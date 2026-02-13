@@ -1,17 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form action="/submit-form/", method="post">
-        {% csrf_token %}
-        {{ main_form.as_p }}
-        <hr>
-        {{ sub_form.as_p }}
-        <input type="submit" value="Submit">
-    </form>
-</body>
-</html>
+{% extends 'warrant_form/base.html' %}
+{% load static %}
+
+{% block title %}Warrant Form{% endblock %}
+
+{% block form %}
+<form id="warrant-form" action="/submit/", method="post">
+    {% csrf_token %}
+    {{ main_form.as_p }}
+
+    {% comment %}
+    <hr>
+    {{ sub_form.as_p }}
+    {% endcomment %}
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}
+
+{% block script %}
+<!-- <script>
+    warrant_form = document.getElementById("warrant-form");
+    warrant_form.reset();
+</script> -->
+{% endblock %}

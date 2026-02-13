@@ -1,12 +1,27 @@
-from django.forms import ModelForm
-from warrant_form.models import ArrayWarrantDataModel, MainJSONWarrantDataModel
+from django import forms
+from warrant_form.models import WarrantDataModel, MainAWISDataModel
 
-class MainJSONWarrantForm(ModelForm):
+class MainAWISForm(forms.ModelForm):
     class Meta:
-        model = MainJSONWarrantDataModel
-        exclude = ["warrants",]
+        model = MainAWISDataModel
+        # exclude = ["warrants",]
+        fields = "__all__"
+        widgets = {
+            'scene_date': forms.SplitDateTimeWidget(
+                date_attrs={
+                    "type": "date", 
+                    "class": "form-control",
+                    # "placeholder": "วัน-เดือน-ปี"
+                },
+                time_attrs={
+                    "type": "time", 
+                    "class": "form-control",
+                    # "placeholder": ""
+                },
+            ),
+        }
 
-class ArrayWarrantForm(ModelForm):
+class WarrantForm(forms.ModelForm):
     class Meta:
-        model = ArrayWarrantDataModel
+        model = WarrantDataModel
         fields = "__all__"

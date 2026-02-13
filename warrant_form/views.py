@@ -1,44 +1,95 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.http import HttpRequest, JsonResponse
-from warrant_form.forms import ArrayWarrantForm, MainJSONWarrantForm
+from warrant_form.models import WarrantDataModel, MainAWISDataModel
+from warrant_form.forms import WarrantForm, MainAWISForm
+import requests
+from requests import RequestException
+import json
 
-# Create your views here.
+from django.forms.models import model_to_dict
 
-# def index(request : HttpRequest):
-#     return JsonResponse({
-#         "success": "yes"
-#     })
+# Functions
+
+def api_request_submit_data(warrant_form : MainAWISDataModel, auth_token):
+    auth_header = {
+        "Authorization": f"Bearer {auth_token}"
+    }
+
+    json_data = json.dumps(warrant_form)
+
+    try:
+        # Response is a json.
+        response = requests.post("", data=json_data, headers=auth_header)
+        data : dict = response.json()
+
+        # success : bool = data.get("success", False)
+        # message : str = data.get("message", "Error")
+
+        return JsonResponse(data)
+
+    except Exception as e:
+        raise RequestException("The API request has failed.")
+
+# VIEWS
 
 def index(request : HttpRequest):
     ## SUB_FORM HAS TO PASS -> MAIN_FORM WILL PASS...
     ## Well, just check both...
-    if request.method == "POST":
-        main_form = MainJSONWarrantForm(request.POST, prefix="main_form")
-        sub_form = ArrayWarrantForm(request.POST, prefix="sub_form")
+    main_form = MainAWISForm(prefix="main_form")
+    sub_form = WarrantForm(prefix="sub_form")
 
-        if main_form.is_valid() and sub_form.is_valid():
-            # both forms are valid
-            main_form.save()
-            sub_form.save()
-            return redirect("/success-dayo")
-        else:
-            return redirect("#")
-    else:
-        main_form = MainJSONWarrantForm(prefix="main_form")
-        sub_form = ArrayWarrantForm(prefix="sub_form")
-
-        return render(request, "warrant_form/index.html", {
-            "main_form": main_form,
-            "sub_form": sub_form
-        })
+    return render(request, "warrant_form/index.html", {
+        "main_form": main_form,
+        "sub_form": sub_form
+    })
+        
 
 def form_submission(request : HttpRequest):
-    main_form = MainJSONWarrantForm(prefix="main_form")
-    sub_form = ArrayWarrantForm(prefix="sub_form")
+    # The expected outcome.
+    if request.method == "POST":
+        main_form = MainAWISForm(request.POST, prefix="main_form")
+        sub_form = WarrantForm(request.POST, prefix="sub_form")
 
+        if main_form.is_valid() and sub_form.is_valid():
+            try:
+                # Create object from the form, but don't commit to database yet.
+                warrant_obj : WarrantDataModel = sub_form.save(commit=False)
 
+                main_awis_obj : MainAWISDataModel = main_form.save(commit=False)
+                main_awis_obj.warrants = warrant_obj
 
+                ## Send an API request to see if it works or not, then save.
+                # api_request_submit_data(main_awis_obj, "test_auth_token")
 
+                dict_main_awis = model_to_dict(main_awis_obj)
+                dict_warrant = model_to_dict(warrant_obj)
+
+                print(dict_main_awis)
+                print(dict_warrant)
+
+                dict_main_awis.pop("id")
+                # dict_main_warrant.update({
+                #     "warrants": 
+                # })
+
+                warrant_obj.save()
+                main_awis_obj.save()
+
+                return redirect(reverse("awis:success"))
+            
+            except Exception:
+                pass
+        
+        # IF not valid, or exception occured.
+        return redirect(reverse("awis:main_page"))
+
+    # Not POST request.   
+    else:
+        return redirect(reverse("awis:main_page"))
+
+def success_page(request : HttpRequest):
     return JsonResponse({
-        "ERROR": "WOW"
+        "status_code": "200",
+        "message": "success"
     })
