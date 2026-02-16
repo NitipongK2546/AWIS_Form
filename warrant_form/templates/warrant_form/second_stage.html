@@ -2,15 +2,11 @@
 {% load static %}
 
 {% block title %}Warrant Form{% endblock %}
+
 {% block form %}
 <form id="warrant-form" action="/submit/", method="post">
     {% csrf_token %}
-    {{ main_form.as_p }}
-
-    {% comment %}
-    <hr>
     {{ sub_form.as_p }}
-    {% endcomment %}
     <input type="submit" value="Submit">
 </form>
 {% endblock %}

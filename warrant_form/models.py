@@ -1,10 +1,11 @@
 from django.db import models
 from django.forms.models import model_to_dict
+import datetime
 # from django.core import serializers
 
 # Create your models here.
 
-# หมายเรียกที่ติดให้กับแบบฟอร์ม
+# หมายเรียกที่ติดไปด้วย
 class WarrantDataModel(models.Model):
     """
     หมายเรียกที่ติดให้กับแบบฟอร์ม
@@ -57,68 +58,7 @@ class WarrantDataModel(models.Model):
     woa_end_date = models.DateField(max_length=10, blank=True, null=True) # MAYBE TIMEFIELD INSTEAD OF DATEFIELD??
     woa_refno = models.CharField(max_length=10, blank=True)
 
-# class WarrantDataModelNew(models.Model):
-#     """
-#     อันนี้เป็น Object เพื่อรองรับข้อมูลจากการค้นหา Warrant ผ่าน API
-#     """
-    
-#     woa_date = models.CharField(max_length=10)
-
-#     fault_type_id = models.IntegerField() # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
-#     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร
-#     cause_text = models.CharField(max_length=400) # ด้วย
-
-#     charge = models.CharField(max_length=250)
-#     charge_type_1 = models.IntegerField() #CHOICES
-#     charge_type_2 = models.IntegerField()
-#     charge_type_2_1 = models.IntegerField()
-#     charge_type_2_2 = models.IntegerField()
-#     charge_type_2_3 = models.IntegerField()
-#     charge_type_3 = models.IntegerField()
-#     charge_other_text = models.CharField(max_length=250)
-
-#     # acc -> stands for accused.
-#     acc_full_name = models.CharField(max_length=250)
-#     acc_card_type = models.IntegerField()
-#     acc_card_id = models.CharField(max_length=20)
-#     acc_origin = models.IntegerField()
-#     acc_nation = models.IntegerField()
-#     acc_occupation = models.CharField(max_length=100)
-#     acc_addno = models.CharField(max_length=50)
-#     acc_vilno = models.CharField(max_length=50)
-#     acc_road = models.CharField(max_length=100)
-#     acc_soi = models.CharField(max_length=100)
-#     acc_near = models.CharField(max_length=200)
-#     acc_sub_district = models.CharField(max_length=6)
-#     acc_district = models.CharField(max_length=4)
-#     acc_province = models.CharField(max_length=2)
-#     acc_tel = models.CharField(max_length=20)
-
-#     appointment_type = models.IntegerField()
-#     appointment_date = models.CharField(max_length=19) # SAME DATE FORMAT AS BELOW
-
-#     woa_start_date = models.CharField(max_length=10) # THIS TIME, IT"S DATE, WITHOUT THE TIME
-#     woa_end_date = models.CharField(max_length=10) # MAYBE TIMEFIELD INSTEAD OF DATEFIELD??
-#     woa_refno = models.CharField(max_length=10)
-
-#     ## ADDITIONAL VARIABLE FOR WARRANT STATUS SEARH
-#     # status = models.CharField(max_length=8) # CHOICES -> Active/Inactive
-#     # court_code = models.CharField(max_length=7)
-#     # woa_type = models.IntegerField() # CHOICES AGAIN
-#     # woa_year = models.IntegerField()
-#     # woa_no = models.IntegerField()
-
-#     # req_num_case_type_id = models.IntegerField() # CHOICES
-#     # police_station_id = models.CharField(max_length=5)
-
-#     # black_case_num_prefix = models.IntegerField() 
-#     # black_case_num = models.IntegerField() 
-#     # black_case_num_year = models.IntegerField() 
-#     # red_case_num_prefix = models.IntegerField() 
-#     # red_case_num = models.IntegerField() 
-#     # red_case_num_year = models.IntegerField() 
-
-# แบบฟอร์ม
+# ข้อมูลหลัก ๆ ส่งให้กับ API
 class MainAWISDataModel(models.Model):
     class ReqCaseTypeIDChoices(models.IntegerChoices):
         GENERAL = 1, "ทั่วไป(จ)"
@@ -150,7 +90,7 @@ class MainAWISDataModel(models.Model):
     req_tel = models.CharField(max_length=50)
 
     # Start of a few unrequired field.
-    cause_type_id = models.IntegerField(choices=CauseTypeIDChoices)
+    cause_type_id = models.IntegerField(choices=CauseTypeIDChoices, blank=True, null=True)
     cause_text = models.CharField(max_length=500, verbose_name="ฐานความผิด", blank=True)
     charge = models.CharField(max_length=50, blank=True)
     charge_type_1 = models.BooleanField() 
@@ -197,3 +137,59 @@ class MainAWISDataModel(models.Model):
     # คิดว่าหมาย 
     # ManyToMany อยู่ในนี้เพราะถ้ามีการแก้ไขก็คิดว่าต้องแก้ใน AWIS Form 
     warrants = models.ManyToManyField(WarrantDataModel)
+
+    def toAPICompatibleDict(self) -> dict[str, object]:
+        """
+        Convert the model object into a dictionary that fits what the API required.
+        It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
+        then convert or remove some fields to match the API.\n
+        It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
+        """
+        ################################################################
+        # Conversion section.
+        # Convert dictionary into the format that API can receive.
+
+        dict_main_awis = model_to_dict(self)
+
+        DATEHALF_STR = "scene_date_datehalf"
+        TIMEHALF_STR = "scene_date_timehalf"
+
+        buddhist_date_half = dict_main_awis.get(DATEHALF_STR)
+        time_half = dict_main_awis.get(TIMEHALF_STR)
+
+        if buddhist_date_half and time_half:
+            # First, we have to convert Year: B.E. to A.D.
+            BUDDHIST_ERA_YEAR_DIFF = 543
+            one_year = datetime.timedelta(days=365)
+            buddhist_era_difference_datetime = BUDDHIST_ERA_YEAR_DIFF * one_year
+
+            iso_date_half = buddhist_date_half - buddhist_era_difference_datetime
+
+            # Leave a space between date and time.
+            full_datetime = f"{iso_date_half} {time_half}"
+            dict_main_awis.update({"scene_date": full_datetime})
+
+            dict_main_awis.pop(DATEHALF_STR)
+            dict_main_awis.pop(TIMEHALF_STR)
+
+        dict_main_awis.pop("id")
+
+        empty_key_list = []
+        for key, value in dict_main_awis.items():
+            if isinstance(value, str):
+                if not value:
+                    empty_key_list.append(key)
+            elif isinstance(value, bool):
+                if value: # True...
+                    dict_main_awis.update({key: 1})
+                else:
+                    dict_main_awis.update({key: 0})
+
+            if value is None:
+                empty_key_list.append(key)
+
+        for key in empty_key_list:
+            dict_main_awis.pop(key)
+
+        return dict_main_awis
+        
