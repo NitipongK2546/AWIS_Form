@@ -4,21 +4,11 @@ from warrant_form.models import WarrantDataModel, MainAWISDataModel
 class MainAWISForm(forms.ModelForm):
     class Meta:
         model = MainAWISDataModel
-        # exclude = ["warrants",]
-        fields = "__all__"
+        exclude = ["scene_date","warrants"]
+        # fields = "__all__"
         widgets = {
-            'scene_date': forms.SplitDateTimeWidget(
-                date_attrs={
-                    "type": "date", 
-                    "class": "form-control",
-                    # "placeholder": "วัน-เดือน-ปี"
-                },
-                time_attrs={
-                    "type": "time", 
-                    "class": "form-control",
-                    # "placeholder": ""
-                },
-            ),
+            'scene_date_datehalf': forms.DateInput(attrs={'type': 'date'}),
+            'scene_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
         }
 
 class WarrantForm(forms.ModelForm):

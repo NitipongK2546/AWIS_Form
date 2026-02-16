@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=
+    , initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="post">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+    {{ form.as_p }}
+
+    {% if wizard.steps.prev %}
+        <button name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>
+    {% endif %}
+
+    <button type="submit">Next</button>
+    </form>
+</body>
+</html>

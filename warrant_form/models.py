@@ -19,9 +19,9 @@ class WarrantDataModel(models.Model):
         PASSPORT = 2, "เลขหนังสือเดินทาง"
         NON_THAI_ID = 3, "เลขคนซึ่งไม่มีสัญชาติไทย"
 
-    woa_date = models.DateField(max_length=10, blank=True)
+    woa_date = models.DateField(max_length=10, blank=True, null=True)
 
-    fault_type_id = models.IntegerField() # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
+    fault_type_id = models.IntegerField(blank=True, null=True) # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร
     cause_text = models.CharField(max_length=400) # ด้วย
 
@@ -157,7 +157,11 @@ class MainAWISDataModel(models.Model):
     charge_type_2 = models.BooleanField()
 
     scene = models.CharField(max_length=300, blank=True)
-    scene_date = models.DateTimeField(blank=True, null=True) ## MODELS.DATETIMEFIELD FORMAT -> "YYYY-MM-DD HH24:MI:SS" or "2019-01-01 20:00:00" 19 letters
+    scene_date_datehalf = models.DateField(blank=True, null=True) 
+    scene_date_timehalf = models.TimeField(blank=True, null=True) 
+
+    scene_date = models.CharField(max_length=19, blank=True) 
+
     act = models.CharField(max_length=500, verbose_name="มีพฤติการกระทำความผิด", blank=True)
     law = models.CharField(max_length=200, verbose_name="ตามกฎหมาย", blank=True)
 
@@ -185,6 +189,11 @@ class MainAWISDataModel(models.Model):
     create_uid = models.IntegerField() # USER ที่สร้างข้อมูล
     ref_no = models.CharField(max_length=50, blank=True)
 
+    # def clean(self):
+    #     self.scene_date = " ".join(self.scene_date)
+
+    #     return super().clean()
+
     # คิดว่าหมาย 
     # ManyToMany อยู่ในนี้เพราะถ้ามีการแก้ไขก็คิดว่าต้องแก้ใน AWIS Form 
-    # warrants = models.ManyToManyField(WarrantDataModel)
+    warrants = models.ManyToManyField(WarrantDataModel)
