@@ -9,7 +9,7 @@
 
 <form onsubmit="confirmForm()" action="/submit/" method="post">
     {% csrf_token %}
-    
+    <p>คำร้อง(ขอออกหมายจับ) </p>
     <p>{{ form.court_code }}</p>
     <p>{{ form.req_year }}</p>
     <p>{{ form.req_case_type_id }}</p>
@@ -74,24 +74,3 @@
 </form>
 {% endblock %}
 
-{% block script %}
-<!-- <script>
-    const day_selector = document.getElementById("id_main_form-scene_date_day");
-    const month_selector = document.getElementById("id_main_form-scene_date_month");
-    //
-    const febuary_non_leap_year_day = 28
-    const febuary_max_day = 29
-    const default_max_day = 31
-</script>
-<script>
-    function isLeapYear() {
-        let date_obj = new Date()
-
-        return true
-    }
-    function adjustDate() {
-        day_selector.re
-    }
-    adjustDate();
-</script> -->
-{% endblock %}
