@@ -1,0 +1,219 @@
+form {
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: "TH Sarabun New", "Tahoma", sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    color: #000;
+
+}
+
+form input {
+    border: 1px solid #6f6767;
+    border-radius: 3px;
+    font-size: 17px;
+    font-family: "TH Sarabun New", "Tahoma", sans-serif;
+    background-color: #e5e5e5;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    outline: none;
+    box-shadow: 0 0 4px 2px #3399ff;
+    border: 1px solid #3399ff;
+}
+
+
+.form-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.form-header-row h3 {
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+.form-header-row .emblem {
+    height: 3cm;
+    width: auto;
+    margin: 20px 20px;
+    /* spacing around emblem */
+}
+
+.form-header-row p {
+    margin-top: 20px;
+}
+
+
+#id_req_year {
+    width: 80px;
+    text-align: center;
+}
+
+.form-header-row input {
+    width: 80px;
+}
+
+.lawsuit-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+.lawsuit-between .left {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.lawsuit-between .right {
+    text-align: right;
+}
+
+.lawsuit-between .right p {
+    margin: 5px 0;
+}
+
+.lawsuit-between .right input {
+    width: 450px;
+    font-size: 18px;
+}
+
+#id_main_form-req_name {
+    width: 300px;
+    font-size: 18px;
+}
+
+#id_main_form-req_pos {
+    width: 250px;
+    font-size: 18px;
+}
+
+#id_main_form-req_age {
+    width: 50px;
+
+}
+
+#id_main_form-req_office {
+    width: 445px;
+
+}
+
+#id_main_form-req_province {
+    width: 188px;
+}
+
+#id_main_form-req_district {
+    width: 170px;
+}
+
+#id_main_form-req_sub_district {
+    width: 170px;
+}
+
+#id_main_form-cause_text {
+    width: 500px;
+}
+
+#id_main_form-acc_full_name {
+    width: 400px;
+}
+
+#id_main_form-acc_card_id {
+    width: 225px;
+}
+
+#id_main_form-acc_age {
+    width: 45px;
+}
+
+#id_main_form-acc_origin {
+    width: 170px;
+}
+
+#id_main_form-acc_nation {
+    width: 170px;
+}
+
+#id_main_form-acc_occupation {
+    width: 160px;
+}
+
+#id_main_form-acc_addno {
+    width: 197px;
+}
+
+#id_main_form-acc_vilno {
+    width: 197px;
+}
+
+#id_main_form-acc_road {
+    width: 197px;
+}
+
+#id_main_form-acc_soi {
+    width: 185px;
+}
+
+#id_main_form-acc_near {
+    width: 185px;
+}
+
+#id_main_form-acc_province {
+    width: 185px;
+}
+
+#id_main_form-acc_district {
+    width: 170px;
+}
+
+#id_main_form-acc_sub_district {
+    width: 170px;
+}
+
+#id_main_form-acc_tel {
+    width: 170px;
+}
+
+#id_main_form-scene {
+    width: 710px;
+}
+
+.header_page_2 {
+    width: 800px;
+    text-align: center;
+}
+
+#id_main_form-act {
+    width: 800px;
+    height: 80px;
+}
+
+#id_main_form-charge {
+    width: 592px;
+}
+
+#id_main_form-law {
+    width: 450px;
+}
+
+#id_main_form-have_court_code {
+    width: 210px;
+}
+
+#id_main_form-have_act {
+    width: 100%;
+}
+
+#id_main_form-composer_name {
+    width: 300px;
+}
+
+#id_main_form-writer_name {
+    width: 300px;
+}
