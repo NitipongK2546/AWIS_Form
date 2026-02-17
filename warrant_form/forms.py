@@ -1,5 +1,6 @@
 from django import forms
 from django.db import models
+from django.core.exceptions import ValidationError
 from warrant_form.models import WarrantDataModel
 from django.forms.models import model_to_dict
 import datetime
@@ -9,9 +10,9 @@ class SpecialAWISDataFormModelPartOne(models.Model):
         GENERAL = 1, "ทั่วไป(จ)"
         DRUGS = 2, "ยาเสพติด(ยจ)"
 
-    class CauseTypeIDChoices(models.IntegerChoices):
-        PROBLEM_REPORT = 1, "ร้องทุกข์"
-        INTERROGATION = 2, "สืบสวนสอบสวน"
+    # class CauseTypeIDChoices(models.IntegerChoices):
+    #     PROBLEM_REPORT = 1, "ร้องทุกข์"
+    #     INTERROGATION = 2, "สืบสวนสอบสวน"
 
     court_code = models.CharField(max_length=7, verbose_name="รหัส")
 
@@ -35,14 +36,36 @@ class SpecialAWISDataFormModelPartOne(models.Model):
     req_tel = models.CharField(max_length=50)
 
     # Start of a few unrequired field.
-    cause_type_id = models.IntegerField(choices=CauseTypeIDChoices, blank=True, null=True)
+    # cause_type_id 
+    cause_type_id_report = models.BooleanField()
+    cause_type_id_interrogate = models.BooleanField()
+
     cause_text = models.CharField(max_length=500, verbose_name="ฐานความผิด", blank=True)
     charge = models.CharField(max_length=50, blank=True)
     charge_type_1 = models.BooleanField() 
     charge_type_2 = models.BooleanField()
 
     scene = models.CharField(max_length=300, blank=True)
-    scene_date_datehalf = models.DateField(blank=True, null=True) 
+    # scene_date_datehalf = models.DateField(blank=True, null=True) 
+
+    class SceneDateMonthChoices(models.IntegerChoices):
+        JANUARY = (1, "มกราคม")
+        FEBRUARY = (2, "กุมภาพันธ์")
+        MARCH = (3, "มีนาคม")
+        APRIL = (4, "เมษายน")
+        MAY = (5, "พฤษภาคม")
+        JUNE = (6, "มิถุนายน")
+        JULY = (7, "กรกฎาคม")
+        AUGUST = (8, "สิงหาคม")
+        SEPTEMBER = (9, "กันยายน")
+        OCTOBER = (10, "ตุลาคม")
+        NOVEMBER = (11, "พฤศจิกายน")
+        DECEMBER = (12, "ธันวาคม")
+
+    scene_date_day = models.PositiveIntegerField(blank=True, null=True)
+    scene_date_month = models.PositiveIntegerField(blank=True, null=True)
+    scene_date_year = models.PositiveIntegerField(blank=True, null=True)
+
     scene_date_timehalf = models.TimeField(blank=True, null=True) 
     scene_date = models.CharField(max_length=19, blank=True) 
 
@@ -80,16 +103,38 @@ class SpecialAWISDataFormModelPartOne(models.Model):
     acc_age = models.IntegerField(blank=True, null=True)
     acc_origin = models.IntegerField(blank=True, null=True)
     acc_nation = models.IntegerField(blank=True, null=True)
-    acc_occupation = models.CharField(max_length=100)
-    acc_addno = models.CharField(max_length=50)
-    acc_vilno = models.CharField(max_length=50)
-    acc_road = models.CharField(max_length=100)
-    acc_soi = models.CharField(max_length=100)
-    acc_near = models.CharField(max_length=200)
-    acc_sub_district = models.CharField(max_length=6)
-    acc_district = models.CharField(max_length=4)
-    acc_province = models.CharField(max_length=2)
-    acc_tel = models.CharField(max_length=20)
+    acc_occupation = models.CharField(max_length=100, blank=True)
+    acc_addno = models.CharField(max_length=50, blank=True)
+    acc_vilno = models.CharField(max_length=50, blank=True)
+    acc_road = models.CharField(max_length=100, blank=True)
+    acc_soi = models.CharField(max_length=100, blank=True)
+    acc_near = models.CharField(max_length=200, blank=True)
+    acc_sub_district = models.CharField(max_length=6, blank=True)
+    acc_district = models.CharField(max_length=4, blank=True)
+    acc_province = models.CharField(max_length=2, blank=True)
+    acc_tel = models.CharField(max_length=20, blank=True)
+
+    def clean_date(self):
+        try:
+            if self.scene_date_year and self.scene_date_month and self.scene_date_day:
+            # BUDDHIST_ERA_YEAR_DIFF = 543
+                converted_year = self.scene_date_year 
+                padded_month = str(self.scene_date_month).zfill(2)
+                padded_day = str(self.scene_date_day).zfill(2)
+
+                combined_date = f"{converted_year}-{padded_month}-{padded_day}"
+                datetime.date.fromisoformat(combined_date)
+
+            # One of the field doesn't exist.
+        except:
+            print(f"[LOG] ***Possible Error*** -> Date String: {combined_date}")
+            raise ValidationError("The given Date is impossible.")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.clean_date()
+
+        return cleaned_data
 
     def toAPICompatibleDict(self) -> dict[str, object]:
         """
@@ -122,8 +167,8 @@ class SpecialAWISDataFormModelPartOne(models.Model):
             full_datetime = f"{iso_date_half} {time_half}"
             dict_main_awis.update({"scene_date": full_datetime})
 
-            dict_main_awis.pop(DATEHALF_STR)
-            dict_main_awis.pop(TIMEHALF_STR)
+            dict_main_awis.pop(DATEHALF_STR, None)
+            dict_main_awis.pop(TIMEHALF_STR, None)
 
         dict_main_awis.pop("id")
 
@@ -148,13 +193,34 @@ class SpecialAWISDataFormModelPartOne(models.Model):
 
 class MainAWISForm(forms.ModelForm):
     class Meta:
+        today_year = datetime.date.today().year
+        year_choices = [(year, year + 543) for year in range(1970, today_year + 1)]
+        day_choices = [(day, day) for day in range(1, 31 + 1)]
+        month_choices = [
+            (1, "มกราคม"),
+            (2, "กุมภาพันธ์"),
+            (3, "มีนาคม"),
+            (4, "เมษายน"),
+            (5, "พฤษภาคม"),
+            (6, "มิถุนายน"),
+            (7, "กรกฎาคม"),
+            (8, "สิงหาคม"),
+            (9, "กันยายน"),
+            (10, "ตุลาคม"),
+            (11, "พฤศจิกายน"),
+            (12, "ธันวาคม"),
+        ]
+
         model = SpecialAWISDataFormModelPartOne
-        exclude = ["scene_date", "scene_date_datehalf", "scene_date_timehalf"]
-        # fields = "__all__"
-        # widgets = {
-        #     'scene_date_datehalf': forms.DateInput(attrs={'type': 'date'}),
-        #     'scene_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
-        # }
+        exclude = ["scene_date"]
+        widgets = {
+            'scene_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
+            'scene_date_year': forms.Select(choices=year_choices),
+            'scene_date_day': forms.Select(choices=day_choices,),
+            'scene_date_month': forms.Select(choices=month_choices, attrs={
+                'onchange': "adjustDate()"
+            })
+        }
 
 class WarrantForm(forms.ModelForm):
     class Meta:

@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpRequest, JsonResponse, HttpResponse
 
-from formtools.wizard.views import SessionWizardView, CookieWizardView
+# from formtools.wizard.views import SessionWizardView, CookieWizardView
 
 from warrant_form.models import WarrantDataModel, MainAWISDataModel
 from warrant_form.forms import WarrantForm, MainAWISForm, SpecialAWISDataFormModelPartOne
+from warrant_form.doc_create import doc_create_with_context
 
 import requests
 from requests import RequestException
@@ -38,17 +39,19 @@ def api_request_submit_data(warrant_form : MainAWISDataModel, auth_token):
 
 # VIEWS
 
-def index(request : HttpRequest):
-    ## SUB_FORM HAS TO PASS -> MAIN_FORM WILL PASS...
-    ## Well, just check both...
-    
+def index(request : HttpRequest):    
     main_form = MainAWISForm(prefix="main_form")
     sub_form = WarrantForm(prefix="sub_form")
 
-    return render(request, "warrant_form/awis_step1.html", {
+    context = {
         "form": main_form,
         "sub_form": sub_form
-    })
+    }
+
+    if request.GET.get("status") == "error":
+        context.update({"status": "error"})
+
+    return render(request, "warrant_form/awis_step1.html", context)
         
 
 def form_submission(request : HttpRequest):
@@ -68,11 +71,13 @@ def form_submission(request : HttpRequest):
                 ## Send an API request to see if it works or not, then save.
                 # api_request_submit_data(main_awis_obj, "test_auth_token")
 
-                print(main_awis_obj)
+                print(main_awis_obj.toAPICompatibleDict())
+
+                doc_create_with_context(main_awis_obj.toAPICompatibleDict())
 
                 # SAVE THE FORM
                 # The form, not the obj.
-                main_form.save()
+                # main_form.save()
 
                 return redirect(reverse("awis:success"))
                 # sub_form = WarrantForm(prefix="sub_form")
@@ -80,8 +85,7 @@ def form_submission(request : HttpRequest):
             except Exception as e:
                 print("@***EXCEPTION OCCURED:", e  ,"***")
 
-        print("***ERROR: FORM INVALID!***")
-        print(main_form.errors)
+        print(main_form.errors.as_text())
         # if main_form.is_valid() and sub_form.is_valid():
         #     try:
         #         # Create object from the form, but don't commit to database yet.
@@ -113,7 +117,9 @@ def form_submission(request : HttpRequest):
         #         pass
         
         # IF not valid, or exception occured.
-        return redirect(reverse("awis:main_page"))
+        return redirect(reverse("awis:main_page", query={
+            "status": "error",
+        }))
 
     # Not POST request.   
     else:

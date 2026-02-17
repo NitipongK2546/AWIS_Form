@@ -3,7 +3,11 @@
 
 {% block title %}Warrant Form{% endblock %}
 {% block form %}
-<form action="/submit/" method="post">
+{% if status == "error" %}
+<h3>ข้อมูลที่กรอกมีข้อผิดพลาด</h3>
+{% endif %}
+
+<form onsubmit="confirmForm()" action="/submit/" method="post">
     {% csrf_token %}
     
     <p>{{ form.court_code }}</p>
@@ -24,7 +28,9 @@
     <p>จังหวัด {{ form.req_province }} โทรศัพท์ {{ form.req_tel }}</p>
     <p>ขอทำคำร้องขอออกหมายจับยื่นต่อศาลดังต่อไปนี้</p>
 
-    <p>ข้อ 1. ด้วย {{ form.cause_type_id }} {{ form.cause_text }}</p>
+    <p>ข้อ 1. ด้วย</p>
+    <p>{{ form.cause_type_id_report }} {{ form.cause_text }} มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
+    <p>{{ form.cause_type_id_interrogate }} ปรากฎจากการสืบสวนของ {{ form.cause_text }}</p>
 
     <p>ว่า {{ form.acc_full_name }} เลขบัตรประชาชน {{ form.acc_card_id }}</p>
     <p>อายุ {{ form.acc_age }} เชื้อชาติ {{ form.acc_origin }} สัญชาติ {{ form.acc_nation }} อาชีพ {{ form.acc_occupation }}</p>
@@ -35,10 +41,12 @@
     <p>{{ form.charge_type_1 }} ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</p>
     <p>{{ form.charge_type_2 }} ได้หรือน่าจะได้กระทำความผิดอาญา และน่าจะหลบหนีหรือจะไปยุ่งเหยิงกับพยานหลักฐานหรือก่ออันตรายประการอื่น</p>
     <p>เหตุเกิดที่ {{ form.scene }}</p>
-    <p>เมื่อวันที่ .... เดือน .... พ.ศ. ...... เวลา ..00:00... นาฬิกา</p>
-    <p>มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับคือ {{ form.act }}</p>
-    <p>เป็นการกระทำความผิดฐาน {{ form.cause_text........... }}</p>
-    <p>ตามกฎหมาย {{ form.law }} ซึ่งเป็นคดีที่อยู่ในอำนาจศาล {{ form.court_owner_code }}p>
+    <p>เมื่อวันที่ {{ form.scene_date_day }} เดือน {{ form.scene_date_month }} พ.ศ. {{ form.scene_date_year }} เวลา {{form.scene_date_timehalf}} นาฬิกา</p>
+
+    <p>มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับคือ {{ form.cause_text........... }} (cause_text?)</p>
+    <p>เป็นการกระทำความผิดฐาน {{ form.act }} (act?)</p>
+
+    <p>ตามกฎหมาย {{ form.law }} ซึ่งเป็นคดีที่อยู่ในอำนาจศาล {{ form.court_owner_code }} </p>
     <p>รายละเอียดข้อมูลและพยานหลักฐาน ปรากฎตามที่เอกสารที่แนบมาพร้อมนี้</p>
 
     <p>ข้อ 2. ผู้ประสงค์จะทำการจับกุม {{ form.accused............... }}</p>
@@ -62,15 +70,28 @@
     <p>ตำแหน่ง {{ form.writer_position }} เป็นผู้เรียง</p>
     <p>(ลงชื่อ) ........................ ผู้พิมพ์/เขียน</p>
     
-    
-
-    {% if wizard.steps.prev %}
-        <button name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>
-    {% endif %}
-
     <button type="submit">Next</button>
 </form>
 {% endblock %}
 
 {% block script %}
+<!-- <script>
+    const day_selector = document.getElementById("id_main_form-scene_date_day");
+    const month_selector = document.getElementById("id_main_form-scene_date_month");
+    //
+    const febuary_non_leap_year_day = 28
+    const febuary_max_day = 29
+    const default_max_day = 31
+</script>
+<script>
+    function isLeapYear() {
+        let date_obj = new Date()
+
+        return true
+    }
+    function adjustDate() {
+        day_selector.re
+    }
+    adjustDate();
+</script> -->
 {% endblock %}

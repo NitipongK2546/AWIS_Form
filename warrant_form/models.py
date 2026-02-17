@@ -169,8 +169,8 @@ class MainAWISDataModel(models.Model):
             full_datetime = f"{iso_date_half} {time_half}"
             dict_main_awis.update({"scene_date": full_datetime})
 
-            dict_main_awis.pop(DATEHALF_STR)
-            dict_main_awis.pop(TIMEHALF_STR)
+            dict_main_awis.pop(DATEHALF_STR, None)
+            dict_main_awis.pop(TIMEHALF_STR, None)
 
         dict_main_awis.pop("id")
 
