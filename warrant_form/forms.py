@@ -254,11 +254,11 @@ class MainAWISForm(forms.ModelForm):
         exclude = ["scene_date"]
         widgets = {
             'acc_province': forms.Select(choices=thai_codes.getProvinceChoices()),
-            'acc_district': forms.Select(choices=thai_codes.getDistrictChoices),
-            'acc_sub_district': forms.Select(choices=thai_codes.getSubDistrictChoices),
+            'acc_district': forms.Select(choices=thai_codes.getDistrictChoices()),
+            'acc_sub_district': forms.Select(choices=thai_codes.getSubDistrictChoices()),
             'req_province': forms.Select(choices=thai_codes.getProvinceChoices()),
-            'req_district': forms.Select(choices=thai_codes.getDistrictChoices),
-            'req_sub_district': forms.Select(choices=thai_codes.getSubDistrictChoices),
+            'req_district': forms.Select(choices=thai_codes.getDistrictChoices()),
+            'req_sub_district': forms.Select(choices=thai_codes.getSubDistrictChoices()),
             'scene_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
             'scene_date_year': forms.Select(choices=year_choices),
             'scene_date_day': forms.Select(choices=day_choices,),

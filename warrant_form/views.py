@@ -73,7 +73,7 @@ def form_submission(request : HttpRequest):
 
                 print(main_awis_obj.toAPICompatibleDict())
 
-                main_awis_obj.save()
+                # main_awis_obj.save()
                 doc_create_with_context(main_awis_obj.toAPICompatibleDict())
 
                 # SAVE THE FORM
