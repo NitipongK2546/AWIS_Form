@@ -48,9 +48,9 @@
     <p>จังหวัด {{ form.req_province }} อำเภอ/เขต {{ form.req_district }} ตำบล/แขวง {{ form.req_sub_district }}</p>
     <p> โทรศัพท์ {{ form.req_tel }} ขอทำคำร้องขอออกหมายจับยื่นต่อศาลดังต่อไปนี้</p>
 
-    <p align="right">ข้อ 1. {{ form.cause_type_id_report }} ด้วย {{ form.cause_text }} </p>
+    <p align="right">ข้อ 1. {{ form.cause_type_id_1 }} ด้วย {{ form.cause_text_1 }} </p>
     <p> มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
-    <p align="right">{{ form.cause_type_id_interrogate }} ปรากฎจากการสืบสวนของ {{ form.cause_text }}</p>
+    <p align="right">{{ form.cause_type_id_2 }} ปรากฎจากการสืบสวนของ {{ form.cause_text_2 }}</p>
 
     <p>ว่า {{ form.acc_full_name }} เลขบัตรประชาชน {{ form.acc_card_id }}</p>
     <p>อายุ {{ form.acc_age }} เชื้อชาติ {{ form.acc_origin }} สัญชาติ {{ form.acc_nation }} อาชีพ {{ form.acc_occupation }}</p>
@@ -89,7 +89,7 @@
     <p></p>
     -->
 
-    <p align="right">ข้อที่ 3. ผู้ร้อง  ....เคย ..... ไม่เคย ร้องขอให้ศาล {{ form.have_court_code }} ออกหมายจับ</p>
+    <p align="right">ข้อที่ 3. ผู้ร้อง  {{form.have_req_1}} เคย {{form.have_req_2}} ไม่เคย ร้องขอให้ศาล {{ form.have_court_code }} ออกหมายจับ</p>
     <p>บุคคลดังกล่าว โดยอาศัยเหตุแห่งการร้องขอเดียวกันนี้ หรือเหตุอื่น (ระบุ) </p>
     <p>{{ form.have_act }}</p>
     <p>และศาลสั่ง {{ form.have_injunc }} </p>
@@ -113,19 +113,86 @@
 
 {% block script %}
 <script>
-    const year_selector = document.getElementById("id_main_form-scene_date_year");
+    // Variable setup
     const awis_form = document.getElementById("awis-form");
 
+    const year_selector = document.getElementById("id_main_form-scene_date_year");
+    const month_selector = document.getElementById("id_main_form-scene_date_month");
+    const day_selector = document.getElementById("id_main_form-scene_date_day");
+
+    let req_province_sel = document.getElementById("id_main_form-req_province");
+    let req_district_sel = document.getElementById("id_main_form-req_district");
+    let req_sub_district_sel = document.getElementById("id_main_form-req_sub_district");
+
+    let acc_province_sel = document.getElementById("id_main_form-acc_province");
+    let acc_district_sel = document.getElementById("id_main_form-acc_district");
+    let acc_sub_district_sel = document.getElementById("id_main_form-acc_sub_district");
+
     let is_submitting_form = false;
+
+    let all_district = [];
+    let all_sub_district = [];
 </script>
 <script>
+    // Setup Code
+    for (let element of req_district_sel) {
+        all_district.push({
+            "value": element.value,
+            "innerText": element.innerText,
+        })
+    }
+    for (let element of req_sub_district_sel) {
+        all_sub_district.push({
+            "value": element.value,
+            "innerText": element.innerText,
+        })
+    }
+</script>
+<script>
+    // Non-Async Function
     function adjustYearToLatest() {
         year_selector.value = new Date().getFullYear();
     }
+    function changeSelectValue(frontal_substring, targeted_sel, full_list) {
+        let options = [];
+        for (let child of full_list) {
+            if (String(child.value).startsWith(frontal_substring)) {
+                options.push(child);
+            }
+        }
+        targeted_sel.innerHTML = "";
+        options.forEach(dict => {
+            let optionElement = document.createElement("option");
+            optionElement.value = dict.value;
+            optionElement.innerText = dict.innerText;
+
+            targeted_sel.appendChild(optionElement);
+        });
+    }
+</script>
+<script>
+// AUTORUN ON START
     adjustYearToLatest();
+    changeSelectValue("10", req_district_sel, all_district)
+    changeSelectValue("10", acc_district_sel, all_district)
 </script>
 <script>
 // EVENT LISTENERS
+code_select_arr = [
+    [req_province_sel, req_district_sel, req_sub_district_sel,],
+    [acc_province_sel, acc_district_sel, acc_sub_district_sel,],
+]
+code_select_arr.forEach(element => {
+    // FOR PROVINCE TO CHANGE DISTRICT
+    element[0].addEventListener("change", function () {
+        changeSelectValue(element[0].value, element[1], all_district);
+        changeSelectValue(element[1].value, element[2], all_sub_district);
+    });
+    // FOR DISTRICT TO CHANGE SUB_DISTRICT
+    element[1].addEventListener("change", function () {
+        changeSelectValue(element[1].value, element[2], all_sub_district);
+    });
+});
 awis_form.addEventListener("submit", function () {
     is_submitting_form = true;
 });
