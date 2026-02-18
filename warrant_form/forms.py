@@ -4,18 +4,23 @@ from django.core.exceptions import ValidationError
 from warrant_form.models import WarrantDataModel
 from django.forms.models import model_to_dict
 import datetime
+from django.utils import timezone
+from warrant_form.code_handler import ThaiCountryAreaCode
 
 class SpecialAWISDataFormModelPartOne(models.Model):
-    class ReqCaseTypeIDChoices(models.IntegerChoices):
-        GENERAL = 1, "ทั่วไป(จ)"
-        DRUGS = 2, "ยาเสพติด(ยจ)"
+    # POSSIBLY TEMPORARY VARIABLE.
+    #req_no = USE ID OF OBJECT INSTEAD.
+    court_name = models.CharField(max_length=250, blank=True)
+    day = timezone.datetime.today().day
+    month = timezone.datetime.today().month
+    year = timezone.datetime.today().year
 
-    # class CauseTypeIDChoices(models.IntegerChoices):
-    #     PROBLEM_REPORT = 1, "ร้องทุกข์"
-    #     INTERROGATION = 2, "สืบสวนสอบสวน"
+    class ReqCaseTypeIDChoices(models.IntegerChoices):
+        GENERAL = (1, "ทั่วไป(จ)")
+        DRUGS = (2, "ยาเสพติด(ยจ)")
 
     court_code = models.CharField(max_length=7, verbose_name="รหัส")
-
+    
     req_year = models.IntegerField()
     req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) # CHOICES
 
@@ -37,10 +42,11 @@ class SpecialAWISDataFormModelPartOne(models.Model):
 
     # Start of a few unrequired field.
     # cause_type_id 
-    cause_type_id_report = models.BooleanField()
-    cause_type_id_interrogate = models.BooleanField()
+    cause_type_id_1 = models.BooleanField()
+    cause_type_id_2 = models.BooleanField()
+    cause_text_1 = models.CharField(max_length=500, blank=True)
+    cause_text_2 = models.CharField(max_length=500, blank=True)
 
-    cause_text = models.CharField(max_length=500, verbose_name="ฐานความผิด", blank=True)
     charge = models.CharField(max_length=50, blank=True)
     charge_type_1 = models.BooleanField() 
     charge_type_2 = models.BooleanField()
@@ -79,7 +85,9 @@ class SpecialAWISDataFormModelPartOne(models.Model):
     agent_name = models.CharField(max_length=400, blank=True)
     agent_pos = models.CharField(max_length=400, blank=True)
 
-    have_req = models.BooleanField() 
+    have_req_1 = models.BooleanField() 
+    have_req_2 = models.BooleanField() 
+
     have_court_code = models.CharField(max_length=7, blank=True) # tb_office court_code
     have_act = models.CharField(max_length=400, blank=True)
     have_injunc = models.CharField(max_length=50, blank=True)
@@ -114,28 +122,6 @@ class SpecialAWISDataFormModelPartOne(models.Model):
     acc_province = models.CharField(max_length=2, blank=True)
     acc_tel = models.CharField(max_length=20, blank=True)
 
-    def clean_date(self):
-        try:
-            if self.scene_date_year and self.scene_date_month and self.scene_date_day:
-            # BUDDHIST_ERA_YEAR_DIFF = 543
-                converted_year = self.scene_date_year 
-                padded_month = str(self.scene_date_month).zfill(2)
-                padded_day = str(self.scene_date_day).zfill(2)
-
-                combined_date = f"{converted_year}-{padded_month}-{padded_day}"
-                datetime.date.fromisoformat(combined_date)
-
-            # One of the field doesn't exist.
-        except:
-            print(f"[LOG] ***Possible Error*** -> Date String: {combined_date}")
-            raise ValidationError("The given Date is impossible.")
-
-    def clean(self):
-        cleaned_data = super().clean()
-        self.clean_date()
-
-        return cleaned_data
-
     def toAPICompatibleDict(self) -> dict[str, object]:
         """
         Convert the model object into a dictionary that fits what the API required.
@@ -148,29 +134,32 @@ class SpecialAWISDataFormModelPartOne(models.Model):
         # Convert dictionary into the format that API can receive.
 
         dict_main_awis = model_to_dict(self)
+        dict_main_awis.update({"day": self.day})
+        dict_main_awis.update({"month": self.month})
+        dict_main_awis.update({"year": self.year})
 
-        DATEHALF_STR = "scene_date_datehalf"
         TIMEHALF_STR = "scene_date_timehalf"
-
-        buddhist_date_half = dict_main_awis.get(DATEHALF_STR)
         time_half = dict_main_awis.get(TIMEHALF_STR)
+        date_half = None
+        
+        if self.scene_date_year and self.scene_date_month and self.scene_date_day:
+            converted_year = self.scene_date_year 
+            padded_month = str(self.scene_date_month).zfill(2)
+            padded_day = str(self.scene_date_day).zfill(2)
 
-        if buddhist_date_half and time_half:
-            # First, we have to convert Year: B.E. to A.D.
-            BUDDHIST_ERA_YEAR_DIFF = 543
-            one_year = datetime.timedelta(days=365)
-            buddhist_era_difference_datetime = BUDDHIST_ERA_YEAR_DIFF * one_year
+            # The year is already converted from choices -> BE to AD (refer to Form field)
+            date_half = f"{converted_year}-{padded_month}-{padded_day}"
 
-            iso_date_half = buddhist_date_half - buddhist_era_difference_datetime
-
+        if date_half and time_half:
             # Leave a space between date and time.
-            full_datetime = f"{iso_date_half} {time_half}"
+            full_datetime = f"{date_half} {time_half}"
             dict_main_awis.update({"scene_date": full_datetime})
 
-            dict_main_awis.pop(DATEHALF_STR, None)
-            dict_main_awis.pop(TIMEHALF_STR, None)
+            # dict_main_awis.pop(DATEHALF_STR, None)
+            # dict_main_awis.pop(TIMEHALF_STR, None)
 
-        dict_main_awis.pop("id")
+        # dict_main_awis.pop("id")
+        dict_main_awis.update({"req_no": dict_main_awis.get("id", "NO ID")})
 
         empty_key_list = []
         for key, value in dict_main_awis.items():
@@ -192,6 +181,55 @@ class SpecialAWISDataFormModelPartOne(models.Model):
         return dict_main_awis
 
 class MainAWISForm(forms.ModelForm):
+    def clean_date(self, data : dict[str, object]):
+        combined_date = ""
+        try:
+            scene_date_year = data.get("scene_date_year")
+            scene_date_month = data.get("scene_date_month")
+            scene_date_day = data.get("scene_date_day")
+            if scene_date_year and scene_date_month and scene_date_day:
+            # BUDDHIST_ERA_YEAR_DIFF = 543
+                converted_year = scene_date_year 
+                padded_month = str(scene_date_month).zfill(2)
+                padded_day = str(scene_date_day).zfill(2)
+
+                combined_date = f"{converted_year}-{padded_month}-{padded_day}"
+                datetime.date.fromisoformat(combined_date)
+
+            # One of the field doesn't exist.
+        except:
+            self.add_error(f"Invalid Date: {combined_date}")
+        
+    def clean_multi_boolean(self, data : dict[str, object]):
+        bool_key_dict : dict[str, int] = {
+            "cause_type_id": 2,
+            "have_req": 2,
+            "charge_type": 2,
+        }
+        # This is for checking -> If one is True, the other must be False.
+        for bool_key, total_num in bool_key_dict.items():
+            bool_value_list = []
+            for num in range(total_num):
+                # Example: cause_type_id_1
+                key = f"{bool_key}_{num + 1}"
+
+                var_value = data.get(key)
+                bool_value_list.append(var_value)
+            # Check if multiple checkboxes was ticked.
+            # More than 1 = impossible, raise error.
+            if bool_value_list.count(1) > 1:
+                for num in range(total_num):
+                    key = f"{bool_key}_{num + 1}"
+                    custom_error = ValidationError(f"Duplicated Checkboxes from the same type.")
+                    self.add_error(key, custom_error)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.clean_date(cleaned_data)
+        self.clean_multi_boolean(cleaned_data)
+
+        return cleaned_data
+    
     class Meta:
         today_year = datetime.date.today().year
         year_choices = [(year, year + 543) for year in range(1970, today_year + 1)]
@@ -210,10 +248,17 @@ class MainAWISForm(forms.ModelForm):
             (11, "พฤศจิกายน"),
             (12, "ธันวาคม"),
         ]
+        thai_codes = ThaiCountryAreaCode()
 
         model = SpecialAWISDataFormModelPartOne
         exclude = ["scene_date"]
         widgets = {
+            'acc_province': forms.Select(choices=thai_codes.getProvinceChoices()),
+            'acc_district': forms.Select(choices=thai_codes.getDistrictChoices),
+            'acc_sub_district': forms.Select(choices=thai_codes.getSubDistrictChoices),
+            'req_province': forms.Select(choices=thai_codes.getProvinceChoices()),
+            'req_district': forms.Select(choices=thai_codes.getDistrictChoices),
+            'req_sub_district': forms.Select(choices=thai_codes.getSubDistrictChoices),
             'scene_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
             'scene_date_year': forms.Select(choices=year_choices),
             'scene_date_day': forms.Select(choices=day_choices,),

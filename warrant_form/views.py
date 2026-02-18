@@ -48,8 +48,8 @@ def index(request : HttpRequest):
         "sub_form": sub_form
     }
 
-    if request.GET.get("status") == "error":
-        context.update({"status": "error"})
+    # if request.GET.get("status") == "error":
+    #     context.update({"status": "error"})
 
     return render(request, "warrant_form/awis_step1.html", context)
         
@@ -73,6 +73,7 @@ def form_submission(request : HttpRequest):
 
                 print(main_awis_obj.toAPICompatibleDict())
 
+                main_awis_obj.save()
                 doc_create_with_context(main_awis_obj.toAPICompatibleDict())
 
                 # SAVE THE FORM
@@ -86,40 +87,12 @@ def form_submission(request : HttpRequest):
                 print("@***EXCEPTION OCCURED:", e  ,"***")
 
         print(main_form.errors.as_text())
-        # if main_form.is_valid() and sub_form.is_valid():
-        #     try:
-        #         # Create object from the form, but don't commit to database yet.
-        #         warrant_obj : WarrantDataModel = sub_form.save(commit=False)
-
-        #         main_awis_obj : MainAWISDataModel = main_form.save(commit=False)
-        #         main_awis_obj.warrants = warrant_obj
-
-        #         ## Send an API request to see if it works or not, then save.
-        #         # api_request_submit_data(main_awis_obj, "test_auth_token")
-
-        #         dict_main_awis = model_to_dict(main_awis_obj)
-        #         dict_warrant = model_to_dict(warrant_obj)
-
-        #         print(dict_main_awis)
-        #         print(dict_warrant)
-
-        #         dict_main_awis.pop("id")
-        #         # dict_main_warrant.update({
-        #         #     "warrants": 
-        #         # })
-
-        #         warrant_obj.save()
-        #         main_awis_obj.save()
-
-        #         return redirect(reverse("awis:success"))
-            
-        #     except Exception:
-        #         pass
         
         # IF not valid, or exception occured.
-        return redirect(reverse("awis:main_page", query={
+        return render(request, "warrant_form/awis_step1.html", {
+            "form": main_form,
             "status": "error",
-        }))
+        })
 
     # Not POST request.   
     else:

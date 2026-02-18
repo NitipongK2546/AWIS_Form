@@ -7,16 +7,21 @@
 <h3>ข้อมูลที่กรอกมีข้อผิดพลาด</h3>
 {% endif %}
 
-<form onsubmit="confirmForm()" action="/submit/" method="post">
+<form id="awis-form" onsubmit="confirmForm()" action="/submit/" method="post">
     {% csrf_token %}
     
-    <p>{{ form.court_code }}</p>
-    <p>{{ form.req_year }}</p>
-    <p>{{ form.req_case_type_id }}</p>
-    <p>{{ form.police_station_id }}</p>
-    <p>{{ form.req_no_plaintiff }}</p>
+    <h3>Required in API</h3>
+    <p>Court Code: {{ form.court_code }}</p>
+    <p>Req Year: {{ form.req_year }}</p>
+    <p>Req Case Type ID: {{ form.req_case_type_id }}</p>
+    <p>Police Station ID: {{ form.police_station_id }}</p>
+    <p>Req No Plaintiff: {{ form.req_no_plaintiff }}</p>
 
-    <p>{{ form.create_uid }}</p>
+    <h3>Possibly need to be randomly generated via specific Algorithm</h3>
+    <p>Create UID (UID that created this form) {{ form.create_uid }}</p>
+
+    <h3>Currently does not exist in API.</h3>
+    <p>Court Name: {{ form.court_name }}</p>
 
     <p>ความอาญาระหว่าง</p>
     <p>{{ form.plaintiff }} ผู้ร้อง</p>
@@ -29,8 +34,8 @@
     <p>ขอทำคำร้องขอออกหมายจับยื่นต่อศาลดังต่อไปนี้</p>
 
     <p>ข้อ 1. ด้วย</p>
-    <p>{{ form.cause_type_id_report }} {{ form.cause_text }} มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
-    <p>{{ form.cause_type_id_interrogate }} ปรากฎจากการสืบสวนของ {{ form.cause_text }}</p>
+    <p>{{ form.cause_type_id_1 }} {{ form.cause_text_1 }} มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
+    <p>{{ form.cause_type_id_2 }} ปรากฎจากการสืบสวนของ {{ form.cause_text_2 }}</p>
 
     <p>ว่า {{ form.acc_full_name }} เลขบัตรประชาชน {{ form.acc_card_id }}</p>
     <p>อายุ {{ form.acc_age }} เชื้อชาติ {{ form.acc_origin }} สัญชาติ {{ form.acc_nation }} อาชีพ {{ form.acc_occupation }}</p>
@@ -43,8 +48,8 @@
     <p>เหตุเกิดที่ {{ form.scene }}</p>
     <p>เมื่อวันที่ {{ form.scene_date_day }} เดือน {{ form.scene_date_month }} พ.ศ. {{ form.scene_date_year }} เวลา {{form.scene_date_timehalf}} นาฬิกา</p>
 
-    <p>มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับคือ {{ form.cause_text........... }} (cause_text?)</p>
-    <p>เป็นการกระทำความผิดฐาน {{ form.act }} (act?)</p>
+    <p>มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับคือ {{ form.act }} (cause_text?)</p>
+    <p>เป็นการกระทำความผิดฐาน {{ form.charge }} (act?)</p>
 
     <p>ตามกฎหมาย {{ form.law }} ซึ่งเป็นคดีที่อยู่ในอำนาจศาล {{ form.court_owner_code }} </p>
     <p>รายละเอียดข้อมูลและพยานหลักฐาน ปรากฎตามที่เอกสารที่แนบมาพร้อมนี้</p>
@@ -53,7 +58,7 @@
     <p>จึงขอให้ศาลออกหมายจับ {{ form.accused.................... }} มาดำเนินคดี</p>
     <p>ในการยื่นคำร้องนี้ ผู้ร้องได้มอบหมายให้ {{ form.agent_name }}</p>
     <p>ตำแหน่ง {{ form.agent_pos }} ซึ่งเป็นผู้ใต้บังคับบัญชา เป็นผู้นำคำร้องมายื่นต่อศาล และหากศาลเรียกสอบถามเมื่อใด ผู้ร้องพร้อมจะมาให้ศาลสอบในทันที</p>
-    <p>ผู้ร้อง  ....เคย ..... ไม่เคย ร้องขอให้ศาล {{ form.have_court_code }} ออกหมายจับ</p>
+    <p>ผู้ร้อง {{ form.have_req_1 }} เคย {{ form.have_req_2 }} ไม่เคย ร้องขอให้ศาล {{ form.have_court_code }} ออกหมายจับ</p>
     <p>บุคคลดังกล่าว โดยอาศัยเหตุแห่งการร้องขอเดียวกันนี้ หรือเหตุอื่น (ระบุ) {{ form.have_act }}</p>
     <p>และศาลสั่งว่า {{ form.have_injunc }} </p>
     <p>อายุความ {{ form.prescription}} (optional)</p>
@@ -61,7 +66,7 @@
 
     <p>ควรมิควรแล้วแต่จะโปรด</p>
 
-    <p>(ลงชื่อ) ........................ ผู้ร้อง</p>
+    <p>(ลงชื่อ) {{ form.plaintiff }} ผู้ร้อง</p>
 
     <p>คำร้องฉบับนี้ข้าพเจ้า {{ form.composer_name }}</p>
     <p>ตำแหน่ง {{ form.composer_position }} เป็นผู้เรียง</p>
@@ -75,23 +80,28 @@
 {% endblock %}
 
 {% block script %}
-<!-- <script>
-    const day_selector = document.getElementById("id_main_form-scene_date_day");
-    const month_selector = document.getElementById("id_main_form-scene_date_month");
-    //
-    const febuary_non_leap_year_day = 28
-    const febuary_max_day = 29
-    const default_max_day = 31
+<script>
+    const year_selector = document.getElementById("id_main_form-scene_date_year");
+    const awis_form = document.getElementById("awis-form");
+
+    let is_submitting_form = false;
 </script>
 <script>
-    function isLeapYear() {
-        let date_obj = new Date()
-
-        return true
+    function adjustYearToLatest() {
+        year_selector.value = new Date().getFullYear();
     }
-    function adjustDate() {
-        day_selector.re
+    adjustYearToLatest();
+</script>
+<script>
+// EVENT LISTENERS
+awis_form.addEventListener("submit", function () {
+    is_submitting_form = true;
+});
+window.addEventListener("beforeunload", function (e) {
+    if (!is_submitting_form) {
+        e.preventDefault();
+        e.returnValue = ""; 
     }
-    adjustDate();
-</script> -->
+});
+</script>
 {% endblock %}
