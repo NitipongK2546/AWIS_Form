@@ -53,8 +53,16 @@ form textarea:focus {
     justify-content: space-between;
 }
 
+.type_and_court-input {
+    width: 300px;
+}
+
 .first_plaintiff {
     align-items: center;
+}
+
+.first_plaintiff input[name="plaintiff"] {
+    width: 500px;
 }
 
 #id_req_year {
@@ -63,7 +71,7 @@ form textarea:focus {
 }
 
 .form-header-row input {
-    width: 80px;
+    width: 150px;
 }
 
 .lawsuit-between {
@@ -209,11 +217,11 @@ form textarea:focus {
 } */
 
 #id_main_form-law {
-    width: 450px;
+    width: 690px;
 }
 
-#id_main_form-have_court_code {
-    width: 210px;
+#id_main_form-court_name {
+    width: 380px;
 }
 
 #id_main_form-have_act {
