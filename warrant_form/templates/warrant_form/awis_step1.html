@@ -2,6 +2,11 @@
 {% load static %}
 
 {% block title %}Warrant Form{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/step1.css' %}">
+{% endblock %}
+
 {% block form %}
 {% if status == "error" %}
 <h3>ข้อมูลที่กรอกมีข้อผิดพลาด</h3>
@@ -10,7 +15,7 @@
 <form id="awis-form" onsubmit="confirmForm()" action="/submit/" method="post">
     {% csrf_token %}
     
-    <h3>Required in API</h3>
+    <!-- <h3>Required in API</h3>
     <p>Court Code: {{ form.court_code }}</p>
     <p>Req Year: {{ form.req_year }}</p>
     <p>Req Case Type ID: {{ form.req_case_type_id }}</p>
@@ -21,21 +26,31 @@
     <p>Create UID (UID that created this form) {{ form.create_uid }}</p>
 
     <h3>Currently does not exist in API.</h3>
-    <p>Court Name: {{ form.court_name }}</p>
+    <p>Court Name: {{ form.court_name }}</p> -->
+    <div class="form-header-row">    
+        <h3>คำร้อง <p>(ขอออกหมายจับ)</p></h3>
+        <img src="{% static 'images/Thai_Goverment_Emblem.jpg' %}" alt="Thai Emblem" class="emblem">
+        <p>คำร้องที่......./{{form.req_year}}</p>
+    </div>
+    
+    <p align="right">ศาล...........{{form.court_name}}</p> <!--ยังไม่ได้เชื่อม-->
 
-    <p>ความอาญาระหว่าง</p>
-    <p>{{ form.plaintiff }} ผู้ร้อง</p>
-    <p>{{ form.accused }} ผู้ต้องหา</p>
+    <div class="lawsuit-between">
+        <div class="left"><p>ความอาญาระหว่าง<p></div>
+        <div class="right">
+            <p>{{ form.plaintiff }} ผู้ร้อง</p>
+            <p>{{ form.accused }} ผู้ต้องหา</p>
+        </div>
+    </div>
 
-    <p>ข้าพเจ้า {{ form.req_name }} ตำแหน่ง {{ form.req_pos }}</p>
-    <p>อายุ {{ form.req_age }} ปี สถานที่ทำงาน {{ form.req_office }}</p>
-    <p>ตำบล/แขวง {{ form.req_sub_district }} อำเภอ/เขต {{ form.req_district }}</p>
-    <p>จังหวัด {{ form.req_province }} โทรศัพท์ {{ form.req_tel }}</p>
-    <p>ขอทำคำร้องขอออกหมายจับยื่นต่อศาลดังต่อไปนี้</p>
+    <p align="right">ข้าพเจ้า {{ form.req_name }} ตำแหน่ง {{ form.req_pos }}</p>
+    <p>อายุ {{ form.req_age }} ปี อาชีพ รับราชการ สถานที่ทำงาน {{ form.req_office }}</p>
+    <p>จังหวัด {{ form.req_province }} อำเภอ/เขต {{ form.req_district }} ตำบล/แขวง {{ form.req_sub_district }}</p>
+    <p> โทรศัพท์ {{ form.req_tel }} ขอทำคำร้องขอออกหมายจับยื่นต่อศาลดังต่อไปนี้</p>
 
-    <p>ข้อ 1. ด้วย</p>
-    <p>{{ form.cause_type_id_1 }} {{ form.cause_text_1 }} มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
-    <p>{{ form.cause_type_id_2 }} ปรากฎจากการสืบสวนของ {{ form.cause_text_2 }}</p>
+    <p align="right">ข้อ 1. {{ form.cause_type_id_report }} ด้วย {{ form.cause_text }} </p>
+    <p> มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
+    <p align="right">{{ form.cause_type_id_interrogate }} ปรากฎจากการสืบสวนของ {{ form.cause_text }}</p>
 
     <p>ว่า {{ form.acc_full_name }} เลขบัตรประชาชน {{ form.acc_card_id }}</p>
     <p>อายุ {{ form.acc_age }} เชื้อชาติ {{ form.acc_origin }} สัญชาติ {{ form.acc_nation }} อาชีพ {{ form.acc_occupation }}</p>
@@ -45,17 +60,26 @@
 
     <p>{{ form.charge_type_1 }} ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</p>
     <p>{{ form.charge_type_2 }} ได้หรือน่าจะได้กระทำความผิดอาญา และน่าจะหลบหนีหรือจะไปยุ่งเหยิงกับพยานหลักฐานหรือก่ออันตรายประการอื่น</p>
+    
+    <br><br>
+    <div class="header_page_2">
+        -2-
+    </div>
+    <br>
+
     <p>เหตุเกิดที่ {{ form.scene }}</p>
     <p>เมื่อวันที่ {{ form.scene_date_day }} เดือน {{ form.scene_date_month }} พ.ศ. {{ form.scene_date_year }} เวลา {{form.scene_date_timehalf}} นาฬิกา</p>
 
-    <p>มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับคือ {{ form.act }} (cause_text?)</p>
-    <p>เป็นการกระทำความผิดฐาน {{ form.charge }} (act?)</p>
+    <p>มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับ คือ {{ form.act}} </p>
+    <p>เป็นการกระทำความผิดฐาน {{ form.charge}}</p>
 
-    <p>ตามกฎหมาย {{ form.law }} ซึ่งเป็นคดีที่อยู่ในอำนาจศาล {{ form.court_owner_code }} </p>
+    <p>ประมวลกฎหมายอาญา/พระราชบัญญัติ {{ form.law }} </p>
     <p>รายละเอียดข้อมูลและพยานหลักฐาน ปรากฎตามที่เอกสารที่แนบมาพร้อมนี้</p>
 
-    <p>ข้อ 2. ผู้ประสงค์จะทำการจับกุม {{ form.accused............... }}</p>
-    <p>จึงขอให้ศาลออกหมายจับ {{ form.accused.................... }} มาดำเนินคดี</p>
+    <p align="right">ข้อ 2. ผู้ร้องประสงค์จะทำการจับกุม  {{ form.acc_full_name }}</p>
+    <p>จึงขอให้ศาลออกหมายจับบุคคลดังกล่าวมาดำเนินคดีตามกฎหมายต่อไป</p>
+    
+    <!--
     <p>ในการยื่นคำร้องนี้ ผู้ร้องได้มอบหมายให้ {{ form.agent_name }}</p>
     <p>ตำแหน่ง {{ form.agent_pos }} ซึ่งเป็นผู้ใต้บังคับบัญชา เป็นผู้นำคำร้องมายื่นต่อศาล และหากศาลเรียกสอบถามเมื่อใด ผู้ร้องพร้อมจะมาให้ศาลสอบในทันที</p>
     <p>ผู้ร้อง {{ form.have_req_1 }} เคย {{ form.have_req_2 }} ไม่เคย ร้องขอให้ศาล {{ form.have_court_code }} ออกหมายจับ</p>
@@ -63,17 +87,25 @@
     <p>และศาลสั่งว่า {{ form.have_injunc }} </p>
     <p>อายุความ {{ form.prescription}} (optional)</p>
     <p></p>
+    -->
 
-    <p>ควรมิควรแล้วแต่จะโปรด</p>
+    <p align="right">ข้อที่ 3. ผู้ร้อง  ....เคย ..... ไม่เคย ร้องขอให้ศาล {{ form.have_court_code }} ออกหมายจับ</p>
+    <p>บุคคลดังกล่าว โดยอาศัยเหตุแห่งการร้องขอเดียวกันนี้ หรือเหตุอื่น (ระบุ) </p>
+    <p>{{ form.have_act }}</p>
+    <p>และศาลสั่ง {{ form.have_injunc }} </p>
+    
+    <br>
+    <p align="center">ควรมิควรแล้วแต่จะโปรด</p>
+    <br>
 
-    <p>(ลงชื่อ) {{ form.plaintiff }} ผู้ร้อง</p>
+    <p align="center">(ลงชื่อ) {{ form.plaintiff }} ผู้ร้อง</p>
 
-    <p>คำร้องฉบับนี้ข้าพเจ้า {{ form.composer_name }}</p>
-    <p>ตำแหน่ง {{ form.composer_position }} เป็นผู้เรียง</p>
-    <p>(ลงชื่อ) ........................ ผู้เรียง</p>
-    <p>คำร้องฉบับนี้ข้าพเจ้า {{ form.writer_name }}</p>
-    <p>ตำแหน่ง {{ form.writer_position }} เป็นผู้เรียง</p>
-    <p>(ลงชื่อ) ........................ ผู้พิมพ์/เขียน</p>
+    <p align="right">คำร้องฉบับนี้ข้าพเจ้า {{ form.composer_name }}</p>
+    <p align="center">ตำแหน่ง {{ form.composer_position }} เป็นผู้เรียง</p>
+    <br>
+
+    <p align="right">คำร้องฉบับนี้ข้าพเจ้า {{ form.writer_name }}</p>
+    <p align="center">ตำแหน่ง {{ form.writer_position }} เป็นผู้เรียง/ผู้เขียน</p>
     
     <button type="submit">Next</button>
 </form>
