@@ -24,12 +24,10 @@ form textarea:focus {
     border: 1px solid #3399ff;
 }
 
-
 .form-header-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
     margin-top: 20px;
 }
 
@@ -49,6 +47,15 @@ form textarea:focus {
     margin-top: 20px;
 }
 
+.type_and_court {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.first_plaintiff {
+    align-items: center;
+}
 
 #id_req_year {
     width: 80px;

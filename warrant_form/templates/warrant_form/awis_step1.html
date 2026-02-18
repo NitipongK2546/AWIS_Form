@@ -28,21 +28,20 @@
     <h3>Currently does not exist in API.</h3>
     <p>Court Name: {{ form.court_name }}</p> -->
     <div class="form-header-row">    
-        <h3>คำร้อง <p>(ขอออกหมายจับ)</p></h3>
+        <p>(คำร้อง) <br><br>ขอออกหมายจับ </p>
         <img src="{% static 'images/Thai_Goverment_Emblem.jpg' %}" alt="Thai Emblem" class="emblem">
-        <p>คำร้องที่......./{{form.req_year}}</p>
+        <p>ที่ {{form.req_year}}</p>
     </div>
     
-    <p align="right">ศาล{{form.court_name}}</p>
-
-    <div class="lawsuit-between">
-        <div class="left"><p>ความอาญาระหว่าง<p></div>
-        <div class="right">
-            <p>{{ form.plaintiff }} ผู้ร้อง</p>
-            <p>{{ form.accused }} ผู้ต้องหา</p>
-        </div>
+    <div class="type_and_court">
+        <p>{{form.req_case_type_id}}<br> รับคำร้อง</p>
+        <p align="right">ศาล{{form.court_name}}</p>
     </div>
 
+    <div class="first_plaintiff">
+        <p align="center">ความอาญา <br></p>
+        <p align="right">{{ form.plaintiff }} ผู้ร้อง</p>
+    </div>
     <p align="right">ข้าพเจ้า {{ form.req_name }} ตำแหน่ง {{ form.req_pos }}</p>
     <p>อายุ {{ form.req_age }} ปี อาชีพ รับราชการ สถานที่ทำงาน {{ form.req_office }}</p>
     <p>จังหวัด {{ form.req_province }} อำเภอ/เขต {{ form.req_district }} ตำบล/แขวง {{ form.req_sub_district }}</p>
