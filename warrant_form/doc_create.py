@@ -45,7 +45,7 @@ def setup_codes_to_text(incoming_context : dict) -> dict:
     
 
 def doc_create_with_context(incoming_context : dict):
-    doc = DocxTemplate("warrant_form/warrrant_form.docx")
+    doc = DocxTemplate("warrant_form/resources/warrrant_form.docx")
 
     context = clean_data_for_docx(incoming_context)
     incoming_context = setup_codes_to_text(incoming_context)
@@ -53,4 +53,4 @@ def doc_create_with_context(incoming_context : dict):
 
     doc.render(context)
 
-    doc.save("warrant_form/output.docx")
+    doc.save("warrant_form/resources/output.docx")

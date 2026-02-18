@@ -1,7 +1,7 @@
 import csv
 
 def set_up_codes() -> list:
-    CSV_PATH = "warrant_form/codes.csv"
+    CSV_PATH = "warrant_form/resources/codes.csv"
     province_choices = []
     district_choices = []
     sub_district_choices = []

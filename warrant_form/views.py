@@ -60,27 +60,26 @@ def form_submission(request : HttpRequest):
     # The expected outcome.
     if request.method == "POST":
         main_form = MainAWISForm(request.POST, prefix="main_form")
-        sub_form = WarrantForm(request.POST, prefix="sub_form")
+        # sub_form = WarrantForm(request.POST, prefix="sub_form")
 
         if main_form.is_valid():
             try:
                 # Create object from the form, but don't commit to database yet.
                 # warrant_obj : WarrantDataModel = sub_form.save(commit=False)
 
-                main_awis_obj : SpecialAWISDataFormModelPartOne = main_form.save(commit=False)
+                form_awis_obj : SpecialAWISDataFormModelPartOne = main_form.save(commit=False)
                 # main_awis_obj.warrants = warrant_obj
 
                 ## Send an API request to see if it works or not, then save.
 
-                cleaned_dict = main_awis_obj.toAPICompatibleDict()
+                cleaned_dict = form_awis_obj.toAPICompatibleDict()
                 print(json.dumps(cleaned_dict, indent=4))
 
                 # Uncomment to send API.
                 # Please setup URL first.
                 # api_request_submit_data(cleaned_dict, "test_auth_token")
 
-                # main_awis_obj.save()
-                doc_create_with_context(main_awis_obj.toDocumentCompatibleDict())
+                doc_create_with_context(form_awis_obj.toDocumentCompatibleDict())
 
                 MainAWISDataModel.objects.create(**cleaned_dict)
 

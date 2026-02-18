@@ -15,18 +15,13 @@
 <form id="awis-form" onsubmit="confirmForm()" action="/submit/" method="post">
     {% csrf_token %}
     
-    <h3>Required in API</h3>
-    <p>Court Code: {{ form.court_code }}</p>
-    <p>Req Year: {{ form.req_year }}</p>
-    <p>Req Case Type ID: {{ form.req_case_type_id }}</p>
-    <p>Police Station ID: {{ form.police_station_id }}</p>
-    <p>Req No Plaintiff: {{ form.req_no_plaintiff }}</p>
-
-    <h3>Possibly need to be randomly generated via specific Algorithm</h3>
-    <p>Create UID (UID that created this form) {{ form.create_uid }}</p>
-
-    <h3>ส่วนบนไม่มีความเกี่ยวข้อง</h3>
-    -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    {{ form.court_code }}
+    {{ form.police_station_id }}
+    {{ form.req_no_plaintiff }}
+    {{ form.create_uid }}
+    {{ form.req_no}}
+    {{ form.req_case_type_id }}
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
     <!-- <h3>Currently does not exist in API.</h3>
     <p>Court Name: {{ form.court_name }}</p>  -->

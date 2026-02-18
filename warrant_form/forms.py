@@ -6,6 +6,7 @@ from django.forms.models import model_to_dict
 import datetime
 from django.utils import timezone
 from warrant_form.code_handler import ThaiCountryAreaCode
+from uuid import uuid4
 
 class SpecialAWISDataFormModelPartOne(models.Model):
     # POSSIBLY TEMPORARY VARIABLE.
@@ -351,6 +352,18 @@ class MainAWISForm(forms.ModelForm):
                 'rows': 5,
                 'cols': 100,
                 'style':'resize:none;'
+            }),
+            "court_code": forms.HiddenInput(attrs={
+                'value': 1
+            }),
+            "police_station_id": forms.HiddenInput(attrs={
+                'value': 1
+            }),
+            "req_no_plaintiff": forms.HiddenInput(attrs={
+                'value': 1
+            }),
+            "create_uid": forms.HiddenInput(attrs={
+                'value': 9999
             }),
         }
 
