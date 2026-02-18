@@ -115,7 +115,11 @@ form textarea:focus {
     width: 170px;
 }
 
-#id_main_form-cause_text {
+#id_main_form-cause_text_1 {
+    width: 500px;
+}
+
+#id_main_form-cause_text_2 {
     width: 500px;
 }
 
