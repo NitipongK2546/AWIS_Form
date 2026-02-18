@@ -15,7 +15,7 @@
 <form id="awis-form" onsubmit="confirmForm()" action="/submit/" method="post">
     {% csrf_token %}
     
-    <!-- <h3>Required in API</h3>
+    <h3>Required in API</h3>
     <p>Court Code: {{ form.court_code }}</p>
     <p>Req Year: {{ form.req_year }}</p>
     <p>Req Case Type ID: {{ form.req_case_type_id }}</p>
@@ -25,13 +25,18 @@
     <h3>Possibly need to be randomly generated via specific Algorithm</h3>
     <p>Create UID (UID that created this form) {{ form.create_uid }}</p>
 
-    <h3>Currently does not exist in API.</h3>
-    <p>Court Name: {{ form.court_name }}</p> -->
+    <h3>ส่วนบนไม่มีความเกี่ยวข้อง</h3>
+    -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    <!-- <h3>Currently does not exist in API.</h3>
+    <p>Court Name: {{ form.court_name }}</p>  -->
     <div class="form-header-row">    
         <p>(คำร้อง) <br><br>ขอออกหมายจับ </p>
         <img src="{% static 'images/Thai_Goverment_Emblem.jpg' %}" alt="Thai Emblem" class="emblem">
-        <p>ที่ {{form.req_year}}</p>
+        <p>วัน {{form.req_day}} {{form.req_month}} {{form.req_year}}</p>
     </div>
+
+    <p>{{ form.judge_name }} ผู้พิพากษา</p>
     
     <div class="type_and_court">
         <p>{{form.req_case_type_id}}<br> รับคำร้อง</p>

@@ -122,7 +122,11 @@ form textarea:focus {
     width: 170px;
 }
 
-#id_main_form-cause_text {
+#id_main_form-cause_text_1 {
+    width: 500px;
+}
+
+#id_main_form-cause_text_2 {
     width: 500px;
 }
 
@@ -186,23 +190,23 @@ form textarea:focus {
     width: 170px;
 }
 
-#id_main_form-scene {
+/* #id_main_form-scene {
     width: 710px;
-}
+} */
 
 .header_page_2 {
     width: 800px;
     text-align: center;
 }
 
-#id_main_form-act {
+/* #id_main_form-act {
     width: 800px;
     height: 80px;
 }
 
 #id_main_form-charge {
     width: 592px;
-}
+} */
 
 #id_main_form-law {
     width: 450px;

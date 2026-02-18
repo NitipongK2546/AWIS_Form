@@ -20,8 +20,15 @@ class SpecialAWISDataFormModelPartOne(models.Model):
         DRUGS = (2, "ยาเสพติด(ยจ)")
 
     court_code = models.CharField(max_length=7, verbose_name="รหัส")
-    
-    req_year = models.IntegerField()
+
+    # We don't even use this in the API
+    judge_name = models.CharField(max_length=250)
+    req_day = models.PositiveIntegerField()
+    req_month = models.PositiveIntegerField()
+    # We don't even use this in the API
+
+    req_year = models.PositiveIntegerField()
+
     req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) # CHOICES
 
     police_station_id = models.CharField(max_length=5) #REFER id -> tb_police_station
@@ -253,18 +260,38 @@ class MainAWISForm(forms.ModelForm):
         model = SpecialAWISDataFormModelPartOne
         exclude = ["scene_date"]
         widgets = {
+            'req_year': forms.Select(choices=year_choices),
+            'req_day': forms.Select(choices=day_choices,),
+            'req_month': forms.Select(choices=month_choices, attrs={
+                'onchange': "adjustDate()"
+            }),
             'acc_province': forms.Select(choices=thai_codes.getProvinceChoices()),
-            'acc_district': forms.Select(choices=thai_codes.getDistrictChoices),
-            'acc_sub_district': forms.Select(choices=thai_codes.getSubDistrictChoices),
+            'acc_district': forms.Select(choices=thai_codes.getDistrictChoices()),
+            'acc_sub_district': forms.Select(choices=thai_codes.getSubDistrictChoices()),
             'req_province': forms.Select(choices=thai_codes.getProvinceChoices()),
-            'req_district': forms.Select(choices=thai_codes.getDistrictChoices),
-            'req_sub_district': forms.Select(choices=thai_codes.getSubDistrictChoices),
+            'req_district': forms.Select(choices=thai_codes.getDistrictChoices()),
+            'req_sub_district': forms.Select(choices=thai_codes.getSubDistrictChoices()),
             'scene_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
             'scene_date_year': forms.Select(choices=year_choices),
             'scene_date_day': forms.Select(choices=day_choices,),
             'scene_date_month': forms.Select(choices=month_choices, attrs={
                 'onchange': "adjustDate()"
-            })
+            }),
+            'scene': forms.Textarea(attrs={
+                'rows': 5,
+                'cols': 100,
+                'style':'resize:none;'
+            }), 
+            'act': forms.Textarea(attrs={
+                'rows': 5,
+                'cols': 100,
+                'style':'resize:none;'
+            }),
+            'charge': forms.Textarea(attrs={
+                'rows': 5,
+                'cols': 100,
+                'style':'resize:none;'
+            }),
         }
 
 class WarrantForm(forms.ModelForm):
