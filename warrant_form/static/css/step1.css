@@ -100,8 +100,7 @@ form textarea:focus {
 }
 
 #id_main_form-req_office {
-    width: 445px;
-
+    width: 440px;
 }
 
 #id_main_form-req_province {
@@ -216,4 +215,8 @@ form textarea:focus {
 
 #id_main_form-writer_name {
     width: 300px;
+}
+
+#id_main_form-have_injunc {
+    width: 500px;
 }
