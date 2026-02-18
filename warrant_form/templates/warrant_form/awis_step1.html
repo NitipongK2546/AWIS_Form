@@ -33,7 +33,7 @@
     <div class="form-header-row">    
         <p>(คำร้อง) <br><br>ขอออกหมายจับ </p>
         <img src="{% static 'images/Thai_Goverment_Emblem.jpg' %}" alt="Thai Emblem" class="emblem">
-        <p> ที่ {{req_no}}</p>
+        <p> ที่ {{form.req_no}}</p>
     </div>
     
     <div class="type_and_court">
@@ -52,10 +52,10 @@
     <p>จังหวัด {{ form.req_province }} อำเภอ/เขต {{ form.req_district }} ตำบล/แขวง {{ form.req_sub_district }}</p>
     <p> โทรศัพท์ {{ form.req_tel }} ขอทำคำร้องขอออกหมายจับยื่นต่อศาลดังต่อไปนี้</p>
 
-    <p align="right">ข้อ 1. {{ form.cause_type_id_1 }} ด้วย {{ form.cause_text_1 }} </p>
+    <p style="margin-left:100px;">ข้อ 1. {{ form.cause_type_id_1 }} ด้วย {{ form.cause_text_1 }} </p>
     <p> มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
     
-    <p align="right">ข้อ 1. {{ form.cause_type_id_1 }} ด้วย {{ form.cause_text_1 }} </p>
+    <p style="margin-left:100px;">ข้อ 1. {{ form.cause_type_id_1 }} ด้วย {{ form.cause_text_1 }} </p>
     <p> มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
 
     <p align="right">{{ form.cause_type_id_2 }} ปรากฎจากการสืบสวนของ {{ form.cause_text_2 }}</p>
@@ -66,14 +66,14 @@
     <p>ตรอก/ซอย {{ form.acc_soi }} ใกล้เคียง {{ form.acc_near }} จังหวัด {{ form.acc_province }}</p>
     <p>อำเภอ/เขต {{ form.acc_district }} ตำบล/แขวง {{ form.acc_sub_district }} โทรศัพท์ {{ form.acc_tel }}</p>
 
-    <p>{{ form.charge_type_1 }} ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</p>
-    <p>{{ form.charge_type_2 }} ได้หรือน่าจะได้กระทำความผิดอาญา และน่าจะหลบหนีหรือจะไปยุ่งเหยิงกับพยานหลักฐานหรือก่ออันตรายประการอื่น</p>
+    <p> {{ form.charge_type_1 }} ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</p>
+    <p> {{ form.charge_type_2 }} ได้หรือน่าจะได้กระทำความผิดอาญา และน่าจะหลบหนีหรือจะไปยุ่งเหยิงกับพยานหลักฐานหรือก่ออันตรายประการอื่น</p>
 
-    <p>เหตุเกิดที่ {{ form.scene }}</p>
+    <p><span style="vertical-align: top;">เหตุเกิดที่</span> {{ form.scene }}</p>
     <p>เมื่อวันที่ {{ form.scene_date_day }} เดือน {{ form.scene_date_month }} พ.ศ. {{ form.scene_date_year }} เวลา {{form.scene_date_timehalf}} นาฬิกา</p>
 
     <p>มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับ คือ {{ form.act}} </p>
-    <p>เป็นการกระทำความผิดฐาน {{ form.charge}}</p>
+    <p><span style="vertical-align: top;">เป็นการกระทำความผิดฐาน</span> {{ form.charge}}</p>
 
     <p>ตามกฎหมาย {{ form.law }} </p>
     <p>รายละเอียดข้อมูลและพยานหลักฐาน ปรากฎตามที่เอกสารที่แนบมาพร้อมนี้</p>
