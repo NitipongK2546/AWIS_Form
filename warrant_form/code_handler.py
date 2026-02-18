@@ -45,3 +45,11 @@ class ThaiCountryAreaCode:
     
     def getSubDistrictChoices(self):
         return self.sub_district_choices
+    
+    def getCodeDict(self):
+        output_dict = {}
+        [output_dict.update({code:text}) for code, text in self.province_choices]
+        [output_dict.update({code:text}) for code, text in self.district_choices]
+        [output_dict.update({code:text}) for code, text in self.sub_district_choices]
+
+        return output_dict
