@@ -17,20 +17,22 @@ import json
 
 # Functions
 
-def api_request_submit_data(warrant_form : MainAWISDataModel, auth_token):
+def api_request_submit_data(awis_data : dict, auth_token):
     auth_header = {
         "Authorization": f"Bearer {auth_token}"
     }
 
-    json_data = json.dumps(warrant_form)
+    # PASS THE DATA AS DICT
+    dict_data = awis_data
+    # Or you can pass json.dumps(awis_data), 
+    # but, you need json= instead of data= 
+
+    API_URL = ""
 
     try:
         # Response is a json.
-        response = requests.post("", data=json_data, headers=auth_header)
+        response : JsonResponse = requests.post(API_URL, data=dict_data, headers=auth_header)
         data : dict = response.json()
-
-        # success : bool = data.get("success", False)
-        # message : str = data.get("message", "Error")
 
         return JsonResponse(data)
 
@@ -69,16 +71,18 @@ def form_submission(request : HttpRequest):
                 # main_awis_obj.warrants = warrant_obj
 
                 ## Send an API request to see if it works or not, then save.
-                # api_request_submit_data(main_awis_obj, "test_auth_token")
 
-                print(main_awis_obj.toAPICompatibleDict())
+                cleaned_dict = main_awis_obj.toAPICompatibleDict()
+                print(json.dumps(cleaned_dict, indent=4))
+
+                # Uncomment to send API.
+                # Please setup URL first.
+                # api_request_submit_data(cleaned_dict, "test_auth_token")
 
                 # main_awis_obj.save()
-                doc_create_with_context(main_awis_obj.toAPICompatibleDict())
+                doc_create_with_context(main_awis_obj.toDocumentCompatibleDict())
 
-                # SAVE THE FORM
-                # The form, not the obj.
-                # main_form.save()
+                MainAWISDataModel.objects.create(**cleaned_dict)
 
                 return redirect(reverse("awis:success"))
                 # sub_form = WarrantForm(prefix="sub_form")

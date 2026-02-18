@@ -16,12 +16,13 @@ class SpecialAWISDataFormModelPartOne(models.Model):
     year = timezone.datetime.today().year
 
     class ReqCaseTypeIDChoices(models.IntegerChoices):
-        GENERAL = (1, "ทั่วไป(จ)")
-        DRUGS = (2, "ยาเสพติด(ยจ)")
+        GENERAL = (1, "ทั่วไป")
+        DRUGS = (2, "ยาเสพติด")
 
     court_code = models.CharField(max_length=7, verbose_name="รหัส")
 
     # We don't even use this in the API
+    req_no = models.CharField(max_length=50)
     judge_name = models.CharField(max_length=250)
     req_day = models.PositiveIntegerField()
     req_month = models.PositiveIntegerField()
@@ -129,7 +130,7 @@ class SpecialAWISDataFormModelPartOne(models.Model):
     acc_province = models.CharField(max_length=2, blank=True)
     acc_tel = models.CharField(max_length=20, blank=True)
 
-    def toAPICompatibleDict(self) -> dict[str, object]:
+    def toDocumentCompatibleDict(self) -> dict[str, object]:
         """
         Convert the model object into a dictionary that fits what the API required.
         It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
@@ -141,9 +142,9 @@ class SpecialAWISDataFormModelPartOne(models.Model):
         # Convert dictionary into the format that API can receive.
 
         dict_main_awis = model_to_dict(self)
-        dict_main_awis.update({"day": self.day})
-        dict_main_awis.update({"month": self.month})
-        dict_main_awis.update({"year": self.year})
+        # dict_main_awis.update({"day": self.day})
+        # dict_main_awis.update({"month": self.month})
+        # dict_main_awis.update({"year": self.year})
 
         TIMEHALF_STR = "scene_date_timehalf"
         time_half = dict_main_awis.get(TIMEHALF_STR)
@@ -161,9 +162,6 @@ class SpecialAWISDataFormModelPartOne(models.Model):
             # Leave a space between date and time.
             full_datetime = f"{date_half} {time_half}"
             dict_main_awis.update({"scene_date": full_datetime})
-
-            # dict_main_awis.pop(DATEHALF_STR, None)
-            # dict_main_awis.pop(TIMEHALF_STR, None)
 
         # dict_main_awis.pop("id")
         dict_main_awis.update({"req_no": dict_main_awis.get("id", "NO ID")})
@@ -186,6 +184,68 @@ class SpecialAWISDataFormModelPartOne(models.Model):
             dict_main_awis.pop(key)
 
         return dict_main_awis
+    
+    def toAPICompatibleDict(self) -> dict[str, object]:
+        current_dict = self.toDocumentCompatibleDict()
+        current_dict.pop("day", None)
+        current_dict.pop("month", None)
+        current_dict.pop("year", None)
+
+        bool_key_dict : dict[str, int] = {
+            "cause_type_id": 2,
+            "have_req": 2,
+            # "charge_type": 2,
+        }
+        for bool_key, total_num in bool_key_dict.items():
+            bool_value_list = []
+            for num in range(total_num):
+                # Example: cause_type_id_1
+                key = f"{bool_key}_{num + 1}"
+
+                var_value = current_dict.get(key)
+                bool_value_list.append((key, var_value))
+
+                current_dict.pop(key, None)
+
+            if bool_value_list[0][1] == 1:
+                current_dict.update({bool_key: 0})
+            else:
+                current_dict.update({bool_key: 1})
+
+        scene_date_year = current_dict.get("scene_date_year")
+        scene_date_month = current_dict.get("scene_date_month")
+        scene_date_day = current_dict.get("scene_date_day")
+        scene_date_timehalf = current_dict.get("scene_date_timehalf")
+        combined_date = ""
+        if scene_date_year and scene_date_month and scene_date_day:
+            converted_year = scene_date_year 
+            padded_month = str(scene_date_month).zfill(2)
+            padded_day = str(scene_date_day).zfill(2)
+
+            combined_date = f"{converted_year}-{padded_month}-{padded_day}"
+
+            current_dict.pop("scene_date_year")
+            current_dict.pop("scene_date_month")
+            current_dict.pop("scene_date_day")
+
+        if combined_date and scene_date_timehalf:
+            combined_datetime = f"{combined_date} {scene_date_timehalf}"
+            current_dict.update({"scene_date": combined_datetime})
+
+            current_dict.pop("scene_date_timehalf")
+
+        current_dict.pop("judge_name")
+        current_dict.pop("req_day")
+        current_dict.pop("req_month")
+
+        current_dict.pop("acc_full_name")
+        current_dict.pop("acc_card_id")
+        current_dict.pop("acc_sub_district")
+        current_dict.pop("acc_district")
+        current_dict.pop("acc_province")
+        
+
+        return current_dict
 
 class MainAWISForm(forms.ModelForm):
     def clean_date(self, data : dict[str, object]):
@@ -211,7 +271,7 @@ class MainAWISForm(forms.ModelForm):
         bool_key_dict : dict[str, int] = {
             "cause_type_id": 2,
             "have_req": 2,
-            "charge_type": 2,
+            # "charge_type": 2,
         }
         # This is for checking -> If one is True, the other must be False.
         for bool_key, total_num in bool_key_dict.items():
