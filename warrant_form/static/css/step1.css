@@ -13,7 +13,27 @@ form input {
     border-radius: 3px;
     font-size: 17px;
     font-family: "TH Sarabun New", "Tahoma", sans-serif;
-    background-color: #e5e5e5;
+    background-color: #efefef;
+}
+
+form select {
+    border: 1px solid #6f6767;
+    border-radius: 3px;
+    font-size: 17px;
+    font-family: "TH Sarabun New", "Tahoma", sans-serif;
+    background-color: #efefef;
+    padding: 6px 10px;
+    margin: 5px 0;
+    box-sizing: border-box;
+}
+
+form textarea {
+    border: 1px solid #6f6767;
+    border-radius: 3px;
+    font-size: 17px;
+    font-family: "TH Sarabun New", "Tahoma", sans-serif;
+    background-color: #f9f9f9;
+    resize: vertical;
 }
 
 form input:focus,
@@ -24,12 +44,10 @@ form textarea:focus {
     border: 1px solid #3399ff;
 }
 
-
 .form-header-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
     margin-top: 20px;
 }
 
@@ -49,6 +67,23 @@ form textarea:focus {
     margin-top: 20px;
 }
 
+.type_and_court {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.type_and_court-input {
+    width: 300px;
+}
+
+.first_plaintiff {
+    align-items: center;
+}
+
+.first_plaintiff input {
+    width: 500px;
+}
 
 #id_req_year {
     width: 80px;
@@ -56,7 +91,7 @@ form textarea:focus {
 }
 
 .form-header-row input {
-    width: 80px;
+    width: 150px;
 }
 
 .lawsuit-between {
@@ -116,11 +151,11 @@ form textarea:focus {
 }
 
 #id_main_form-cause_text_1 {
-    width: 500px;
+    width: 650px;
 }
 
 #id_main_form-cause_text_2 {
-    width: 500px;
+    width: 340px;
 }
 
 #id_main_form-acc_full_name {
@@ -202,11 +237,11 @@ form textarea:focus {
 } */
 
 #id_main_form-law {
-    width: 450px;
+    width: 690px;
 }
 
-#id_main_form-have_court_code {
-    width: 210px;
+#id_main_form-court_name {
+    width: 380px;
 }
 
 #id_main_form-have_act {
@@ -222,5 +257,9 @@ form textarea:focus {
 }
 
 #id_main_form-have_injunc {
+    width: 707px;
+}
+
+#id_main_form-scene textarea {
     width: 500px;
 }

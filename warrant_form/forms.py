@@ -340,17 +340,17 @@ class MainAWISForm(forms.ModelForm):
             }),
             'scene': forms.Textarea(attrs={
                 'rows': 5,
-                'cols': 100,
+                'cols': 81,
                 'style':'resize:none;'
             }), 
             'act': forms.Textarea(attrs={
                 'rows': 5,
-                'cols': 100,
+                'cols': 90,
                 'style':'resize:none;'
             }),
             'charge': forms.Textarea(attrs={
                 'rows': 5,
-                'cols': 100,
+                'cols': 67,
                 'style':'resize:none;'
             }),
             "court_code": forms.HiddenInput(attrs={
