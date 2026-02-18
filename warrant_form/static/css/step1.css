@@ -51,6 +51,11 @@ form textarea:focus {
     border: 1px solid #3399ff;
 }
 
+.acc-info p{
+    display: flex;
+    justify-content: space-between;
+}
+
 .form-header-row {
     display: flex;
     align-items: center;
@@ -270,3 +275,4 @@ form textarea:focus {
 #id_main_form-scene textarea {
     width: 500px;
 }
+

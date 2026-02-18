@@ -53,11 +53,13 @@
 
     <p align="right">{{ form.cause_type_id_2 }} ปรากฎจากการสืบสวนของ {{ form.cause_text_2 }}</p>
 
-    <p>ว่า {{ form.acc_full_name }} เลขบัตรประชาชน {{ form.acc_card_id }}</p>
-    <p>อายุ {{ form.acc_age }} เชื้อชาติ {{ form.acc_origin }} สัญชาติ {{ form.acc_nation }} อาชีพ {{ form.acc_occupation }}</p>
-    <p>อยู่บ้านเลขที่ {{ form.acc_addno }} หมู่ที่ {{ form.acc_vilno }} ถนน {{ form.acc_road }}</p>
-    <p>ตรอก/ซอย {{ form.acc_soi }} ใกล้เคียง {{ form.acc_near }} จังหวัด {{ form.acc_province }}</p>
-    <p>อำเภอ/เขต {{ form.acc_district }} ตำบล/แขวง {{ form.acc_sub_district }} โทรศัพท์ {{ form.acc_tel }}</p>
+    <div class="acc-info">
+        <p>ว่า {{ form.acc_full_name }} เลขบัตรประชาชน {{ form.acc_card_id }}</p>
+        <p>อายุ {{ form.acc_age }} เชื้อชาติ {{ form.acc_origin }} สัญชาติ {{ form.acc_nation }} อาชีพ {{ form.acc_occupation }}</p>
+        <p>อยู่บ้านเลขที่ {{ form.acc_addno }} หมู่ที่ {{ form.acc_vilno }} ถนน {{ form.acc_road }}</p>
+        <p>ตรอก/ซอย {{ form.acc_soi }} ใกล้เคียง {{ form.acc_near }} จังหวัด {{ form.acc_province }}</p>
+        <p>อำเภอ/เขต {{ form.acc_district }} ตำบล/แขวง {{ form.acc_sub_district }} โทรศัพท์ {{ form.acc_tel }}</p>
+    </div>
 
     <p> {{ form.charge_type_1 }} ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</p>
     <p> {{ form.charge_type_2 }} ได้หรือน่าจะได้กระทำความผิดอาญา และน่าจะหลบหนีหรือจะไปยุ่งเหยิงกับพยานหลักฐานหรือก่ออันตรายประการอื่น</p>
