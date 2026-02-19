@@ -79,9 +79,9 @@ def form_submission(request : HttpRequest):
                 # Please setup URL first.
                 # api_request_submit_data(cleaned_dict, "test_auth_token")
 
-                doc_create_with_context(form_awis_obj.toDocumentCompatibleDict())
+                # doc_create_with_context(form_awis_obj.toDocumentCompatibleDict())
 
-                MainAWISDataModel.objects.create(**cleaned_dict)
+                # MainAWISDataModel.objects.create(**cleaned_dict)
 
                 return redirect(reverse("awis:success"))
                 # sub_form = WarrantForm(prefix="sub_form")
