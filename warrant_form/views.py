@@ -47,13 +47,52 @@ def index(request : HttpRequest):
 
     context = {
         "form": main_form,
+        "main_form": main_form,
         "sub_form": sub_form
     }
 
     # if request.GET.get("status") == "error":
     #     context.update({"status": "error"})
 
-    return render(request, "warrant_form/awis_step1.html", context)
+    return render(request, "warrant_form/index.html", context)
+
+def plain_form_submission(request : HttpRequest):
+    # The expected outcome.
+    if request.method == "POST":
+        main_form = MainAWISForm(request.POST, prefix="main_form")
+        sub_form = WarrantForm(request.POST, prefix="sub_form")
+
+        if main_form.is_valid():
+            # Create object from the form, but don't commit to database yet.
+            # warrant_obj : WarrantDataModel = sub_form.save(commit=False)
+
+            awis_obj : MainAWISDataModel = main_form.save(commit=False)
+            warrant_obj : WarrantDataModel = sub_form.save()
+
+            cleaned_dict = awis_obj.toAPICompatibleDict()
+            warrant_dict = warrant_obj.toAPICompatibleDict()
+
+            test_duped_warrant = [warrant_dict, warrant_dict]
+
+            cleaned_dict.update({"warrants": test_duped_warrant})
+            # print(json.dumps(cleaned_dict, indent=4))
+            for index, (key, value) in enumerate(cleaned_dict.items()):
+                # print(f"{index + 1}: {key} = '{value}'")
+                if not isinstance(value, list):
+                    print(f"{index + 1}: {key} = '{value}'")
+                else:
+                    print(f'{index + 1}: [')
+                    for sub_idx, warrant in enumerate(value):
+                        print(f"    {sub_idx + 1}: {json.dumps(warrant, indent=2)}")
+                    print(']')
+
+            # Uncomment to send API.
+            # Please setup URL first.
+            # api_request_submit_data(cleaned_dict, "test_auth_token")
+
+            # MainAWISDataModel.objects.create(**cleaned_dict)
+
+            return redirect(reverse("awis:success"))
         
 
 def form_submission(request : HttpRequest):

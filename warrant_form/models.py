@@ -20,7 +20,7 @@ class WarrantDataModel(models.Model):
         PASSPORT = 2, "เลขหนังสือเดินทาง"
         NON_THAI_ID = 3, "เลขคนซึ่งไม่มีสัญชาติไทย"
 
-    woa_date = models.DateField(max_length=10, blank=True, null=True)
+    woa_date = models.CharField(max_length=10, blank=True, null=True)
 
     fault_type_id = models.IntegerField(blank=True, null=True) # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร
@@ -52,11 +52,45 @@ class WarrantDataModel(models.Model):
     acc_tel = models.CharField(max_length=20, blank=True)
 
     appointment_type = models.IntegerField(choices=AppointmentTypeChoices, blank=True, null=True)
-    appointment_date = models.DateTimeField(max_length=19, blank=True, null=True) # SAME DATE FORMAT AS BELOW
+    appointment_date = models.CharField(max_length=19, blank=True, null=True) # SAME DATE FORMAT AS BELOW
 
-    woa_start_date = models.DateField(max_length=10, blank=True, null=True) # THIS TIME, IT"S DATE, WITHOUT THE TIME
-    woa_end_date = models.DateField(max_length=10, blank=True, null=True) # MAYBE TIMEFIELD INSTEAD OF DATEFIELD??
+    woa_start_date = models.CharField(max_length=10, blank=True, null=True) # THIS TIME, IT"S DATE, WITHOUT THE TIME
+    woa_end_date = models.CharField(max_length=10, blank=True, null=True) # MAYBE TIMEFIELD INSTEAD OF DATEFIELD??
     woa_refno = models.CharField(max_length=10, blank=True)
+
+    def toAPICompatibleDict(self) -> dict[str, object]:
+        """
+        Convert the model object into a dictionary that fits what the API required.
+        It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
+        then convert or remove some fields to match the API.\n
+        It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
+        """
+        ################################################################
+        # Conversion section.
+        # Convert dictionary into the format that API can receive.
+
+        dict_warrant = model_to_dict(self)
+
+        dict_warrant.pop("id", None)
+
+        empty_key_list = []
+        for key, value in dict_warrant.items():
+            if isinstance(value, str):
+                if not value:
+                    empty_key_list.append(key)
+            elif isinstance(value, bool):
+                if value: # True...
+                    dict_warrant.update({key: 1})
+                else:
+                    dict_warrant.update({key: 0})
+
+            if value is None:
+                empty_key_list.append(key)
+
+        for key in empty_key_list:
+            dict_warrant.pop(key)
+
+        return dict_warrant
 
 # ข้อมูลหลัก ๆ ส่งให้กับ API
 class MainAWISDataModel(models.Model):
@@ -97,9 +131,6 @@ class MainAWISDataModel(models.Model):
     charge_type_2 = models.BooleanField()
 
     scene = models.CharField(max_length=300, blank=True)
-    scene_date_datehalf = models.DateField(blank=True, null=True) 
-    scene_date_timehalf = models.TimeField(blank=True, null=True) 
-
     scene_date = models.CharField(max_length=19, blank=True) 
 
     act = models.CharField(max_length=500, verbose_name="มีพฤติการกระทำความผิด", blank=True)
@@ -151,28 +182,28 @@ class MainAWISDataModel(models.Model):
 
         dict_main_awis = model_to_dict(self)
 
-        DATEHALF_STR = "scene_date_datehalf"
-        TIMEHALF_STR = "scene_date_timehalf"
+        # DATEHALF_STR = "scene_date_datehalf"
+        # TIMEHALF_STR = "scene_date_timehalf"
 
-        buddhist_date_half = dict_main_awis.get(DATEHALF_STR)
-        time_half = dict_main_awis.get(TIMEHALF_STR)
+        # buddhist_date_half = dict_main_awis.get(DATEHALF_STR)
+        # time_half = dict_main_awis.get(TIMEHALF_STR)
 
-        if buddhist_date_half and time_half:
-            # First, we have to convert Year: B.E. to A.D.
-            BUDDHIST_ERA_YEAR_DIFF = 543
-            one_year = datetime.timedelta(days=365)
-            buddhist_era_difference_datetime = BUDDHIST_ERA_YEAR_DIFF * one_year
+        # if buddhist_date_half and time_half:
+        #     # First, we have to convert Year: B.E. to A.D.
+        #     BUDDHIST_ERA_YEAR_DIFF = 543
+        #     one_year = datetime.timedelta(days=365)
+        #     buddhist_era_difference_datetime = BUDDHIST_ERA_YEAR_DIFF * one_year
 
-            iso_date_half = buddhist_date_half - buddhist_era_difference_datetime
+        #     iso_date_half = buddhist_date_half - buddhist_era_difference_datetime
 
-            # Leave a space between date and time.
-            full_datetime = f"{iso_date_half} {time_half}"
-            dict_main_awis.update({"scene_date": full_datetime})
+        #     # Leave a space between date and time.
+        #     full_datetime = f"{iso_date_half} {time_half}"
+        #     dict_main_awis.update({"scene_date": full_datetime})
 
-            dict_main_awis.pop(DATEHALF_STR, None)
-            dict_main_awis.pop(TIMEHALF_STR, None)
+        #     dict_main_awis.pop(DATEHALF_STR, None)
+        #     dict_main_awis.pop(TIMEHALF_STR, None)
 
-        dict_main_awis.pop("id")
+        dict_main_awis.pop("id", None)
 
         empty_key_list = []
         for key, value in dict_main_awis.items():

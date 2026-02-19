@@ -3,10 +3,10 @@
 
 {% block title %}Warrant Form{% endblock %}
 {% block form %}
-<form id="warrant-form" action="/submit/", method="post">
+<form id="warrant-form" action="/plain-submit/", method="post">
     {% csrf_token %}
     {{ main_form.as_p }}
-
+    <hr>
     {{ sub_form.as_p }}
     <input type="submit" value="Submit">
 </form>

@@ -1,7 +1,7 @@
 from django import forms
 from django.db import models
 from django.core.exceptions import ValidationError
-from warrant_form.models import WarrantDataModel
+from warrant_form.models import WarrantDataModel, MainAWISDataModel
 from django.forms.models import model_to_dict
 import datetime
 from django.utils import timezone
@@ -248,7 +248,7 @@ class SpecialAWISDataFormModelPartOne(models.Model):
 
         return current_dict
 
-class MainAWISForm(forms.ModelForm):
+class SpecialAWISForm(forms.ModelForm):
     def clean_date(self, data : dict[str, object]):
         combined_date = ""
         try:
@@ -367,10 +367,22 @@ class MainAWISForm(forms.ModelForm):
             }),
         }
 
+class MainAWISForm(forms.ModelForm):
+    class Meta:
+        model = MainAWISDataModel
+        # fields = "__all__"
+        exclude = ["warrants",]
+        widgets = {
+            "scene_date": forms.DateTimeInput(),
+        }
+
 class WarrantForm(forms.ModelForm):
     class Meta:
         model = WarrantDataModel
         fields = "__all__"
         widgets = {
             "woa_date": forms.DateInput(attrs={'type': 'date'}),
+            "woa_start_date": forms.DateInput(attrs={'type': 'date'}),
+            "woa_end_date": forms.DateInput(attrs={'type': 'date'}),
+            "appointment_date": forms.DateTimeInput(),
         }
