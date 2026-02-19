@@ -31,7 +31,7 @@
     <p>{{form.req_case_type_id}}</p>
     <div class="type_and_court">
         <p><span>รับคำร้อง</span><span>ศาล {{form.court_name}}</span></p> 
-        <p><span>เรียกสอบ</span><span>วัน {{form.req_day}} เดือน {{form.req_month}} พ.ศ. {{form.req_year}}</span></p>
+        <p class="date-widget"><span>เรียกสอบ</span><span>วัน {{form.req_day}} เดือน {{form.req_month}} พ.ศ. {{form.req_year}}</span></p>
     </div>
 
     <p>{{ form.judge_name }} ผู้พิพากษา</p>
@@ -82,7 +82,9 @@
     <p class="cause-id-paragraph"><span>ข้อ 1. {{ form.cause_type_id_1 }}</span> <span>ด้วย {{ form.cause_text_1 }}</span></p>
     <p> มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
 
-    <p align="right">{{ form.cause_type_id_2 }} ปรากฎจากการสืบสวนของ {{ form.cause_text_2 }}</p>
+    <p style="max-width: 42rem; margin-left: 8rem;">
+        {{ form.cause_type_id_2 }} ปรากฎจากการสืบสวนของ {{ form.cause_text_2 }}
+    </p>
 
     <div class="acc-info">
         <p><span>ว่า {{ form.acc_full_name }}</span> <span>เลขบัตรประชาชน {{ form.acc_card_id }}</span></p>

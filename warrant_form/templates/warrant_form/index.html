@@ -7,10 +7,7 @@
     {% csrf_token %}
     {{ main_form.as_p }}
 
-    {% comment %}
-    <hr>
     {{ sub_form.as_p }}
-    {% endcomment %}
     <input type="submit" value="Submit">
 </form>
 {% endblock %}

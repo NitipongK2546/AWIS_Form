@@ -1,7 +1,7 @@
 form {
     max-width: 800px;
     margin: 0 auto;
-    font-family: "TH Sarabun New", "Tahoma", sans-serif;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
     font-size: 18px;
     line-height: 1.2;
     color: #000;
@@ -17,26 +17,28 @@ input[type="checkbox"] {
 
 form input {
     border: 1px solid #6f6767;
+    /* width: 11em; */
     border-radius: 3px;
     font-size: 17px;
-    font-family: "TH Sarabun New", "Tahoma", sans-serif;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
     background-color: #efefef;
 }
 
 form select {
     border: 1px solid #6f6767;
+    /* width: 11em; */
     border-radius: 3px;
     font-size: 17px;
-    font-family: "TH Sarabun New", "Tahoma", sans-serif;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
     background-color: #efefef;
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
 }
 
 form textarea {
     border: 1px solid #6f6767;
     border-radius: 3px;
     font-size: 17px;
-    font-family: "TH Sarabun New", "Tahoma", sans-serif;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
     background-color: #f9f9f9;
     resize: vertical;
 }
@@ -96,7 +98,7 @@ form textarea:focus {
 }
 
 p.cause-id-paragraph {
-    margin-left: 8rem;
+    margin-left: 12rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
