@@ -9,12 +9,11 @@ form {
 }
 
 input[type="checkbox"] {
-  width: 1.25em;
-  height: 1.25em;
+  width: 1.25rem;
+  height: 1.25rem;
   vertical-align: middle;
   border-color: black;
 }
-
 
 form input {
     border: 1px solid #6f6767;
@@ -50,54 +49,81 @@ form textarea:focus {
     border: 1px solid #3399ff;
 }
 
+.special-multi-flex p {
+    display: flex;
+    justify-content: space-between;
+}
+
+.special-multi-flex p span.double-input{
+    min-width: 16rem;
+    max-width: 16rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.special-multi-flex p span.double-input-insides {
+    min-width: unset;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .acc-info p{
     display: flex;
     justify-content: space-between;
 }
 
 .acc-info p span {
-    min-width: 250px;
-    display: flex;                 /* turn span into flex row */
-    justify-content: space-between;/* push children to edges */
-    align-items: center;           /* vertical alignment */
+    min-width: 16rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .acc-info p span.double-input {
-    min-width: 250px;
-    max-width: 250px;
-    display: flex;                 /* turn span into flex row */
-    justify-content: space-between;/* push children to edges */
-    align-items: center;           /* vertical alignment */
+    max-width: 16rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .acc-info p span.double-input-insides {
+    display: flex;
     min-width: unset;
-    display: flex;                 /* turn span into flex row */
-    justify-content: space-between;/* push children to edges */
-    align-items: center;           /* vertical alignment */
+    justify-content: space-between;
+    align-items: center;
+}
+
+p.cause-id-paragraph {
+    margin-left: 8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .form-header-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 1.25rem;
 }
 
 .form-header-row h3 {
-    font-size: 20px;
-    margin-top: 20px;
+    font-size: 1.25rem;
+    margin-top: 1.25rem;
 }
 
 .form-header-row .emblem {
     height: 3cm;
     width: auto;
-    margin: 20px 20px;
+    margin: 1.25rem 1.25rem;
     /* spacing around emblem */
 }
 
 .form-header-row p {
-    margin-top: 20px;
+    margin-top: 1.25rem;
+    min-width: 11rem;
 }
 
 .header_page_2 {
@@ -105,15 +131,10 @@ form textarea:focus {
     text-align: center;
 }
 
-.type_and_court {
+.type_and_court p {
     display: flex;
-    align-items: top;
     justify-content: space-between;
     margin-top: 0px;
-}
-
-.type_and_court-input {
-    width: 300px;
 }
 
 .first_plaintiff {
@@ -137,7 +158,7 @@ form textarea:focus {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-top: 20px;
+    margin-top: 1.25rem;
 }
 
 .lawsuit-between .left {
@@ -155,6 +176,11 @@ form textarea:focus {
 
 .lawsuit-between .right input {
     width: 450px;
+    font-size: 18px;
+}
+
+#id_main_form-req_case_type_id {
+    width: 10rem;
     font-size: 18px;
 }
 
@@ -178,15 +204,19 @@ form textarea:focus {
 }
 
 #id_main_form-req_province {
-    width: 188px;
+    width: 11.5rem;
 }
 
 #id_main_form-req_district {
-    width: 170px;
+    width: 11rem;
 }
 
 #id_main_form-req_sub_district {
-    width: 170px;
+    width: 11rem;
+}
+
+#id_main_form-req_tel {
+    width: 11rem;
 }
 
 #id_main_form-cause_text_1 {
@@ -214,47 +244,47 @@ form textarea:focus {
 }
 
 #id_main_form-acc_nation {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-acc_occupation {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-acc_addno {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-acc_vilno {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-acc_road {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-acc_soi {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-acc_near {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-acc_province {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-acc_district {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-acc_sub_district {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-acc_tel {
-    width: 170px;
+    width: 11em;
 }
 
 #id_main_form-law {

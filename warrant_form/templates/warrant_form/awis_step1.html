@@ -30,8 +30,8 @@
     </div>
     <p>{{form.req_case_type_id}}</p>
     <div class="type_and_court">
-        <p> รับคำร้อง <br> เรียกสอบ</p>
-        <p align="right">ศาล {{form.court_name}} <br> วัน {{form.req_day}} เดือน {{form.req_month}} พ.ศ. {{form.req_year}}</p>
+        <p><span>รับคำร้อง</span><span>ศาล {{form.court_name}}</span></p> 
+        <p><span>เรียกสอบ</span><span>วัน {{form.req_day}} เดือน {{form.req_month}} พ.ศ. {{form.req_year}}</span></p>
     </div>
 
     <p>{{ form.judge_name }} ผู้พิพากษา</p>
@@ -40,24 +40,55 @@
         <p align="center">ความอาญา <br></p>
         <p align="right">{{ form.plaintiff }} ผู้ร้อง</p>
     </div>
-    <p align="right">ข้าพเจ้า {{ form.req_name }} ตำแหน่ง {{ form.req_pos }}</p>
-    <p>อายุ {{ form.req_age }} ปี อาชีพ รับราชการ สถานที่ทำงาน {{ form.req_office }}</p>
-    <p>จังหวัด {{ form.req_province }} อำเภอ/เขต {{ form.req_district }} ตำบล/แขวง {{ form.req_sub_district }}</p>
-    <p> โทรศัพท์ {{ form.req_tel }} ขอทำคำร้องขอออกหมายจับยื่นต่อศาลดังต่อไปนี้</p>
-
-    <p style="margin-left:100px;">ข้อ 1. {{ form.cause_type_id_1 }} ด้วย {{ form.cause_text_1 }} </p>
+    
+        <p align="right">
+            <span>ข้าพเจ้า {{ form.req_name }}</span>
+            <span>ตำแหน่ง {{ form.req_pos }}</span>
+        </p>
+    <div class="special-multi-flex">
+        <p>
+            <span class="double-input">
+                <span>
+                    อายุ 
+                </span>
+                <span class="double-input-insides" style="min-width: 11rem;">
+                    <span>{{ form.req_age }} ปี</span> <span>อาชีพ รับราชการ</span>
+                </span>
+            </span>
+            <span>
+                สถานที่ทำงาน {{ form.req_office }}
+            </span>
+        </p>
+    </div>
+    <div class="acc-info">
+        <p>
+            <span>จังหวัด {{ form.req_province }}</span>
+            <span>อำเภอ/เขต {{ form.req_district }}</span>
+            <span>ตำบล/แขวง {{ form.req_sub_district }}</span>
+        </p>
+     
+        <p> 
+            <span>โทรศัพท์ {{ form.req_tel }} </span>
+            <span>
+                ขอทำคำร้องขอออกหมายจับยื่นต่อศาลดังต่อไปนี้
+            </span>
+            <span></span>
+        </p>
+        </div> 
+      
+    <p class="cause-id-paragraph"><span>ข้อ 1. {{ form.cause_type_id_1 }}</span> <span>ด้วย {{ form.cause_text_1 }}</span></p>
     <p> มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
     
-    <p style="margin-left:100px;">ข้อ 1. {{ form.cause_type_id_1 }} ด้วย {{ form.cause_text_1 }} </p>
+    <p class="cause-id-paragraph"><span>ข้อ 1. {{ form.cause_type_id_1 }}</span> <span>ด้วย {{ form.cause_text_1 }}</span></p>
     <p> มาแจ้งความร้องทุกข์ต่อพนักงานสืบสวน</p>
 
     <p align="right">{{ form.cause_type_id_2 }} ปรากฎจากการสืบสวนของ {{ form.cause_text_2 }}</p>
 
     <div class="acc-info">
-        <p><span>ว่า      {{ form.acc_full_name }}</span> <span>เลขบัตรประชาชน {{ form.acc_card_id }}</span></p>
+        <p><span>ว่า {{ form.acc_full_name }}</span> <span>เลขบัตรประชาชน {{ form.acc_card_id }}</span></p>
         <p>
             <span class="double-input">
-                <span class="double-input-insides">อายุ      {{ form.acc_age }}</span>
+                <span class="double-input-insides">อายุ {{ form.acc_age }}</span>
                 <span class="double-input-insides">เชื้อชาติ {{ form.acc_origin }}</span>
             </span> 
             <span>สัญชาติ {{ form.acc_nation }}</span> 
