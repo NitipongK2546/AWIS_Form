@@ -6,7 +6,7 @@
 /test_files
 /.test_files
 
-resources
+# resources
 
 ### Django ###
 *.log
