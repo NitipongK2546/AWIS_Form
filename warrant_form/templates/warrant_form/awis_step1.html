@@ -54,11 +54,30 @@
     <p align="right">{{ form.cause_type_id_2 }} ปรากฎจากการสืบสวนของ {{ form.cause_text_2 }}</p>
 
     <div class="acc-info">
-        <p><span>ว่า {{ form.acc_full_name }}</span> <span>เลขบัตรประชาชน {{ form.acc_card_id }}</span></p>
-        <p><span>อายุ {{ form.acc_age }}</span> <span>เชื้อชาติ {{ form.acc_origin }}</span> <span>สัญชาติ {{ form.acc_nation }}</span> <span>อาชีพ {{ form.acc_occupation }}</span></p>
-        <p><span>อยู่บ้านเลขที่ {{ form.acc_addno }}</span> <span>หมู่ที่ {{ form.acc_vilno }}</span> <span>ถนน {{ form.acc_road }}</span></p>
-        <p><span>ตรอก/ซอย {{ form.acc_soi }}</span> <span>ใกล้เคียง {{ form.acc_near }}</span> <span>จังหวัด {{ form.acc_province }}</span></p>
-        <p><span>อำเภอ/เขต {{ form.acc_district }}</span> <span>ตำบล/แขวง {{ form.acc_sub_district }}</span> <span>โทรศัพท์ {{ form.acc_tel }}</span></p>
+        <p><span>ว่า      {{ form.acc_full_name }}</span> <span>เลขบัตรประชาชน {{ form.acc_card_id }}</span></p>
+        <p>
+            <span class="double-input">
+                <span class="double-input-insides">อายุ      {{ form.acc_age }}</span>
+                <span class="double-input-insides">เชื้อชาติ {{ form.acc_origin }}</span>
+            </span> 
+            <span>สัญชาติ {{ form.acc_nation }}</span> 
+            <span>อาชีพ {{ form.acc_occupation }}</span>
+        </p>
+        <p>
+            <span>อยู่บ้านเลขที่ {{ form.acc_addno }}</span> 
+            <span>หมู่ที่ {{ form.acc_vilno }}</span> 
+            <span>ถนน {{ form.acc_road }}</span>
+        </p>
+        <p>
+            <span>ตรอก/ซอย {{ form.acc_soi }}</span> 
+            <span>ใกล้เคียง {{ form.acc_near }}</span> 
+            <span>จังหวัด {{ form.acc_province }}</span>
+        </p>
+        <p>
+            <span>อำเภอ/เขต {{ form.acc_district }}</span> 
+            <span>ตำบล/แขวง {{ form.acc_sub_district }}</span> 
+            <span>โทรศัพท์ {{ form.acc_tel }}</span>
+        </p>
     </div>
 
     <p> {{ form.charge_type_1 }} ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</p>
