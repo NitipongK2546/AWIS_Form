@@ -15,16 +15,16 @@ def set_up_codes() -> list:
 
         for row in code_table:
             if row[0]:
-                current_province_code = row[0]
-                province_choices.append((current_province_code, row[0 + 3]))
+                current_province_code = row[0].zfill(2)
+                province_choices.append((current_province_code, row[3]))
                 continue
             if row[1]:
-                current_district_code = current_province_code + row[1]
-                district_choices.append((current_district_code, row[1 + 3]))
+                current_district_code = current_province_code + row[1].zfill(2)
+                district_choices.append((current_district_code, row[3]))
                 continue
             if row[2]:
-                current_sub_district_code = current_district_code + row[2]
-                sub_district_choices.append((current_sub_district_code, row[2 + 3]))
+                current_sub_district_code = current_district_code + row[2].zfill(2)
+                sub_district_choices.append((current_sub_district_code, row[3]))
                 continue
 
     return province_choices, district_choices, sub_district_choices
@@ -53,3 +53,9 @@ class ThaiCountryAreaCode:
         [output_dict.update({code:text}) for code, text in self.sub_district_choices]
 
         return output_dict
+    
+if __name__ == "__main__":
+    test = ThaiCountryAreaCode()
+    # print(test.getSubDistrictChoices())
+    print(test.getDistrictChoices())
+    # print(test.getProvinceChoices())
