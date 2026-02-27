@@ -57,5 +57,5 @@ class ThaiCountryAreaCode:
 if __name__ == "__main__":
     test = ThaiCountryAreaCode()
     # print(test.getSubDistrictChoices())
-    print(test.getDistrictChoices())
+    print(test.getSubDistrictChoices()[:20])
     # print(test.getProvinceChoices())
