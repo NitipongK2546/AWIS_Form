@@ -127,19 +127,76 @@ def get_search_warrants(version : str, request : HttpRequest, query_data : dict)
     return message
 
 # 6.
-def put_report_warrant_result(version : str):
+def put_report_warrant_result(version : str, request : HttpRequest, put_data : dict) -> dict:
     # This one need PUT request
-    pass
+    if not get_health_check("v1"):
+        return False
+
+    base_url = RequestUtils.get_full_url_from_env()
+    parameter = [version, "awis", "arrests"]
+
+    auth_token : str = RequestUtils.check_auth_token(request)
+    response : JsonResponse = RequestUtils.put_request_with_auth(
+        base_url, 
+        parameter_data=parameter, 
+        put_data=put_data, 
+        auth_token=auth_token
+    )
+    data : dict = response.json()
+
+    if data:
+        return data
+
+    return False
 
 # 7.
-def get_court_order_and_warrant(version : str):
-    # This one needs Base64
-    pass
+def get_court_order_and_warrant(version : str, request : HttpRequest, plaintiff_code : str):
+    """
+    This one will return 1 value as Base64. Prepare to Convert.
+    """
+    # This one RETURN VALUE IN Base64
+    if not get_health_check("v1"):
+        return False
+
+    base_url = RequestUtils.get_full_url_from_env()
+    parameter = [version, "awis", "warrants", "search_file", plaintiff_code]
+
+    auth_token : str = RequestUtils.check_auth_token(request)
+    response : JsonResponse = RequestUtils.get_request_with_auth(
+        base_url, 
+        parameter_data=parameter,
+        auth_token=auth_token
+    )
+    data : dict = response.json()
+
+    if data:
+        return data
+
+    return False
 
 # 8.
-def delete_req_form(version : str):
+def delete_req_form(version : str, request : HttpRequest, req_no_plaintiff : str):
     # This one need PUT request
-    pass
+    if not get_health_check("v1"):
+        return False
+
+    base_url = RequestUtils.get_full_url_from_env()
+    parameter = [version, "awis", "court", req_no_plaintiff]
+
+    auth_token : str = RequestUtils.check_auth_token(request)
+    response : JsonResponse = RequestUtils.delete_request_with_auth(
+        base_url, 
+        parameter_data=parameter,
+        auth_token=auth_token
+    )
+    data : dict = response.json()
+
+    message = data.get("message")
+
+    if message:
+        return message
+
+    return False
 
 # 9.
 def get_court_list(version : str, request : HttpRequest) -> dict:
@@ -158,10 +215,8 @@ def get_court_list(version : str, request : HttpRequest) -> dict:
     )
     data : dict = response.json()
 
-    return data
+    if data:
+        return data
     
-    # # Response OK.
-    # if data.get("status") == "ok":
-    #     return True
+    return False
     
-    # return False

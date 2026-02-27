@@ -64,8 +64,12 @@ def send_request_receive_response(packed_data : tuple, request_type) -> HttpResp
             response : JsonResponse = requests.get(final_url, params=dict_data, headers=dict_header)
         elif request_type == "POST":
             response : JsonResponse = requests.post(final_url, data=dict_data, headers=dict_header)
+        elif request_type == "PUT":
+            response : JsonResponse = requests.put(final_url, data=dict_data, headers=dict_header)
+        elif request_type == "DELETE":
+            response : JsonResponse = requests.delete(final_url, params=dict_data, headers=dict_header)
         else: 
-            raise RequestException("Unsupported. Has to add PUT and DELETE soon though.")
+            raise RequestException("Unsupported Method.")
 
         # Get response data either way.
         # Return it as Dictionary.
@@ -112,7 +116,7 @@ def get_request_with_auth(target_url : str, query_data : dict = None, parameter_
     """
     Request แบบที่มี Token ได้ ต้องเพิ่มเองโดยใช้ check_auth_token จา่ก session. \n\n
     target_url: Base URL ของ API Server ที่ต้องการเชื่อมต่อ \n
-    query_data: ข้อมูลที่ส่ง เป็นแบบ ?id=5&name=test เป็นต้น \n
+    query_data: ข้อมูลที่ส่ง เป็นแบบ Dictionary (?id=5&name=test) เป็นต้น \n
     parameter_data: Directory ใส่เพิ่มเติมหลังจาก Base URL เช่น example.com/param1 \n 
     auth_token: Authentication Token ยืนยันตัวตน ตอนนี้มีแค่ Bearer Token (JSON Web Token) \n
     """
@@ -135,3 +139,31 @@ def post_request_with_auth(target_url : str, post_data : dict = None, parameter_
     REQUEST_TYPE = "POST"
 
     return send_request(REQUEST_TYPE, target_url, post_data, parameter_data, auth_token)
+
+def put_request_with_auth(target_url : str, put_data : dict = None, parameter_data : list = None, auth_token : str = None) -> HttpResponse:
+    """
+    Request แบบที่มี Token ได้ ต้องเพิ่มเองโดยใช้ check_auth_token จา่ก session. \n\n
+
+    target_url: Base URL ของ API Server ที่ต้องการเชื่อมต่อ \n
+    put_data: ข้อมูลที่ส่ง เป็นแบบ Dictionary \n
+    parameter_data: Directory ใส่เพิ่มเติมหลังจาก Base URL เช่น example.com/param1 \n 
+    auth_token: Authentication Token ยืนยันตัวตน ตอนนี้มีแค่ Bearer Token (JSON Web Token) \n
+    """
+
+    REQUEST_TYPE = "PUT"
+
+    return send_request(REQUEST_TYPE, target_url, put_data, parameter_data, auth_token)
+
+def delete_request_with_auth(target_url : str, query_data : dict = None,  parameter_data : list = None, auth_token : str = None) -> HttpResponse:
+    """
+    Request แบบที่มี Token ได้ ต้องเพิ่มเองโดยใช้ check_auth_token จา่ก session. \n\n
+
+    target_url: Base URL ของ API Server ที่ต้องการเชื่อมต่อ \n
+    query_data (คาดว่าไม่ต้องใช้): ข้อมูลที่ส่ง เป็นแบบ Dictionary (?id=5&name=test) เป็นต้น \n
+    parameter_data: Directory ใส่เพิ่มเติมหลังจาก Base URL เช่น example.com/param1 \n 
+    auth_token: Authentication Token ยืนยันตัวตน ตอนนี้มีแค่ Bearer Token (JSON Web Token) \n
+    """
+
+    REQUEST_TYPE = "DELETE"
+
+    return send_request(REQUEST_TYPE, target_url, query_data, parameter_data, auth_token)
