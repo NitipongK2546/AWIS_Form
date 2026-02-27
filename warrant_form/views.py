@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login, logout 
-from django.http import HttpRequest, JsonResponse, HttpResponse
+from django.http import HttpRequest, JsonResponse
 # from formtools.wizard.views import SessionWizardView, CookieWizardView
 from warrant_form.models import WarrantDataModel, MainAWISDataModel
 from warrant_form.forms import WarrantForm, MainAWISForm, SpecialAWISDataFormModelPartOne
@@ -20,7 +20,11 @@ def user_login(request : HttpRequest):
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            login(request, form.get_user())
+            user = form.get_user()
+            if user is not None:
+                login(request, form.get_user())
+                AWISConnectAPI.post_login_authorize("v1.1", request)
+
             return redirect("awis:index")
     else:
         form = AuthenticationForm()
@@ -39,15 +43,6 @@ def signup(request : HttpRequest):
 def custom_logout(request : HttpRequest): 
     logout(request) 
     return redirect("awis:login")
-
-# def login(request : HttpRequest): 
-#     if request.method != "POST":
-#         return HttpResponseNotAllowed("Method is not POST.")
-
-#     if login_authorize(request, "test", "test"):
-
-
-#     return HttpResponseForbidden("Login Failed.")
 
 def index(request : HttpRequest):    
     main_form = WarrantForm(prefix="main_form")
