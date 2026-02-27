@@ -1,9 +1,14 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
+<<<<<<< HEAD
 from django.http import HttpRequest, JsonResponse
 
+=======
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login, logout 
+from django.http import HttpRequest, JsonResponse, HttpResponse
+>>>>>>> 60215159531cbd76acfa09d822debfda8d81e3fc
 # from formtools.wizard.views import SessionWizardView, CookieWizardView
-
 from warrant_form.models import WarrantDataModel, MainAWISDataModel
 from warrant_form.forms import WarrantForm, MainAWISForm, SpecialAWISDataFormModelPartOne
 from warrant_form.doc_create import doc_create_with_context
@@ -14,6 +19,31 @@ import warrant_form.connect_api as AWISConnectAPI
 
 ##############################################################################
 # FORM VIEWS
+def user_login(request : HttpRequest):
+    if request.user.is_authenticated:
+        return redirect("awis:index")
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect("awis:index")
+    else:
+        form = AuthenticationForm()
+    return render(request, "warrant_form/login.html", {"form": form})
+
+def signup(request : HttpRequest):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("awis:login")
+    else:
+        form = UserCreationForm()
+    return render(request, "warrant_form/signup.html", {"form": form})
+
+def custom_logout(request : HttpRequest): 
+    logout(request) 
+    return redirect("awis:login")
 
 # def login(request : HttpRequest): 
 #     if request.method != "POST":
@@ -25,8 +55,7 @@ import warrant_form.connect_api as AWISConnectAPI
 #     return HttpResponseForbidden("Login Failed.")
 
 def index(request : HttpRequest):    
-    # health_check()
-    main_form = MainAWISForm(prefix="main_form")
+    main_form = WarrantForm(prefix="main_form")
     sub_form = WarrantForm(prefix="sub_form")
 
     context = {
