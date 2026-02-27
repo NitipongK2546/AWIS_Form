@@ -1,0 +1,43 @@
+{% extends 'warrant_form/base.html' %}
+{% load static %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+{% endblock %}
+
+{% block content %}
+
+<div class="signup-container">
+    <div class="signup-header">
+        <a href="{% url 'awis:logout' %}" class="back-button">
+            <span class="material-icons">arrow_back_ios</span>
+            Back
+        </a>
+        <h1>Create Account</h1>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_username">Username</label>
+            {{ form.username }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password1">Password</label>
+            {{ form.password1 }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password2">Confirm Password</label>
+            {{ form.password2 }}
+        </div>
+
+        <button type="submit">Sign Up</button>
+    </form>
+</div>
+
+{% endblock %}

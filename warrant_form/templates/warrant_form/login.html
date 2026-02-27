@@ -1,0 +1,34 @@
+{% extends 'warrant_form/base.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+<div class="login-container">
+    <div class="login-left-container">
+        <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
+    </div>
+    <div class="login-right-container">
+        <h1>Login</h1>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">Password</label>
+                {{ form.password }}
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p>Don't have an account? <a href="{% url 'awis:signup' %}">Sign up here</a></p>
+    </div>
+</div>
+{% endblock %}
