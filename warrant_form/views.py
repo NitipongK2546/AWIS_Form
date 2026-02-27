@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpRequest, JsonResponse, HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import HttpRequest, JsonResponse
 
 # from formtools.wizard.views import SessionWizardView, CookieWizardView
 
@@ -10,72 +10,7 @@ from warrant_form.doc_create import doc_create_with_context
 
 import json
 
-import warrant_form.request_utils as RequestUtils
-
-#############################################################################
-# API REQUEST
-
-def get_health_check(version : str) -> bool:
-    base_url = RequestUtils.get_full_url_from_env()
-    parameter = [version, "authorize"]
-
-    response : JsonResponse = RequestUtils.get_request(
-        base_url, 
-        parameter_data=parameter
-    )
-    data : dict = response.json()
-    
-    # Response OK.
-    if data.get("status") == "ok":
-        return True
-    
-    return False
-
-def post_login_authorize(version : str, request : HttpRequest, username : str, password : str) -> bool:
-
-    if not get_health_check("v1"):
-        return False
-    
-    base_url = RequestUtils.get_full_url_from_env()
-    parameter = [version, "authorize"]
-
-    post_data = {
-        "username": username,
-        "password": password,
-    }
-    response : JsonResponse = RequestUtils.post_request(
-        base_url, 
-        parameter_data=parameter, 
-        post_data=post_data
-    )
-    data : dict = response.json()
-    
-    # Response OK.
-    if data.get("token"):
-        request.session["bearer_token"] = data.get("token")
-        return True
-    
-    return False
-
-def send_req_form(version : str, request : HttpRequest, post_data : dict) -> bool:
-
-    if not get_health_check("v1"):
-        return False
-
-    base_url = RequestUtils.get_full_url_from_env()
-    parameter = [version, "awis", "reqforms"]
-
-    auth_token : str = RequestUtils.check_auth_token(request)
-    response : JsonResponse = RequestUtils.post_request_with_auth(
-        base_url, 
-        parameter_data=parameter, 
-        post_data=post_data, 
-        auth_token=auth_token
-    )
-    data : dict = response.json()
-
-    if data.get("status"):
-        return True
+import warrant_form.connect_api as AWISConnectAPI
 
 ##############################################################################
 # FORM VIEWS
@@ -124,7 +59,7 @@ def plain_form_submission(request : HttpRequest):
 
             ###################################################################
 
-            success = send_req_form("v1.1", request, cleaned_dict)
+            success = AWISConnectAPI.post_send_req_form("v1.1", request, cleaned_dict)
             
             if not success:
                 raise Exception("Form submission failed.")
