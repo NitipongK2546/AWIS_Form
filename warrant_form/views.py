@@ -45,7 +45,7 @@ def custom_logout(request : HttpRequest):
     return redirect("awis:login")
 
 def index(request : HttpRequest):    
-    main_form = WarrantForm(prefix="main_form")
+    main_form = MainAWISForm(prefix="main_form")
     sub_form = WarrantForm(prefix="sub_form")
 
     context = {
