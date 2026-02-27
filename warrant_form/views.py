@@ -1,13 +1,8 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-<<<<<<< HEAD
-from django.http import HttpRequest, JsonResponse
-
-=======
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login, logout 
 from django.http import HttpRequest, JsonResponse, HttpResponse
->>>>>>> 60215159531cbd76acfa09d822debfda8d81e3fc
 # from formtools.wizard.views import SessionWizardView, CookieWizardView
 from warrant_form.models import WarrantDataModel, MainAWISDataModel
 from warrant_form.forms import WarrantForm, MainAWISForm, SpecialAWISDataFormModelPartOne
