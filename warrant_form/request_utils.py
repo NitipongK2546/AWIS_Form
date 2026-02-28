@@ -1,3 +1,6 @@
+"""
+File สำหรับการรวม Function ที่ส่ง request ไปให้ API Server ในรูปแบบต่าง ๆ โดยใช้ Library "requests" เป็นตัวส่ง
+"""
 import requests
 from requests import RequestException
 
@@ -21,7 +24,7 @@ def get_full_url_from_env(var_name : str = "FULL_API_URL") -> str:
 
 # Request function.
 
-def prepare_request_data(target_url : str, data : dict, parameter_data : list, auth_token : str) -> tuple:
+def _prepare_request_data(target_url : str, data : dict, parameter_data : list, auth_token : str) -> tuple:
     """
     target_url: Base URL ของ Server ที่ต้องการเชื่อมต่อ \n
     data: ข้อมูลที่ส่ง ถ้าเป็น get จะเป็น query/ ถ้าเป็น post จะเป็น data\n
@@ -53,7 +56,7 @@ def prepare_request_data(target_url : str, data : dict, parameter_data : list, a
 
     return (finalized_url, dict_data, dict_header)
 
-def send_request_receive_response(packed_data : tuple, request_type) -> HttpResponse:
+def _send_request_receive_response(packed_data : tuple, request_type) -> HttpResponse:
     """
     packed_data: ข้อมูล url, dict_data, dict_header สำหรับส่ง request
     request_type: เพื่อแยก GET, POST และประเภท dict_data ออกจากกัน
@@ -79,10 +82,10 @@ def send_request_receive_response(packed_data : tuple, request_type) -> HttpResp
     except Exception as e:
         raise RequestException("The API request has failed.")
     
-def send_request(request_type : str, target_url : str, query_data : dict, parameter_data : list, auth_token : str):
+def _send_request(request_type : str, target_url : str, query_data : dict, parameter_data : list, auth_token : str):
 
-    packed_data = prepare_request_data(target_url, query_data, parameter_data, auth_token)
-    response_data = send_request_receive_response(packed_data, request_type)
+    packed_data = _prepare_request_data(target_url, query_data, parameter_data, auth_token)
+    response_data = _send_request_receive_response(packed_data, request_type)
 
     return response_data
 
@@ -96,7 +99,7 @@ def get_request(target_url : str, query_data : dict = None, parameter_data : lis
     REQUEST_TYPE = "GET"
     AUTH_TOKEN = None
 
-    return send_request(REQUEST_TYPE, target_url, query_data, parameter_data, AUTH_TOKEN)
+    return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, AUTH_TOKEN)
     
     
 def post_request(target_url : str, post_data : dict = None, parameter_data : list = None) -> HttpResponse:
@@ -109,7 +112,7 @@ def post_request(target_url : str, post_data : dict = None, parameter_data : lis
     REQUEST_TYPE = "POST"
     AUTH_TOKEN = None
 
-    return send_request(REQUEST_TYPE, target_url, post_data, parameter_data, AUTH_TOKEN)
+    return _send_request(REQUEST_TYPE, target_url, post_data, parameter_data, AUTH_TOKEN)
 
 
 def get_request_with_auth(target_url : str, query_data : dict = None, parameter_data : list = None, auth_token : str = None) -> HttpResponse:
@@ -123,7 +126,7 @@ def get_request_with_auth(target_url : str, query_data : dict = None, parameter_
 
     REQUEST_TYPE = "GET"
 
-    return send_request(REQUEST_TYPE, target_url, query_data, parameter_data, auth_token)
+    return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, auth_token)
     
     
 def post_request_with_auth(target_url : str, post_data : dict = None, parameter_data : list = None, auth_token : str = None) -> HttpResponse:
@@ -138,7 +141,7 @@ def post_request_with_auth(target_url : str, post_data : dict = None, parameter_
 
     REQUEST_TYPE = "POST"
 
-    return send_request(REQUEST_TYPE, target_url, post_data, parameter_data, auth_token)
+    return _send_request(REQUEST_TYPE, target_url, post_data, parameter_data, auth_token)
 
 def put_request_with_auth(target_url : str, put_data : dict = None, parameter_data : list = None, auth_token : str = None) -> HttpResponse:
     """
@@ -152,7 +155,7 @@ def put_request_with_auth(target_url : str, put_data : dict = None, parameter_da
 
     REQUEST_TYPE = "PUT"
 
-    return send_request(REQUEST_TYPE, target_url, put_data, parameter_data, auth_token)
+    return _send_request(REQUEST_TYPE, target_url, put_data, parameter_data, auth_token)
 
 def delete_request_with_auth(target_url : str, query_data : dict = None,  parameter_data : list = None, auth_token : str = None) -> HttpResponse:
     """
@@ -166,4 +169,4 @@ def delete_request_with_auth(target_url : str, query_data : dict = None,  parame
 
     REQUEST_TYPE = "DELETE"
 
-    return send_request(REQUEST_TYPE, target_url, query_data, parameter_data, auth_token)
+    return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, auth_token)

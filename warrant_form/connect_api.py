@@ -1,7 +1,19 @@
-from django.http import HttpRequest, JsonResponse
+"""
+File สำหรับรวม Function ทุกตัว ที่มีไว้สำหรับการส่งข้อมูลให้ API Server\n
+ใส่ข้อมูลตามที่ Function ขอมา แล้วจะได้ข้อมูล Output หรือ ข้อมูลเป็น Boolean ออกมาใช้ต่อ\n
+"""
 
+from django.http import HttpRequest, JsonResponse, HttpResponse
 import warrant_form.request_utils as RequestUtils
 # import base64
+
+# Some special case for status code.
+
+def check_status_code(response : HttpResponse):
+    if response.status_code == "401":
+        raise Exception("Unauthorized. Is the Token expired?")
+    elif response.status_code == "403":
+        raise Exception("Forbidden. Current IP Address perhaps not allowed?")
 
 #############################################################################
 # API REQUEST
