@@ -1,7 +1,5 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth import login, logout 
 from django.http import HttpRequest, JsonResponse
 # from formtools.wizard.views import SessionWizardView, CookieWizardView
 from warrant_form.models import WarrantDataModel, MainAWISDataModel
@@ -14,35 +12,6 @@ import warrant_form.connect_api as AWISConnectAPI
 
 ##############################################################################
 # FORM VIEWS
-def user_login(request : HttpRequest):
-    if request.user.is_authenticated:
-        return redirect("awis:index")
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            if user is not None:
-                login(request, form.get_user())
-                AWISConnectAPI.post_login_authorize("v1.1", request)
-
-            return redirect("awis:index")
-    else:
-        form = AuthenticationForm()
-    return render(request, "warrant_form/login.html", {"form": form})
-
-def signup(request : HttpRequest):
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("awis:login")
-    else:
-        form = UserCreationForm()
-    return render(request, "warrant_form/signup.html", {"form": form})
-
-def custom_logout(request : HttpRequest): 
-    logout(request) 
-    return redirect("awis:login")
 
 def index(request : HttpRequest):    
     main_form = MainAWISForm(prefix="main_form")
@@ -78,10 +47,10 @@ def plain_form_submission(request : HttpRequest):
 
             ###################################################################
 
-            success = AWISConnectAPI.post_send_req_form("v1.1", request, cleaned_dict)
+            # success = AWISConnectAPI.post_send_req_form("v1.1", request, cleaned_dict)
             
-            if not success:
-                raise Exception("Form submission failed.")
+            # if not success:
+            #     raise Exception("Form submission failed.")
 
             return redirect(reverse("awis:success"))
         
