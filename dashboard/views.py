@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpRequest
+from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.decorators import login_required
 
 from dashboard.models import FormApprovalDataContainer
@@ -32,3 +32,45 @@ def approve_form_page(request : HttpRequest):
     return render(request, "dashboard/approve_page.html", {
         "forms": all_forms,
     })
+
+@login_required(login_url="/users/login/")
+def selected_form_to_see_page(request : HttpRequest, form_id : int):
+    selected_form = FormApprovalDataContainer.objects.filter(id=form_id).first()
+
+    return render(request, "dashboard/selected_form_page.html", {
+        "form": selected_form,
+    })
+
+@login_required(login_url="/users/login/")
+def confirm_approve(request : HttpRequest, form_id : int):
+    selected_form = FormApprovalDataContainer.objects.filter(id=form_id).first()
+    if request.method == "POST":
+        selected_form.approve_status = 2
+        selected_form.save()
+
+        return redirect(JsonResponse({
+            "status": "approve success"
+        }))
+
+    return render(request, "dashboard/confirmation_page.html", {
+        "action": "Approve",
+        "form": selected_form,
+    })
+    
+
+@login_required(login_url="/users/login/")
+def confirm_reject(request : HttpRequest, form_id : int):
+    selected_form = FormApprovalDataContainer.objects.filter(id=form_id).first()
+    if request.method == "POST":
+        selected_form.approve_status = 0
+        selected_form.save()
+
+        return redirect(JsonResponse({
+            "status": "reject success"
+        }))
+    
+    return render(request, "dashboard/confirmation_page.html", {
+        "action": "Reject",
+        "form": selected_form,
+    })
+    

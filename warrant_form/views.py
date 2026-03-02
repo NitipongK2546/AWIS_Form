@@ -29,7 +29,7 @@ def index(request : HttpRequest):
     # if request.GET.get("status") == "error":
     #     context.update({"status": "error"})
 
-    return render(request, "warrant_form/index.html", context)
+    return render(request, "warrant_form/reqform.html", context)
 
 @login_required(login_url="/users/login/")
 def plain_form_submission(request : HttpRequest):
@@ -63,7 +63,7 @@ def plain_form_submission(request : HttpRequest):
             # if not success:
             #     raise Exception("Form submission failed.")
 
-            return redirect(reverse("awis:success"))
+            return redirect(reverse("forms:success"))
         
 @login_required(login_url="/users/login/")
 def form_submission(request : HttpRequest):
@@ -93,7 +93,7 @@ def form_submission(request : HttpRequest):
 
                 MainAWISDataModel.objects.create(**cleaned_dict)
 
-                return redirect(reverse("awis:success"))
+                return redirect(reverse("forms:success"))
                 # sub_form = WarrantForm(prefix="sub_form")
             
             except Exception as e:
@@ -109,7 +109,7 @@ def form_submission(request : HttpRequest):
 
     # Not POST request.   
     else:
-        return redirect(reverse("awis:main_page"))
+        return redirect(reverse("forms:first_page"))
 
 @login_required(login_url="/users/login/")
 def success_page(request : HttpRequest):

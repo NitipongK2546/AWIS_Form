@@ -170,3 +170,7 @@ def delete_request_with_auth(target_url : str, query_data : dict = None,  parame
     REQUEST_TYPE = "DELETE"
 
     return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, auth_token)
+
+print("Current API URL Loaded:")
+print(get_full_url_from_env())
+print("")
