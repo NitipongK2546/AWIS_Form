@@ -1,20 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Dashboard</h1>
+{% extends 'dashboard/base.html' %}
+{% load static %}
 
-    <p><a href="{% url 'forms:first_page' %}">CREATE NEW FORM</a></p>
-    <p><a href="{% url 'dashboard:approve_form_page' %}">APPROVE FORM</a></p>
+{% block title %}Dashboard{% endblock %}
 
-    {% for form in forms %}
-    <p>{{ form }}</p>
-    {% empty %}
-    <p>No form available.</p>
-    {% endfor %}
-</body>
-</html>
+{% block body %}
+<h1>Dashboard</h1>
+
+<p><a href="{% url 'forms:first_page' %}">CREATE NEW FORM</a></p>
+<p><a href="{% url 'dashboard:approve_form_page' %}">APPROVE FORM</a></p>
+
+{% for form in forms %}
+<p>{{ form }}</p>
+{% empty %}
+<p>No form available.</p>
+{% endfor %}
+{% endblock %}

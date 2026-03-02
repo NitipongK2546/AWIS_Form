@@ -12,7 +12,7 @@
 
 <div class="signup-container">
     <div class="signup-header">
-        <a href="{% url 'users:logout' %}" class="back-button">
+        <a href="{% url 'admin_panel:collections' %}" class="back-button">
             <span class="material-icons">arrow_back_ios</span>
             Back
         </a>
@@ -27,12 +27,22 @@
         </div>
 
         <div class="form-group">
-            <label for="id_password1">Password</label>
+            <label for="id_first_name">ชื่อ</label>
+            {{ form.first_name }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_last_name">นามสกุล</label>
+            {{ form.last_name }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password1">รหัสผ่าน</label>
             {{ form.password1 }}
         </div>
 
         <div class="form-group">
-            <label for="id_password2">Confirm Password</label>
+            <label for="id_password2">ยืนยันรหัส</label>
             {{ form.password2 }}
         </div>
 

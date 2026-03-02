@@ -33,7 +33,7 @@ class FormApprovalDataContainer(models.Model):
     approve_status = models.IntegerField(choices=ApprovalStatus)
 
     def __str__(self):
-        converted_date = self.date_created.astimezone(ZoneInfo("Asia/Bangkok")).strftime("%d/%B/%Y, %H:%M")
+        converted_date = self.date_created.astimezone(ZoneInfo("Asia/Bangkok")).strftime("%d %B %Y, %H:%M")
         finalized_date = f"{converted_date} น."
         
         return f"{self.get_approve_status_display()} | {self.form_creator} | {finalized_date}"

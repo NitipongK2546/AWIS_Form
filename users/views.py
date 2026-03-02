@@ -9,16 +9,17 @@ import api.connect_api as AWISConnectAPI
 
 def user_login(request : HttpRequest):
     if request.user.is_authenticated:
-        return redirect("awis:index")
+        return redirect("dashboard:dashboard")
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             if user is not None:
                 login(request, form.get_user())
-                # AWISConnectAPI.post_login_authorize("v1.1", request)
+                if user.is_superuser:
+                    return redirect("admin_panel:collections")
 
-            return redirect("dashboard:dashboard")
+                return redirect("dashboard:dashboard")
     else:
         form = AuthenticationForm()
     return render(request, "users/login.html", {"form": form})
