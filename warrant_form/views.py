@@ -8,9 +8,9 @@ from django.contrib.auth.decorators import login_required
 from warrant_form.models import WarrantDataModel, MainAWISDataModel
 from warrant_form.forms import WarrantForm, MainAWISForm, SpecialAWISDataFormModelPartOne
 from warrant_form.doc_create import doc_create_with_context
-import warrant_form.connect_api as AWISConnectAPI
 
 from dashboard.models import FormApprovalDataContainer
+from users.models import UserDataModel
 
 ##############################################################################
 # FORM VIEWS
@@ -51,8 +51,10 @@ def plain_form_submission(request : HttpRequest):
 
             awis_obj.save()
             awis_obj.warrants.add(warrant_obj)
+
+            user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
             
-            FormApprovalDataContainer.objects.create(form=awis_obj, form_creator=request.user, form_owner=request.user)
+            FormApprovalDataContainer.objects.create(form=awis_obj, form_creator=user_obj, form_owner=user_obj, approve_status=1)
 
             ###################################################################
 

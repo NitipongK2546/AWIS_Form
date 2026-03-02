@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Exit on error
+set -o errexit
+
+# Set Variable to cd on current scripts dir.
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# "$DIR/print_dir.sh"
+
+# Start by migrating...
+"$DIR/quick_migrate.sh"
+
+# Add collectstatic later if we have to.
+#
+# python manage.py collectstatic --no-input
+#
+# I'll need to add STATIC_ROOT later.
+
+export DJANGO_SUPERUSER_USERNAME=admin
+export DJANGO_SUPERUSER_EMAIL=admin@example.com
+export DJANGO_SUPERUSER_PASSWORD=adminpass999999
+
+python manage.py createsuperuser --no-input
+unset DJANGO_SUPERUSER_USERNAME DJANGO_SUPERUSER_EMAIL DJANGO_SUPERUSER_PASSWORD
+

@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login, logout 
 from django.http import HttpRequest
 
-import warrant_form.connect_api as AWISConnectAPI
+import api.connect_api as AWISConnectAPI
 
 # Create your views here.
 
@@ -18,21 +18,11 @@ def user_login(request : HttpRequest):
                 login(request, form.get_user())
                 # AWISConnectAPI.post_login_authorize("v1.1", request)
 
-            return redirect("awis:index")
+            return redirect("dashboard:dashboard")
     else:
         form = AuthenticationForm()
     return render(request, "users/login.html", {"form": form})
 
-# def signup(request : HttpRequest):
-#     if request.method == "POST":
-#         form = UserCreationForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect("awis:login")
-#     else:
-#         form = UserCreationForm()
-#     return render(request, "users/signup.html", {"form": form})
-
 def custom_logout(request : HttpRequest): 
     logout(request) 
-    return redirect("awis:login")
+    return redirect("users:login")

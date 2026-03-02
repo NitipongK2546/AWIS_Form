@@ -22,6 +22,9 @@ class UserDataModel(models.Model):
     # May be unused. Here for now.
     api_uid = models.IntegerField(blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
+
     
 
 

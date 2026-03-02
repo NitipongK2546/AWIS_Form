@@ -9,7 +9,7 @@
     <h1>Dashboard</h1>
 
     <p><a href="{% url 'awis:index' %}">CREATE NEW FORM</a></p>
-    <p><a href="{% url 'dashboard:approve_form' %}">APPROVE FORM</a></p>
+    <p><a href="{% url 'dashboard:approve_form_page' %}">APPROVE FORM</a></p>
 
     {% for form in forms %}
     <p>{{ form }}</p>
