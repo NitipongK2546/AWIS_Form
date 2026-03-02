@@ -58,7 +58,7 @@ class WarrantDataModel(models.Model):
     woa_end_date = models.CharField(max_length=10, blank=True, null=True) # MAYBE TIMEFIELD INSTEAD OF DATEFIELD??
     woa_refno = models.CharField(max_length=10, blank=True)
 
-    def toAPICompatibleDict(self) -> dict[str, object]:
+    def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:
         """
         Convert the model object into a dictionary that fits what the API required.
         It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
@@ -89,6 +89,12 @@ class WarrantDataModel(models.Model):
 
         for key in empty_key_list:
             dict_warrant.pop(key)
+
+        prefixed_dict = {}
+        if prefix:
+            prefixed_dict = {f"{prefix}-{key}":value for key, value in dict_warrant.items()}
+
+            return prefixed_dict
 
         return dict_warrant
 
@@ -169,7 +175,7 @@ class MainAWISDataModel(models.Model):
     # ManyToMany อยู่ในนี้เพราะถ้ามีการแก้ไขก็คิดว่าต้องแก้ใน AWIS Form 
     warrants = models.ManyToManyField(WarrantDataModel)
 
-    def toAPICompatibleDict(self) -> dict[str, object]:
+    def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:
         """
         Convert the model object into a dictionary that fits what the API required.
         It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
@@ -201,16 +207,27 @@ class MainAWISDataModel(models.Model):
         for key in empty_key_list:
             dict_main_awis.pop(key)
 
+        prefixed_dict = {}
+        if prefix:
+            prefixed_dict = {f"{prefix}-{key}":value for key, value in dict_main_awis.items()}
+
+            return prefixed_dict
+
         return dict_main_awis
     
-    def toAPICompatibleDictWithConvertedWarrants(self) -> dict[str, object]:
-        cleaned_dict = self.toAPICompatibleDict()
+
+    
+    def toAPICompatibleDictWithConvertedWarrants(self, prefix : str = None) -> dict[str, object]:
+        cleaned_dict = self.toAPICompatibleDict(prefix)
 
         warrants_obj = self.warrants.all()
         warrants_list = [item.toAPICompatibleDict() for item in warrants_obj]
 
-        cleaned_dict.update({"warrants": warrants_list})
-
+        if prefix:
+            cleaned_dict.update({f"{prefix}_warrants": warrants_list})
+            return cleaned_dict
+        
+        cleaned_dict.update({f"warrants": warrants_list})
         return cleaned_dict
         
         

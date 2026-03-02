@@ -3,6 +3,9 @@ from django.urls import reverse
 from django.http import HttpRequest
 from django.contrib.auth.decorators import login_required
 
+from warrant_form.forms import MainAWISForm, WarrantForm
+from warrant_form.models import MainAWISDataModel, WarrantDataModel
+
 from dashboard.models import FormApprovalDataContainer as FormData
 from users.models import UserDataModel
 
@@ -84,4 +87,45 @@ def confirm_reject(request : HttpRequest, form_id : int):
 def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {
         "user": request.user,
+    })
+
+######################################################################
+#EDIT THE FORM
+
+@login_required(login_url="/users/login/")
+def select_form_to_edit(request : HttpRequest, form_id : int):
+    selected_form = FormData.objects.filter(id=form_id).first()
+
+    if request.method == "POST":
+        main_form = MainAWISForm(request.POST, prefix="main_form")
+        sub_form = WarrantForm(request.POST, prefix="sub_form")
+
+        if main_form.is_valid():
+            awis_obj : MainAWISDataModel = main_form.save(commit=False)
+            warrant_obj : WarrantDataModel = sub_form.save()
+
+            awis_obj.save()
+            awis_obj.warrants.add(warrant_obj)
+            
+            # The old object is replaced by the new one.
+            selected_form.form = awis_obj
+            # Enable approval again.
+            selected_form.approve_status = FormData.ApprovalStatus.PENDING
+
+            selected_form.save()
+
+            return redirect(reverse("dashboard:success_page"))
+    
+    form_obj : MainAWISDataModel = selected_form.form.toAPICompatibleDict("main_form")
+    warrants_list : list[WarrantDataModel] = selected_form.form.warrants.all()[0].toAPICompatibleDict("sub_form")
+
+    main_form = MainAWISForm(form_obj, prefix="main_form")
+    sub_form = WarrantForm(warrants_list, prefix="sub_form")
+
+    return render(request, "dashboard/reqform.html", {
+        "main_form": main_form,
+        "sub_form": sub_form,
+        "user": request.user,
+        "action": "Edit",
+        "form": selected_form,
     })

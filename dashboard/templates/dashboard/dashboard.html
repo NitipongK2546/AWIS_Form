@@ -10,7 +10,12 @@
 <p><a href="{% url 'dashboard:approve_form_page' %}">APPROVE FORM</a></p>
 
 {% for form in forms %}
-<p>{{ form }}</p>
+<p>
+    {{ form }} 
+    {% if form.approve_status <= 1 %}
+    <a href="{% url 'dashboard:edit_form' form.id %}">แก้ไขแบบฟอร์ม</a>
+    {% endif %}
+</p>
 {% empty %}
 <p>No form available.</p>
 {% endfor %}

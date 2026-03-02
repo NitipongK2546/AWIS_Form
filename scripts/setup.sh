@@ -11,6 +11,8 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 # Start by migrating...
 "$DIR/quick_migrate.sh"
 
+"python $DIR/setup_group.py"
+
 # Add collectstatic later if we have to.
 #
 # python manage.py collectstatic --no-input
