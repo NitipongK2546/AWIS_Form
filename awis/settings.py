@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'warrant_form',
-    'formtools',
+    'users'
 ]
 
 MIDDLEWARE = [
