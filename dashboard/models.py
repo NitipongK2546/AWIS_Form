@@ -1,5 +1,6 @@
 from django.db import models
-from warrant_form.forms import SpecialAWISDataFormModelPartOne
+# from warrant_form.forms import SpecialAWISDataFormModelPartOne
+from warrant_form.models import MainAWISDataModel
 
 from users.models import UserDataModel
 
@@ -20,9 +21,9 @@ class FormApprovalDataContainer(models.Model):
         PENDING = (1, "กำลังรอพิจารณา")
         APPROVED = (2, "ผ่านการอนุมัติ")
     
-    form = models.OneToOneField(SpecialAWISDataFormModelPartOne, on_delete=models.CASCADE)
+    form = models.OneToOneField(MainAWISDataModel, on_delete=models.CASCADE)
 
-    date_created = models.DateTimeField()
+    date_created = models.DateTimeField(auto_now_add=True)
     date_approved = models.DateTimeField(blank=True, null=True)
 
     form_creator = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="created_form")

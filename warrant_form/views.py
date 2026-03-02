@@ -1,18 +1,21 @@
+import json
+
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpRequest, JsonResponse
-# from formtools.wizard.views import SessionWizardView, CookieWizardView
+from django.contrib.auth.decorators import login_required
+
 from warrant_form.models import WarrantDataModel, MainAWISDataModel
 from warrant_form.forms import WarrantForm, MainAWISForm, SpecialAWISDataFormModelPartOne
 from warrant_form.doc_create import doc_create_with_context
-
-import json
-
 import warrant_form.connect_api as AWISConnectAPI
+
+from dashboard.models import FormApprovalDataContainer
 
 ##############################################################################
 # FORM VIEWS
 
+@login_required(login_url="/users/login/")
 def index(request : HttpRequest):    
     main_form = MainAWISForm(prefix="main_form")
     sub_form = WarrantForm(prefix="sub_form")
@@ -28,6 +31,7 @@ def index(request : HttpRequest):
 
     return render(request, "warrant_form/index.html", context)
 
+@login_required(login_url="/users/login/")
 def plain_form_submission(request : HttpRequest):
     # The expected outcome.
     if request.method == "POST":
@@ -45,6 +49,11 @@ def plain_form_submission(request : HttpRequest):
 
             cleaned_dict.update({"warrants": warrants_list})
 
+            awis_obj.save()
+            awis_obj.warrants.add(warrant_obj)
+            
+            FormApprovalDataContainer.objects.create(form=awis_obj, form_creator=request.user, form_owner=request.user)
+
             ###################################################################
 
             # success = AWISConnectAPI.post_send_req_form("v1.1", request, cleaned_dict)
@@ -54,7 +63,7 @@ def plain_form_submission(request : HttpRequest):
 
             return redirect(reverse("awis:success"))
         
-
+@login_required(login_url="/users/login/")
 def form_submission(request : HttpRequest):
     # The expected outcome.
     if request.method == "POST":
@@ -100,6 +109,7 @@ def form_submission(request : HttpRequest):
     else:
         return redirect(reverse("awis:main_page"))
 
+@login_required(login_url="/users/login/")
 def success_page(request : HttpRequest):
     return JsonResponse({
         "status_code": "200",
