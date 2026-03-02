@@ -3,15 +3,16 @@
 # Exit on error
 set -o errexit
 
-# Set Variable to cd on current scripts dir.
 DIR="$(cd "$(dirname "$0")" && pwd)"
+
+python --version
 
 # "$DIR/print_dir.sh"
 
 # Start by migrating...
 "$DIR/quick_migrate.sh"
 
-"python $DIR/setup_group.py"
+python manage.py shell < "$DIR/setup_group.py"
 
 # Add collectstatic later if we have to.
 #
