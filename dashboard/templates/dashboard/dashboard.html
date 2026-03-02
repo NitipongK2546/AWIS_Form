@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+
+    <p><a href="{% url 'awis:index' %}">CREATE NEW FORM</a></p>
+    <p><a href="{% url 'awis:index' %}">APPROVE FORM</a></p>
+
+    {% for form in forms %}
+    <p>{{ form }}</p>
+    {% empty %}
+    <p>No form available.</p>
+    {% endfor %}
+</body>
+</html>
