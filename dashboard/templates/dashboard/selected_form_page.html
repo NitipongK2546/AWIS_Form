@@ -9,6 +9,7 @@
     <h1>Approve THIS Form NOWWWWWWWWWWWW</h1>
 
     {{ form }}
+    <pre>{{ data }}</pre>
 
     <p><a href="{% url 'dashboard:confirm_approve' form.id %}">APPROVE</a></p>
     <p><a href="{% url 'dashboard:confirm_reject' form.id %}">REJECT</a></p>

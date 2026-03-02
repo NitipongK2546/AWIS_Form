@@ -182,27 +182,6 @@ class MainAWISDataModel(models.Model):
 
         dict_main_awis = model_to_dict(self)
 
-        # DATEHALF_STR = "scene_date_datehalf"
-        # TIMEHALF_STR = "scene_date_timehalf"
-
-        # buddhist_date_half = dict_main_awis.get(DATEHALF_STR)
-        # time_half = dict_main_awis.get(TIMEHALF_STR)
-
-        # if buddhist_date_half and time_half:
-        #     # First, we have to convert Year: B.E. to A.D.
-        #     BUDDHIST_ERA_YEAR_DIFF = 543
-        #     one_year = datetime.timedelta(days=365)
-        #     buddhist_era_difference_datetime = BUDDHIST_ERA_YEAR_DIFF * one_year
-
-        #     iso_date_half = buddhist_date_half - buddhist_era_difference_datetime
-
-        #     # Leave a space between date and time.
-        #     full_datetime = f"{iso_date_half} {time_half}"
-        #     dict_main_awis.update({"scene_date": full_datetime})
-
-        #     dict_main_awis.pop(DATEHALF_STR, None)
-        #     dict_main_awis.pop(TIMEHALF_STR, None)
-
         dict_main_awis.pop("id", None)
 
         empty_key_list = []
@@ -223,4 +202,15 @@ class MainAWISDataModel(models.Model):
             dict_main_awis.pop(key)
 
         return dict_main_awis
+    
+    def toAPICompatibleDictWithConvertedWarrants(self) -> dict[str, object]:
+        cleaned_dict = self.toAPICompatibleDict()
+
+        warrants_obj = self.warrants.all()
+        warrants_list = [item.toAPICompatibleDict() for item in warrants_obj]
+
+        cleaned_dict.update({"warrants": warrants_list})
+
+        return cleaned_dict
+        
         

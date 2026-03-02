@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest
 from django.contrib.auth.decorators import login_required
 
 from dashboard.models import FormApprovalDataContainer
 from users.models import UserDataModel
 
 import api.connect_api as AWISConnectAPI
+
+import json
 
 # Create your views here.
 
@@ -39,6 +41,7 @@ def selected_form_to_see_page(request : HttpRequest, form_id : int):
 
     return render(request, "dashboard/selected_form_page.html", {
         "form": selected_form,
+        "data": json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=4),
     })
 
 @login_required(login_url="/users/login/")
@@ -48,9 +51,9 @@ def confirm_approve(request : HttpRequest, form_id : int):
         selected_form.approve_status = 2
         selected_form.save()
 
-        return redirect(JsonResponse({
-            "status": "approve success"
-        }))
+        # AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
+
+        return redirect(reverse("dashboard:success_page"))
 
     return render(request, "dashboard/confirmation_page.html", {
         "action": "Approve",
@@ -65,12 +68,14 @@ def confirm_reject(request : HttpRequest, form_id : int):
         selected_form.approve_status = 0
         selected_form.save()
 
-        return redirect(JsonResponse({
-            "status": "reject success"
-        }))
+        return redirect(reverse("dashboard:success_page"))
     
     return render(request, "dashboard/confirmation_page.html", {
         "action": "Reject",
         "form": selected_form,
     })
-    
+
+@login_required(login_url="/users/login/")
+def success_page(request : HttpRequest):
+    return render(request, "dashboard/success_page.html", {
+    })

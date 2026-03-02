@@ -9,7 +9,13 @@
     <h1>Approve Form</h1>
 
     {% for form in forms %}
-    <p><a href="{% url 'dashboard:get_form' form.id %}">{{ form }}</a></p>
+        <p>
+        {% if form.approve_status == 1 %}
+            <a href="{% url 'dashboard:get_form' form.id %}">{{ form }}</a>
+        </p>
+        {% else %}
+            {{ form }}
+        {% endif %}
     {% empty %}
     <p>No form available.</p>
     {% endfor %}

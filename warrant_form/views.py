@@ -52,6 +52,8 @@ def plain_form_submission(request : HttpRequest):
             awis_obj.save()
             awis_obj.warrants.add(warrant_obj)
 
+            print(awis_obj.toAPICompatibleDictWithConvertedWarrants())
+
             user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
             
             FormApprovalDataContainer.objects.create(form=awis_obj, form_creator=user_obj, form_owner=user_obj, approve_status=1)
