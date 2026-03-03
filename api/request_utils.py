@@ -56,22 +56,25 @@ def _prepare_request_data(target_url : str, data : dict, parameter_data : list, 
 
     return (finalized_url, dict_data, dict_header)
 
-def _send_request_receive_response(packed_data : tuple, request_type) -> HttpResponse:
+def _send_request_receive_response(packed_data : tuple, request_type : str) -> HttpResponse:
     """
-    packed_data: ข้อมูล url, dict_data, dict_header สำหรับส่ง request
-    request_type: เพื่อแยก GET, POST และประเภท dict_data ออกจากกัน
+    packed_data: ข้อมูล url, dict_data, dict_header สำหรับส่ง request\n
+    request_type: เพื่อแยก GET, POST และประเภท dict_data ออกจากกัน\n
     """
+    REQUEST_DICT : dict[str, function] = {
+        "GET": requests.get,
+        "POST": requests.post,
+        "PUT": requests.put,
+        "DELETE": requests.delete,
+    }
+
     final_url, dict_data, dict_header = packed_data
     try:
-        if request_type == "GET":
-            response : JsonResponse = requests.get(final_url, params=dict_data, headers=dict_header)
-        elif request_type == "POST":
-            response : JsonResponse = requests.post(final_url, data=dict_data, headers=dict_header)
-        elif request_type == "PUT":
-            response : JsonResponse = requests.put(final_url, data=dict_data, headers=dict_header)
-        elif request_type == "DELETE":
-            response : JsonResponse = requests.delete(final_url, params=dict_data, headers=dict_header)
-        else: 
+        if request_type in ["GET", "DELETE"]:
+            response : JsonResponse = REQUEST_DICT.get(request_type)(final_url, headers=dict_header, params=dict_data, )
+        elif request_type in ["POST", "PUT"]:
+            response : JsonResponse = REQUEST_DICT.get(request_type)(final_url, headers=dict_header, data=dict_data, )
+        else:
             raise RequestException("Unsupported Method.")
 
         # Get response data either way.
@@ -89,6 +92,11 @@ def _send_request(request_type : str, target_url : str, query_data : dict, param
 
     return response_data
 
+##############################################################################
+#
+# The function people actually calls.
+#
+
 def get_request(target_url : str, query_data : dict = None, parameter_data : list = None) -> HttpResponse:
     """
     target_url: Base URL ของ API Server ที่ต้องการเชื่อมต่อ \n
@@ -100,20 +108,6 @@ def get_request(target_url : str, query_data : dict = None, parameter_data : lis
     AUTH_TOKEN = None
 
     return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, AUTH_TOKEN)
-    
-    
-def post_request(target_url : str, post_data : dict = None, parameter_data : list = None) -> HttpResponse:
-    """
-    target_url: Base URL ของ API Server ที่ต้องการเชื่อมต่อ \n
-    post_data: ข้อมูลที่ส่ง เป็นแบบ Dictionary \n
-    parameter_data: Directory ใส่เพิ่มเติมหลังจาก Base URL เช่น example.com/param1 \n 
-    """
-
-    REQUEST_TYPE = "POST"
-    AUTH_TOKEN = None
-
-    return _send_request(REQUEST_TYPE, target_url, post_data, parameter_data, AUTH_TOKEN)
-
 
 def get_request_with_auth(target_url : str, query_data : dict = None, parameter_data : list = None, auth_token : str = None) -> HttpResponse:
     """
@@ -127,7 +121,20 @@ def get_request_with_auth(target_url : str, query_data : dict = None, parameter_
     REQUEST_TYPE = "GET"
 
     return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, auth_token)
+
+##########################################################################################################
     
+def post_request(target_url : str, post_data : dict = None, parameter_data : list = None) -> HttpResponse:
+    """
+    target_url: Base URL ของ API Server ที่ต้องการเชื่อมต่อ \n
+    post_data: ข้อมูลที่ส่ง เป็นแบบ Dictionary \n
+    parameter_data: Directory ใส่เพิ่มเติมหลังจาก Base URL เช่น example.com/param1 \n 
+    """
+
+    REQUEST_TYPE = "POST"
+    AUTH_TOKEN = None
+
+    return _send_request(REQUEST_TYPE, target_url, post_data, parameter_data, AUTH_TOKEN)
     
 def post_request_with_auth(target_url : str, post_data : dict = None, parameter_data : list = None, auth_token : str = None) -> HttpResponse:
     """
@@ -142,6 +149,8 @@ def post_request_with_auth(target_url : str, post_data : dict = None, parameter_
     REQUEST_TYPE = "POST"
 
     return _send_request(REQUEST_TYPE, target_url, post_data, parameter_data, auth_token)
+
+##########################################################################################################
 
 def put_request_with_auth(target_url : str, put_data : dict = None, parameter_data : list = None, auth_token : str = None) -> HttpResponse:
     """
