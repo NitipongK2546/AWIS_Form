@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, JsonResponse
 from admin_panel.forms import CustomizedUserCreationForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+
+from users.models import UserDataModel
 
 FORBIDDEN_MSG = JsonResponse({
                 "status": "403",
@@ -19,6 +21,13 @@ def collections(request : HttpRequest):
 
     return render(request, "admin_panel/collections.html")
 
+role_dict = {
+    "0": "Employee",
+    "1": "Manager",
+    "2": "Director",
+    "99": "System Admin",
+}
+
 @login_required(login_url="/users/login/")
 def signup(request : HttpRequest):
     if not request.user.is_superuser:
@@ -27,13 +36,23 @@ def signup(request : HttpRequest):
     if request.method == "POST":
         form = CustomizedUserCreationForm(request.POST)
         if form.is_valid():
-            user_obj : User = form.save()
+            try:
+                user_obj : User = form.save()
+                user_obj.is_active = False
+                user_obj.save()
 
-            user_obj.is_active = False
+                data = form.cleaned_data
+                selected_role = data.get("role")
 
-            user_obj.save()
+                UserDataModel.objects.create(user=user_obj, role=selected_role)
 
-            return redirect("admin_panel:collections")
+                selected_group = Group.objects.filter(name=role_dict.get(str(selected_role))).first()
+
+                user_obj.groups.add(selected_group)
+
+                return redirect("admin_panel:collections")
+            except Exception as e:
+                raise Exception(e)
     else:
         form = CustomizedUserCreationForm()
     return render(request, "users/signup.html", {"form": form})
