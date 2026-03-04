@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.decorators import login_required
 
 from warrant_form.forms import MainAWISForm, WarrantForm
@@ -30,8 +30,15 @@ def dashboard(request : HttpRequest):
         "forms": all_forms,
     })
 
+#######################################################3
+#
+# FORM APPROVE SECTION
+#
+
 @login_required(login_url="/users/login/")
 def approve_form_page(request : HttpRequest):
+    if not request.user.has_perm("dashboard.can_approve_form"):
+        return HttpResponseForbidden("403 Forbidden: No Permission")
 
     all_forms = FormData.objects.all()
 
@@ -42,6 +49,9 @@ def approve_form_page(request : HttpRequest):
 
 @login_required(login_url="/users/login/")
 def selected_form_to_see_page(request : HttpRequest, form_id : int):
+    if not request.user.has_perm("dashboard.can_approve_form"):
+        return HttpResponseForbidden("403 Forbidden: No Permission")
+    
     selected_form = FormData.objects.filter(id=form_id).first()
 
     return render(request, "dashboard/selected_form_page.html", {
@@ -52,6 +62,9 @@ def selected_form_to_see_page(request : HttpRequest, form_id : int):
 
 @login_required(login_url="/users/login/")
 def confirm_approve(request : HttpRequest, form_id : int):
+    if not request.user.has_perm("dashboard.can_approve_form"):
+        return HttpResponseForbidden("403 Forbidden: No Permission")
+
     selected_form = FormData.objects.filter(id=form_id).first()
     if request.method == "POST":
         selected_form.approve_status = FormData.ApprovalStatus.APPROVED
@@ -70,6 +83,9 @@ def confirm_approve(request : HttpRequest, form_id : int):
 
 @login_required(login_url="/users/login/")
 def confirm_reject(request : HttpRequest, form_id : int):
+    if not request.user.has_perm("dashboard.can_approve_form"):
+        return HttpResponseForbidden("403 Forbidden: No Permission")
+
     selected_form = FormData.objects.filter(id=form_id).first()
     if request.method == "POST":
         selected_form.approve_status = FormData.ApprovalStatus.REJECTED
@@ -95,6 +111,13 @@ def success_page(request : HttpRequest):
 @login_required(login_url="/users/login/")
 def select_form_to_edit(request : HttpRequest, form_id : int):
     selected_form = FormData.objects.filter(id=form_id).first()
+    current_user = request.user
+
+    if not ((current_user == selected_form.form_creator.user) or (current_user == selected_form.form_owner.user)):
+        return JsonResponse({
+            "status": 403,
+            "message": "Not the owner or creator."
+        }, status=403)
 
     if request.method == "POST":
         main_form = MainAWISForm(request.POST, prefix="main_form")
