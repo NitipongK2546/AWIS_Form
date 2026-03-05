@@ -81,7 +81,7 @@ class AWISFormStep1(forms.ModelForm):
         thai_codes = ThaiCountryAreaCode()
 
         model = ReqformDataModel
-        exclude = ["scene_date"]
+        exclude = ["warrants",]
         widgets = {
             'req_year': forms.Select(choices=year_choices),
             'req_day': forms.Select(choices=day_choices,),

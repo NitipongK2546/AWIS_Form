@@ -11,5 +11,6 @@ urlpatterns = [
     ######################################################################
 
     path('submit/<int:step>', views.form_submission, name="submit"),
-    path('create-reqform/step1/', views.step1_reqform, name="step1-reqform")
+    path('create-reqform/step1/', views.step1_reqform, name="step1"),
+    path('create-reqform/step2/', views.step2_warrantform, name="step2"),
 ]

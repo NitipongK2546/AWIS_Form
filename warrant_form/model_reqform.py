@@ -113,7 +113,7 @@ class ReqformDataModel(models.Model):
     scene_date_year = models.PositiveIntegerField(blank=True, null=True)
 
     scene_date_timehalf = models.TimeField(blank=True, null=True) 
-    scene_date = models.CharField(max_length=19, blank=True) 
+    # scene_date = models.CharField(max_length=19, blank=True) 
 
     act = models.CharField(max_length=500, verbose_name="มีพฤติการกระทำความผิด", blank=True)
     law = models.CharField(max_length=200, verbose_name="ตามกฎหมาย", blank=True)
@@ -135,12 +135,26 @@ class ReqformDataModel(models.Model):
     composer_name = models.CharField(max_length=200, blank=True)
     composer_position = models.CharField(max_length=200, blank=True)
     writer_name = models.CharField(max_length=200, blank=True)
-    #############################################
-    # THE FILE SAID "write_position" BUT IS IT "write" or "writer"?
-    # CHECK LATERRRRRRRRRRRRRRRRR
-    writer_position = models.CharField(max_length=200, blank=True)
+    write_position = models.CharField(max_length=200, blank=True)
 
     create_uid = models.IntegerField()
+
+    #######################
+
+    # woa_start_date_day = models.PositiveIntegerField(blank=True, null=True)
+    # woa_start_date_month = models.PositiveIntegerField(blank=True, null=True)
+    # woa_start_date_year = models.PositiveIntegerField(blank=True, null=True)
+
+    # woa_start_date_timehalf = models.TimeField(blank=True, null=True) 
+
+
+    # woa_end_date_day = models.PositiveIntegerField(blank=True, null=True)
+    # woa_end_date_month = models.PositiveIntegerField(blank=True, null=True)
+    # woa_end_date_year = models.PositiveIntegerField(blank=True, null=True)
+
+    # woa_end_date_timehalf = models.TimeField(blank=True, null=True) 
+
+
     #############################################
 
     #####################################################################3

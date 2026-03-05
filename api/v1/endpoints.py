@@ -28,6 +28,10 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     #     "accept_date": "2006-01-02T00:00:00"
     # }
 
+    return JsonResponse({
+        "status": "success",
+    })
+
     
 
 def update_status_warrant(request : HttpRequest) -> JsonResponse:
@@ -46,7 +50,11 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
     
     # Data confirm to be dictionary.   
 
-    print(data)
+    # print(data)
+
+    return JsonResponse({
+        "status": "success",
+    })
 
 
         

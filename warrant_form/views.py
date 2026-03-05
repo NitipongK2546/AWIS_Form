@@ -4,7 +4,7 @@ from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.decorators import login_required
 
 from warrant_form.test_models import WarrantDataModel, MainAWISDataModel
-from warrant_form.forms import WarrantForm, MainAWISForm, AWISFormStep1
+from warrant_form.forms import WarrantForm, MainAWISForm, AWISFormStep1, ReqformDataModel
 from warrant_form.doc_create import doc_create_with_context
 
 # from warrant_form.forms_visual import VisualReqForm
@@ -73,14 +73,15 @@ def form_submission(request : HttpRequest, step : int):
     # The expected outcome.
     if request.method == "POST":
         try:
-            if step == 1:
-                step1_confirm(request)
-            if step == 2:
-                step2_confirm(request)
-            else:
-                return JsonResponse({
-                    "message": "Invalid Step"
-                })
+            pass
+            # if step == 1:
+            #     step1_confirm(request)
+            # if step == 2:
+            #     step2_confirm(request)
+            # else:
+            #     return JsonResponse({
+            #         "message": "Invalid Step"
+            #     })
         
         except Exception as e:
             print("@***EXCEPTION OCCURED:", e  ,"***")
@@ -100,29 +101,63 @@ def step1_reqform(request : HttpRequest):
         form = AWISFormStep1(request.POST, prefix="main_form")
 
         if form.is_valid():
-            next_form = WarrantForm()
-            return render(request, "warrant_form/awis_step2.html", {
-                "form": next_form,
-                "step": 1,
-            })
-        else:
-            print(form.errors.as_text())
-            return render(request, "warrant_form/awis_step1.html", {
-                "form": form,
-                "step": 1,
-            })
+            data = form.cleaned_data
+            reqform : ReqformDataModel = form.save()
 
-    form = AWISFormStep1(prefix="main_form")
+            request.session.update({
+                "step1": data,
+                "reqform_id": reqform.id,
+            })
+            return redirect(reverse("forms:step2"))
+
+    old_data = request.session.get("step1")
+    form = AWISFormStep1(initial=old_data, prefix="main_form")
     return render(request, "warrant_form/awis_step1.html", {
         "form": form,
         "step": 1,
     })
 
-def step1_confirm(request : HttpRequest):
-    pass
+def step2_warrantform(request : HttpRequest):
+    if request.method == "POST":
+        form = WarrantForm(request.POST)
 
-def step2_warrantform():
-    pass
+        if form.is_valid():
+            # data = form.cleaned_data
+            # request.session.update({
+            #     "step2": data,
+            # })
 
-def step2_confirm():
-    pass
+            warrant : WarrantDataModel = form.save()
+
+            form_id = request.session.get("reqform_id")
+            reqform = ReqformDataModel.objects.filter(id=form_id).first()
+
+            if reqform:
+                reqform.warrants.add(warrant)
+
+            print(reqform.toAPICompatibleDict())
+
+            request.session.pop("step1", None)
+            request.session.pop("step2", None)
+
+            return JsonResponse({
+                "status": "nice"
+            })
+        else:
+            print(form.errors.as_text())
+            return render(request, "warrant_form/awis_step2.html", {
+                "form": form,
+                "step": 2,
+            })
+        
+    if not request.session.get("step1"):
+        return redirect(reverse("forms:step1"))
+
+    form = WarrantForm()
+    return render(request, "warrant_form/awis_step2.html", {
+        "form": form,
+        "step": 2,
+    })
+
+# def step3_confirmation(request : HttpRequest):
+#     pass
