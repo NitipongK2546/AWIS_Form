@@ -4,9 +4,12 @@ from warrant_form import views
 app_name = "forms"
 
 urlpatterns = [
-    # path('', views.AWISFormWizard.as_view(ALL_FORMS), name="main_page"),
-    path("", views.index, name="first_page"),
+    path("", views.plain_form, name="plain-form"),
     path('plain-submit/', views.plain_form_submission, name="plain-submit"),
-    path('submit/', views.form_submission, name="submit"),
     path('success/', views.success_page, name="success"),
+
+    ######################################################################
+
+    path('submit/<int:step>', views.form_submission, name="submit"),
+    path('create-reqform/step1/', views.step1_reqform, name="step1-reqform")
 ]

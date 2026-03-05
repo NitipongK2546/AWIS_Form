@@ -88,7 +88,7 @@ class WarrantDataModel(models.Model):
     appointment_type = models.IntegerField(choices=AppointmentTypeChoices, blank=True, null=True)
     appointment_date = models.CharField(max_length=19, blank=True, null=True) # SAME DATE FORMAT AS BELOW
 
-    woa_refno = models.CharField(max_length=10, blank=True)
+    woa_refno = models.CharField(max_length=16, blank=True)
     woa_type = models.IntegerField()
 
     def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:

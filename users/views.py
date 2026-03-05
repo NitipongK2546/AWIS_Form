@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout 
 from django.http import HttpRequest
 
-import api.connect_api as AWISConnectAPI
+import request_utils.connect_api as AWISConnectAPI
 
 # Create your views here.
 

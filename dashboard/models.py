@@ -1,6 +1,6 @@
 from django.db import models
 # from warrant_form.forms import SpecialAWISDataFormModelPartOne
-from warrant_form.models import MainAWISDataModel, WarrantDataModel
+from warrant_form.test_models import MainAWISDataModel, WarrantDataModel
 
 from users.models import UserDataModel
 from zoneinfo import ZoneInfo
