@@ -54,6 +54,12 @@ def selected_form_to_see_page(request : HttpRequest, form_id : int):
     
     selected_form = FormData.objects.filter(id=form_id).first()
 
+    if selected_form.approve_status == FormData.ApprovalStatus.APPROVED:
+        return JsonResponse({
+            "status": 405,
+            "message": "API already sent. Can't edit anymore.",
+        }, status=405)
+
     return render(request, "dashboard/selected_form_page.html", {
         "user": request.user,
         "form": selected_form,
@@ -118,6 +124,12 @@ def select_form_to_edit(request : HttpRequest, form_id : int):
             "status": 403,
             "message": "Not the owner or creator."
         }, status=403)
+    
+    if selected_form.approve_status == FormData.ApprovalStatus.APPROVED:
+        return JsonResponse({
+            "status": 405,
+            "message": "API already sent. Can't edit anymore."
+        }, status=405)
 
     if request.method == "POST":
         main_form = MainAWISForm(request.POST, prefix="main_form")

@@ -24,7 +24,7 @@ def get_full_url_from_env(var_name : str = "FULL_API_URL") -> str:
 
 # Request function.
 
-def _prepare_request_data(target_url : str, data : dict, parameter_data : list, auth_token : str) -> tuple:
+def _prepare_request_data(target_url : str, data : dict, parameter_data : list, header_data : dict, auth_token : str) -> tuple:
     """
     target_url: Base URL ของ Server ที่ต้องการเชื่อมต่อ \n
     data: ข้อมูลที่ส่ง ถ้าเป็น get จะเป็น query/ ถ้าเป็น post จะเป็น data\n
@@ -34,7 +34,7 @@ def _prepare_request_data(target_url : str, data : dict, parameter_data : list, 
     if not target_url:
         raise Exception("The URL wasn't entered.")
 
-    dict_header = {}
+    dict_header = header_data
     if auth_token:
         dict_header.update({"Authorization": f"Bearer {auth_token}"})
     # PASS THE DATA AS DICT
@@ -73,7 +73,7 @@ def _send_request_receive_response(packed_data : tuple, request_type : str) -> H
         if request_type in ["GET", "DELETE"]:
             response : JsonResponse = REQUEST_DICT.get(request_type)(final_url, headers=dict_header, params=dict_data, )
         elif request_type in ["POST", "PUT"]:
-            response : JsonResponse = REQUEST_DICT.get(request_type)(final_url, headers=dict_header, data=dict_data, )
+            response : JsonResponse = REQUEST_DICT.get(request_type)(final_url, headers=dict_header, json=dict_data,)
         else:
             raise RequestException("Unsupported Method.")
 
@@ -85,9 +85,9 @@ def _send_request_receive_response(packed_data : tuple, request_type : str) -> H
     except Exception as e:
         raise RequestException("The API request has failed.")
     
-def _send_request(request_type : str, target_url : str, query_data : dict, parameter_data : list, auth_token : str):
+def _send_request(request_type : str, target_url : str, query_data : dict, parameter_data : list, header_data : dict, auth_token : str):
 
-    packed_data = _prepare_request_data(target_url, query_data, parameter_data, auth_token)
+    packed_data = _prepare_request_data(target_url, query_data, parameter_data, header_data, auth_token)
     response_data = _send_request_receive_response(packed_data, request_type)
 
     return response_data
@@ -97,7 +97,7 @@ def _send_request(request_type : str, target_url : str, query_data : dict, param
 # The function people actually calls.
 #
 
-def get_request(target_url : str, query_data : dict = None, parameter_data : list = None) -> HttpResponse:
+def get_request(target_url : str, query_data : dict = None, parameter_data : list = None, header_data : dict = None) -> HttpResponse:
     """
     target_url: Base URL ของ API Server ที่ต้องการเชื่อมต่อ \n
     query_data: ข้อมูลที่ส่ง เป็นแบบ ?id=5&name=test เป็นต้น \n
@@ -107,9 +107,9 @@ def get_request(target_url : str, query_data : dict = None, parameter_data : lis
     REQUEST_TYPE = "GET"
     AUTH_TOKEN = None
 
-    return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, AUTH_TOKEN)
+    return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, header_data, AUTH_TOKEN)
 
-def get_request_with_auth(target_url : str, query_data : dict = None, parameter_data : list = None, auth_token : str = None) -> HttpResponse:
+def get_request_with_auth(target_url : str, query_data : dict = None, parameter_data : list = None, header_data : dict = None, auth_token : str = None) -> HttpResponse:
     """
     Request แบบที่มี Token ได้ ต้องเพิ่มเองโดยใช้ check_auth_token จา่ก session. \n\n
     target_url: Base URL ของ API Server ที่ต้องการเชื่อมต่อ \n
@@ -120,11 +120,11 @@ def get_request_with_auth(target_url : str, query_data : dict = None, parameter_
 
     REQUEST_TYPE = "GET"
 
-    return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, auth_token)
+    return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, header_data, auth_token)
 
 ##########################################################################################################
     
-def post_request(target_url : str, post_data : dict = None, parameter_data : list = None) -> HttpResponse:
+def post_request(target_url : str, post_data : dict = None, parameter_data : list = None, header_data : dict = None) -> HttpResponse:
     """
     target_url: Base URL ของ API Server ที่ต้องการเชื่อมต่อ \n
     post_data: ข้อมูลที่ส่ง เป็นแบบ Dictionary \n
@@ -134,9 +134,9 @@ def post_request(target_url : str, post_data : dict = None, parameter_data : lis
     REQUEST_TYPE = "POST"
     AUTH_TOKEN = None
 
-    return _send_request(REQUEST_TYPE, target_url, post_data, parameter_data, AUTH_TOKEN)
+    return _send_request(REQUEST_TYPE, target_url, post_data, parameter_data, header_data, AUTH_TOKEN)
     
-def post_request_with_auth(target_url : str, post_data : dict = None, parameter_data : list = None, auth_token : str = None) -> HttpResponse:
+def post_request_with_auth(target_url : str, post_data : dict = None, parameter_data : list = None, header_data : dict = None,  auth_token : str = None) -> HttpResponse:
     """
     Request แบบที่มี Token ได้ ต้องเพิ่มเองโดยใช้ check_auth_token จา่ก session. \n\n
 
@@ -148,11 +148,11 @@ def post_request_with_auth(target_url : str, post_data : dict = None, parameter_
 
     REQUEST_TYPE = "POST"
 
-    return _send_request(REQUEST_TYPE, target_url, post_data, parameter_data, auth_token)
+    return _send_request(REQUEST_TYPE, target_url, post_data, parameter_data, header_data, auth_token)
 
 ##########################################################################################################
 
-def put_request_with_auth(target_url : str, put_data : dict = None, parameter_data : list = None, auth_token : str = None) -> HttpResponse:
+def put_request_with_auth(target_url : str, put_data : dict = None, parameter_data : list = None, header_data : dict = None, auth_token : str = None) -> HttpResponse:
     """
     Request แบบที่มี Token ได้ ต้องเพิ่มเองโดยใช้ check_auth_token จา่ก session. \n\n
 
@@ -164,9 +164,9 @@ def put_request_with_auth(target_url : str, put_data : dict = None, parameter_da
 
     REQUEST_TYPE = "PUT"
 
-    return _send_request(REQUEST_TYPE, target_url, put_data, parameter_data, auth_token)
+    return _send_request(REQUEST_TYPE, target_url, put_data, parameter_data, header_data, auth_token)
 
-def delete_request_with_auth(target_url : str, query_data : dict = None,  parameter_data : list = None, auth_token : str = None) -> HttpResponse:
+def delete_request_with_auth(target_url : str, query_data : dict = None,  parameter_data : list = None, header_data : dict = None, auth_token : str = None) -> HttpResponse:
     """
     Request แบบที่มี Token ได้ ต้องเพิ่มเองโดยใช้ check_auth_token จา่ก session. \n\n
 
@@ -178,7 +178,7 @@ def delete_request_with_auth(target_url : str, query_data : dict = None,  parame
 
     REQUEST_TYPE = "DELETE"
 
-    return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, auth_token)
+    return _send_request(REQUEST_TYPE, target_url, query_data, parameter_data, header_data, auth_token)
 
 print("Current API URL Loaded:")
 print(get_full_url_from_env())
