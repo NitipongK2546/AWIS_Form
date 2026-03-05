@@ -4,12 +4,12 @@ from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.decorators import login_required
 
 from warrant_form.forms import MainAWISForm, WarrantForm
-from warrant_form.models import MainAWISDataModel, WarrantDataModel
+from warrant_form.test_models import MainAWISDataModel, WarrantDataModel
 
 from dashboard.models import FormApprovalDataContainer as FormData
 from users.models import UserDataModel
 
-import api.connect_api as AWISConnectAPI
+import request_utils.connect_api as AWISConnectAPI
 
 import json
 
@@ -25,9 +25,12 @@ def dashboard(request : HttpRequest):
 
     all_forms = creator.union(owner)
 
+    # fixed_form = 
+
     return render(request, "dashboard/dashboard.html", {
         "user": request.user,
         "forms": all_forms,
+        # "length": len(fixed_form),
     })
 
 #######################################################3
@@ -63,7 +66,7 @@ def selected_form_to_see_page(request : HttpRequest, form_id : int):
     return render(request, "dashboard/selected_form_page.html", {
         "user": request.user,
         "form": selected_form,
-        "data": json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=4),
+        "data": json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=4, ensure_ascii=False),
     })
 
 @login_required(login_url="/users/login/")
@@ -163,4 +166,21 @@ def select_form_to_edit(request : HttpRequest, form_id : int):
         "user": request.user,
         "action": "Edit",
         "form": selected_form,
+    })
+
+
+################################################### View for Check Reqform Status
+#
+
+@login_required(login_url="/users/login/")
+def view_reqforms_status(request : HttpRequest, req_no_plaintiff : str):
+
+    # data = AWISConnectAPI.get_req_form_status("v1.1", request, req_no_plaintiff)
+    data = None
+
+    if not data:
+        data = []
+    
+    return render(request, "dashboard/reqform_status.html", {
+        "reqforms": data,
     })

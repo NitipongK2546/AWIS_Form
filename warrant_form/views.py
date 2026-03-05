@@ -1,13 +1,13 @@
-import json
-
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from warrant_form.models import WarrantDataModel, MainAWISDataModel
-from warrant_form.forms import WarrantForm, MainAWISForm, SpecialAWISDataFormModelPartOne
+from warrant_form.test_models import WarrantDataModel, MainAWISDataModel
+from warrant_form.forms import WarrantForm, MainAWISForm, AWISFormStep1
 from warrant_form.doc_create import doc_create_with_context
+
+# from warrant_form.forms_visual import VisualReqForm
 
 from dashboard.models import FormApprovalDataContainer
 from users.models import UserDataModel
@@ -16,12 +16,11 @@ from users.models import UserDataModel
 # FORM VIEWS
 
 @login_required(login_url="/users/login/")
-def index(request : HttpRequest):    
+def plain_form(request : HttpRequest):    
     main_form = MainAWISForm(prefix="main_form")
     sub_form = WarrantForm(prefix="sub_form")
 
     context = {
-        "form": main_form,
         "main_form": main_form,
         "sub_form": sub_form
     }
@@ -29,7 +28,7 @@ def index(request : HttpRequest):
     # if request.GET.get("status") == "error":
     #     context.update({"status": "error"})
 
-    return render(request, "warrant_form/reqform.html", context)
+    return render(request, "warrant_form/plain-reqform.html", context)
 
 @login_required(login_url="/users/login/")
 def plain_form_submission(request : HttpRequest):
@@ -67,51 +66,25 @@ def plain_form_submission(request : HttpRequest):
 
             return redirect(reverse("forms:success"))
         
+###############################################################################
+        
 @login_required(login_url="/users/login/")
-def form_submission(request : HttpRequest):
+def form_submission(request : HttpRequest, step : int):
     # The expected outcome.
     if request.method == "POST":
-        main_form = MainAWISForm(request.POST, prefix="main_form")
-        # sub_form = WarrantForm(request.POST, prefix="sub_form")
-
-        if main_form.is_valid():
-            try:
-                # Create object from the form, but don't commit to database yet.
-                # warrant_obj : WarrantDataModel = sub_form.save(commit=False)
-
-                form_awis_obj : SpecialAWISDataFormModelPartOne = main_form.save(commit=False)
-                # main_awis_obj.warrants = warrant_obj
-
-                ## Send an API request to see if it works or not, then save.
-
-                cleaned_dict = form_awis_obj.toAPICompatibleDict()
-                print(json.dumps(cleaned_dict, indent=4))
-
-                # Uncomment to send API.
-                # Please setup URL first.
-                # api_request_submit_data(cleaned_dict, "test_auth_token")
-
-                doc_create_with_context(form_awis_obj.toDocumentCompatibleDict())
-
-                MainAWISDataModel.objects.create(**cleaned_dict)
-
-                return redirect(reverse("forms:success"))
-                # sub_form = WarrantForm(prefix="sub_form")
-            
-            except Exception as e:
-                print("@***EXCEPTION OCCURED:", e  ,"***")
-
-        print(main_form.errors.as_text())
+        try:
+            if step == 1:
+                step1_confirm(request)
+            if step == 2:
+                step2_confirm(request)
+            else:
+                return JsonResponse({
+                    "message": "Invalid Step"
+                })
         
-        # IF not valid, or exception occured.
-        return render(request, "warrant_form/awis_step1.html", {
-            "form": main_form,
-            "status": "error",
-        })
-
-    # Not POST request.   
-    else:
-        return redirect(reverse("forms:first_page"))
+        except Exception as e:
+            print("@***EXCEPTION OCCURED:", e  ,"***")
+        
 
 @login_required(login_url="/users/login/")
 def success_page(request : HttpRequest):
@@ -119,3 +92,37 @@ def success_page(request : HttpRequest):
         "status_code": "200",
         "message": "success"
     })
+
+##############################################################################
+
+def step1_reqform(request : HttpRequest):
+    if request.method == "POST":
+        form = AWISFormStep1(request.POST, prefix="main_form")
+
+        if form.is_valid():
+            next_form = WarrantForm()
+            return render(request, "warrant_form/awis_step2.html", {
+                "form": next_form,
+                "step": 1,
+            })
+        else:
+            print(form.errors.as_text())
+            return render(request, "warrant_form/awis_step1.html", {
+                "form": form,
+                "step": 1,
+            })
+
+    form = AWISFormStep1(prefix="main_form")
+    return render(request, "warrant_form/awis_step1.html", {
+        "form": form,
+        "step": 1,
+    })
+
+def step1_confirm(request : HttpRequest):
+    pass
+
+def step2_warrantform():
+    pass
+
+def step2_confirm():
+    pass

@@ -5,6 +5,40 @@ import datetime
 
 # Create your models here.
 
+def toAPICompatibleDictGeneral(incoming_model : models.Model) -> dict[str, object]:
+        """
+        Convert the model object into a dictionary that fits what the API required.
+        It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
+        then convert or remove some fields to match the API.\n
+        It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
+        """
+        ################################################################
+        # Conversion section.
+        # Convert dictionary into the format that API can receive.
+
+        model_dict = model_to_dict(incoming_model)
+
+        model_dict.pop("id", None)
+
+        empty_key_list = []
+        for key, value in model_dict.items():
+            if isinstance(value, str):
+                if not value:
+                    empty_key_list.append(key)
+            elif isinstance(value, bool):
+                if value: # True...
+                    model_dict.update({key: 1})
+                else:
+                    model_dict.update({key: 0})
+
+            if value is None:
+                empty_key_list.append(key)
+
+        for key in empty_key_list:
+            model_dict.update({key: None})
+
+        return model_dict
+
 # หมายเรียกที่ติดไปด้วย
 class WarrantDataModel(models.Model):
     """
@@ -20,9 +54,9 @@ class WarrantDataModel(models.Model):
         PASSPORT = 2, "เลขหนังสือเดินทาง"
         NON_THAI_ID = 3, "เลขคนซึ่งไม่มีสัญชาติไทย"
 
-    woa_date = models.CharField(max_length=10, blank=True, null=True)
+    woa_date = models.CharField(max_length=19, blank=True, null=True)
 
-    fault_type_id = models.IntegerField(blank=True, null=True) # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
+    fault_type_id = models.IntegerField() # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร
     cause_text = models.CharField(max_length=400) # ด้วย
 
@@ -54,9 +88,8 @@ class WarrantDataModel(models.Model):
     appointment_type = models.IntegerField(choices=AppointmentTypeChoices, blank=True, null=True)
     appointment_date = models.CharField(max_length=19, blank=True, null=True) # SAME DATE FORMAT AS BELOW
 
-    woa_start_date = models.CharField(max_length=10, blank=True, null=True) # THIS TIME, IT"S DATE, WITHOUT THE TIME
-    woa_end_date = models.CharField(max_length=10, blank=True, null=True) # MAYBE TIMEFIELD INSTEAD OF DATEFIELD??
-    woa_refno = models.CharField(max_length=10, blank=True)
+    woa_refno = models.CharField(max_length=16, blank=True)
+    woa_type = models.IntegerField()
 
     def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:
         """
@@ -65,30 +98,16 @@ class WarrantDataModel(models.Model):
         then convert or remove some fields to match the API.\n
         It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
         """
-        ################################################################
-        # Conversion section.
-        # Convert dictionary into the format that API can receive.
+        dict_warrant = toAPICompatibleDictGeneral(self)
 
-        dict_warrant = model_to_dict(self)
+        date_list = ["appointment_date", "woa_date"]
 
-        dict_warrant.pop("id", None)
-
-        empty_key_list = []
-        for key, value in dict_warrant.items():
-            if isinstance(value, str):
-                if not value:
-                    empty_key_list.append(key)
-            elif isinstance(value, bool):
-                if value: # True...
-                    dict_warrant.update({key: 1})
-                else:
-                    dict_warrant.update({key: 0})
-
-            if value is None:
-                empty_key_list.append(key)
-
-        for key in empty_key_list:
-            dict_warrant.pop(key)
+        for date in date_list:
+            date_value = dict_warrant.get(date)
+            if (not date_value) or len(date_value) != 19:
+                dict_warrant.update({
+                    date: "1970-01-01 12:00:00",
+                })
 
         prefixed_dict = {}
         if prefix:
@@ -113,7 +132,8 @@ class MainAWISDataModel(models.Model):
     req_year = models.IntegerField()
     req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) # CHOICES
 
-    police_station_id = models.CharField(max_length=5) #REFER id -> tb_police_station
+    # The API specification wants 5, but the real thing is 8, so ehhhhh.
+    police_station_id = models.CharField(max_length=8) #REFER id -> tb_police_station
     req_no_plaintiff = models.CharField(max_length=50)
 
     plaintiff = models.CharField(max_length=400)
@@ -166,6 +186,9 @@ class MainAWISDataModel(models.Model):
     create_uid = models.IntegerField() # USER ที่สร้างข้อมูล
     ref_no = models.CharField(max_length=50, blank=True)
 
+    woa_start_date = models.CharField(max_length=19, blank=True, null=True) # THIS TIME, IT"S DATE, WITHOUT THE TIME
+    woa_end_date = models.CharField(max_length=19, blank=True, null=True) # MAYBE TIMEFIELD INSTEAD OF DATEFIELD??
+
     # def clean(self):
     #     self.scene_date = " ".join(self.scene_date)
 
@@ -182,30 +205,16 @@ class MainAWISDataModel(models.Model):
         then convert or remove some fields to match the API.\n
         It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
         """
-        ################################################################
-        # Conversion section.
-        # Convert dictionary into the format that API can receive.
+        dict_main_awis = toAPICompatibleDictGeneral(self)
 
-        dict_main_awis = model_to_dict(self)
+        date_list = ["scene_date", "woa_start_date", "woa_end_date"]
 
-        dict_main_awis.pop("id", None)
-
-        empty_key_list = []
-        for key, value in dict_main_awis.items():
-            if isinstance(value, str):
-                if not value:
-                    empty_key_list.append(key)
-            elif isinstance(value, bool):
-                if value: # True...
-                    dict_main_awis.update({key: 1})
-                else:
-                    dict_main_awis.update({key: 0})
-
-            if value is None:
-                empty_key_list.append(key)
-
-        for key in empty_key_list:
-            dict_main_awis.pop(key)
+        for date in date_list:
+            date_value = dict_main_awis.get(date)
+            if (not date_value) or len(date_value) != 19:
+                dict_main_awis.update({
+                    date: "1970-01-01 12:00:00",
+                })
 
         prefixed_dict = {}
         if prefix:
@@ -214,7 +223,6 @@ class MainAWISDataModel(models.Model):
             return prefixed_dict
 
         return dict_main_awis
-    
 
     
     def toAPICompatibleDictWithConvertedWarrants(self, prefix : str = None) -> dict[str, object]:
