@@ -12,7 +12,7 @@ python --version
 # Start by migrating...
 "$DIR/quick_migrate.sh"
 
-python manage.py shell < "$DIR/setup_group.py"
+python manage.py shell < "$DIR/full_setup_group_perm.py"
 
 # Add collectstatic later if we have to.
 #

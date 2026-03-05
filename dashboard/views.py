@@ -63,7 +63,7 @@ def selected_form_to_see_page(request : HttpRequest, form_id : int):
     return render(request, "dashboard/selected_form_page.html", {
         "user": request.user,
         "form": selected_form,
-        "data": json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=4),
+        "data": json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=4, ensure_ascii=False),
     })
 
 @login_required(login_url="/users/login/")

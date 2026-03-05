@@ -54,6 +54,11 @@ for perm in emp_perm:
 print("ADDED EMPLOYEE PERMISSIONS")
 
 for perm in dir_perm:
+    manager_group.permissions.add(perm)
+
+print("ADDED DIRECTOR PERMISSIONS")
+
+for perm in dir_perm:
     director_group.permissions.add(perm)
 
 print("ADDED DIRECTOR PERMISSIONS")

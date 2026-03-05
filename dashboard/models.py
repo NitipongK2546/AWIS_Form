@@ -37,3 +37,6 @@ class FormApprovalDataContainer(models.Model):
         finalized_date = f"{converted_date} น."
         
         return f"ID: {self.id} | {self.get_approve_status_display()} | {self.form_creator} | {finalized_date}"
+    
+    def toAPICompatibleDict(self) -> dict[str, object]:
+        return self.form.toAPICompatibleDictWithConvertedWarrants()

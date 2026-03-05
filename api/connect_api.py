@@ -73,8 +73,8 @@ def post_login_authorize(version : str, request : HttpRequest) -> bool:
 # 3. 
 def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -> bool:
 
-    if not get_health_check("v1"):
-        return False
+    # if not get_health_check("v1"):
+    #     return False
 
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "reqforms"]
@@ -90,6 +90,8 @@ def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -
 
     if data.get("status"):
         return True
+    
+    return False
 
 ##############################################################################
 # 4. 
@@ -98,8 +100,8 @@ def get_req_form_status(version : str, request : HttpRequest, req_no_plaintiff :
     Return List ที่เป็น Dictionary ออกมา เป็นข้อมูลสถานะคำร้อง ReqForm
     """
 
-    if not get_health_check("v1"):
-        return False
+    # if not get_health_check("v1"):
+    #     return False
 
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "reqforms", req_no_plaintiff]
@@ -122,8 +124,8 @@ def get_search_warrants(version : str, request : HttpRequest, query_data : dict)
     Return message ออกมา ถ้า False หาไม่เจอ
     """
 
-    if not get_health_check("v1"):
-        return False
+    # if not get_health_check("v1"):
+    #     return False
 
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "warrants", "search"]
@@ -149,8 +151,8 @@ def get_search_warrants(version : str, request : HttpRequest, query_data : dict)
 # 6.
 def put_report_warrant_result(version : str, request : HttpRequest, put_data : dict) -> dict:
     # This one need PUT request
-    if not get_health_check("v1"):
-        return False
+    # if not get_health_check("v1"):
+    #     return False
 
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "arrests"]
@@ -176,8 +178,8 @@ def get_court_order_and_warrant(version : str, request : HttpRequest, plaintiff_
     This one will return "file_path" value as Base64. Prepare to Convert.
     """
     # This one RETURN VALUE IN Base64
-    if not get_health_check("v1"):
-        return False
+    # if not get_health_check("v1"):
+    #     return False
 
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "warrants", "search_file", plaintiff_code]
@@ -199,8 +201,8 @@ def get_court_order_and_warrant(version : str, request : HttpRequest, plaintiff_
 # 8.
 def delete_req_form(version : str, request : HttpRequest, req_no_plaintiff : str):
     # This one need PUT request
-    if not get_health_check("v1"):
-        return False
+    # if not get_health_check("v1"):
+    #     return False
 
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "court", req_no_plaintiff]
@@ -224,8 +226,8 @@ def delete_req_form(version : str, request : HttpRequest, req_no_plaintiff : str
 # 9.
 def get_court_list(version : str, request : HttpRequest) -> dict:
 
-    if not get_health_check("v1"):
-        return False
+    # if not get_health_check("v1"):
+    #     return False
 
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "court"]
@@ -242,4 +244,57 @@ def get_court_list(version : str, request : HttpRequest) -> dict:
         return data
     
     return False
-    
+
+#######################################################################
+#
+# Additional
+#
+#######################################################################\
+
+##############################################################################
+# 1.
+def put_update_request_status(version : str, request : HttpRequest, put_data : dict) -> dict:
+    # This one need PUT request
+    # if not get_health_check("v1"):
+    #     return False
+
+    base_url = RequestUtils.get_full_url_from_env()
+    parameter = [version, "updatestatusreqwarrant"]
+
+    auth_token : str = RequestUtils.check_auth_token(request)
+    response : JsonResponse = RequestUtils.put_request_with_auth(
+        base_url, 
+        parameter_data=parameter, 
+        put_data=put_data, 
+        auth_token=auth_token
+    )
+    data : dict = response.json()
+
+    if data:
+        return data
+
+    return False
+
+##############################################################################
+# 2.
+def put_report_warrant_result(version : str, request : HttpRequest, put_data : dict) -> dict:
+    # This one need PUT request
+    # if not get_health_check("v1"):
+    #     return False
+
+    base_url = RequestUtils.get_full_url_from_env()
+    parameter = [version, "awis", "arrests"]
+
+    auth_token : str = RequestUtils.check_auth_token(request)
+    response : JsonResponse = RequestUtils.put_request_with_auth(
+        base_url, 
+        parameter_data=parameter, 
+        put_data=put_data, 
+        auth_token=auth_token
+    )
+    data : dict = response.json()
+
+    if data:
+        return data
+
+    return False
