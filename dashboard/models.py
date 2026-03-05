@@ -1,6 +1,6 @@
 from django.db import models
 # from warrant_form.forms import SpecialAWISDataFormModelPartOne
-from warrant_form.models import MainAWISDataModel
+from warrant_form.models import MainAWISDataModel, WarrantDataModel
 
 from users.models import UserDataModel
 from zoneinfo import ZoneInfo
@@ -40,3 +40,39 @@ class FormApprovalDataContainer(models.Model):
     
     def toAPICompatibleDict(self) -> dict[str, object]:
         return self.form.toAPICompatibleDictWithConvertedWarrants()
+
+class FinalizedFormData(models.Model):
+    """
+    เก็บข้อมูลฟอร์มที่ได้ทำการส่งไปแล้ว และสามารถให้บุคคลภายนอกเชื่อม API เข้ามาแก้ไขข้อมูลสถานะได้
+    """
+
+    class AcceptStatus(models.IntegerChoices):
+        DENIED = (0, "ไม่รับ")
+        ACCEPTED = (1, "รับ")
+    
+    form = models.OneToOneField(MainAWISDataModel, on_delete=models.CASCADE)
+
+    # THIS NAME IS CORRECT, DON'T CHANGE THIS, FUTURE READER!!!
+    recive_date = models.DateTimeField()
+    accept_date = models.DateTimeField()
+
+    accept = models.IntegerField(choices=AcceptStatus)
+
+    # def __str__(self):
+    #     converted_date = self.date_created.astimezone(ZoneInfo("Asia/Bangkok")).strftime("%d %B %Y, %H:%M")
+    #     finalized_date = f"{converted_date} น."
+        
+    #     return f"ID: {self.id} | {self.get_approve_status_display()} | {self.form_creator} | {finalized_date}"
+    
+    def toAPICompatibleDict(self) -> dict[str, object]:
+        return self.form.toAPICompatibleDictWithConvertedWarrants()
+    
+    def getReqNoPlaintiff(self):
+        form : MainAWISDataModel = self.form
+
+        return form.req_no_plaintiff
+    
+    # def getReqNo(self):
+    #     form : MainAWISDataModel = self.form
+
+    #     return form.req_no_plaintiff

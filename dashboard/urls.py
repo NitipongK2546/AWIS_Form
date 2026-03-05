@@ -12,4 +12,6 @@ urlpatterns = [
     path("approve/success/", views.success_page, name="success_page"),
     ##########################################
     path("edit/<int:form_id>/", views.select_form_to_edit, name="edit_form"),
+    ##########################################
+    path("check/<int:form_id>/", views.select_form_to_edit, name="edit_form"),
 ]

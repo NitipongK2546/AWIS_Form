@@ -16,6 +16,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# SESSION_COOKIE_AGE = os.getenv("SESSION_TIMEOUT")
+# SESSION_EXPIRE_AT_BROWSER_CLOSE =
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -44,6 +47,7 @@ INSTALLED_APPS = [
     'users',
     'dashboard',
     'admin_panel',
+    'api',
 ]
 
 MIDDLEWARE = [

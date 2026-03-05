@@ -164,3 +164,20 @@ def select_form_to_edit(request : HttpRequest, form_id : int):
         "action": "Edit",
         "form": selected_form,
     })
+
+
+################################################### View for Check Reqform Status
+#
+
+@login_required(login_url="/users/login/")
+def view_reqforms_status(request : HttpRequest, req_no_plaintiff : str):
+
+    # data = AWISConnectAPI.get_req_form_status("v1.1", request, req_no_plaintiff)
+    data = None
+
+    if not data:
+        data = []
+    
+    return render(request, "dashboard/reqform_status.html", {
+        "reqforms": data,
+    })

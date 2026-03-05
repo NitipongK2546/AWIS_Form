@@ -23,4 +23,5 @@ urlpatterns = [
     path('form/', include("warrant_form.urls")),
     path('users/', include("users.urls")),
     path('admin_panel/', include("admin_panel.urls")),
+    path('api/', include("api.version_urls")),
 ]
