@@ -4,10 +4,59 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block body %}
-<h1>Dashboard</h1>
+<div id="header-container">
+    <div class="header-row"> 
+        <h1>Dashboard</h1> 
+        <p>Username: <span class="username-value">{{ user.username }}</span></p>
+    </div>
+    <div class="header-button-row">
+        <p><a href="{% url 'forms:first_page' %}" class="button">เพิ่มคำร้องหมายจับ</a></p>
+        <p><a href="{% url 'dashboard:approve_form_page' %}" class="button">อนุมัติแบบฟอร์ม</a></p>
+    </div>
+</div>
 
-<p><a href="{% url 'forms:first_page' %}">CREATE NEW FORM</a></p>
-<p><a href="{% url 'dashboard:approve_form_page' %}">APPROVE FORM</a></p>
+<div id="body-table">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>สถานะการอนุมัติ</th>
+                <th>ผู้ร่าง</th>
+                <th>เจ้าของร่าง</th>
+                <th>วันที่สร้าง</th>
+                <th>วันที่อนุมัติ</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in forms %}
+            <tr>
+                <td>{{ form.id }}</td>
+                <td>{{ form.get_approve_status_display }}</td>
+                <td>{{ form.form_creator }}</td>
+                <td>{{ form.form_owner }}</td>
+                <td>{{ form.date_created|date:"d M Y, H:i" }}</td>
+                <td>
+                    {% if form.date_approved %}
+                        {{ form.date_approved|date:"d M Y, H:i" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'dashboard:selected_form_to_see_page' form.id %}">View</a> |
+                    <a href="{% url 'dashboard:confirm_approve' form.id %}">Approve</a> |
+                    <a href="{% url 'dashboard:confirm_reject' form.id %}">Reject</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No forms available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% for form in forms %}
 <p>
@@ -16,7 +65,8 @@
     <a href="{% url 'dashboard:edit_form' form.id %}">แก้ไขแบบฟอร์ม</a>
     {% endif %}
 </p>
+
 {% empty %}
-<p>No form available.</p>
+{% comment %} <p>No form available.</p> {% endcomment %}
 {% endfor %}
 {% endblock %}
