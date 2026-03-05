@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from dashboard.test_models import FormApprovalDataContainer
 from django.contrib.auth.models import Group, Permission
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "awis.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project_awis.settings")
 django.setup()
 
 employee_group, created = Group.objects.get_or_create(name='Employee')

@@ -8,9 +8,10 @@ from warrant_form.test_models import MainAWISDataModel, WarrantDataModel
 
 # from dashboard.test_models import FormApprovalDataContainer as FormData
 from dashboard.models import VisualFormApprovalData as FormData
+from dashboard.receiver_models import ReceivedReqFormStatus
 from users.models import UserDataModel
 
-import request_utils.connect_api as AWISConnectAPI
+import _request_utils.connect_api as AWISConnectAPI
 
 import json
 
@@ -79,6 +80,11 @@ def confirm_approve(request : HttpRequest, form_id : int):
     if request.method == "POST":
         selected_form.approve_status = FormData.ApprovalStatus.APPROVED
         selected_form.save()
+        
+        form = ReceivedReqFormStatus()
+        form_data = form.toDictWithConvertedType()
+
+        print(form_data)
 
         # AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
 

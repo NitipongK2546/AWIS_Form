@@ -19,13 +19,11 @@ class ReqformDataModel(models.Model):
 
     court_code = models.CharField(max_length=7, verbose_name="รหัส")
 
-    # We don't even use this in the API
     reqno = models.CharField(max_length=50)
+    # reqno = models.CharField(max_length=50)
     judge_name = models.CharField(max_length=250)
     req_day = models.PositiveIntegerField()
     req_month = models.PositiveIntegerField()
-    # We don't even use this in the API
-
     req_year = models.PositiveIntegerField()
 
     req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) # CHOICES

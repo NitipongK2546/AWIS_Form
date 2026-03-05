@@ -7,17 +7,7 @@
 
     <h1>Approve Form</h1>
 
-    {% for form in forms %}
-        <p>
-        {% if form.approve_status == 1 %}
-            <a href="{% url 'dashboard:get_form' form.id %}">{{ form }}</a>
-        </p>
-        {% else %}
-            {{ form }}
-        {% endif %}
-    {% empty %}
-    <p>No form available.</p>
-    {% endfor %}
+    {% include 'module/approve_table.html' %}
 
     <p><a href="{% url 'dashboard:dashboard' %}">GO BACK</a></p>
 {% endblock %}

@@ -17,3 +17,25 @@ def json_retrieval(request : HttpRequest) -> dict[str,] | JsonResponse:
             "status": 400,
             "message": "Cannot decode JSON"
         }, status=400)
+
+def check_token(data : dict) -> bool | JsonResponse:
+    try:
+        authorization : str = data.get("Authorization")
+        
+        if not authorization:
+            return JsonResponse({
+                "status": 400,
+                "message": "No Authorization Token"
+            }, status=400)
+        
+        token : str = authorization.split()[1]
+
+        # Do the checking thing.
+
+        return True
+
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "status": 400,
+            "message": "Check Token Failed"
+        }, status=400)

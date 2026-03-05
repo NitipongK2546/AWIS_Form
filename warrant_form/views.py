@@ -140,8 +140,6 @@ def step2_warrantform(request : HttpRequest):
             #     "step2": data,
             # })
 
-            WarrantDataModel.objects.all().delete()
-
             warrant : WarrantDataModel = form.save()
 
             form_id = request.session.get("reqform_id")

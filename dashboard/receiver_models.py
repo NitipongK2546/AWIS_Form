@@ -25,12 +25,24 @@ class ReceivedReqFormStatus(forms.Form):
             "plaintiff": self.plaintiff,
         }
 
-        date_format = "%Y-%m-%d %H:%M:%S"
+        date_format = "%Y-%m-%dT%H:%M:%S"
 
         new_req_date = timezone.datetime.strptime(
-            self.req_date, date_format
+            self.accept_date, date_format
         )
-        output_dict.update({"req_date": new_req_date})
+
+        # new_fields = [
+        #     ("req_day", ),
+        #     ("req_month", ),
+        #     ("req_year", ),
+        #     ]
+
+        # for field, format in new_fields:
+        #     output_dict.update({field: new_req_date})
+
+        output_dict.update({"req_day": new_req_date.day})
+        output_dict.update({"req_month": new_req_date.month})
+        output_dict.update({"req_year": new_req_date.year})
 
         new_accept_date = timezone.datetime.strptime(
             self.accept_date, date_format
