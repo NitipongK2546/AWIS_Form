@@ -9,8 +9,11 @@ from warrant_form.doc_create import doc_create_with_context
 
 # from warrant_form.forms_visual import VisualReqForm
 
-from dashboard.models import FormApprovalDataContainer
+from dashboard.test_models import FormApprovalDataContainer
+from dashboard.models import VisualFormApprovalData
 from users.models import UserDataModel
+
+import json
 
 ##############################################################################
 # FORM VIEWS
@@ -101,14 +104,22 @@ def step1_reqform(request : HttpRequest):
         form = AWISFormStep1(request.POST, prefix="main_form")
 
         if form.is_valid():
-            data = form.cleaned_data
             reqform : ReqformDataModel = form.save()
 
+            step1_data = reqform.toAPICompatibleDict()
+
             request.session.update({
-                "step1": data,
+                "step1": step1_data,
                 "reqform_id": reqform.id,
             })
+
             return redirect(reverse("forms:step2"))
+        else:
+            print(form.errors.as_text)
+            return render(request, "warrant_form/awis_step1.html", {
+                "form": form,
+                "step": 1,
+            })
 
     old_data = request.session.get("step1")
     form = AWISFormStep1(initial=old_data, prefix="main_form")
@@ -127,6 +138,8 @@ def step2_warrantform(request : HttpRequest):
             #     "step2": data,
             # })
 
+            WarrantDataModel.objects.all().delete()
+
             warrant : WarrantDataModel = form.save()
 
             form_id = request.session.get("reqform_id")
@@ -135,11 +148,20 @@ def step2_warrantform(request : HttpRequest):
             if reqform:
                 reqform.warrants.add(warrant)
 
-            print(reqform.toAPICompatibleDict())
+            data = reqform.toAPICompatibleDictWithConvertedWarrants()
+
+            # print(json.dumps(data, indent=2, ensure_ascii=False))
 
             request.session.pop("step1", None)
             request.session.pop("step2", None)
 
+            user_obj = user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
+            VisualFormApprovalData.objects.create(
+                form=reqform, 
+                form_creator=user_obj, 
+                form_owner=user_obj, 
+                approve_status=VisualFormApprovalData.ApprovalStatus.PENDING
+            )
             return JsonResponse({
                 "status": "nice"
             })

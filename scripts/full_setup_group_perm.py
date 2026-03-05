@@ -1,7 +1,7 @@
 import os
 import django
 from django.contrib.contenttypes.models import ContentType
-from dashboard.models import FormApprovalDataContainer
+from dashboard.test_models import FormApprovalDataContainer
 from django.contrib.auth.models import Group, Permission
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "awis.settings")

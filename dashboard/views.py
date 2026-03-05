@@ -6,7 +6,8 @@ from django.contrib.auth.decorators import login_required
 from warrant_form.forms import MainAWISForm, WarrantForm
 from warrant_form.test_models import MainAWISDataModel, WarrantDataModel
 
-from dashboard.models import FormApprovalDataContainer as FormData
+# from dashboard.test_models import FormApprovalDataContainer as FormData
+from dashboard.models import VisualFormApprovalData as FormData
 from users.models import UserDataModel
 
 import request_utils.connect_api as AWISConnectAPI

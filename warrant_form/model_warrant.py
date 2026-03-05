@@ -95,7 +95,7 @@ class WarrantDataModel(models.Model):
         then convert or remove some fields to match the API.\n
         It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
         """
-        dict_warrant = models.toAPICompatibleDictGeneral(self)
+        dict_warrant = toAPICompatibleDictGeneral(self)
 
         date_list = ["appointment_date", "woa_date"]
 

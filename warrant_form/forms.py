@@ -12,19 +12,26 @@ from uuid import uuid4
 
 class AWISFormStep1(forms.ModelForm):
     def clean_date(self, data : dict[str, object]):
-        combined_date = ""
-        try:
-            scene_date_year = data.get("scene_date_year")
-            scene_date_month = data.get("scene_date_month")
-            scene_date_day = data.get("scene_date_day")
-            if scene_date_year and scene_date_month and scene_date_day:
-            # BUDDHIST_ERA_YEAR_DIFF = 543
-                converted_year = scene_date_year 
-                padded_month = str(scene_date_month).zfill(2)
-                padded_day = str(scene_date_day).zfill(2)
 
-                combined_date = f"{converted_year}-{padded_month}-{padded_day}"
-                datetime.date.fromisoformat(combined_date)
+        included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
+
+        try:
+            for field in included_fields:
+                scene_date_year = data.get(f"{field}_year")
+                scene_date_month = data.get(f"{field}_month")
+                scene_date_day = data.get(f"{field}_day")
+                if scene_date_year and scene_date_month and scene_date_day:
+                # BUDDHIST_ERA_YEAR_DIFF = 543
+                    converted_year = scene_date_year 
+                    padded_month = str(scene_date_month).zfill(2)
+                    padded_day = str(scene_date_day).zfill(2)
+
+                    combined_date = f"{converted_year}-{padded_month}-{padded_day}"
+                    datetime.date.fromisoformat(combined_date)
+
+                # timehalf = data.get(f"{field}_timehalf")
+                # data.update({f"{field}_timehalf": datetime.time.strftime(timehalf, "HH:MM:SS")})
+                # data.pop(f"{field}_timehalf", None)
 
             # One of the field doesn't exist.
         except:
@@ -97,9 +104,18 @@ class AWISFormStep1(forms.ModelForm):
             'scene_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
             'scene_date_year': forms.Select(choices=year_choices),
             'scene_date_day': forms.Select(choices=day_choices,),
-            'scene_date_month': forms.Select(choices=month_choices, attrs={
-                'onchange': "adjustDate()"
-            }),
+            'scene_date_month': forms.Select(choices=month_choices),
+
+            'woa_start_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
+            'woa_start_date_year': forms.Select(choices=year_choices),
+            'woa_start_date_day': forms.Select(choices=day_choices,),
+            'woa_start_date_month': forms.Select(choices=month_choices),
+
+            'woa_end_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
+            'woa_end_date_year': forms.Select(choices=year_choices),
+            'woa_end_date_day': forms.Select(choices=day_choices,),
+            'woa_end_date_month': forms.Select(choices=month_choices),
+
             'scene': forms.Textarea(attrs={
                 'rows': 5,
                 'cols': 135,
@@ -143,8 +159,6 @@ class WarrantForm(forms.ModelForm):
         model = WarrantDataModel
         fields = "__all__"
         widgets = {
-            "woa_date": forms.DateInput(attrs={'type': 'date'}),
-            "woa_start_date": forms.DateInput(attrs={'type': 'date'}),
-            "woa_end_date": forms.DateInput(attrs={'type': 'date'}),
+            "woa_date": forms.DateTimeInput(attrs={'type': 'datetime'}),
             "appointment_date": forms.DateTimeInput(),
         }
