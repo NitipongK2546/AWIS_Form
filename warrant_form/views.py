@@ -99,6 +99,7 @@ def success_page(request : HttpRequest):
 
 ##############################################################################
 
+@login_required(login_url="/users/login/")
 def step1_reqform(request : HttpRequest):
     if request.method == "POST":
         form = AWISFormStep1(request.POST, prefix="main_form")
@@ -128,6 +129,7 @@ def step1_reqform(request : HttpRequest):
         "step": 1,
     })
 
+@login_required(login_url="/users/login/")
 def step2_warrantform(request : HttpRequest):
     if request.method == "POST":
         form = WarrantForm(request.POST)
