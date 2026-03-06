@@ -95,16 +95,16 @@ def confirm_approve(request : HttpRequest, form_id : int):
     selected_form = FormData.objects.filter(id=form_id).first()
     if request.method == "POST":
         try:
-            selected_form.approve_status = FormData.ApprovalStatus.APPROVED
-            selected_form.save()
-            
             FormSent.objects.create(
                 form=selected_form.form,
                 accept=FormSent.AcceptStatus.WAITING,
             )
 
-            if settings.ENABLE_API:
-                AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
+            # if settings.ENABLE_API:
+            AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
+
+            selected_form.approve_status = FormData.ApprovalStatus.APPROVED
+            selected_form.save()
 
             return redirect(reverse("dashboard:success_page"))
         except Exception as e:
