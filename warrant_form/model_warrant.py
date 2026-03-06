@@ -54,7 +54,7 @@ class WarrantDataModel(models.Model):
     woa_date_day = models.PositiveIntegerField(blank=True, null=True)
     woa_date_month = models.PositiveIntegerField(blank=True, null=True)
     woa_date_year = models.PositiveIntegerField(blank=True, null=True)
-    woa_date_timehalf = models.DateTimeField(blank=True, null=True)
+    woa_date_timehalf = models.TimeField(blank=True, null=True)
 
     fault_type_id = models.IntegerField() # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร

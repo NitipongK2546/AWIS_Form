@@ -106,6 +106,8 @@ def confirm_approve(request : HttpRequest, form_id : int):
             if settings.ENABLE_API:
                 AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
 
+            print(selected_form.form.toAPICompatibleDictWithConvertedWarrants())
+
             return redirect(reverse("dashboard:success_page"))
         except Exception as e:
             print(e)
@@ -126,7 +128,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
     if request.method == "POST":
         selected_form.approve_status = FormData.ApprovalStatus.REJECTED
         selected_form.save()
-
+  
         return redirect(reverse("dashboard:success_page"))
     
     return render(request, "dashboard/confirmation_page.html", {
