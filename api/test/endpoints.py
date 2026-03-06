@@ -32,7 +32,7 @@ def test1(request : HttpRequest) -> JsonResponse:
 
 @csrf_exempt
 def test2(request : HttpRequest) -> JsonResponse:
-    response, data = AWISAPIConnect.post_login_authorize("v1.1", request, "session")
+    response = AWISAPIConnect.post_login_authorize("v1.1", request, "session")
     storage = ""
 
     return JsonResponse({

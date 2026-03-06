@@ -40,7 +40,7 @@ def get_health_check(version : str) -> bool:
 
 ##############################################################################
 # 2. 
-def post_login_authorize(version : str, request : HttpRequest, storage : str = "cookies") -> tuple | bool:
+def post_login_authorize(version : str, request : HttpRequest, storage : str = "cookies") -> JsonResponse | bool:
     """
     Token จะถูกใส่ลงไปใน Session/Cookie
     """
