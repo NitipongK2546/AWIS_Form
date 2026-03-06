@@ -7,16 +7,17 @@
 <div id="header-container">
     <div class="header-row"> 
         <h1>Dashboard</h1> 
-        <p>Username: <span class="username-value">{{ user.username }}</span></p>
+        <p>Username: <span class="username-value">{{ user.username }}</span> <a href="{% url 'users:logout' %}" class="button-logout">logout</a></p>
     </div>
     <div class="header-button-row">
         <p><a href="{% url 'forms:step1' %}" class="button">เพิ่มคำร้องหมายจับ</a></p>
         <p><a href="{% url 'dashboard:approve_form_page' %}" class="button">อนุมัติแบบฟอร์ม</a></p>
     </div>
+    {% include 'module/approve_table.html' %}
+
+    {% include 'module/accept_table.html' %}
 </div>
 
-{% include 'module/approve_table.html' %}
 
-{% include 'module/accept_table.html' %}
 
 {% endblock %}
