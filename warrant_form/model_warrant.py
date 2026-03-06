@@ -54,7 +54,7 @@ class WarrantDataModel(models.Model):
     woa_date_day = models.PositiveIntegerField(blank=True, null=True)
     woa_date_month = models.PositiveIntegerField(blank=True, null=True)
     woa_date_year = models.PositiveIntegerField(blank=True, null=True)
-    woa_date_timehalf = models.TimeField(blank=True, null=True)
+    woa_date_timehalf = models.DateTimeField(blank=True, null=True)
 
     fault_type_id = models.IntegerField() # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร
@@ -86,7 +86,12 @@ class WarrantDataModel(models.Model):
     acc_tel = models.CharField(max_length=20, blank=True)
 
     appointment_type = models.IntegerField(choices=AppointmentTypeChoices, blank=True, null=True)
-    appointment_date = models.CharField(max_length=19, blank=True, null=True) # SAME DATE FORMAT AS BELOW
+    # appointment_date = models.CharField(max_length=19, blank=True, null=True) # SAME DATE FORMAT AS BELOW
+
+    appointment_date_day = models.PositiveIntegerField(blank=True, null=True)
+    appointment_date_month = models.PositiveIntegerField(blank=True, null=True)
+    appointment_date_year = models.PositiveIntegerField(blank=True, null=True)
+    appointment_date_timehalf = models.DateTimeField(blank=True, null=True)
 
     woa_no = models.IntegerField()
     woa_refno = models.CharField(max_length=16, blank=True)
@@ -101,14 +106,16 @@ class WarrantDataModel(models.Model):
         """
         dict_warrant = toAPICompatibleDictGeneral(self)
 
-        date_list = ["appointment_date", ]
+        dict_warrant = cleanDateTimeFields(dict_warrant)
 
-        for date in date_list:
-            date_value = dict_warrant.get(date)
-            if (not date_value) or len(date_value) != 19:
-                dict_warrant.update({
-                    date: "1970-01-01 12:00:00",
-                })
+        # date_list = ["appointment_date", ]
+
+        # for date in date_list:
+        #     date_value = dict_warrant.get(date)
+        #     if (not date_value) or len(date_value) != 19:
+        #         dict_warrant.update({
+        #             date: "1970-01-01 12:00:00",
+        #         })
 
         prefixed_dict = {}
         if prefix:
@@ -119,3 +126,39 @@ class WarrantDataModel(models.Model):
         return dict_warrant
     
 ##########################################################################
+
+def cleanDateTimeFields(current_dict : dict):
+
+    included_fields = ["woa_date", "appointment_date"]
+
+    for field in included_fields:
+        current_dict = reattachDateTime(current_dict, field)
+    
+    return current_dict
+
+def reattachDateTime(current_dict : dict, field : str):
+    
+    scene_date_year = current_dict.get(f"{field}_year")
+    scene_date_month = current_dict.get(f"{field}_month")
+    scene_date_day = current_dict.get(f"{field}_day")
+    scene_date_timehalf = current_dict.get(f"{field}_timehalf")
+    combined_date = ""
+    combined_datetime = "1970-00-00 12:00:00"
+    if scene_date_year and scene_date_month and scene_date_day:
+        converted_year = scene_date_year 
+        padded_month = str(scene_date_month).zfill(2)
+        padded_day = str(scene_date_day).zfill(2)
+
+        combined_date = f"{converted_year}-{padded_month}-{padded_day}"
+
+    if combined_date and scene_date_timehalf:
+        combined_datetime = f"{combined_date} {scene_date_timehalf}"
+
+    current_dict.pop(f"{field}_year", None)
+    current_dict.pop(f"{field}_month", None)
+    current_dict.pop(f"{field}_day", None)
+    current_dict.pop(f"{field}_timehalf", None)
+
+    current_dict.update({f"{field}": combined_datetime})
+
+    return current_dict
