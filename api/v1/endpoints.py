@@ -5,8 +5,9 @@ from django.contrib.auth import authenticate
 from api import check_utils as UtilsHandle
 from api import jwt_utils as JWTHandle
 
-from dashboard.receiver_models import ReceivedReqFormStatus
 from dashboard.models import VisualFinalizedFormData, ReqformDataModel
+
+from dashboard.warrant_wrapper import VisualWarrantData
 
 from django.utils import timezone
 
@@ -130,11 +131,66 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
     
     # Data confirm to be dictionary.   
 
-    # print(data)
+    # {
+    #     "req_no_plaintiff": "123456789",
+    #     "reqno": "จ.1/2569",
+    
+    #     "woa_no": 2,
+    #     "woa_year": 2569,
+    #     "woa_type": 2,
+    #     "woa_refno": "1234",
 
-    return JsonResponse({
-        "status": "success",
-    })
+    #     "judge_name": "xxxxxx xxxx",
+    #     "court_injunction": 1,
+    #     "injunction_date": "2006-01-02T00:00:00",
+    #     "file_path": "",
+    #     "because": ""
+    # }
+
+    try:
+        form_obj = ReqformDataModel.objects.get(
+            req_no_plaintiff = data.get("req_no_plaintiff"),
+            reqno = data.get("reqno"),
+        )
+
+        warrants_list = form_obj.warrants
+
+        target_object = warrants_list.get(
+            woa_no = data.get("woa_no"),
+            woa_date__year = data.get("woa_year"),
+            woa_type = data.get("woa_type"),
+            woa_refno = data.get("woa_refno"),
+        )
+
+        target_object = VisualWarrantData.objects.filter(
+            warrant=target_object,
+        )
+
+        iso8601_str_format = "%Y-%m-%dT%H:%M:%S"    
+
+        injunction_date = timezone.datetime.strptime(data.get("injunction_date"), iso8601_str_format)
+        recive_date = timezone.make_aware(recive_date, timezone.UTC,)
+
+        target_object.update(
+            judge_name = data.get("judge_name"),
+            court_injunction = data.get("court_injunction"),
+            injunction_date = injunction_date,
+            file_path = "",
+            because = "",
+        )
+
+        return JsonResponse({
+            "status": 200,
+            "message": "Update Success"
+        }, status=200)
+
+    except Exception as e:
+        print(e)
+
+        return JsonResponse({
+            "status": 400,
+            "message": "Update Failed",
+        }, status=400)
 
 
         

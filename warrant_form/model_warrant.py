@@ -51,7 +51,10 @@ class WarrantDataModel(models.Model):
         PASSPORT = 2, "เลขหนังสือเดินทาง"
         NON_THAI_ID = 3, "เลขคนซึ่งไม่มีสัญชาติไทย"
 
-    woa_date = models.CharField(max_length=19, blank=True, null=True)
+    woa_date_day = models.PositiveIntegerField(blank=True, null=True)
+    woa_date_month = models.PositiveIntegerField(blank=True, null=True)
+    woa_date_year = models.PositiveIntegerField(blank=True, null=True)
+    woa_date_timehalf = models.DateTimeField(blank=True, null=True)
 
     fault_type_id = models.IntegerField() # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร
@@ -85,6 +88,7 @@ class WarrantDataModel(models.Model):
     appointment_type = models.IntegerField(choices=AppointmentTypeChoices, blank=True, null=True)
     appointment_date = models.CharField(max_length=19, blank=True, null=True) # SAME DATE FORMAT AS BELOW
 
+    woa_no = models.IntegerField()
     woa_refno = models.CharField(max_length=16, blank=True)
     woa_type = models.IntegerField()
 
@@ -97,7 +101,7 @@ class WarrantDataModel(models.Model):
         """
         dict_warrant = toAPICompatibleDictGeneral(self)
 
-        date_list = ["appointment_date", "woa_date"]
+        date_list = ["appointment_date", ]
 
         for date in date_list:
             date_value = dict_warrant.get(date)

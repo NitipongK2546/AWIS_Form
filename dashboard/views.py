@@ -3,14 +3,14 @@ from django.urls import reverse
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from warrant_form.forms import MainAWISForm, WarrantForm
-from warrant_form.test_models import MainAWISDataModel, WarrantDataModel
+from warrant_form.forms import WarrantForm, AWISFormStep1
 
 # from dashboard.test_models import FormApprovalDataContainer as FormData
 from dashboard.models import VisualFormApprovalData as FormData
 from dashboard.models import VisualFinalizedFormData as FormSent
 
-from dashboard.receiver_models import ReceivedReqFormStatus
+from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
+
 from users.models import UserDataModel
 
 import _request_utils.connect_api as AWISConnectAPI
@@ -162,15 +162,17 @@ def select_form_to_edit(request : HttpRequest, form_id : int):
         }, status=405)
 
     if request.method == "POST":
-        main_form = MainAWISForm(request.POST, prefix="main_form")
+        main_form = AWISFormStep1(request.POST, prefix="main_form")
         sub_form = WarrantForm(request.POST, prefix="sub_form")
 
-        if main_form.is_valid():
-            awis_obj : MainAWISDataModel = main_form.save(commit=False)
+        if main_form.is_valid() and sub_form.is_valid():
+            awis_obj : ReqformDataModel = main_form.save(commit=False)
             warrant_obj : WarrantDataModel = sub_form.save()
 
             awis_obj.save()
             awis_obj.warrants.add(warrant_obj)
+            
+            selected_form.form.delete()
             
             # The old object is replaced by the new one.
             selected_form.form = awis_obj
@@ -180,14 +182,19 @@ def select_form_to_edit(request : HttpRequest, form_id : int):
             selected_form.save()
 
             return redirect(reverse("dashboard:success_page"))
+        else:
+            print(main_form.errors.as_text())
+            print(sub_form.errors.as_text())
     
-    form_obj : MainAWISDataModel = selected_form.form.toAPICompatibleDict("main_form")
-    warrants_list : list[WarrantDataModel] = selected_form.form.warrants.all()[0].toAPICompatibleDict("sub_form")
+    form_obj : ReqformDataModel = selected_form.form.toAPICompatibleDict()
+    warrants_list : list[WarrantDataModel] = selected_form.form.warrants.all()[0].toAPICompatibleDict()
 
-    main_form = MainAWISForm(form_obj, prefix="main_form")
-    sub_form = WarrantForm(warrants_list, prefix="sub_form")
+    # warrants_list = [warrant.toAPICompatibleDict() for warrant in warrants_list][0]
 
-    return render(request, "dashboard/reqform.html", {
+    main_form = AWISFormStep1(initial=form_obj, prefix="main_form")
+    sub_form = WarrantForm(initial=warrants_list, prefix="sub_form")
+
+    return render(request, "dashboard/BROKEN_CHANGE_TO_NEW_ONE.html", {
         "main_form": main_form,
         "sub_form": sub_form,
         "user": request.user,
