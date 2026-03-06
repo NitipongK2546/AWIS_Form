@@ -158,6 +158,8 @@ class ReqformDataModel(models.Model):
         # dict_main_awis.update({"month": self.month})
         # dict_main_awis.update({"year": self.year})
 
+        dict_main_awis.pop("id")
+
         empty_key_list = []
         for key, value in dict_main_awis.items():
             if isinstance(value, str):
@@ -206,7 +208,6 @@ class ReqformDataModel(models.Model):
         
         current_dict = cleanDateTimeFields(current_dict)
 
-        current_dict.pop("judge_name")
         current_dict.pop("req_day")
         current_dict.pop("req_month")
 
