@@ -37,9 +37,9 @@ def get_health_check(version : str) -> bool:
 
 ##############################################################################
 # 2. 
-def post_login_authorize(version : str, request : HttpRequest) -> bool:
+def post_login_authorize(version : str, request : HttpRequest, storage : str = "cookies") -> bool:
     """
-    Token จะถูกใส่ลงไปใน Session.
+    Token จะถูกใส่ลงไปใน Session/Cookie
     """
 
     if not get_health_check("v1"):
@@ -63,11 +63,15 @@ def post_login_authorize(version : str, request : HttpRequest) -> bool:
     data : dict = response.json()
     
     # Response OK.
-    if data.get("token"):
-        request.session["bearer_token"] = data.get("token")
-        return True
+    if not data.get("token"):
+        return False
     
-    return False
+    if storage == "session":
+        request.session["bearer_token"] = data.get("token")
+    else:
+        response.set_cookie("bearer_token", data.get("token"), max_age=1800, httponly=True)
+    
+    return response
 
 ##############################################################################
 # 3. 

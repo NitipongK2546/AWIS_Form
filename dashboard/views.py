@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 from warrant_form.forms import WarrantForm, AWISFormStep1
 
@@ -102,13 +103,12 @@ def confirm_approve(request : HttpRequest, form_id : int):
                 accept=FormSent.AcceptStatus.WAITING,
             )
 
+            if settings.ENABLE_API:
+                AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
+
             return redirect(reverse("dashboard:success_page"))
         except Exception as e:
             print(e)
-        # form = ReceivedReqFormStatus()
-        # form_data = form.toDictWithConvertedType()
-
-        # AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
 
     return render(request, "dashboard/confirmation_page.html", {
         "user": request.user,

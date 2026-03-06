@@ -14,7 +14,9 @@ load_dotenv()
 # Extra utility function... in a util functions.
 
 def check_auth_token(request : HttpRequest, token_type : str = "bearer_token") -> str | None:
-    return request.session.get(token_type)
+    # return request.session.get(token_type)
+
+    return request.COOKIES.get(token_type)
 
 def get_base_url_from_env(var_name : str = "BASE_URL") -> str:
     return os.getenv(var_name)
