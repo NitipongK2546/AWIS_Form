@@ -60,7 +60,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'awis.urls'
+ROOT_URLCONF = 'project_awis.urls'
 
 TEMPLATES = [
     {
@@ -77,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'awis.wsgi.application'
+WSGI_APPLICATION = 'project_awis.wsgi.application'
 
 
 # Database

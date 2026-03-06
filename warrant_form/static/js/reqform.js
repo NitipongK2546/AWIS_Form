@@ -81,6 +81,5 @@ awis_form.addEventListener("submit", function () {
 window.addEventListener("beforeunload", function (e) {
     if (!is_submitting_form) {
         e.preventDefault();
-        e.returnValue = ""; 
     }
 });

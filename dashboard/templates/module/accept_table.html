@@ -1,0 +1,51 @@
+{% load static %}
+
+<div id="body-table">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th colspan="7">สถานะคำร้องที่ส่งให้ศาลสำเร็จแล้ว</th>
+            </tr>
+            <tr>
+                <th>ID</th>
+                <th>เลขอ้างอิงคำร้อง</th>
+                <th>เลขที่คำร้อง</th>
+                <th>วันที่รับคำร้อง</th>
+                <th>สถานะการรับคำร้อง</th>
+                <th>วันที่อนุมัติคำร้อง</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in forms_sent %}
+            <tr>
+                <td>{{ form.id }}</td>
+                <td>{{ form.req_no_plaintiff }}</td>
+                <td>{{ form.reqno }}</td>
+                <td>{% if form.recive_date %}
+                        {{ form.recive_date|date:"d M Y, H:i" }}
+                    {% else %}
+                        -
+                    {% endif %}</td>
+                <td>{{ form.get_accept_display }}</td>
+                <td>
+                    {% if form.accept_date %}
+                        {{ form.accept_date|date:"d M Y, H:i" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'dashboard:get_form' form.id %}">View</a> |
+                    <a href="{% url 'dashboard:confirm_approve' form.id %}">Approve</a> |
+                    <a href="{% url 'dashboard:confirm_reject' form.id %}">Reject</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No forms available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

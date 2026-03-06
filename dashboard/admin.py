@@ -1,5 +1,5 @@
 from django.contrib import admin
-from dashboard.models import FormApprovalDataContainer
+from dashboard.test_models import FormApprovalDataContainer
 
 # Register your models here.
 

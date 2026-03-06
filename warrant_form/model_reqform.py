@@ -5,40 +5,6 @@ from django.forms.models import model_to_dict
 
 from warrant_form.test_models import WarrantDataModel
 
-def toAPICompatibleDictGeneral(incoming_model : models.Model) -> dict[str, object]:
-        """
-        Convert the model object into a dictionary that fits what the API required.
-        It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
-        then convert or remove some fields to match the API.\n
-        It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
-        """
-        ################################################################
-        # Conversion section.
-        # Convert dictionary into the format that API can receive.
-
-        model_dict = model_to_dict(incoming_model)
-
-        model_dict.pop("id", None)
-
-        empty_key_list = []
-        for key, value in model_dict.items():
-            if isinstance(value, str):
-                if not value:
-                    empty_key_list.append(key)
-            elif isinstance(value, bool):
-                if value: # True...
-                    model_dict.update({key: 1})
-                else:
-                    model_dict.update({key: 0})
-
-            if value is None:
-                empty_key_list.append(key)
-
-        for key in empty_key_list:
-            model_dict.update({key: None})
-
-        return model_dict
-
 class ReqformDataModel(models.Model):
     # POSSIBLY TEMPORARY VARIABLE.
     #req_no = USE ID OF OBJECT INSTEAD.
@@ -53,13 +19,11 @@ class ReqformDataModel(models.Model):
 
     court_code = models.CharField(max_length=7, verbose_name="รหัส")
 
-    # We don't even use this in the API
     reqno = models.CharField(max_length=50)
+    # reqno = models.CharField(max_length=50)
     judge_name = models.CharField(max_length=250)
     req_day = models.PositiveIntegerField()
     req_month = models.PositiveIntegerField()
-    # We don't even use this in the API
-
     req_year = models.PositiveIntegerField()
 
     req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) # CHOICES
@@ -113,7 +77,7 @@ class ReqformDataModel(models.Model):
     scene_date_year = models.PositiveIntegerField(blank=True, null=True)
 
     scene_date_timehalf = models.TimeField(blank=True, null=True) 
-    scene_date = models.CharField(max_length=19, blank=True) 
+    # scene_date = models.CharField(max_length=19, blank=True) 
 
     act = models.CharField(max_length=500, verbose_name="มีพฤติการกระทำความผิด", blank=True)
     law = models.CharField(max_length=200, verbose_name="ตามกฎหมาย", blank=True)
@@ -135,12 +99,26 @@ class ReqformDataModel(models.Model):
     composer_name = models.CharField(max_length=200, blank=True)
     composer_position = models.CharField(max_length=200, blank=True)
     writer_name = models.CharField(max_length=200, blank=True)
-    #############################################
-    # THE FILE SAID "write_position" BUT IS IT "write" or "writer"?
-    # CHECK LATERRRRRRRRRRRRRRRRR
-    writer_position = models.CharField(max_length=200, blank=True)
+    write_position = models.CharField(max_length=200, blank=True)
 
     create_uid = models.IntegerField()
+
+    #######################
+
+    woa_start_date_day = models.PositiveIntegerField(blank=True, null=True)
+    woa_start_date_month = models.PositiveIntegerField(blank=True, null=True)
+    woa_start_date_year = models.PositiveIntegerField(blank=True, null=True)
+
+    woa_start_date_timehalf = models.TimeField(blank=True, null=True) 
+
+
+    woa_end_date_day = models.PositiveIntegerField(blank=True, null=True)
+    woa_end_date_month = models.PositiveIntegerField(blank=True, null=True)
+    woa_end_date_year = models.PositiveIntegerField(blank=True, null=True)
+
+    woa_end_date_timehalf = models.TimeField(blank=True, null=True) 
+
+
     #############################################
 
     #####################################################################3
@@ -180,26 +158,6 @@ class ReqformDataModel(models.Model):
         # dict_main_awis.update({"month": self.month})
         # dict_main_awis.update({"year": self.year})
 
-        TIMEHALF_STR = "scene_date_timehalf"
-        time_half = dict_main_awis.get(TIMEHALF_STR)
-        date_half = None
-        
-        if self.scene_date_year and self.scene_date_month and self.scene_date_day:
-            converted_year = self.scene_date_year 
-            padded_month = str(self.scene_date_month).zfill(2)
-            padded_day = str(self.scene_date_day).zfill(2)
-
-            # The year is already converted from choices -> BE to AD (refer to Form field)
-            date_half = f"{converted_year}-{padded_month}-{padded_day}"
-
-        if date_half and time_half:
-            # Leave a space between date and time.
-            full_datetime = f"{date_half} {time_half}"
-            dict_main_awis.update({"scene_date": full_datetime})
-
-        # dict_main_awis.pop("id")
-        dict_main_awis.update({"req_no": dict_main_awis.get("id", "NO ID")})
-
         empty_key_list = []
         for key, value in dict_main_awis.items():
             if isinstance(value, str):
@@ -215,11 +173,11 @@ class ReqformDataModel(models.Model):
                 empty_key_list.append(key)
 
         for key in empty_key_list:
-            dict_main_awis.pop(key)
+            dict_main_awis.update({key: None})
 
         return dict_main_awis
     
-    def toAPICompatibleDict(self) -> dict[str, object]:
+    def toAPICompatibleDict(self,) -> dict[str, object]:
         current_dict = self.toDocumentCompatibleDict()
         current_dict.pop("day", None)
         current_dict.pop("month", None)
@@ -245,28 +203,8 @@ class ReqformDataModel(models.Model):
                 current_dict.update({bool_key: 0})
             else:
                 current_dict.update({bool_key: 1})
-
-        scene_date_year = current_dict.get("scene_date_year")
-        scene_date_month = current_dict.get("scene_date_month")
-        scene_date_day = current_dict.get("scene_date_day")
-        scene_date_timehalf = current_dict.get("scene_date_timehalf")
-        combined_date = ""
-        if scene_date_year and scene_date_month and scene_date_day:
-            converted_year = scene_date_year 
-            padded_month = str(scene_date_month).zfill(2)
-            padded_day = str(scene_date_day).zfill(2)
-
-            combined_date = f"{converted_year}-{padded_month}-{padded_day}"
-
-            current_dict.pop("scene_date_year")
-            current_dict.pop("scene_date_month")
-            current_dict.pop("scene_date_day")
-
-        if combined_date and scene_date_timehalf:
-            combined_datetime = f"{combined_date} {scene_date_timehalf}"
-            current_dict.update({"scene_date": combined_datetime})
-
-            current_dict.pop("scene_date_timehalf")
+        
+        current_dict = cleanDateTimeFields(current_dict)
 
         current_dict.pop("judge_name")
         current_dict.pop("req_day")
@@ -279,3 +217,55 @@ class ReqformDataModel(models.Model):
         current_dict.pop("acc_province")
 
         return current_dict
+    
+    
+    def toAPICompatibleDictWithConvertedWarrants(self, prefix : str = None) -> dict[str, object]:
+        cleaned_dict = self.toAPICompatibleDict()
+
+        warrants_obj = self.warrants.all()
+        warrants_list = [item.toAPICompatibleDict() for item in warrants_obj]
+
+        if prefix:
+            cleaned_dict.update({f"{prefix}_warrants": warrants_list})
+            return cleaned_dict
+        
+        cleaned_dict.update({f"warrants": warrants_list})
+        return cleaned_dict
+    
+################################################################################
+
+def cleanDateTimeFields(current_dict : dict):
+
+    included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
+
+    for field in included_fields:
+        current_dict = reattachDateTime(current_dict, field)
+    
+    return current_dict
+
+def reattachDateTime(current_dict : dict, field : str):
+    
+    scene_date_year = current_dict.get(f"{field}_year")
+    scene_date_month = current_dict.get(f"{field}_month")
+    scene_date_day = current_dict.get(f"{field}_day")
+    scene_date_timehalf = current_dict.get(f"{field}_timehalf")
+    combined_date = ""
+    combined_datetime = "1970-00-00 12:00:00"
+    if scene_date_year and scene_date_month and scene_date_day:
+        converted_year = scene_date_year 
+        padded_month = str(scene_date_month).zfill(2)
+        padded_day = str(scene_date_day).zfill(2)
+
+        combined_date = f"{converted_year}-{padded_month}-{padded_day}"
+
+    if combined_date and scene_date_timehalf:
+        combined_datetime = f"{combined_date} {scene_date_timehalf}"
+
+    current_dict.pop(f"{field}_year", None)
+    current_dict.pop(f"{field}_month", None)
+    current_dict.pop(f"{field}_day", None)
+    current_dict.pop(f"{field}_timehalf", None)
+
+    current_dict.update({f"{field}": combined_datetime})
+
+    return current_dict

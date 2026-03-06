@@ -8,7 +8,11 @@
 {% endblock %}
 
 {% block form %}
+<form id="awis-form" onsubmit="confirmForm()" method="post">
+    {% csrf_token %}
     {{ form }}
+    <button type="submit">Next</button>
+</form>
 {% endblock %}
 
 {% block script %}

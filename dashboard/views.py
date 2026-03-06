@@ -6,10 +6,14 @@ from django.contrib.auth.decorators import login_required
 from warrant_form.forms import MainAWISForm, WarrantForm
 from warrant_form.test_models import MainAWISDataModel, WarrantDataModel
 
-from dashboard.models import FormApprovalDataContainer as FormData
+# from dashboard.test_models import FormApprovalDataContainer as FormData
+from dashboard.models import VisualFormApprovalData as FormData
+from dashboard.models import VisualFinalizedFormData as FormSent
+
+from dashboard.receiver_models import ReceivedReqFormStatus
 from users.models import UserDataModel
 
-import request_utils.connect_api as AWISConnectAPI
+import _request_utils.connect_api as AWISConnectAPI
 
 import json
 
@@ -22,14 +26,27 @@ def dashboard(request : HttpRequest):
 
     creator = FormData.objects.filter(form_creator=user_data)
     owner = FormData.objects.filter(form_owner=user_data)
+    waiting_approval_forms = creator.union(owner)
 
-    all_forms = creator.union(owner)
+    form_sent = FormSent.objects.all()
 
-    # fixed_form = 
+    output_list = []
+    for obj in form_sent:
+        data_dict = {
+            "id": obj.pk,
+            "recive_date": obj.recive_date,
+            "accept": obj.accept,
+            "accept_date": obj.accept_date,
+            "req_no_plaintiff": obj.getReqNoPlaintiff(),
+            "reqno": obj.getReqNoPlaintiff(),
+        }
+
+        output_list.append(data_dict)
 
     return render(request, "dashboard/dashboard.html", {
         "user": request.user,
-        "forms": all_forms,
+        "forms": waiting_approval_forms,
+        "forms_sent": output_list,
         # "length": len(fixed_form),
     })
 
@@ -76,12 +93,22 @@ def confirm_approve(request : HttpRequest, form_id : int):
 
     selected_form = FormData.objects.filter(id=form_id).first()
     if request.method == "POST":
-        selected_form.approve_status = FormData.ApprovalStatus.APPROVED
-        selected_form.save()
+        try:
+            selected_form.approve_status = FormData.ApprovalStatus.APPROVED
+            selected_form.save()
+            
+            FormSent.objects.create(
+                form=selected_form.form,
+                accept=FormSent.AcceptStatus.WAITING,
+            )
+
+            return redirect(reverse("dashboard:success_page"))
+        except Exception as e:
+            print(e)
+        # form = ReceivedReqFormStatus()
+        # form_data = form.toDictWithConvertedType()
 
         # AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
-
-        return redirect(reverse("dashboard:success_page"))
 
     return render(request, "dashboard/confirmation_page.html", {
         "user": request.user,
@@ -166,21 +193,4 @@ def select_form_to_edit(request : HttpRequest, form_id : int):
         "user": request.user,
         "action": "Edit",
         "form": selected_form,
-    })
-
-
-################################################### View for Check Reqform Status
-#
-
-@login_required(login_url="/users/login/")
-def view_reqforms_status(request : HttpRequest, req_no_plaintiff : str):
-
-    # data = AWISConnectAPI.get_req_form_status("v1.1", request, req_no_plaintiff)
-    data = None
-
-    if not data:
-        data = []
-    
-    return render(request, "dashboard/reqform_status.html", {
-        "reqforms": data,
     })
