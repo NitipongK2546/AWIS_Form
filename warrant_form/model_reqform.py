@@ -206,7 +206,6 @@ class ReqformDataModel(models.Model):
         
         current_dict = cleanDateTimeFields(current_dict)
 
-        current_dict.pop("judge_name")
         current_dict.pop("req_day")
         current_dict.pop("req_month")
 

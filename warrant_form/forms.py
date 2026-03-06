@@ -9,6 +9,24 @@ from django.utils import timezone
 from warrant_form.code_handler import ThaiCountryAreaCode
 from uuid import uuid4
 
+today_year = datetime.date.today().year
+year_choices = [(year, year + 543) for year in range(1970, today_year + 1)]
+day_choices = [(day, day) for day in range(1, 31 + 1)]
+month_choices = [
+    (1, "มกราคม"),
+    (2, "กุมภาพันธ์"),
+    (3, "มีนาคม"),
+    (4, "เมษายน"),
+    (5, "พฤษภาคม"),
+    (6, "มิถุนายน"),
+    (7, "กรกฎาคม"),
+    (8, "สิงหาคม"),
+    (9, "กันยายน"),
+    (10, "ตุลาคม"),
+    (11, "พฤศจิกายน"),
+    (12, "ธันวาคม"),
+]
+
 class AWISFormStep1(forms.ModelForm):
     def clean_date(self, data : dict[str, object]):
 
@@ -67,23 +85,6 @@ class AWISFormStep1(forms.ModelForm):
         return cleaned_data
     
     class Meta:
-        today_year = datetime.date.today().year
-        year_choices = [(year, year + 543) for year in range(1970, today_year + 1)]
-        day_choices = [(day, day) for day in range(1, 31 + 1)]
-        month_choices = [
-            (1, "มกราคม"),
-            (2, "กุมภาพันธ์"),
-            (3, "มีนาคม"),
-            (4, "เมษายน"),
-            (5, "พฤษภาคม"),
-            (6, "มิถุนายน"),
-            (7, "กรกฎาคม"),
-            (8, "สิงหาคม"),
-            (9, "กันยายน"),
-            (10, "ตุลาคม"),
-            (11, "พฤศจิกายน"),
-            (12, "ธันวาคม"),
-        ]
         thai_codes = ThaiCountryAreaCode()
 
         model = ReqformDataModel
@@ -158,6 +159,13 @@ class WarrantForm(forms.ModelForm):
         model = WarrantDataModel
         fields = "__all__"
         widgets = {
-            "woa_date": forms.DateTimeInput(attrs={'type': 'datetime'}),
-            "appointment_date": forms.DateTimeInput(),
+            'woa_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
+            'woa_date_year': forms.Select(choices=year_choices),
+            'woa_date_day': forms.Select(choices=day_choices,),
+            'woa_date_month': forms.Select(choices=month_choices),
+
+            'appointment_date_timehalf': forms.TimeInput(attrs={'type': 'time'}),
+            'appointment_date_year': forms.Select(choices=year_choices),
+            'appointment_date_day': forms.Select(choices=day_choices,),
+            'appointment_date_month': forms.Select(choices=month_choices),
         }

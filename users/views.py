@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout 
 from django.http import HttpRequest
+from django.conf import settings
 
 import _request_utils.connect_api as AWISConnectAPI
 
@@ -16,6 +17,10 @@ def user_login(request : HttpRequest):
             user = form.get_user()
             if user is not None:
                 login(request, form.get_user())
+
+                if settings.ENABLE_API:
+                    AWISConnectAPI.post_login_authorize("v1.1", request)
+
                 if user.is_superuser:
                     return redirect("admin_panel:collections")
 
