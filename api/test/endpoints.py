@@ -35,8 +35,7 @@ def test2(request : HttpRequest) -> JsonResponse:
     response, data = AWISAPIConnect.post_login_authorize("v1.1", request, "session")
     storage = ""
 
-    response.set_cookie("bearer_token", data.get("token"), max_age=1800, httponly=True)
-
     return JsonResponse({
-        "status": "success"
-    }, status=500)
+        "status": "success",
+        "token_from_cookie": request.COOKIES.get("token"),
+    })
