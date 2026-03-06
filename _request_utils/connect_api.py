@@ -61,7 +61,7 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
         "password": password,
     }
     
-    response : JsonResponse = RequestUtils.post_request(
+    response = RequestUtils.post_request(
         base_url, 
         parameter_data=parameter, 
         post_data=post_data
@@ -71,7 +71,15 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
     # Response OK.
     if not data.get("token"):
         return False
-
+    
+    # REASSEMBLE DATA IN DJANGO RESPONSE, NOT REQUEST RESPONSE.
+    response = JsonResponse(data, status=200)
+    
+    if storage == "session":
+        request.session["bearer_token"] = data.get("token")
+    else:
+        response.set_cookie("bearer_token", data.get("token"), max_age=1800, httponly=True)
+    
     return response
 
 ##############################################################################
