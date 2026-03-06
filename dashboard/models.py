@@ -52,7 +52,7 @@ class VisualFinalizedFormData(models.Model):
         ACCEPTED = (1, "รับ")
         WAITING = (99, "รอการพิจารณา")
     
-    form = models.OneToOneField(ReqformDataModel, on_delete=models.CASCADE)
+    form = models.OneToOneField(ReqformDataModel, on_delete=models.CASCADE, related_name='finalized_form')
 
     # THIS NAME IS CORRECT, DON'T CHANGE THIS, FUTURE READER!!!
     recive_date = models.DateTimeField(blank=True, null=True)
@@ -74,7 +74,7 @@ class VisualFinalizedFormData(models.Model):
 
         return form.req_no_plaintiff
     
-    def getReqNoPlaintiff(self):
+    def getReqNo(self):
         form : ReqformDataModel = self.form
 
         return form.reqno

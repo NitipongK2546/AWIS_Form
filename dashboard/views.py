@@ -35,10 +35,10 @@ def dashboard(request : HttpRequest):
         data_dict = {
             "id": obj.pk,
             "recive_date": obj.recive_date,
-            "accept": obj.accept,
+            "accept": obj.get_accept_display,
             "accept_date": obj.accept_date,
             "req_no_plaintiff": obj.getReqNoPlaintiff(),
-            "reqno": obj.getReqNoPlaintiff(),
+            "reqno": obj.getReqNo(),
         }
 
         output_list.append(data_dict)

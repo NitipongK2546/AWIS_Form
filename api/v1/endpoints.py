@@ -6,6 +6,9 @@ from api import check_utils as UtilsHandle
 from api import jwt_utils as JWTHandle
 
 from dashboard.receiver_models import ReceivedReqFormStatus
+from dashboard.models import VisualFinalizedFormData, ReqformDataModel
+
+from django.utils import timezone
 
 # V1 ENDPOINTS
 
@@ -71,9 +74,43 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     #     "accept_date": "2006-01-02T00:00:00"
     # }
 
-    return JsonResponse({
-        "status": "success",
-    })
+    try:
+
+        form_obj = ReqformDataModel.objects.get(
+            req_no_plaintiff = data.get("req_no_plaintiff"),
+            reqno = data.get("reqno"),
+        )
+
+        target_object = VisualFinalizedFormData.objects.filter(
+            form=form_obj,
+        )
+
+        iso8601_str_format = "%Y-%m-%dT%H:%M:%S"     
+
+        recive_date = timezone.datetime.strptime(data.get("recive_date"), iso8601_str_format)
+        recive_date = timezone.make_aware(recive_date, timezone.UTC,)
+
+        accept_date = timezone.datetime.strptime(data.get("accept_date"), iso8601_str_format) 
+        accept_date = timezone.make_aware(accept_date, timezone.UTC,)
+
+        target_object.update(
+            recive_date = recive_date,
+            accept_date = accept_date,
+            accept = data.get("accept"),
+        )
+
+        return JsonResponse({
+            "status": 200,
+            "message": "Update Success"
+        }, status=200)
+
+    except Exception as e:
+        print(e)
+
+        return JsonResponse({
+            "status": 400,
+            "message": "Update Failed",
+        }, status=400)
 
     
 @csrf_exempt
