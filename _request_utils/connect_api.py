@@ -40,7 +40,7 @@ def get_health_check(version : str) -> bool:
 
 ##############################################################################
 # 2. 
-def post_login_authorize(version : str, request : HttpRequest, storage : str = "cookies") -> JsonResponse | bool:
+def post_login_authorize(version : str, request : HttpRequest, storage : str = "cookies") -> tuple | bool:
     """
     Token จะถูกใส่ลงไปใน Session/Cookie
     """
@@ -72,12 +72,12 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
     if not data.get("token"):
         return False
     
-    if storage == "session":
-        request.session["bearer_token"] = data.get("token")
-    else:
-        response.set_cookie("bearer_token", data.get("token"), max_age=1800, httponly=True)
+    # if storage == "session":
+    #     request.session["bearer_token"] = data.get("token")
+    # else:
+    #     response.set_cookie("bearer_token", data.get("token"), max_age=1800, httponly=True)
     
-    return response
+    return response, data
 
 ##############################################################################
 # 3. 
