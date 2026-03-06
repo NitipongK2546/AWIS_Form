@@ -17,16 +17,6 @@
 
 {% include 'module/approve_table.html' %}
 
-{% for form in forms %}
-<p>
-    {{ form }} 
-    {% if form.approve_status <= 1 %}
-    <a href="{% url 'dashboard:edit_form' form.id %}">แก้ไขแบบฟอร์ม</a>
-    {% endif %}
-</p>
-
-{% empty %}
-{% comment %} <p>No form available.</p> {% endcomment %}
-{% endfor %}
+{% include 'module/accept_table.html' %}
 
 {% endblock %}
