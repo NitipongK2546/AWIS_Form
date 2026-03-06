@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.forms.models import model_to_dict
 # from warrant_form import model_warrant 
 
-from warrant_form.test_models import WarrantDataModel
+from warrant_form.model_warrant import WarrantDataModel
 
 class ReqformDataModel(models.Model):
     # POSSIBLY TEMPORARY VARIABLE.

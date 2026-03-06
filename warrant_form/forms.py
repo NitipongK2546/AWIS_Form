@@ -1,6 +1,5 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from warrant_form.test_models import WarrantDataModel, MainAWISDataModel
 
 from warrant_form.model_reqform import ReqformDataModel
 from warrant_form.model_reqform import WarrantDataModel
@@ -145,14 +144,14 @@ class AWISFormStep1(forms.ModelForm):
             }),
         }
 
-class MainAWISForm(forms.ModelForm):
-    class Meta:
-        model = MainAWISDataModel
-        # fields = "__all__"
-        exclude = ["warrants",]
-        widgets = {
-            "scene_date": forms.DateTimeInput(),
-        }
+# class MainAWISForm(forms.ModelForm):
+#     class Meta:
+#         model = MainAWISDataModel
+#         # fields = "__all__"
+#         exclude = ["warrants",]
+#         widgets = {
+#             "scene_date": forms.DateTimeInput(),
+#         }
 
 class WarrantForm(forms.ModelForm):
     class Meta:

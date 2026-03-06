@@ -3,13 +3,12 @@ from django.urls import reverse
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from warrant_form.test_models import WarrantDataModel, MainAWISDataModel
-from warrant_form.forms import WarrantForm, MainAWISForm, AWISFormStep1, ReqformDataModel
+from warrant_form.forms import WarrantForm, AWISFormStep1, ReqformDataModel
 from warrant_form.doc_create import doc_create_with_context
+from warrant_form.model_warrant import WarrantDataModel
 
 # from warrant_form.forms_visual import VisualReqForm
 
-from dashboard.test_models import FormApprovalDataContainer
 from dashboard.models import VisualFormApprovalData
 from users.models import UserDataModel
 
@@ -20,7 +19,7 @@ import json
 
 @login_required(login_url="/users/login/")
 def plain_form(request : HttpRequest):    
-    main_form = MainAWISForm(prefix="main_form")
+    main_form = VisualFormApprovalData(prefix="main_form")
     sub_form = WarrantForm(prefix="sub_form")
 
     context = {
@@ -37,11 +36,11 @@ def plain_form(request : HttpRequest):
 def plain_form_submission(request : HttpRequest):
     # The expected outcome.
     if request.method == "POST":
-        main_form = MainAWISForm(request.POST, prefix="main_form")
+        main_form = VisualFormApprovalData(request.POST, prefix="main_form")
         sub_form = WarrantForm(request.POST, prefix="sub_form")
 
         if main_form.is_valid():
-            awis_obj : MainAWISDataModel = main_form.save(commit=False)
+            awis_obj : VisualFormApprovalData = main_form.save(commit=False)
             warrant_obj : WarrantDataModel = sub_form.save()
 
             cleaned_dict = awis_obj.toAPICompatibleDict()
@@ -58,7 +57,7 @@ def plain_form_submission(request : HttpRequest):
 
             user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
             
-            FormApprovalDataContainer.objects.create(form=awis_obj, form_creator=user_obj, form_owner=user_obj, approve_status=1)
+            VisualFormApprovalData.objects.create(form=awis_obj, form_creator=user_obj, form_owner=user_obj, approve_status=1)
 
             ###################################################################
 
