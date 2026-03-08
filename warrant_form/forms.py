@@ -9,6 +9,9 @@ from django.utils import timezone
 from warrant_form.code_handler import ThaiCountryAreaCode
 from uuid import uuid4
 
+from django.forms.models import model_to_dict
+
+
 class AWISFormStep1(forms.ModelForm):
     def clean_date(self, data : dict[str, object]):
 
@@ -143,15 +146,6 @@ class AWISFormStep1(forms.ModelForm):
                 'value': 10000010
             }),
         }
-
-# class MainAWISForm(forms.ModelForm):
-#     class Meta:
-#         model = MainAWISDataModel
-#         # fields = "__all__"
-#         exclude = ["warrants",]
-#         widgets = {
-#             "scene_date": forms.DateTimeInput(),
-#         }
 
 class WarrantForm(forms.ModelForm):
     class Meta:

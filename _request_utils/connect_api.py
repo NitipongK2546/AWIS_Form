@@ -83,7 +83,7 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
 
 ##############################################################################
 # 3. 
-def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -> bool:
+def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -> dict | bool:
 
     # if not get_health_check("v1"):
     #     return False
@@ -101,7 +101,7 @@ def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -
     data : dict = response.json()
 
     if data.get("status"):
-        return True
+        return data
     
     return False
 

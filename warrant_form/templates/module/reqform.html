@@ -15,11 +15,11 @@
     <div class="form-header-row">    
         <p>(คำร้อง) <br><br>ขอออกหมายจับ </p>
         <img src="{% static 'images/Thai_Goverment_Emblem.jpg' %}" alt="Thai Emblem" class="emblem">
-        <p> ที่ {{form.reqno}}</p>
+        <p> ที่ {{form.req_form_number}}</p>
     </div>
     <p>{{form.req_case_type_id}}</p>
     <div class="type_and_court">
-        <p><span>รับคำร้อง</span><span>ศาล {{form.court_name}}</span></p> 
+        <p><span>รับคำร้อง</span><span>ศาล {{form.court_name_1}}</span></p> 
         <p class="date-widget"><span>เรียกสอบ</span><span>วัน {{form.req_day}} เดือน {{form.req_month}} พ.ศ. {{form.req_year}}</span></p>
     </div>
 
@@ -27,13 +27,14 @@
 
     <div class="first_plaintiff">
         <p align="center">ความอาญา <br></p>
-        <p align="right">{{ form.plaintiff }} ผู้ร้อง</p>
+        <p align="right">{{ form.plaintiff_1 }} ผู้ร้อง</p>
     </div>
     
-        <p align="right">
-            <span>ข้าพเจ้า {{ form.req_name }}</span>
-            <span>ตำแหน่ง {{ form.req_pos }}</span>
-        </p>
+    <p align="right">
+        <span>ข้าพเจ้า {{ form.req_name }}</span>
+        <span>ตำแหน่ง {{ form.req_pos }}</span>
+    </p>
+
     <div class="special-multi-flex">
         <p>
             <span class="double-input">
@@ -62,44 +63,15 @@
                 ขอยื่นคำร้องขอออกหมายจับยื่นต่อศาลดังมีข้อความที่จะกล่าวดังต่อไปนี้
             </span>
         </p>
-        </div> 
-      
-    <p class="cause-id-paragraph"><span>ข้อ 1. {{ form.cause_type_id_1 }}</span> <span>ด้วย {{ form.cause_text_1 }}</span></p>
-    <p> มาแจ้งความร้องทุกข์ต่อพนักงานสอบสวน</p>
+    </div> 
     
-    <p class="cause-id-paragraph"><span>ข้อ 1. {{ form.cause_type_id_1 }}</span> <span>ด้วย {{ form.cause_text_1 }}</span></p>
-    <p> มาแจ้งความร้องทุกข์ต่อพนักงานสอบสวน</p>
+    {% include 'module/cause_type_num1.html' %}
 
     <p style="max-width: 42rem; margin-left: 8rem;">
         {{ form.cause_type_id_2 }} ปรากฎจากการสืบสวน/สอบสวนของ {{ form.cause_text_2 }}
     </p>
 
-    <div class="acc-info">
-        <p><span>ว่า {{ form.acc_full_name }}</span> <span>เลขบัตรประชาชน {{ form.acc_card_id }}</span></p>
-        <p>
-            <span class="double-input">
-                <span class="double-input-insides">อายุ {{ form.acc_age }}</span>
-                <span class="double-input-insides">เชื้อชาติ {{ form.acc_origin }}</span>
-            </span> 
-            <span>สัญชาติ {{ form.acc_nation }}</span> 
-            <span>อาชีพ {{ form.acc_occupation }}</span>
-        </p>
-        <p>
-            <span>อยู่บ้านเลขที่ {{ form.acc_addno }}</span> 
-            <span>หมู่ที่ {{ form.acc_vilno }}</span> 
-            <span>ถนน {{ form.acc_road }}</span>
-        </p>
-        <p>
-            <span>ตรอก/ซอย {{ form.acc_soi }}</span> 
-            <span>ใกล้เคียง {{ form.acc_near }}</span> 
-            <span>จังหวัด {{ form.acc_province }}</span>
-        </p>
-        <p>
-            <span>อำเภอ/เขต {{ form.acc_district }}</span> 
-            <span>ตำบล/แขวง {{ form.acc_sub_district }}</span> 
-            <span>โทรศัพท์ {{ form.acc_tel }}</span>
-        </p>
-    </div>
+    {% include 'module/acc_info.html' %}
 
     <p> {{ form.charge_type_1 }} ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</p>
     <p> {{ form.charge_type_2 }} ได้หรือน่าจะได้กระทำความผิดอาญา และน่าจะหลบหนีหรือจะไปยุ่งเหยิงกับพยานหลักฐานหรือก่ออันตรายประการอื่น</p>
@@ -113,15 +85,15 @@
     <p>ตามกฎหมาย {{ form.law }} </p>
     <p>รายละเอียดข้อมูลและพยานหลักฐาน ปรากฎตามที่เอกสารที่แนบมาพร้อมนี้</p>
 
-    <p align="right">ข้อ 2. ผู้ร้องประสงค์จะทำการจับกุม  {{ form.accused }}</p>
-    <p>จึงขอให้ศาลออกหมายจับ   {{ form.accused }} มาดำเนินคดี</p>
+    <p align="right">ข้อ 2. ผู้ร้องประสงค์จะทำการจับกุม  {{ form.accused_1 }}</p>
+    <p>จึงขอให้ศาลออกหมายจับ   {{ form.accused_2 }} มาดำเนินคดี</p>
 
     {% include 'module/woa_date.html' %}
     
     <p>ในการยื่นคำร้องนี้ ผู้ร้องได้มอบหมายให้ {{ form.agent_name }}</p>
     <p>ตำแหน่ง {{ form.agent_pos }} ซึ่งเป็นผู้ใต้บังคับบัญชา เป็นผู้นำคำร้องมายื่นต่อศาล <br>และหากศาลเรียกสอบถามเมื่อใด ผู้ร้องพร้อมจะมาให้ศาลสอบในทันที</p>
 
-    <p align="right">ผู้ร้อง  {{form.have_req_1}} เคย {{form.have_req_2}} ไม่เคย ร้องขอให้ศาล {{form.court_name}}</p>
+    <p align="right">ผู้ร้อง  {{form.have_req_1}} เคย {{form.have_req_2}} ไม่เคย ร้องขอให้ศาล {{form.court_name_2}}</p>
     <p>ออกหมายจับบุคคลดังกล่าว โดยอาศัยเหตุแห่งการร้องขอเดียวกันนี้ หรือเหตุอื่น (ระบุ) </p>
     <p>{{ form.have_act }}</p>
     <p>และศาลสั่ง {{ form.have_injunc }} </p>

@@ -6,33 +6,35 @@ from django.forms.models import model_to_dict
 from warrant_form.model_warrant import WarrantDataModel
 
 class ReqformDataModel(models.Model):
-    # POSSIBLY TEMPORARY VARIABLE.
-    #req_no = USE ID OF OBJECT INSTEAD.
-    court_name = models.CharField(max_length=250, blank=True)
-    day = timezone.datetime.today().day
-    month = timezone.datetime.today().month
-    year = timezone.datetime.today().year
-
     class ReqCaseTypeIDChoices(models.IntegerChoices):
-        GENERAL = (1, "ทั่วไป")
-        DRUGS = (2, "ยาเสพติด")
+        GENERAL = (1, "ทั่วไป") # จ.
+        DRUGS = (2, "ยาเสพติด") # ยจ.
+    
+    reqno = models.CharField(max_length=50, blank=True, unique=True)
+    # เป็นการผสมกันระหว่าง case_type_id, req_form_number, และ req_year
 
-    court_code = models.CharField(max_length=7, verbose_name="รหัส")
-
-    reqno = models.CharField(max_length=50)
-    # reqno = models.CharField(max_length=50)
-    judge_name = models.CharField(max_length=250)
+    req_form_number = models.IntegerField(unique=True)
+    
     req_day = models.PositiveIntegerField()
     req_month = models.PositiveIntegerField()
     req_year = models.PositiveIntegerField()
 
-    req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) # CHOICES
+    req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) 
+
+    court_name_1 = models.CharField(max_length=250, blank=True)
+    court_name_2 = models.CharField(max_length=250, blank=True)
+    court_code = models.CharField(max_length=7, verbose_name="รหัส")
+
+    judge_name = models.CharField(max_length=250)
 
     police_station_id = models.CharField(max_length=8) #REFER id -> tb_police_station
     req_no_plaintiff = models.CharField(max_length=50)
 
-    plaintiff = models.CharField(max_length=400)
-    accused = models.CharField(max_length=400)
+    plaintiff_1 = models.CharField(max_length=400)
+    plaintiff_2 = models.CharField(max_length=400)
+    accused_1 = models.CharField(max_length=400)
+    accused_2 = models.CharField(max_length=400)
+    
     req_name = models.CharField(max_length=300)
     req_pos = models.CharField(max_length=400)
     req_age = models.PositiveIntegerField()

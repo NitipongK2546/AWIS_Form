@@ -104,10 +104,12 @@ def confirm_approve(request : HttpRequest, form_id : int):
             )
 
             if settings.ENABLE_API:
-                AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
+                dict = AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
 
-            print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False)
-)
+            print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False))
+                  
+            # print(f"Result: {json.dumps(dict)}")
+
             return redirect(reverse("dashboard:success_page"))
         except Exception as e:
             print(e)

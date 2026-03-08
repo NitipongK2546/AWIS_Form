@@ -10,6 +10,7 @@ from warrant_form.model_warrant import WarrantDataModel
 # from warrant_form.forms_visual import VisualReqForm
 
 from dashboard.models import VisualFormApprovalData
+from dashboard.warrant_wrapper import VisualWarrantData
 from users.models import UserDataModel
 
 import json
@@ -146,6 +147,13 @@ def step2_warrantform(request : HttpRequest):
 
             if reqform:
                 reqform.warrants.add(warrant)
+
+                # Fix below/above for more than 1 warrant
+
+                VisualWarrantData.objects.create(
+                    warrant=warrant,
+                    judge_name=reqform.judge_name,
+                )
 
             data = reqform.toAPICompatibleDictWithConvertedWarrants()
 

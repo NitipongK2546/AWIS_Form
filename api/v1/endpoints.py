@@ -128,36 +128,18 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
     # Failed.
     if isinstance(data, JsonResponse):
         return data
-    
-    # Data confirm to be dictionary.   
-
-    # {
-    #     "req_no_plaintiff": "123456789",
-    #     "reqno": "จ.1/2569",
-    
-    #     "woa_no": 2,
-    #     "woa_year": 2569,
-    #     "woa_type": 2,
-    #     "woa_refno": "1234",
-
-    #     "judge_name": "xxxxxx xxxx",
-    #     "court_injunction": 1,
-    #     "injunction_date": "2006-01-02T00:00:00",
-    #     "file_path": "",
-    #     "because": ""
-    # }
 
     try:
-        form_obj = ReqformDataModel.objects.get(
+        form_obj = ReqformDataModel.objects.filter(
             req_no_plaintiff = data.get("req_no_plaintiff"),
             reqno = data.get("reqno"),
-        )
+        ).first()
 
         warrants_list = form_obj.warrants
 
         target_object = warrants_list.get(
             woa_no = data.get("woa_no"),
-            woa_date__year = data.get("woa_year"),
+            woa_date_year = data.get("woa_year"),
             woa_type = data.get("woa_type"),
             woa_refno = data.get("woa_refno"),
         )
@@ -194,4 +176,20 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
 
 
         
-    
+    # Data confirm to be dictionary.   
+
+# {
+#     "req_no_plaintiff": "123456789",
+#     "reqno": "จ.1/2569",
+
+#     "woa_no": 2,
+#     "woa_year": 2569,
+#     "woa_type": 2,
+#     "woa_refno": "1234",
+
+#     "judge_name": "xxxxxx xxxx",
+#     "court_injunction": 1,
+#     "injunction_date": "2006-01-02T00:00:00",
+#     "file_path": "",
+#     "because": ""
+# }
