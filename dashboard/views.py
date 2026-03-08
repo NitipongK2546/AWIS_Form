@@ -97,14 +97,14 @@ def confirm_approve(request : HttpRequest, form_id : int):
         try:
             selected_form.approve_status = FormData.ApprovalStatus.APPROVED
             selected_form.save()
+
+            if settings.ENABLE_API:
+                dict = AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
             
             FormSent.objects.create(
                 form=selected_form.form,
                 accept=FormSent.AcceptStatus.WAITING,
             )
-
-            if settings.ENABLE_API:
-                dict = AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
 
             print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False))
                   
