@@ -21,8 +21,7 @@ class ReqformDataModel(models.Model):
 
     req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) 
 
-    court_name_1 = models.CharField(max_length=250, blank=True)
-    court_name_2 = models.CharField(max_length=250, blank=True)
+    court_name = models.CharField(max_length=250, blank=True)
     court_code = models.CharField(max_length=7, verbose_name="รหัส")
 
     judge_name = models.CharField(max_length=250)
@@ -30,10 +29,8 @@ class ReqformDataModel(models.Model):
     police_station_id = models.CharField(max_length=8) #REFER id -> tb_police_station
     req_no_plaintiff = models.CharField(max_length=50)
 
-    plaintiff_1 = models.CharField(max_length=400)
-    plaintiff_2 = models.CharField(max_length=400)
-    accused_1 = models.CharField(max_length=400)
-    accused_2 = models.CharField(max_length=400)
+    plaintiff = models.CharField(max_length=400)
+    accused = models.CharField(max_length=400)
     
     req_name = models.CharField(max_length=300)
     req_pos = models.CharField(max_length=400)

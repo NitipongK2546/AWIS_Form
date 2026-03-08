@@ -121,9 +121,20 @@ def step1_reqform(request : HttpRequest):
                 "form": form,
                 "step": 1,
             })
+        
+    static_data = {
+        "court_code": "0000011",
+        "police_station_id": "TCCT0001",
+        "req_no_plaintiff": "tcctd20260304002",
+        "create_uid": 10000010,
+    }
 
-    old_data = request.session.get("step1")
-    form = AWISFormStep1(initial=old_data, prefix="main_form")
+    old_data : dict = request.session.get("step1")
+
+    if old_data:
+        static_data.update(old_data)
+
+    form = AWISFormStep1(initial=static_data, prefix="main_form")
     return render(request, "warrant_form/awis_step1.html", {
         "form": form,
         "step": 1,

@@ -7,10 +7,10 @@
 <form id="awis-form" onsubmit="confirmForm()" method="post">
     {% csrf_token %}
     
-    {{ form.court_code }}
-    {{ form.police_station_id }}
-    {{ form.req_no_plaintiff }}
-    {{ form.create_uid }}
+    {{ form.court_code.as_hidden }}
+    {{ form.police_station_id.as_hidden}}
+    {{ form.req_no_plaintiff.as_hidden }}
+    {{ form.create_uid.as_hidden }}
 
     <div class="form-header-row">    
         <p>(คำร้อง) <br><br>ขอออกหมายจับ </p>
@@ -100,7 +100,7 @@
     
     <p align="center">ควรมิควรแล้วแต่จะโปรด</p>
 
-    <p align="center">(ลงชื่อ) ({{ form.plaintiff }})  ผู้ร้อง</p>
+    <p align="center">(ลงชื่อ) ({{ form.plaintiff_2 }})  ผู้ร้อง</p>
 
     <button type="submit">Next</button>
 </form>
