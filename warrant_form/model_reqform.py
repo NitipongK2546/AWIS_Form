@@ -122,6 +122,7 @@ class ReqformDataModel(models.Model):
 
     warrants = models.ManyToManyField(WarrantDataModel)
 
+
     def toDocumentCompatibleDict(self) -> dict[str, object]:
         """
         Convert the model object into a dictionary that fits what the API required.
@@ -194,8 +195,6 @@ class ReqformDataModel(models.Model):
         current_dict.pop("acc_sub_district")
         current_dict.pop("acc_district")
         current_dict.pop("acc_province")
-
-        current_dict = cleanDateTimeFields(current_dict)
 
         return current_dict
     

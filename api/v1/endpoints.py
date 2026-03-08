@@ -107,6 +107,7 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
 
     except Exception as e:
         print(e)
+        print(data)
 
         return JsonResponse({
             "status": 400,

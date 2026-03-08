@@ -3,11 +3,11 @@ from django.urls import reverse
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from warrant_form.forms import WarrantForm, AWISFormStep1, ReqformDataModel
+from warrant_form.forms import WarrantForm, AWISFormStep1
 from warrant_form.doc_create import doc_create_with_context
 from warrant_form.model_warrant import WarrantDataModel
+from warrant_form.model_reqform import ReqformDataModel
 
-# from warrant_form.forms_visual import VisualReqForm
 
 from dashboard.models import VisualFormApprovalData
 from dashboard.warrant_wrapper import VisualWarrantData
@@ -107,13 +107,8 @@ def step1_reqform(request : HttpRequest):
         if form.is_valid():
             data = form.cleaned_data
 
-            reqform = ReqformDataModel.objects.create(**data)
-
-            step1_data = reqform.toAPICompatibleDict()
-
             request.session.update({
-                "step1": step1_data,
-                "reqform_id": reqform.id,
+                "step1": data,
             })
 
             return redirect(reverse("forms:step2"))
@@ -148,15 +143,11 @@ def step2_warrantform(request : HttpRequest):
         form = WarrantForm(request.POST)
 
         if form.is_valid():
-            # data = form.cleaned_data
-            # request.session.update({
-            #     "step2": data,
-            # })
+
+            reqform_data = request.session.get("step1")
+            reqform : ReqformDataModel = ReqformDataModel.objects.create(**reqform_data)
 
             warrant : WarrantDataModel = form.save()
-
-            form_id = request.session.get("reqform_id")
-            reqform = ReqformDataModel.objects.filter(id=form_id).first()
 
             if reqform:
                 reqform.warrants.add(warrant)
