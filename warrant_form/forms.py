@@ -78,8 +78,8 @@ class AWISFormStep1(forms.Form):
 
     # Start of a few unrequired field.
     # cause_type_id 
-    cause_type_id_1 = forms.BooleanField()
-    cause_type_id_2 = forms.BooleanField()
+    cause_type_id_1 = forms.BooleanField(required=False)
+    cause_type_id_2 = forms.BooleanField(required=False)
     cause_text_1 = forms.CharField(max_length=500, required=False)
     cause_text_2 = forms.CharField(max_length=500, required=False)
 
@@ -88,8 +88,8 @@ class AWISFormStep1(forms.Form):
                 'cols': 135,
                 'style':'resize:none;'
             }), )
-    charge_type_1 = forms.BooleanField() 
-    charge_type_2 = forms.BooleanField()
+    charge_type_1 = forms.BooleanField(required=False) 
+    charge_type_2 = forms.BooleanField(required=False)
 
     scene = forms.CharField(max_length=300, required=False, widget=forms.Textarea(attrs={
                 'rows': 5,
@@ -119,8 +119,8 @@ class AWISFormStep1(forms.Form):
     agent_name = forms.CharField(max_length=400, required=False)
     agent_pos = forms.CharField(max_length=400, required=False)
 
-    have_req_1 = forms.BooleanField() 
-    have_req_2 = forms.BooleanField() 
+    have_req_1 = forms.BooleanField(required=False) 
+    have_req_2 = forms.BooleanField(required=False) 
 
     have_court_code = forms.CharField(max_length=7, required=False) # tb_office court_code
     have_act = forms.CharField(max_length=400, required=False)
@@ -216,7 +216,6 @@ class AWISFormStep1(forms.Form):
         bool_key_dict : dict[str, int] = {
             "cause_type_id": 2,
             "have_req": 2,
-            # "charge_type": 2,
         }
         for bool_key, total_num in bool_key_dict.items():
             bool_value_list = []
@@ -233,8 +232,6 @@ class AWISFormStep1(forms.Form):
                 current_dict.update({bool_key: 0})
             else:
                 current_dict.update({bool_key: 1})
-        
-        current_dict = cleanDateTimeFields(current_dict)
 
         current_dict.pop("req_day")
         current_dict.pop("req_month")
@@ -312,10 +309,38 @@ class AWISFormStep1(forms.Form):
                     custom_error = ValidationError(f"Duplicated Checkboxes from the same type.")
                     self.add_error(key, custom_error)
 
+    def combineDupe(self, current_dict : dict):
+
+        included_fields = ["plaintiff", "accused", "court_name"]
+
+        for field in included_fields:
+            val_num1 = current_dict.get(f"{field}_1")
+            val_num2 = current_dict.get(f"{field}_2")
+
+            if val_num1 == val_num2:
+                current_dict.update({field: val_num1})
+                current_dict.pop(f"{field}_1")
+                current_dict.pop(f"{field}_2")
+            else:
+                raise Exception("VALUE NOT MATCHED.")
+        
+        return current_dict
+    
+    def cleanDateTimeFields(self, current_dict : dict):
+
+        included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
+
+        for field in included_fields:
+            current_dict = reattachDateTime(current_dict, field)
+        
+        return current_dict
+
     def clean(self):
         cleaned_data = super().clean()
         self.clean_date(cleaned_data)
         self.clean_multi_boolean(cleaned_data)
+        self.combineDupe(cleaned_data)
+        self.cleanDateTimeFields(cleaned_data)
 
         return cleaned_data
 
@@ -329,23 +354,14 @@ class WarrantForm(forms.ModelForm):
             "appointment_date": forms.DateTimeInput(),
         }
 
-def cleanDateTimeFields(current_dict : dict):
-
-    included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
-
-    for field in included_fields:
-        current_dict = reattachDateTime(current_dict, field)
-    
-    return current_dict
-
 def reattachDateTime(current_dict : dict, field : str):
-    
+        
     scene_date_year = current_dict.get(f"{field}_year")
     scene_date_month = current_dict.get(f"{field}_month")
     scene_date_day = current_dict.get(f"{field}_day")
     scene_date_timehalf = current_dict.get(f"{field}_timehalf")
     combined_date = ""
-    combined_datetime = "1970-00-00 12:00:00"
+    combined_datetime = "1970-01-01 00:00:00"
     if scene_date_year and scene_date_month and scene_date_day:
         converted_year = scene_date_year 
         padded_month = str(scene_date_month).zfill(2)

@@ -71,11 +71,7 @@ class ReqformDataModel(models.Model):
         NOVEMBER = (11, "พฤศจิกายน")
         DECEMBER = (12, "ธันวาคม")
 
-    scene_date_day = models.PositiveIntegerField(blank=True, null=True)
-    scene_date_month = models.PositiveIntegerField(blank=True, null=True)
-    scene_date_year = models.PositiveIntegerField(blank=True, null=True)
-
-    scene_date_timehalf = models.TimeField(blank=True, null=True) 
+    scene_date = models.DateTimeField(blank=True, null=True) 
     # scene_date = models.CharField(max_length=19, blank=True) 
 
     act = models.CharField(max_length=500, verbose_name="มีพฤติการกระทำความผิด", blank=True)
@@ -102,23 +98,8 @@ class ReqformDataModel(models.Model):
 
     create_uid = models.IntegerField()
 
-    #######################
-
-    woa_start_date_day = models.PositiveIntegerField(blank=True, null=True)
-    woa_start_date_month = models.PositiveIntegerField(blank=True, null=True)
-    woa_start_date_year = models.PositiveIntegerField(blank=True, null=True)
-
-    woa_start_date_timehalf = models.TimeField(blank=True, null=True) 
-
-
-    woa_end_date_day = models.PositiveIntegerField(blank=True, null=True)
-    woa_end_date_month = models.PositiveIntegerField(blank=True, null=True)
-    woa_end_date_year = models.PositiveIntegerField(blank=True, null=True)
-
-    woa_end_date_timehalf = models.TimeField(blank=True, null=True) 
-
-
-    #############################################
+    woa_start_date = models.DateTimeField(blank=True, null=True)
+    woa_end_date = models.DateTimeField(blank=True, null=True)
 
     #####################################################################3
     # WARRANTS AUTO-FILL SECTION
@@ -204,8 +185,6 @@ class ReqformDataModel(models.Model):
                 current_dict.update({bool_key: 0})
             else:
                 current_dict.update({bool_key: 1})
-        
-        current_dict = cleanDateTimeFields(current_dict)
 
         current_dict.pop("req_day")
         current_dict.pop("req_month")
@@ -234,38 +213,38 @@ class ReqformDataModel(models.Model):
     
 ################################################################################
 
-def cleanDateTimeFields(current_dict : dict):
+# def cleanDateTimeFields(current_dict : dict):
 
-    included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
+#     included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
 
-    for field in included_fields:
-        current_dict = reattachDateTime(current_dict, field)
+#     for field in included_fields:
+#         current_dict = reattachDateTime(current_dict, field)
     
-    return current_dict
+#     return current_dict
 
-def reattachDateTime(current_dict : dict, field : str):
+# def reattachDateTime(current_dict : dict, field : str):
     
-    scene_date_year = current_dict.get(f"{field}_year")
-    scene_date_month = current_dict.get(f"{field}_month")
-    scene_date_day = current_dict.get(f"{field}_day")
-    scene_date_timehalf = current_dict.get(f"{field}_timehalf")
-    combined_date = ""
-    combined_datetime = "1970-00-00 12:00:00"
-    if scene_date_year and scene_date_month and scene_date_day:
-        converted_year = scene_date_year 
-        padded_month = str(scene_date_month).zfill(2)
-        padded_day = str(scene_date_day).zfill(2)
+#     scene_date_year = current_dict.get(f"{field}_year")
+#     scene_date_month = current_dict.get(f"{field}_month")
+#     scene_date_day = current_dict.get(f"{field}_day")
+#     scene_date_timehalf = current_dict.get(f"{field}_timehalf")
+#     combined_date = ""
+#     combined_datetime = "1970-00-00 12:00:00"
+#     if scene_date_year and scene_date_month and scene_date_day:
+#         converted_year = scene_date_year 
+#         padded_month = str(scene_date_month).zfill(2)
+#         padded_day = str(scene_date_day).zfill(2)
 
-        combined_date = f"{converted_year}-{padded_month}-{padded_day}"
+#         combined_date = f"{converted_year}-{padded_month}-{padded_day}"
 
-    if combined_date and scene_date_timehalf:
-        combined_datetime = f"{combined_date} {scene_date_timehalf}"
+#     if combined_date and scene_date_timehalf:
+#         combined_datetime = f"{combined_date} {scene_date_timehalf}"
 
-    current_dict.pop(f"{field}_year", None)
-    current_dict.pop(f"{field}_month", None)
-    current_dict.pop(f"{field}_day", None)
-    current_dict.pop(f"{field}_timehalf", None)
+#     current_dict.pop(f"{field}_year", None)
+#     current_dict.pop(f"{field}_month", None)
+#     current_dict.pop(f"{field}_day", None)
+#     current_dict.pop(f"{field}_timehalf", None)
 
-    current_dict.update({f"{field}": combined_datetime})
+#     current_dict.update({f"{field}": combined_datetime})
 
-    return current_dict
+#     return current_dict

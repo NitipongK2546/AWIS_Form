@@ -105,7 +105,9 @@ def step1_reqform(request : HttpRequest):
         form = AWISFormStep1(request.POST, prefix="main_form")
 
         if form.is_valid():
-            reqform : ReqformDataModel = form.save()
+            data = form.cleaned_data
+
+            reqform = ReqformDataModel.objects.create(**data)
 
             step1_data = reqform.toAPICompatibleDict()
 
