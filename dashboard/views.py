@@ -36,7 +36,6 @@ def dashboard(request : HttpRequest):
     output_list = []
     for obj in form_sent:
         data_dict = {
-            "id": obj.pk,
             "recive_date": obj.recive_date,
             "accept": obj.get_accept_display,
             "accept_date": obj.accept_date,
@@ -50,7 +49,7 @@ def dashboard(request : HttpRequest):
     for warrant in warrants:
         data_dict = {
             "court_injunction": warrant.get_court_injunction_display,  
-            "woa_no": f"{warrant.warrant.woa_no}/{warrant.warrant.woa_date_year}"
+            "woa_no": f"{warrant.warrant.woa_no}/{warrant.warrant.woa_date.year + 543}"
         }
 
         warrants_list.append(data_dict)

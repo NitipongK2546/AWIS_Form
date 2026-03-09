@@ -18,19 +18,7 @@ for (let element of req_sub_district_sel) {
 }
 
 // Non-Async Function
-function adjustYearToLatest() {
-    let current_date = new Date()
-    let current_year = current_date.getFullYear();
 
-    req_year.value = current_date.getFullYear();
-    req_month.value = current_date.getMonth() + 1;
-    req_day.value = current_date.getDate();
-
-    scene_year_selector.value = current_year;
-    woa_start_year.value = current_year;
-    woa_end_year.value = current_year;
-
-}
 function changeSelectValue(frontal_substring, targeted_sel, full_list) {
     let options = [];
     for (let child of full_list) {
@@ -49,7 +37,7 @@ function changeSelectValue(frontal_substring, targeted_sel, full_list) {
 }
 
 // AUTORUN ON START
-adjustYearToLatest();
+
 changeSelectValue("10", req_district_sel, all_district)
 changeSelectValue("10", acc_district_sel, all_district)
 

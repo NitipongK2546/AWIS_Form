@@ -1,176 +1,139 @@
-from django import forms
-from warrant_form.model_reqform import WarrantDataModel
-from django.core.exceptions import ValidationError
-
 import datetime
-from warrant_form.code_handler import ThaiCountryAreaCode
 
-from django.forms.models import model_to_dict
-
+from django import forms
 from django.db import models
-from django.utils import timezone
 from django.forms.models import model_to_dict
 
-# def toAPICompatibleDictGeneral(incoming_model : models.Model) -> dict[str, object]:
-#         """
-#         Convert the model object into a dictionary that fits what the API required.
-#         It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
-#         then convert or remove some fields to match the API.\n
-#         It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
-#         """
-#         ################################################################
-#         # Conversion section.
-#         # Convert dictionary into the format that API can receive.
+from warrant_form import forms_central as CentralForm
+from warrant_form.model_reqform import WarrantDataModel
 
-#         model_dict = model_to_dict(incoming_model)
+appointment_type_choices = [
+    (1, "กำหนดอายุความ"),
+    (2, "กำหนดนัด")
+]
 
-#         model_dict.pop("id", None)
+account_card_type_choices = [
+    (1, "เลขประจำตัวประชาชน"),
+    (2, "เลขหนังสือเดินทาง"),
+    (3, "เลขคนซึ่งไม่มีสัญชาติไทย"),
+]
 
-#         empty_key_list = []
-#         for key, value in model_dict.items():
-#             if isinstance(value, str):
-#                 if not value:
-#                     empty_key_list.append(key)
-#             elif isinstance(value, bool):
-#                 if value: # True...
-#                     model_dict.update({key: 1})
-#                 else:
-#                     model_dict.update({key: 0})
+def toAPICompatibleDictGeneral(incoming_model : models.Model) -> dict[str, object]:
+        """
+        Convert the model object into a dictionary that fits what the API required.
+        It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
+        then convert or remove some fields to match the API.\n
+        It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
+        """
+        ################################################################
+        # Conversion section.
+        # Convert dictionary into the format that API can receive.
 
-#             if value is None:
-#                 empty_key_list.append(key)
+        model_dict = model_to_dict(incoming_model)
 
-#         for key in empty_key_list:
-#             model_dict.update({key: None})
+        model_dict.pop("id", None)
 
-#         return model_dict
+        empty_key_list = []
+        for key, value in model_dict.items():
+            if isinstance(value, str):
+                if not value:
+                    empty_key_list.append(key)
+            elif isinstance(value, bool):
+                if value: # True...
+                    model_dict.update({key: 1})
+                else:
+                    model_dict.update({key: 0})
 
-# # หมายเรียกที่ติดไปด้วย
-# class WarrantDataModel(models.Model):
-#     """
-#     หมายเรียกที่ติดให้กับแบบฟอร์ม
-#     1 แบบฟอร์มสามารถใช้ได้หลายตัว
-#     """
-#     class AppointmentTypeChoices(models.IntegerChoices):
-#         PRESCRIPTION = (1, "กำหนดอายุความ")
-#         APPOINTMENT = (2, "กำหนดนัด")
+            if value is None:
+                empty_key_list.append(key)
 
-#     class AccountCardTypeChoices(models.IntegerChoices):
-#         THAI_ID = (1, "เลขประจำตัวประชาชน")
-#         PASSPORT = (2, "เลขหนังสือเดินทาง")
-#         NON_THAI_ID = (3, "เลขคนซึ่งไม่มีสัญชาติไทย")
+        for key in empty_key_list:
+            model_dict.update({key: None})
 
-#     woa_date = models.DateTimeField(blank=True, null=True)
+        return model_dict
 
-#     fault_type_id = models.IntegerField() # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
-#     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร
-#     cause_text = models.CharField(max_length=400) # ด้วย
+class WarrantForm(forms.Form):
 
-#     charge = models.CharField(max_length=250)
-#     charge_type_1 = models.BooleanField() 
-#     charge_type_2 = models.BooleanField()
-#     charge_type_2_1 = models.BooleanField()
-#     charge_type_2_2 = models.BooleanField()
-#     charge_type_2_3 = models.BooleanField()
-#     charge_type_3 = models.BooleanField()
-#     charge_other_text = models.CharField(max_length=250, blank=True)
+    woa_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    woa_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
+    woa_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
+    woa_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
 
-#     acc_full_name = models.CharField(max_length=250)
-#     acc_card_type = models.IntegerField(choices=AccountCardTypeChoices)
-#     acc_card_id = models.CharField(max_length=20)
-#     acc_origin = models.IntegerField(blank=True, null=True) # This gotta be choices, again.
-#     acc_nation = models.IntegerField(blank=True, null=True) # Except no choices in descriptions.
-#     acc_occupation = models.CharField(max_length=100, blank=True)
-#     acc_addno = models.CharField(max_length=50, blank=True)
-#     acc_vilno = models.CharField(max_length=50, blank=True)
-#     acc_road = models.CharField(max_length=100, blank=True)
-#     acc_soi = models.CharField(max_length=100, blank=True)
-#     acc_near = models.CharField(max_length=200, blank=True)
-#     acc_sub_district = models.CharField(max_length=6, blank=True)
-#     acc_district = models.CharField(max_length=4, blank=True)
-#     acc_province = models.CharField(max_length=2, blank=True)
-#     acc_tel = models.CharField(max_length=20, blank=True)
+    fault_type_id = forms.IntegerField() 
+    send_to_name = forms.CharField(max_length=250) # ส่งหมายถึงใคร
+    cause_text = forms.CharField(max_length=400) # ด้วย
 
-#     appointment_type = models.IntegerField(choices=AppointmentTypeChoices, blank=True, null=True)
-#     # appointment_date = models.CharField(max_length=19, blank=True, null=True) # SAME DATE FORMAT AS BELOW
+    charge = forms.CharField(max_length=250)
+    charge_type_1 = forms.BooleanField(required=False) 
+    charge_type_2 = forms.BooleanField(required=False)
+    charge_type_2_1 = forms.BooleanField(required=False)
+    charge_type_2_2 = forms.BooleanField(required=False)
+    charge_type_2_3 = forms.BooleanField(required=False)
+    charge_type_3 = forms.BooleanField(required=False)
+    charge_other_text = forms.CharField(max_length=250, required=False)
 
-#     appointment_date = models.DateTimeField(blank=True, null=True)
+    acc_full_name_1 = forms.CharField(max_length=250)
+    acc_full_name_2 = forms.CharField(max_length=250)
 
-#     woa_no = models.IntegerField()
-#     woa_refno = models.CharField(max_length=16, blank=True)
-#     woa_type = models.IntegerField()
+    acc_card_type = forms.IntegerField(required=False, )
+    acc_card_id = forms.CharField(max_length=20)
+    # acc_age = forms.IntegerField(required=False, )
+    acc_origin = forms.IntegerField(required=False, )
+    acc_nation = forms.IntegerField(required=False, )
+    acc_occupation = forms.CharField(max_length=100, required=False)
+    acc_addno = forms.CharField(max_length=50, required=False)
+    acc_vilno = forms.CharField(max_length=50, required=False)
+    acc_road = forms.CharField(max_length=100, required=False)
+    acc_soi = forms.CharField(max_length=100, required=False)
+    acc_near = forms.CharField(max_length=200, required=False)
+    acc_sub_district = forms.CharField(max_length=6, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getSubDistrictChoices()))
+    acc_district = forms.CharField(max_length=4, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getDistrictChoices()))
+    acc_province = forms.CharField(max_length=2, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getProvinceChoices()))
+    acc_tel = forms.CharField(max_length=20, required=False)
 
-#     def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:
-#         """
-#         Convert the model object into a dictionary that fits what the API required.
-#         It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
-#         then convert or remove some fields to match the API.\n
-#         It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
-#         """
-#         dict_warrant = toAPICompatibleDictGeneral(self)
+    appointment_type = forms.IntegerField(widget=forms.Select(choices=appointment_type_choices), required=False,)
+    # appointment_date = models.CharField(max_length=19, required=False, ) # SAME DATE FORMAT AS BELOW
 
-#         dict_warrant = cleanDateTimeFields(dict_warrant)
+    appointment_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    appointment_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
+    appointment_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
+    appointment_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
 
-#         # date_list = ["appointment_date", ]
+    woa_no = forms.IntegerField()
+    woa_refno = forms.CharField(max_length=16, required=False)
+    woa_type = forms.IntegerField()
 
-#         # for date in date_list:
-#         #     date_value = dict_warrant.get(date)
-#         #     if (not date_value) or len(date_value) != 19:
-#         #         dict_warrant.update({
-#         #             date: "1970-01-01 12:00:00",
-#         #         })
+    def cleanDateTimeFields(self, current_dict : dict):
 
-#         prefixed_dict = {}
-#         if prefix:
-#             prefixed_dict = {f"{prefix}-{key}":value for key, value in dict_warrant.items()}
+        included_fields = ["woa_date", "appointment_date"]
 
-#             return prefixed_dict
-
-#         return dict_warrant
+        for field in included_fields:
+            current_dict = CentralForm.reattachDateTime(current_dict, field)
     
-# ##########################################################################
-
-# def cleanDateTimeFields(current_dict : dict):
-
-#     included_fields = ["woa_date", "appointment_date"]
-
-#     for field in included_fields:
-#         current_dict = reattachDateTime(current_dict, field)
+        return current_dict
     
-#     return current_dict
+    def combineDupe(self, current_dict : dict):
 
-# def reattachDateTime(current_dict : dict, field : str):
-    
-#     scene_date_year = current_dict.get(f"{field}_year")
-#     scene_date_month = current_dict.get(f"{field}_month")
-#     scene_date_day = current_dict.get(f"{field}_day")
-#     scene_date_timehalf = current_dict.get(f"{field}_timehalf")
-#     combined_date = ""
-#     combined_datetime = "1970-01-01 00:00:00"
-#     if scene_date_year and scene_date_month and scene_date_day:
-#         converted_year = scene_date_year 
-#         padded_month = str(scene_date_month).zfill(2)
-#         padded_day = str(scene_date_day).zfill(2)
+        included_fields = ["acc_full_name",]
 
-#         combined_date = f"{converted_year}-{padded_month}-{padded_day}"
+        for field in included_fields:
+            val_num1 = current_dict.get(f"{field}_1")
+            val_num2 = current_dict.get(f"{field}_2")
 
-#     if combined_date and scene_date_timehalf:
-#         combined_datetime = f"{combined_date} {scene_date_timehalf}"
+            if val_num1 == val_num2:
+                current_dict.update({field: val_num1})
+                current_dict.pop(f"{field}_1")
+                current_dict.pop(f"{field}_2")
+            else:
+                raise Exception("VALUE NOT MATCHED.")
+        
+        return current_dict
 
-#     current_dict.pop(f"{field}_year", None)
-#     current_dict.pop(f"{field}_month", None)
-#     current_dict.pop(f"{field}_day", None)
-#     current_dict.pop(f"{field}_timehalf", None)
+    def clean(self):
+        cleaned_data = super().clean()
+        self.combineDupe(cleaned_data)
+        self.cleanDateTimeFields(cleaned_data)
 
-#     current_dict.update({f"{field}": combined_datetime})
+        return cleaned_data
 
-#     return current_dict
 
-class WarrantForm(forms.ModelForm):
-    class Meta:
-        model = WarrantDataModel
-        fields = "__all__"
-        widgets = {
-            "woa_date": forms.DateTimeInput(attrs={'type': 'datetime'}),
-            "appointment_date": forms.DateTimeInput(),
-        }

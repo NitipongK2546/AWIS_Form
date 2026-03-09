@@ -6,8 +6,7 @@ from api import check_utils as UtilsHandle
 from api import jwt_utils as JWTHandle
 
 from dashboard.models import VisualFinalizedFormData, ReqformDataModel
-
-from dashboard.warrant_wrapper import VisualWarrantData
+from dashboard.warrant_wrapper import VisualWarrantData, WarrantDataModel
 
 from django.utils import timezone
 
@@ -88,16 +87,26 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
 
         iso8601_str_format = "%Y-%m-%dT%H:%M:%S"     
 
-        recive_date = timezone.datetime.strptime(data.get("recive_date"), iso8601_str_format)
-        recive_date = timezone.make_aware(recive_date, timezone.UTC,)
+        data_recive_date = data.get("recive_date")
+        data_accept_date = data.get("accept_date")
 
-        accept_date = timezone.datetime.strptime(data.get("accept_date"), iso8601_str_format) 
-        accept_date = timezone.make_aware(accept_date, timezone.UTC,)
+        update_dict = {}
+
+        if data_recive_date:
+            recive_date = timezone.datetime.strptime(data_recive_date, iso8601_str_format)
+            recive_date = timezone.make_aware(recive_date, timezone.UTC,)
+
+            update_dict.update({"recive_date": recive_date})
+
+        if data_accept_date:
+            accept_date = timezone.datetime.strptime(data_accept_date, iso8601_str_format) 
+            accept_date = timezone.make_aware(accept_date, timezone.UTC,)
+
+            update_dict.update({"accept_date": accept_date})
+            update_dict.update({"accept": data.get("accept")})
 
         target_object.update(
-            recive_date = recive_date,
-            accept_date = accept_date,
-            accept = data.get("accept"),
+            **update_dict,
         )
 
         return JsonResponse({
@@ -138,12 +147,14 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
 
         warrants_list = form_obj.warrants
 
-        target_object = warrants_list.get(
+        target_object = WarrantDataModel.objects.filter(
             woa_no = data.get("woa_no"),
             woa_date_year = data.get("woa_year"),
             woa_type = data.get("woa_type"),
             woa_refno = data.get("woa_refno"),
         )
+
+        warrants_list = warrants_list.intersection(target_object)
 
         target_object = VisualWarrantData.objects.filter(
             warrant=target_object,

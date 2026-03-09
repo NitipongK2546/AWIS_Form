@@ -1,30 +1,11 @@
-from django import forms
-from warrant_form.model_reqform import WarrantDataModel
-from django.core.exceptions import ValidationError
-
 import datetime
-from warrant_form.code_handler import ThaiCountryAreaCode
 
+from django import forms
+from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
 
-today_year = datetime.date.today().year
-year_choices = [(year, year + 543) for year in range(1970, today_year + 1)]
-day_choices = [(day, day) for day in range(1, 31 + 1)]
-month_choices = [
-    (1, "มกราคม"),
-    (2, "กุมภาพันธ์"),
-    (3, "มีนาคม"),
-    (4, "เมษายน"),
-    (5, "พฤษภาคม"),
-    (6, "มิถุนายน"),
-    (7, "กรกฎาคม"),
-    (8, "สิงหาคม"),
-    (9, "กันยายน"),
-    (10, "ตุลาคม"),
-    (11, "พฤศจิกายน"),
-    (12, "ธันวาคม"),
-]
-thai_codes = ThaiCountryAreaCode()
+from warrant_form import forms_central as CentralForm
+from warrant_form.model_reqform import WarrantDataModel
 
 req_case_type_id_choices = [
     (1, "ทั่วไป"),
@@ -43,9 +24,9 @@ class AWISFormStep1(forms.Form):
 
     req_form_number = forms.IntegerField()
     
-    req_day = forms.IntegerField(widget=forms.Select(choices=day_choices))
-    req_month = forms.IntegerField(widget=forms.Select(choices=month_choices))
-    req_year = forms.IntegerField(widget=forms.Select(choices=year_choices))
+    req_day = forms.IntegerField(widget=forms.Select(choices=CentralForm.day_choices))
+    req_month = forms.IntegerField(widget=forms.Select(choices=CentralForm.month_choices))
+    req_year = forms.IntegerField(widget=forms.Select(choices=CentralForm.year_choices))
 
     req_case_type_id = forms.IntegerField(widget=forms.Select(choices=req_case_type_id_choices))
 
@@ -68,9 +49,9 @@ class AWISFormStep1(forms.Form):
     req_age = forms.IntegerField()
 
     req_office = forms.CharField(max_length=300)
-    req_sub_district = forms.CharField(max_length=6, widget=forms.Select(choices=thai_codes.getSubDistrictChoices())) # tb_sub_district / sub_district_code
-    req_district = forms.CharField(max_length=4, widget=forms.Select(choices=thai_codes.getDistrictChoices()))
-    req_province = forms.CharField(max_length=2, widget=forms.Select(choices=thai_codes.getProvinceChoices()))
+    req_sub_district = forms.CharField(max_length=6, widget=forms.Select(choices=CentralForm.thai_codes.getSubDistrictChoices())) # tb_sub_district / sub_district_code
+    req_district = forms.CharField(max_length=4, widget=forms.Select(choices=CentralForm.thai_codes.getDistrictChoices()))
+    req_province = forms.CharField(max_length=2, widget=forms.Select(choices=CentralForm.thai_codes.getProvinceChoices()))
     req_tel = forms.CharField(max_length=50)
 
     # Start of a few unrequired field.
@@ -91,9 +72,9 @@ class AWISFormStep1(forms.Form):
             }), )
     # scene_date_datehalf = forms.DateField(required=False, ) 
 
-    scene_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=day_choices))
-    scene_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=month_choices))
-    scene_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=year_choices))
+    scene_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    scene_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
+    scene_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
 
     scene_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
     # scene_date = forms.CharField(max_length=19, required=False) 
@@ -126,16 +107,16 @@ class AWISFormStep1(forms.Form):
 
     #######################
 
-    woa_start_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=day_choices))
-    woa_start_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=month_choices))
-    woa_start_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=year_choices))
+    woa_start_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    woa_start_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
+    woa_start_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
 
     woa_start_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
 
 
-    woa_end_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=day_choices))
-    woa_end_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=month_choices))
-    woa_end_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=year_choices))
+    woa_end_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    woa_end_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
+    woa_end_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
 
     woa_end_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
 
@@ -156,9 +137,9 @@ class AWISFormStep1(forms.Form):
     acc_road = forms.CharField(max_length=100, required=False)
     acc_soi = forms.CharField(max_length=100, required=False)
     acc_near = forms.CharField(max_length=200, required=False)
-    acc_sub_district = forms.CharField(max_length=6, required=False, widget=forms.Select(choices=thai_codes.getSubDistrictChoices()))
-    acc_district = forms.CharField(max_length=4, required=False, widget=forms.Select(choices=thai_codes.getDistrictChoices()))
-    acc_province = forms.CharField(max_length=2, required=False, widget=forms.Select(choices=thai_codes.getProvinceChoices()))
+    acc_sub_district = forms.CharField(max_length=6, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getSubDistrictChoices()))
+    acc_district = forms.CharField(max_length=4, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getDistrictChoices()))
+    acc_province = forms.CharField(max_length=2, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getProvinceChoices()))
     acc_tel = forms.CharField(max_length=20, required=False)
 
     def toDocumentCompatibleDict(self) -> dict[str, object]:
@@ -322,7 +303,7 @@ class AWISFormStep1(forms.Form):
         included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
 
         for field in included_fields:
-            current_dict = reattachDateTime(current_dict, field)
+            current_dict = CentralForm.reattachDateTime(current_dict, field)
         
         return current_dict
 
@@ -350,33 +331,6 @@ class AWISFormStep1(forms.Form):
             cleaned_data.update({"reqno": reqno})
 
         return cleaned_data
-
-def reattachDateTime(current_dict : dict, field : str):
-        
-    scene_date_year = current_dict.get(f"{field}_year")
-    scene_date_month = current_dict.get(f"{field}_month")
-    scene_date_day = current_dict.get(f"{field}_day")
-    scene_date_timehalf = current_dict.get(f"{field}_timehalf")
-    combined_date = ""
-    combined_datetime = "1970-01-01 00:00:00"
-    if scene_date_year and scene_date_month and scene_date_day:
-        converted_year = scene_date_year 
-        padded_month = str(scene_date_month).zfill(2)
-        padded_day = str(scene_date_day).zfill(2)
-
-        combined_date = f"{converted_year}-{padded_month}-{padded_day}"
-
-    if combined_date and scene_date_timehalf:
-        combined_datetime = f"{combined_date} {scene_date_timehalf}"
-
-    current_dict.pop(f"{field}_year", None)
-    current_dict.pop(f"{field}_month", None)
-    current_dict.pop(f"{field}_day", None)
-    current_dict.pop(f"{field}_timehalf", None)
-
-    current_dict.update({f"{field}": combined_datetime})
-
-    return current_dict
 
 class DisabledFormStep1(AWISFormStep1):
     def __init__(self, *args, **kwargs):

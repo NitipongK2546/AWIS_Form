@@ -71,24 +71,6 @@ def plain_form_submission(request : HttpRequest):
         
 ###############################################################################
         
-@login_required(login_url="/users/login/")
-def form_submission(request : HttpRequest, step : int):
-    # The expected outcome.
-    if request.method == "POST":
-        try:
-            pass
-            # if step == 1:
-            #     step1_confirm(request)
-            # if step == 2:
-            #     step2_confirm(request)
-            # else:
-            #     return JsonResponse({
-            #         "message": "Invalid Step"
-            #     })
-        
-        except Exception as e:
-            print("@***EXCEPTION OCCURED:", e  ,"***")
-        
 
 @login_required(login_url="/users/login/")
 def success_page(request : HttpRequest):
@@ -139,48 +121,57 @@ def step1_reqform(request : HttpRequest):
 @login_required(login_url="/users/login/")
 def step2_warrantform(request : HttpRequest):
     if request.method == "POST":
-        form = WarrantForm(request.POST)
+        try:
+            form = WarrantForm(request.POST)
 
-        if form.is_valid():
+            if form.is_valid():
+                warrant_data = form.cleaned_data
 
-            reqform_data = request.session.get("step1")
-            reqform : ReqformDataModel = ReqformDataModel.objects.create(**reqform_data)
+                reqform_data = request.session.get("step1")
+                reqform : ReqformDataModel = ReqformDataModel.objects.create(**reqform_data)
 
-            warrant : WarrantDataModel = form.save()
-
-            if reqform:
-                reqform.warrants.add(warrant)
-
-                # Fix below/above for more than 1 warrant
-
-                VisualWarrantData.objects.create(
-                    warrant=warrant,
-                    judge_name=reqform.judge_name,
+                warrant : WarrantDataModel = WarrantDataModel.objects.create(
+                    **warrant_data
                 )
 
-            # data = reqform.toAPICompatibleDictWithConvertedWarrants()
+                if reqform:
+                    reqform.warrants.add(warrant)
 
-            # print(json.dumps(data, indent=2, ensure_ascii=False))
+                    # Fix below/above for more than 1 warrant
 
-            request.session.pop("step1", None)
-            request.session.pop("step2", None)
+                    VisualWarrantData.objects.create(
+                        warrant=warrant,
+                        judge_name=reqform.judge_name,
+                    )
 
-            user_obj = user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
-            VisualFormApprovalData.objects.create(
-                form=reqform, 
-                form_creator=user_obj, 
-                form_owner=user_obj, 
-                approve_status=VisualFormApprovalData.ApprovalStatus.PENDING
-            )
-            return JsonResponse({
-                "status": "nice"
-            })
-        else:
-            print(form.errors.as_text())
-            return render(request, "warrant_form/awis_step2.html", {
-                "form": form,
-                "step": 2,
-            })
+                # data = reqform.toAPICompatibleDictWithConvertedWarrants()
+
+                # print(json.dumps(data, indent=2, ensure_ascii=False))
+
+                request.session.pop("step1", None)
+                request.session.pop("step2", None)
+
+                user_obj = user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
+                VisualFormApprovalData.objects.create(
+                    form=reqform, 
+                    form_creator=user_obj, 
+                    form_owner=user_obj, 
+                    approve_status=VisualFormApprovalData.ApprovalStatus.PENDING
+                )
+                return JsonResponse({
+                    "status": "nice"
+                })
+            else:
+                print(form.errors.as_text())
+        except:
+            ReqformDataModel.objects.filter(pk=reqform.pk).first().delete()
+            WarrantDataModel.objects.filter(pk=warrant.pk).first().delete()
+
+        return render(request, "warrant_form/awis_step2.html", {
+            "form": form,
+            "step": 2,
+        })
+            
         
     if not request.session.get("step1"):
         return redirect(reverse("forms:step1"))
