@@ -1,0 +1,40 @@
+{% load static %}
+
+<div id="body-table">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th colspan="7">สถานะของหมายศาล</th>
+            </tr>
+            <tr>
+                <th>สถานะหมายจับ</th>
+                <th>เลขที่คดี</th>
+                <th>เลขที่หมายจับ</th>
+                <th>ชื่อ-สกุล ผู้ต้องหา</th>
+                <th>ข้อหา</th>
+                <th>นับตั้งแต่วันที่</th>
+                <th>แต่ไม่เกินวันที่</th>
+                <th>อายุความ (ปี)</th>
+                <th>สถานที่เกิดเหตุ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in warrants %}
+            <tr>
+                <td>
+                    {% if form.court_injunction %}
+                        {{ form.court_injunction }}
+                    {% else %}
+                        รอการพิจารณา
+                    {% endif %}
+                </td>
+                <td>{{ form.woa_no }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No forms available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

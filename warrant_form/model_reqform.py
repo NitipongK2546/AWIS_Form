@@ -13,7 +13,7 @@ class ReqformDataModel(models.Model):
     reqno = models.CharField(max_length=50, blank=True, unique=True)
     # เป็นการผสมกันระหว่าง case_type_id, req_form_number, และ req_year
 
-    req_form_number = models.IntegerField(unique=True)
+    req_form_number = models.IntegerField()
     
     req_day = models.PositiveIntegerField()
     req_month = models.PositiveIntegerField()
@@ -134,10 +134,9 @@ class ReqformDataModel(models.Model):
         # Conversion section.
         # Convert dictionary into the format that API can receive.
 
+        included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
+
         dict_main_awis = model_to_dict(self)
-        # dict_main_awis.update({"day": self.day})
-        # dict_main_awis.update({"month": self.month})
-        # dict_main_awis.update({"year": self.year})
 
         dict_main_awis.pop("id")
 
@@ -154,6 +153,12 @@ class ReqformDataModel(models.Model):
 
             if value is None:
                 empty_key_list.append(key)
+
+        for field in included_fields:
+            datetime_obj : datetime.datetime = dict_main_awis.get(field)
+            dict_main_awis.update({
+                field: datetime_obj.strftime("%d/%m/%Y %H:%M:%S")
+            })
 
         for key in empty_key_list:
             dict_main_awis.update({key: None})
@@ -212,6 +217,18 @@ class ReqformDataModel(models.Model):
         cleaned_dict.update({f"warrants": warrants_list})
         return cleaned_dict
     
+
+    def convertBacktoFormView(self) -> dict[str, object]:
+        dict_main_awis = model_to_dict(self)
+
+        duped_list = ["accused", "plaintiff", "court_name"]
+
+        for item in duped_list:
+            dict_main_awis.update({f"{item}_1" : dict_main_awis.get(item)})
+            dict_main_awis.update({f"{item}_2" : dict_main_awis.get(item)})
+
+        return dict_main_awis
+
 ################################################################################
 
 def cleanDateTimeFields(current_dict : dict):

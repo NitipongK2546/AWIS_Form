@@ -1,9 +1,9 @@
 from django.urls import path
-from api.v1 import endpoints
+from api.test import endpoints
 
-app_name = "v1"
+app_name = "test"
 
 urlpatterns = [
-    # path("test1/", endpoints.test1, name="health"),
-    # path("test2/", endpoints.test2, name="login"),
+    path("health/", endpoints.health_check, name="health"),
+    path("token/", endpoints.fetch_token, name="login"),
 ]

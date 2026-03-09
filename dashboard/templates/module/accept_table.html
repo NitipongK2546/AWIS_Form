@@ -7,7 +7,7 @@
                 <th colspan="7">สถานะคำร้องที่ส่งให้ศาลสำเร็จแล้ว</th>
             </tr>
             <tr>
-                <th>ID</th>
+                <!-- <th>ID</th> -->
                 <th>เลขอ้างอิงคำร้อง</th>
                 <th>เลขที่คำร้อง</th>
                 <th>วันที่รับคำร้อง</th>
@@ -19,7 +19,7 @@
         <tbody>
             {% for form in forms_sent %}
             <tr>
-                <td>{{ form.id }}</td>
+                <!-- <td>{{ form.id }}</td> -->
                 <td>{{ form.req_no_plaintiff }}</td>
                 <td>{{ form.reqno }}</td>
                 <td>{% if form.recive_date %}
@@ -36,9 +36,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:get_form' form.id %}">View</a> |
-                    <a href="{% url 'dashboard:confirm_approve' form.id %}">Approve</a> |
-                    <a href="{% url 'dashboard:confirm_reject' form.id %}">Reject</a>
+                    <a href="{% url 'dashboard:get_form' form.id %}">View</a>
                 </td>
             </tr>
             {% empty %}

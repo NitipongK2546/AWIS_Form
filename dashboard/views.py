@@ -4,14 +4,14 @@ from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-from warrant_form.forms import WarrantForm, AWISFormStep1
+from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledFormStep1
 
 # from dashboard.test_models import FormApprovalDataContainer as FormData
 from dashboard.models import VisualFormApprovalData as FormData
 from dashboard.models import VisualFinalizedFormData as FormSent
+from dashboard.warrant_wrapper import VisualWarrantData
 
 from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
-
 from users.models import UserDataModel
 
 import _request_utils.connect_api as AWISConnectAPI
@@ -31,10 +31,12 @@ def dashboard(request : HttpRequest):
 
     form_sent = FormSent.objects.all()
 
+    warrants : list[VisualWarrantData] = VisualWarrantData.objects.all()
+
     output_list = []
     for obj in form_sent:
         data_dict = {
-            "id": obj.pk,
+            "id": obj.form.id,
             "recive_date": obj.recive_date,
             "accept": obj.get_accept_display,
             "accept_date": obj.accept_date,
@@ -44,11 +46,20 @@ def dashboard(request : HttpRequest):
 
         output_list.append(data_dict)
 
+    warrants_list = []
+    for warrant in warrants:
+        data_dict = {
+            "court_injunction": warrant.get_court_injunction_display,  
+            "woa_no": f"{warrant.warrant.woa_no}/{warrant.warrant.woa_date.year + 543}"
+        }
+
+        warrants_list.append(data_dict)
+
     return render(request, "dashboard/dashboard.html", {
         "user": request.user,
         "forms": waiting_approval_forms,
         "forms_sent": output_list,
-        # "length": len(fixed_form),
+        "warrants": warrants_list,
     })
 
 #######################################################3
@@ -69,23 +80,36 @@ def approve_form_page(request : HttpRequest):
     })
 
 @login_required(login_url="/users/login/")
-def selected_form_to_see_page(request : HttpRequest, form_id : int):
+def view_form(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
+
+    selected_form = FormData.objects.filter(id=form_id).first().form
+
+    print(selected_form.convertBacktoFormView())
     
-    selected_form = FormData.objects.filter(id=form_id).first()
-
-    if selected_form.approve_status == FormData.ApprovalStatus.APPROVED:
-        return JsonResponse({
-            "status": 405,
-            "message": "API already sent. Can't edit anymore.",
-        }, status=405)
-
-    return render(request, "dashboard/selected_form_page.html", {
+    form = DisabledFormStep1(initial=selected_form.convertBacktoFormView(), prefix="main_form")
+    
+    return render(request, "warrant_form/awis_step1.html", {
         "user": request.user,
-        "form": selected_form,
-        "data": json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=4, ensure_ascii=False),
+        "form": form,
+        "disabled": True,
     })
+
+# def edit_form(request : HttpRequest, form_id : int):
+#     if not request.user.has_perm("dashboard.can_approve_form"):
+#         return HttpResponseForbidden("403 Forbidden: No Permission")
+
+#     selected_form = FormData.objects.filter(id=form_id).first().form
+
+#     print(selected_form.convertBacktoFormView())
+    
+#     form = AWISFormStep1(initial=selected_form.convertBacktoFormView(), prefix="main_form")
+    
+#     return render(request, "warrant_form/awis_step1.html", {
+#         "user": request.user,
+#         "form": form,
+#     })
 
 @login_required(login_url="/users/login/")
 def confirm_approve(request : HttpRequest, form_id : int):
@@ -149,7 +173,10 @@ def success_page(request : HttpRequest):
 #EDIT THE FORM
 
 @login_required(login_url="/users/login/")
-def select_form_to_edit(request : HttpRequest, form_id : int):
+def edit_form(request : HttpRequest, form_id : int):
+    if not request.user.has_perm("dashboard.can_approve_form"):
+        return HttpResponseForbidden("403 Forbidden: No Permission")
+    
     selected_form = FormData.objects.filter(id=form_id).first()
     current_user = request.user
 
@@ -159,11 +186,11 @@ def select_form_to_edit(request : HttpRequest, form_id : int):
             "message": "Not the owner or creator."
         }, status=403)
     
-    if selected_form.approve_status == FormData.ApprovalStatus.APPROVED:
-        return JsonResponse({
-            "status": 405,
-            "message": "API already sent. Can't edit anymore."
-        }, status=405)
+    # if selected_form.approve_status == FormData.ApprovalStatus.APPROVED:
+    #     return JsonResponse({
+    #         "status": 405,
+    #         "message": "API already sent. Can't edit anymore."
+    #     }, status=405)
 
     if request.method == "POST":
         main_form = AWISFormStep1(request.POST, prefix="main_form")
@@ -190,18 +217,18 @@ def select_form_to_edit(request : HttpRequest, form_id : int):
             print(main_form.errors.as_text())
             print(sub_form.errors.as_text())
     
-    form_obj : ReqformDataModel = selected_form.form.toAPICompatibleDict()
+    form_obj : ReqformDataModel = selected_form.form.convertBacktoFormView()
     warrants_list : list[WarrantDataModel] = selected_form.form.warrants.all()[0].toAPICompatibleDict()
 
     # warrants_list = [warrant.toAPICompatibleDict() for warrant in warrants_list][0]
 
-    main_form = AWISFormStep1(initial=form_obj, prefix="main_form")
+    main_form = AWISFormStep1(initial=form_obj, prefix="main_form",)
     sub_form = WarrantForm(initial=warrants_list, prefix="sub_form")
 
-    return render(request, "dashboard/BROKEN_CHANGE_TO_NEW_ONE.html", {
-        "main_form": main_form,
+    return render(request, "warrant_form/awis_step1.html", {
+        # "main_form": main_form,
         "sub_form": sub_form,
         "user": request.user,
         "action": "Edit",
-        "form": selected_form,
+        "form": main_form,
     })
