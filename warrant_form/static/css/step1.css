@@ -313,7 +313,19 @@ p.cause-id-paragraph {
     width: 707px;
 }
 
-#id_main_form-scene textarea {
+form textarea {
+    width: 800px;
+    height: 120px;
+}
+
+/* #id_main_form-scene textarea {
     width: 500px;
 }
 
+#id_main_form-act textarea {
+    width: 500px;
+}
+
+#id_main_form-charge textarea {
+    width: 500px;
+} */

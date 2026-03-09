@@ -80,16 +80,12 @@ class AWISFormStep1(forms.Form):
     cause_text_2 = forms.CharField(max_length=500, required=False)
 
     charge = forms.CharField(max_length=50, required=False, widget=forms.Textarea(attrs={
-                'rows': 5,
-                'cols': 135,
                 'style':'resize:none;'
             }), )
     charge_type_1 = forms.BooleanField(required=False) 
     charge_type_2 = forms.BooleanField(required=False)
 
     scene = forms.CharField(max_length=300, required=False, widget=forms.Textarea(attrs={
-                'rows': 5,
-                'cols': 135,
                 'style':'resize:none;'
             }), )
     # scene_date_datehalf = forms.DateField(required=False, ) 
@@ -102,8 +98,6 @@ class AWISFormStep1(forms.Form):
     # scene_date = forms.CharField(max_length=19, required=False) 
 
     act = forms.CharField(max_length=500, required=False, widget=forms.Textarea(attrs={
-                'rows': 5,
-                'cols': 135,
                 'style':'resize:none;'
             }), )
     law = forms.CharField(max_length=200, required=False)
