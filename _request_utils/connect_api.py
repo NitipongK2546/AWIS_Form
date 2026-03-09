@@ -100,10 +100,14 @@ def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -
     )
     data : dict = response.json()
 
-    if data.get("status"):
-        return data
+    print(data)
+
+    return data
+
+    # if data.get("status"):
+    #     return data
     
-    return False
+    # return False
 
 ##############################################################################
 # 4. 
