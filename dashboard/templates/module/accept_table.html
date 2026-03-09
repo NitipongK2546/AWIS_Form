@@ -36,9 +36,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:get_form' form.id %}">View</a> |
-                    <a href="{% url 'dashboard:confirm_approve' form.id %}">Approve</a> |
-                    <a href="{% url 'dashboard:confirm_reject' form.id %}">Reject</a>
+                    <a href="{% url 'dashboard:get_form' form.id %}">View</a>
                 </td>
             </tr>
             {% empty %}

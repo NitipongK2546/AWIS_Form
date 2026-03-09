@@ -149,21 +149,22 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
 
         target_object = WarrantDataModel.objects.filter(
             woa_no = data.get("woa_no"),
-            woa_date_year = data.get("woa_year"),
+            woa_date__year = data.get("woa_year") - 543,
             woa_type = data.get("woa_type"),
             woa_refno = data.get("woa_refno"),
-        )
-
-        warrants_list = warrants_list.intersection(target_object)
+        ).first()
 
         target_object = VisualWarrantData.objects.filter(
             warrant=target_object,
         )
 
+        if len(target_object) == 0:
+            raise Exception("No Match Found.")
+
         iso8601_str_format = "%Y-%m-%dT%H:%M:%S"    
 
         injunction_date = timezone.datetime.strptime(data.get("injunction_date"), iso8601_str_format)
-        recive_date = timezone.make_aware(recive_date, timezone.UTC,)
+        injunction_date = timezone.make_aware(injunction_date, timezone.UTC,)
 
         target_object.update(
             judge_name = data.get("judge_name"),

@@ -36,6 +36,7 @@ def dashboard(request : HttpRequest):
     output_list = []
     for obj in form_sent:
         data_dict = {
+            "id": obj.form.id,
             "recive_date": obj.recive_date,
             "accept": obj.get_accept_display,
             "accept_date": obj.accept_date,
