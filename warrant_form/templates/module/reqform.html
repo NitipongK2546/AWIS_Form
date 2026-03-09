@@ -23,7 +23,10 @@
         <p class="date-widget"><span>เรียกสอบ</span><span>วัน {{form.req_day}} เดือน {{form.req_month}} พ.ศ. {{form.req_year}}</span></p>
     </div>
 
-    <p>{{ form.judge_name }} ผู้พิพากษา</p>
+    <p class="judge-paragraph">
+      <span class="judge-input">{{ form.judge_name }}</span> ผู้พิพากษา
+    </p>
+
 
     <div class="first_plaintiff">
         <p align="center">ความอาญา <br></p>
@@ -67,10 +70,13 @@
     
     {% include 'module/cause_type_num1.html' %}
 
-    <p style="max-width: 42rem; margin-left: 8rem;">
-        {{ form.cause_type_id_2 }} ปรากฎจากการสืบสวน/สอบสวนของ {{ form.cause_text_2 }}
+    <p style="max-width: 42rem; margin-left: 8rem; display:flex; align-items:center; flex-wrap:nowrap;">
+      {{ form.cause_type_id_2 }} ปรากฎจากการสืบสวน/สอบสวนของ 
+      <span style="flex:1; margin-left:0.5rem;">
+        {{ form.cause_text_2 }}
+      </span>
     </p>
-
+    
     {% include 'module/acc_info.html' %}
 
     <p> {{ form.charge_type_1 }} ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</p>
@@ -85,7 +91,12 @@
     <p>ตามกฎหมาย {{ form.law }} </p>
     <p>รายละเอียดข้อมูลและพยานหลักฐาน ปรากฎตามที่เอกสารที่แนบมาพร้อมนี้</p>
 
-    <p align="right">ข้อ 2. ผู้ร้องประสงค์จะทำการจับกุม  {{ form.accused_1 }}</p>
+    <p class="cause-id-paragraph">
+      <span>ข้อ 2. ผู้ร้องประสงค์จะทำการจับกุม</span>
+      <span class="accused-input">{{ form.accused_1 }}</span>
+    </p>
+
+    
     <p>จึงขอให้ศาลออกหมายจับ   {{ form.accused_2 }} มาดำเนินคดี</p>
 
     {% include 'module/woa_date.html' %}
@@ -100,7 +111,12 @@
     
     <p align="center">ควรมิควรแล้วแต่จะโปรด</p>
 
-    <p align="center">(ลงชื่อ) ({{ form.plaintiff_2 }})  ผู้ร้อง</p>
+    <p align="center">
+      (ลงชื่อ) 
+      <span class="plaintiff-input">{{ form.plaintiff_2 }}</span>  
+      ผู้ร้อง
+    </p>
+
 
     <button type="submit">Next</button>
 </form>
