@@ -254,7 +254,11 @@ class WarrantDataModel(models.Model):
 
     woa_no = models.IntegerField()
     woa_refno = models.CharField(max_length=16, blank=True)
+
     woa_type = models.IntegerField()
+
+    plaintiff = models.CharField(max_length=400, blank=True)
+    court_name = models.CharField(max_length=250, blank=True)
 
     def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:
         """

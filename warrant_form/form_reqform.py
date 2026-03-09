@@ -25,7 +25,9 @@ class AWISFormStep1(forms.Form):
     req_form_number = forms.IntegerField()
     
     req_day = forms.IntegerField(widget=forms.Select(choices=CentralForm.day_choices))
-    req_month = forms.IntegerField(widget=forms.Select(choices=CentralForm.month_choices))
+    req_month = forms.IntegerField(widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'onchange': 'changeDate(req_day, req_month)'
+    }))
     req_year = forms.IntegerField(widget=forms.Select(choices=CentralForm.year_choices))
 
     req_case_type_id = forms.IntegerField(widget=forms.Select(choices=req_case_type_id_choices))
@@ -73,7 +75,9 @@ class AWISFormStep1(forms.Form):
     # scene_date_datehalf = forms.DateField(required=False, ) 
 
     scene_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
-    scene_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
+    scene_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'onchange': 'changeDate(scene_date_day, scene_date_month)'
+    }))
     scene_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
 
     scene_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
@@ -108,14 +112,19 @@ class AWISFormStep1(forms.Form):
     #######################
 
     woa_start_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
-    woa_start_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
+    woa_start_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'onchange': 'changeDate(woa_start_date_day, woa_start_date_month)'
+    }))
     woa_start_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
 
-    woa_start_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
-
+    woa_start_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={
+        'type': 'time',
+        })) 
 
     woa_end_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
-    woa_end_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
+    woa_end_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'onchange': 'changeDate(woa_end_date_day, woa_end_date_month)'
+    }))
     woa_end_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
 
     woa_end_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
