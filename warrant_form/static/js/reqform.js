@@ -1,19 +1,3 @@
-
-// Variable setup
-const awis_form = document.getElementById("awis-form");
-
-const year_selector = document.getElementById("id_main_form-scene_date_year");
-const month_selector = document.getElementById("id_main_form-scene_date_month");
-const day_selector = document.getElementById("id_main_form-scene_date_day");
-
-let req_province_sel = document.getElementById("id_main_form-req_province");
-let req_district_sel = document.getElementById("id_main_form-req_district");
-let req_sub_district_sel = document.getElementById("id_main_form-req_sub_district");
-
-let acc_province_sel = document.getElementById("id_main_form-acc_province");
-let acc_district_sel = document.getElementById("id_main_form-acc_district");
-let acc_sub_district_sel = document.getElementById("id_main_form-acc_sub_district");
-
 let is_submitting_form = false;
 
 let all_district = [];
@@ -35,7 +19,17 @@ for (let element of req_sub_district_sel) {
 
 // Non-Async Function
 function adjustYearToLatest() {
-    year_selector.value = new Date().getFullYear();
+    let current_date = new Date()
+    let current_year = current_date.getFullYear();
+
+    req_year.value = current_date.getFullYear();
+    req_month.value = current_date.getMonth() + 1;
+    req_day.value = current_date.getDate();
+
+    scene_year_selector.value = current_year;
+    woa_start_year.value = current_year;
+    woa_end_year.value = current_year;
+
 }
 function changeSelectValue(frontal_substring, targeted_sel, full_list) {
     let options = [];

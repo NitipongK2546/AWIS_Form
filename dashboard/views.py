@@ -9,6 +9,7 @@ from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledFormStep1
 # from dashboard.test_models import FormApprovalDataContainer as FormData
 from dashboard.models import VisualFormApprovalData as FormData
 from dashboard.models import VisualFinalizedFormData as FormSent
+from dashboard.warrant_wrapper import VisualWarrantData
 
 from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
 from users.models import UserDataModel
@@ -30,6 +31,8 @@ def dashboard(request : HttpRequest):
 
     form_sent = FormSent.objects.all()
 
+    warrants : list[VisualWarrantData] = VisualWarrantData.objects.all()
+
     output_list = []
     for obj in form_sent:
         data_dict = {
@@ -43,11 +46,20 @@ def dashboard(request : HttpRequest):
 
         output_list.append(data_dict)
 
+    warrants_list = []
+    for warrant in warrants:
+        data_dict = {
+            "court_injunction": warrant.get_court_injunction_display,  
+            "woa_no": f"{warrant.warrant.woa_no}/{warrant.warrant.woa_date_year}"
+        }
+
+        warrants_list.append(data_dict)
+
     return render(request, "dashboard/dashboard.html", {
         "user": request.user,
         "forms": waiting_approval_forms,
         "forms_sent": output_list,
-        # "length": len(fixed_form),
+        "warrants": warrants_list,
     })
 
 #######################################################3
@@ -81,6 +93,7 @@ def view_form(request : HttpRequest, form_id : int):
     return render(request, "warrant_form/awis_step1.html", {
         "user": request.user,
         "form": form,
+        "disabled": True,
     })
 
 # def edit_form(request : HttpRequest, form_id : int):

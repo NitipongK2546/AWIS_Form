@@ -134,10 +134,9 @@ class ReqformDataModel(models.Model):
         # Conversion section.
         # Convert dictionary into the format that API can receive.
 
+        included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
+
         dict_main_awis = model_to_dict(self)
-        # dict_main_awis.update({"day": self.day})
-        # dict_main_awis.update({"month": self.month})
-        # dict_main_awis.update({"year": self.year})
 
         dict_main_awis.pop("id")
 
@@ -154,6 +153,12 @@ class ReqformDataModel(models.Model):
 
             if value is None:
                 empty_key_list.append(key)
+
+        for field in included_fields:
+            datetime_obj : datetime.datetime = dict_main_awis.get(field)
+            dict_main_awis.update({
+                field: datetime_obj.strftime("%d/%m/%Y %H:%M:%S")
+            })
 
         for key in empty_key_list:
             dict_main_awis.update({key: None})

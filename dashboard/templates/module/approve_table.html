@@ -7,7 +7,7 @@
                 <th colspan="7">สถานะคำร้องที่รอการอนุมัติเพื่อส่งให้กับศาล</th>
             </tr>
             <tr>
-                <th>ID</th>
+                <!-- <th>ID</th> -->
                 <th>สถานะการอนุมัติ</th>
                 <th>ผู้ร่าง</th>
                 <th>เจ้าของร่าง</th>
@@ -19,7 +19,7 @@
         <tbody>
             {% for form in forms %}
             <tr>
-                <td>{{ form.id }}</td>
+                <!-- <td>{{ form.id }}</td> -->
                 <td>{{ form.get_approve_status_display }}</td>
                 <td>{{ form.form_creator }}</td>
                 <td>{{ form.form_owner }}</td>

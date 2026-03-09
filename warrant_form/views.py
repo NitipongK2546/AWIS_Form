@@ -54,7 +54,7 @@ def plain_form_submission(request : HttpRequest):
             awis_obj.save()
             awis_obj.warrants.add(warrant_obj)
 
-            print(awis_obj.toAPICompatibleDictWithConvertedWarrants())
+            # print(awis_obj.toAPICompatibleDictWithConvertedWarrants())
 
             user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
             
@@ -158,7 +158,7 @@ def step2_warrantform(request : HttpRequest):
                     judge_name=reqform.judge_name,
                 )
 
-            data = reqform.toAPICompatibleDictWithConvertedWarrants()
+            # data = reqform.toAPICompatibleDictWithConvertedWarrants()
 
             # print(json.dumps(data, indent=2, ensure_ascii=False))
 

@@ -12,5 +12,27 @@
 {% endblock %}
 
 {% block script %}
-    <script src="{% static 'js/reqform.js' %}"></script>
+{% if disabled.is_true %}
+<script>
+// Variable setup
+const awis_form = document.getElementById("awis-form");
+
+const req_day = document.getElementById("id_main_form-req_day");
+const req_month = document.getElementById("id_main_form-req_month");
+const req_year = document.getElementById("id_main_form-req_year");
+
+const scene_year_selector = document.getElementById("id_main_form-scene_date_year");
+const woa_start_year = document.getElementById("id_main_form-woa_start_date_year");
+const woa_end_year = document.getElementById("id_main_form-woa_end_date_year");
+
+let req_province_sel = document.getElementById("id_main_form-req_province");
+let req_district_sel = document.getElementById("id_main_form-req_district");
+let req_sub_district_sel = document.getElementById("id_main_form-req_sub_district");
+
+let acc_province_sel = document.getElementById("id_main_form-acc_province");
+let acc_district_sel = document.getElementById("id_main_form-acc_district");
+let acc_sub_district_sel = document.getElementById("id_main_form-acc_sub_district");
+</script>
+<script src="{% static 'js/reqform.js' %}"></script>
+{% endif %}
 {% endblock %}
