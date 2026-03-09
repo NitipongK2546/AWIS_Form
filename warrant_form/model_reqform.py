@@ -1,38 +1,37 @@
 from django.db import models
 from django.utils import timezone
 from django.forms.models import model_to_dict
-# from warrant_form import model_warrant 
+import datetime
 
 from warrant_form.model_warrant import WarrantDataModel
 
 class ReqformDataModel(models.Model):
-    # POSSIBLY TEMPORARY VARIABLE.
-    #req_no = USE ID OF OBJECT INSTEAD.
-    court_name = models.CharField(max_length=250, blank=True)
-    day = timezone.datetime.today().day
-    month = timezone.datetime.today().month
-    year = timezone.datetime.today().year
-
     class ReqCaseTypeIDChoices(models.IntegerChoices):
-        GENERAL = (1, "ทั่วไป")
-        DRUGS = (2, "ยาเสพติด")
+        GENERAL = (1, "ทั่วไป") # จ.
+        DRUGS = (2, "ยาเสพติด") # ยจ.
+    
+    reqno = models.CharField(max_length=50, blank=True, unique=True)
+    # เป็นการผสมกันระหว่าง case_type_id, req_form_number, และ req_year
 
-    court_code = models.CharField(max_length=7, verbose_name="รหัส")
-
-    reqno = models.CharField(max_length=50)
-    # reqno = models.CharField(max_length=50)
-    judge_name = models.CharField(max_length=250)
+    req_form_number = models.IntegerField(unique=True)
+    
     req_day = models.PositiveIntegerField()
     req_month = models.PositiveIntegerField()
     req_year = models.PositiveIntegerField()
 
-    req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) # CHOICES
+    req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) 
+
+    court_name = models.CharField(max_length=250, blank=True)
+    court_code = models.CharField(max_length=7, verbose_name="รหัส")
+
+    judge_name = models.CharField(max_length=250)
 
     police_station_id = models.CharField(max_length=8) #REFER id -> tb_police_station
     req_no_plaintiff = models.CharField(max_length=50)
 
     plaintiff = models.CharField(max_length=400)
     accused = models.CharField(max_length=400)
+    
     req_name = models.CharField(max_length=300)
     req_pos = models.CharField(max_length=400)
     req_age = models.PositiveIntegerField()
@@ -72,11 +71,7 @@ class ReqformDataModel(models.Model):
         NOVEMBER = (11, "พฤศจิกายน")
         DECEMBER = (12, "ธันวาคม")
 
-    scene_date_day = models.PositiveIntegerField(blank=True, null=True)
-    scene_date_month = models.PositiveIntegerField(blank=True, null=True)
-    scene_date_year = models.PositiveIntegerField(blank=True, null=True)
-
-    scene_date_timehalf = models.TimeField(blank=True, null=True) 
+    scene_date = models.DateTimeField(blank=True, null=True) 
     # scene_date = models.CharField(max_length=19, blank=True) 
 
     act = models.CharField(max_length=500, verbose_name="มีพฤติการกระทำความผิด", blank=True)
@@ -103,23 +98,8 @@ class ReqformDataModel(models.Model):
 
     create_uid = models.IntegerField()
 
-    #######################
-
-    woa_start_date_day = models.PositiveIntegerField(blank=True, null=True)
-    woa_start_date_month = models.PositiveIntegerField(blank=True, null=True)
-    woa_start_date_year = models.PositiveIntegerField(blank=True, null=True)
-
-    woa_start_date_timehalf = models.TimeField(blank=True, null=True) 
-
-
-    woa_end_date_day = models.PositiveIntegerField(blank=True, null=True)
-    woa_end_date_month = models.PositiveIntegerField(blank=True, null=True)
-    woa_end_date_year = models.PositiveIntegerField(blank=True, null=True)
-
-    woa_end_date_timehalf = models.TimeField(blank=True, null=True) 
-
-
-    #############################################
+    woa_start_date = models.DateTimeField(blank=True, null=True)
+    woa_end_date = models.DateTimeField(blank=True, null=True)
 
     #####################################################################3
     # WARRANTS AUTO-FILL SECTION
@@ -142,6 +122,7 @@ class ReqformDataModel(models.Model):
 
     warrants = models.ManyToManyField(WarrantDataModel)
 
+
     def toDocumentCompatibleDict(self) -> dict[str, object]:
         """
         Convert the model object into a dictionary that fits what the API required.
@@ -157,6 +138,8 @@ class ReqformDataModel(models.Model):
         # dict_main_awis.update({"day": self.day})
         # dict_main_awis.update({"month": self.month})
         # dict_main_awis.update({"year": self.year})
+
+        dict_main_awis.pop("id")
 
         empty_key_list = []
         for key, value in dict_main_awis.items():
@@ -203,10 +186,7 @@ class ReqformDataModel(models.Model):
                 current_dict.update({bool_key: 0})
             else:
                 current_dict.update({bool_key: 1})
-        
-        current_dict = cleanDateTimeFields(current_dict)
 
-        current_dict.pop("judge_name")
         current_dict.pop("req_day")
         current_dict.pop("req_month")
 
@@ -239,33 +219,7 @@ def cleanDateTimeFields(current_dict : dict):
     included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
 
     for field in included_fields:
-        current_dict = reattachDateTime(current_dict, field)
+        str_datetime = datetime.datetime.strftime(current_dict.get(field),"%Y-%m-%d %H:%M:%S")
+        current_dict.update({field : str_datetime})
     
-    return current_dict
-
-def reattachDateTime(current_dict : dict, field : str):
-    
-    scene_date_year = current_dict.get(f"{field}_year")
-    scene_date_month = current_dict.get(f"{field}_month")
-    scene_date_day = current_dict.get(f"{field}_day")
-    scene_date_timehalf = current_dict.get(f"{field}_timehalf")
-    combined_date = ""
-    combined_datetime = "1970-00-00 12:00:00"
-    if scene_date_year and scene_date_month and scene_date_day:
-        converted_year = scene_date_year 
-        padded_month = str(scene_date_month).zfill(2)
-        padded_day = str(scene_date_day).zfill(2)
-
-        combined_date = f"{converted_year}-{padded_month}-{padded_day}"
-
-    if combined_date and scene_date_timehalf:
-        combined_datetime = f"{combined_date} {scene_date_timehalf}"
-
-    current_dict.pop(f"{field}_year", None)
-    current_dict.pop(f"{field}_month", None)
-    current_dict.pop(f"{field}_day", None)
-    current_dict.pop(f"{field}_timehalf", None)
-
-    current_dict.update({f"{field}": combined_datetime})
-
     return current_dict

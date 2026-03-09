@@ -55,7 +55,7 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
         "username": username,
         "password": password,
     }
-    response : JsonResponse = RequestUtils.post_request(
+    response : HttpResponse = RequestUtils.post_request(
         base_url, 
         parameter_data=parameter, 
         post_data=post_data
@@ -66,6 +66,14 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
     if not data.get("token"):
         return False
     
+    ##############################################################
+    # Rewrap in real Django HTTP request/ json
+
+    response : JsonResponse = JsonResponse({
+        "status": 200,
+        "token": data.get("token")
+    }, status=200)    
+    
     if storage == "session":
         request.session["bearer_token"] = data.get("token")
     else:
@@ -75,7 +83,7 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
 
 ##############################################################################
 # 3. 
-def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -> bool:
+def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -> dict | bool:
 
     # if not get_health_check("v1"):
     #     return False
@@ -92,10 +100,14 @@ def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -
     )
     data : dict = response.json()
 
-    if data.get("status"):
-        return True
+    print(data)
+
+    return data
+
+    # if data.get("status"):
+    #     return data
     
-    return False
+    # return False
 
 ##############################################################################
 # 4. 
@@ -138,7 +150,7 @@ def get_search_warrants(version : str, request : HttpRequest, query_data : dict)
     parameter = [version, "awis", "warrants", "search"]
 
     auth_token : str = RequestUtils.check_auth_token(request)
-    response : JsonResponse = RequestUtils.get_request_with_auth(
+    response : HttpResponse = RequestUtils.get_request_with_auth(
         base_url, 
         parameter_data=parameter, 
         query_data=query_data,

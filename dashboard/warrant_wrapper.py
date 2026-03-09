@@ -24,5 +24,5 @@ class VisualWarrantData(models.Model):
     court_injunction = models.IntegerField(choices=AcceptStatus, blank=True, null=True)
     injunction_date = models.DateTimeField(blank=True, null=True)
 
-    filepath = models.CharField(max_length=250)
-    because = models.CharField(max_length=300)
+    filepath = models.CharField(max_length=250, blank=True,)
+    because = models.CharField(max_length=300, blank=True,)

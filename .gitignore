@@ -6,6 +6,8 @@
 /test_files
 /.test_files
 
+/_test_json
+
 ### Django ###
 *.log
 *.pot
