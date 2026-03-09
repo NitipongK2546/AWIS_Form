@@ -347,16 +347,17 @@ form textarea {
     height: 120px;
 }
 
-/* #id_main_form-scene textarea {
-    width: 500px;
-}
-
-.plaintiff-input input {
+.plaintiff_2 input {
     width: 15rem;
     max-width: 100%;
     text-align: center;
     box-sizing: border-box;
 }
+
+/* #id_main_form-scene textarea {
+    width: 500px;
+}
+
 #id_main_form-act textarea {
     width: 500px;
 }
