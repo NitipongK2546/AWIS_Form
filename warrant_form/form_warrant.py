@@ -54,6 +54,9 @@ def toAPICompatibleDictGeneral(incoming_model : models.Model) -> dict[str, objec
 
 class WarrantForm(forms.Form):
 
+    court_name = forms.CharField(max_length=250)
+    plaintiff = forms.CharField(max_length=400)
+
     woa_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
     woa_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
     woa_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
@@ -131,6 +134,10 @@ class WarrantForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        # cleaned_data.pop("plaintiff", None)
+        # cleaned_data.pop("court_name", None)
+
         self.combineDupe(cleaned_data)
         self.cleanDateTimeFields(cleaned_data)
 
