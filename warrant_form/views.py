@@ -101,8 +101,14 @@ def success_page(request : HttpRequest):
 
 @login_required(login_url="/users/login/")
 def step1_reqform(request : HttpRequest):
+    static_data = {
+        "court_code": "0000011",
+        "police_station_id": "TCCT0001",
+        "req_no_plaintiff": "tcctd20260304002",
+        "create_uid": 10000010,
+    }
     if request.method == "POST":
-        form = AWISFormStep1(request.POST, prefix="main_form")
+        form = AWISFormStep1(request.POST, prefix="main_form",)
 
         if form.is_valid():
             data = form.cleaned_data
@@ -113,18 +119,11 @@ def step1_reqform(request : HttpRequest):
 
             return redirect(reverse("forms:step2"))
         else:
-            print(form.errors.as_text)
+            # print(form.errors.as_text)
             return render(request, "warrant_form/awis_step1.html", {
                 "form": form,
                 "step": 1,
             })
-        
-    static_data = {
-        "court_code": "0000011",
-        "police_station_id": "TCCT0001",
-        "req_no_plaintiff": "tcctd20260304002",
-        "create_uid": 10000010,
-    }
 
     old_data : dict = request.session.get("step1")
 

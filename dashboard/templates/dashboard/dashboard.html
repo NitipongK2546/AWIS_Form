@@ -12,12 +12,11 @@
     <div class="header-button-row">
         <p><a href="{% url 'forms:step1' %}" class="button">เพิ่มคำร้องหมายจับ</a></p>
         <p><a href="{% url 'dashboard:approve_form_page' %}" class="button">อนุมัติแบบฟอร์ม</a></p>
+        <p><a href="{% url 'api:test:login' %}" class="button">ทดสอบเอา token ใส่คุ้กกี้</a></p>
+        <p><a href="{% url 'api:test:health' %}" class="button">ทดสอบ HEALTH CHECK</a></p>
     </div>
     {% include 'module/approve_table.html' %}
 
     {% include 'module/accept_table.html' %}
 </div>
-
-
-
 {% endblock %}

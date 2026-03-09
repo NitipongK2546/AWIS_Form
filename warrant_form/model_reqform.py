@@ -13,7 +13,7 @@ class ReqformDataModel(models.Model):
     reqno = models.CharField(max_length=50, blank=True, unique=True)
     # เป็นการผสมกันระหว่าง case_type_id, req_form_number, และ req_year
 
-    req_form_number = models.IntegerField(unique=True)
+    req_form_number = models.IntegerField()
     
     req_day = models.PositiveIntegerField()
     req_month = models.PositiveIntegerField()
@@ -212,6 +212,18 @@ class ReqformDataModel(models.Model):
         cleaned_dict.update({f"warrants": warrants_list})
         return cleaned_dict
     
+
+    def convertBacktoFormView(self) -> dict[str, object]:
+        dict_main_awis = model_to_dict(self)
+
+        duped_list = ["accused", "plaintiff", "court_name"]
+
+        for item in duped_list:
+            dict_main_awis.update({f"{item}_1" : dict_main_awis.get(item)})
+            dict_main_awis.update({f"{item}_2" : dict_main_awis.get(item)})
+
+        return dict_main_awis
+
 ################################################################################
 
 def cleanDateTimeFields(current_dict : dict):

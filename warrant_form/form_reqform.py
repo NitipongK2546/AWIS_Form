@@ -32,6 +32,7 @@ req_case_type_id_choices = [
 ]
 
 class AWISFormStep1(forms.Form):
+
     court_code = forms.CharField(max_length=7, widget=forms.HiddenInput())
     police_station_id = forms.CharField(max_length=8, widget=forms.HiddenInput())
     req_no_plaintiff = forms.CharField(max_length=50, widget=forms.HiddenInput())
@@ -376,3 +377,10 @@ def reattachDateTime(current_dict : dict, field : str):
     current_dict.update({f"{field}": combined_datetime})
 
     return current_dict
+
+class DisabledFormStep1(AWISFormStep1):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            field.disabled = True

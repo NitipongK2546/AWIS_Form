@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-ENABLE_API = True
+ENABLE_API = False
 DEBUG = True
 
 

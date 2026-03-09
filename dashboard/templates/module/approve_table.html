@@ -33,6 +33,7 @@
                 </td>
                 <td>
                     <a href="{% url 'dashboard:get_form' form.id %}">View</a> |
+                    {% comment %}<a href="{% url 'dashboard:edit_form' form.id %}">Edit</a> |{% endcomment %}
                     <a href="{% url 'dashboard:confirm_approve' form.id %}">Approve</a> |
                     <a href="{% url 'dashboard:confirm_reject' form.id %}">Reject</a>
                 </td>
