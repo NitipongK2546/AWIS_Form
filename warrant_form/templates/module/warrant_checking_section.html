@@ -1,9 +1,17 @@
 <div class="warrant_checking_section">
-    <p>
-        <span> {{ form.charge_type_1 }} 1.</span> 
-        <span>ได้หรือน่าจะได้กระทำความผิดอาญาซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</span>
-    </p>
-    <p>
-        <span> {{ form.charge_type_2 }} 2.</span> ได้หรือน่าจะได้กรทำความผิดอาญาและมีเหตุอันควรเชื่อว่า
-    </p>
+    <p><span> {{ form.charge_type_1 }} </span> 1. ได้หรือน่าจะได้กระทำความผิดอาญาซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</p>
+    <p><span> {{ form.charge_type_2 }} </span> 2. ได้หรือน่าจะได้กรทำความผิดอาญาและมีเหตุอันควรเชื่อว่า</p>
+    
+    <div class="warrant_checking_subclass">
+        <p>
+            <span> {{ form.charge_type_2_1 }} </span> 2.1 จะหลบหนี
+        </p>
+        <p>
+            <span> {{ form.charge_type_2_2 }} </span> 2.2 จะไปยุ่งเหยิงกับพยานหลักฐาน
+        </p>
+        <p>
+            <span> {{ form.charge_type_2_3 }} </span> 2.3 ก่อเหตุอันตรายประการอื่น
+        </p>
+    </div>
+    <p><span> {{ form.charge_type_3 }} </span> อื่น ๆ <span input style="width: 20rem; margin-left: 1rem;"> {{ form.charge_other_text }} </span> </p>
 </div>

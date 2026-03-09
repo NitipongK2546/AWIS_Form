@@ -80,21 +80,26 @@ form textarea:focus {
 }
 
 .warrant_charge p span input {
-    width: 25rem;
+    width: 40rem;
 }
 
 .warrant_checking_section p {
     align-items: center;
     display: flex;
     justify-content: left;
+    margin: 0rem;
 }
 
 .warrant_checking_section p span {
-    max-width: 2rem;
+    width: 5rem;
     display: flex;
     justify-content: left;
 }
 
 .warrant_checking_section p span input {
-    width: 2rem;
+    width: 20rem;
+}
+
+.warrant_checking_subclass {
+    margin-left: 5rem;
 }
