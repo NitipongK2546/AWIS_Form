@@ -4,15 +4,11 @@
 {% block title %}Warrant Form{% endblock %}
 
 {% block style %}
-    <!-- <link rel="stylesheet" href="{% static 'css/step1.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'css/step2.css' %}">
 {% endblock %}
 
 {% block form %}
-<form id="awis-form" onsubmit="confirmForm()" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <button type="submit">Next</button>
-</form>
+{% include 'module/warrant_form.html' %}
 {% endblock %}
 
 {% block script %}

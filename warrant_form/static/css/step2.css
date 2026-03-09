@@ -1,0 +1,100 @@
+form {
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    font-size: 18px;
+    line-height: 1.2;
+    color: #000;
+
+}
+
+input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    vertical-align: middle;
+    border-color: black;
+}
+
+form input {
+    border: 1px solid #6f6767;
+    /* width: 11em; */
+    border-radius: 3px;
+    font-size: 17px;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    background-color: #efefef;
+}
+
+form select {
+    border: 1px solid #6f6767;
+    /* width: 11em; */
+    border-radius: 3px;
+    font-size: 17px;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    background-color: #efefef;
+    /* box-sizing: border-box; */
+}
+
+form textarea {
+    border: 1px solid #6f6767;
+    border-radius: 3px;
+    font-size: 17px;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    background-color: #f9f9f9;
+    resize: vertical;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    outline: none;
+    box-shadow: 0 0 4px 2px #3399ff;
+    border: 1px solid #3399ff;
+}
+
+.warrant_header p {
+    display: flex;
+    justify-content: space-between;
+}
+
+.warrant_header p span {
+    min-width: 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.warrant_header p span input {
+    width: 50rem;
+}
+
+.warrant_charge p {
+    display: flex;
+    justify-content: space-between;
+}
+
+.warrant_charge p span {
+    min-width: 10rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.warrant_charge p span input {
+    width: 25rem;
+}
+
+.warrant_checking_section p {
+    align-items: center;
+    display: flex;
+    justify-content: left;
+}
+
+.warrant_checking_section p span {
+    max-width: 2rem;
+    display: flex;
+    justify-content: left;
+}
+
+.warrant_checking_section p span input {
+    width: 2rem;
+}

@@ -1,0 +1,21 @@
+{% load static %}
+
+{% if status == "error" %}
+<h3>ข้อมูลที่กรอกมีข้อผิดพลาด</h3>
+{% endif %}
+
+<form id="awis-form" onsubmit="confirmForm()" method="post">
+    {% csrf_token %}
+    
+    <p align="right"> ศาล </p>
+    <p align="right" class="date-widget"><span>เรียกสอบ</span><span>วัน {{form.woa_date_day}} เดือน {{form.woa_date_month}} พ.ศ. {{form.woa_date_year}}</span></p>
+    <p align="center">ความอาญา {{ form.fault_type_id }} </p>
+    
+    {% include 'module/warrant_header.html' %}
+    
+    {% include 'module/warrant_charge.html' %}
+    
+    {% include 'module/warrant_checking_section.html' %}
+
+    <button type="submit">Next</button>
+</form>
