@@ -239,6 +239,15 @@ class AWISFormStep1(forms.Form):
         cleaned_dict.update({f"warrants": warrants_list})
         return cleaned_dict
     
+    def dupeNeccesary(self, incoming_dict : dict):
+        dupe = ["acc_full_name"]
+
+        for field in dupe:
+            incoming_dict.update({f"{field}_1": incoming_dict.get(field)})
+            incoming_dict.update({f"{field}_2": incoming_dict.get(field)})
+
+        return incoming_dict
+    
 ################################################################################
 
     def clean_date(self, data : dict[str, object]):

@@ -12,7 +12,10 @@
 
 <hr>
 
-{}
-
+{% for form in warrant_list %}
+{{ form }}
+{% empty %}
+No warrant
+{% endfor %}
 {% endblock %}
 

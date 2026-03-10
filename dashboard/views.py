@@ -56,7 +56,7 @@ def dashboard(request : HttpRequest):
             "woa_type": warrant_data.woa_type,
             "woa_refno": warrant_data.woa_refno,
             "judge_name": warrant_wrap.judge_name,
-            "injunction_date": warrant_wrap.injunction_date,
+            "injunction_date": warrant_wrap.injunction_date.strftime("%d/%m/%Y, %H:%M น."),
             "file_path": warrant_wrap.file_path,
             "because": warrant_wrap.because,
         }
@@ -99,13 +99,14 @@ def view_form(request : HttpRequest, form_id : int):
     warrant_list = []
     for item in warrants:
         dict_item = item.convertBacktoFormView()
+        form = DisabledWarrantForm(initial=dict_item)
         warrant_list.append(
-            form = DisabledWarrantForm(initial=dict_item)
+            form
         )
     
     form = DisabledFormStep1(initial=selected_form.convertBacktoFormView(), prefix="main_form")
     
-    return render(request, "warrant_form/awis_step1.html", {
+    return render(request, "warrant_form/view_all.html", {
         "user": request.user,
         "form": form,
         "warrant_list": warrant_list,
