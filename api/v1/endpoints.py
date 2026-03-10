@@ -145,20 +145,19 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
             reqno = data.get("reqno"),
         ).first()
 
-        warrants_list = form_obj.warrants
+        related_warrants = form_obj.warrants.all()
 
-        target_object = WarrantDataModel.objects.filter(
+        warrants_matched : WarrantDataModel = related_warrants.filter(
             woa_no = data.get("woa_no"),
             woa_date__year = data.get("woa_year") - 543,
             woa_type = data.get("woa_type"),
-            woa_refno = data.get("woa_refno"),
         ).first()
 
-        target_object = VisualWarrantData.objects.filter(
-            warrant=target_object,
+        woa_wrapper_matched = VisualWarrantData.objects.filter(
+            warrant=warrants_matched,
         )
 
-        if len(target_object) == 0:
+        if len(woa_wrapper_matched) == 0:
             raise Exception("No Match Found.")
 
         iso8601_str_format = "%Y-%m-%dT%H:%M:%S"    
@@ -166,13 +165,16 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
         injunction_date = timezone.datetime.strptime(data.get("injunction_date"), iso8601_str_format)
         injunction_date = timezone.make_aware(injunction_date, timezone.UTC,)
 
-        target_object.update(
+        woa_wrapper_matched.update(
             judge_name = data.get("judge_name"),
             court_injunction = data.get("court_injunction"),
             injunction_date = injunction_date,
-            file_path = "",
+            file_path = "https://www.example.com",
             because = "",
         )
+        warrants_matched.woa_refno = data.get("woa_refno")
+        warrants_matched.save()
+        # warrants_matched.
 
         return JsonResponse({
             "status": 200,

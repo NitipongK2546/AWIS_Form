@@ -144,3 +144,9 @@ class WarrantForm(forms.Form):
         return cleaned_data
 
 
+class DisabledWarrantForm(WarrantForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            field.disabled = True

@@ -120,7 +120,7 @@ class ReqformDataModel(models.Model):
     acc_province = models.CharField(max_length=2, blank=True)
     acc_tel = models.CharField(max_length=20, blank=True)
 
-    warrants = models.ManyToManyField(WarrantDataModel)
+    warrants = models.ManyToManyField(WarrantDataModel, related_name="reqforms")
 
 
     def toDocumentCompatibleDict(self) -> dict[str, object]:
