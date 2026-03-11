@@ -12,8 +12,8 @@ from django.utils import timezone
 
 from _request_utils import connect_api as AWISConnectAPI
 
-def health_check(request : HttpRequest) -> JsonResponse:
-    return AWISConnectAPI.get_health_check("v1",)
+def health_check(request : HttpRequest) -> dict:
+    return JsonResponse(AWISConnectAPI.get_health_check("v1",))
 
 def fetch_token(request : HttpRequest) -> JsonResponse:
     return AWISConnectAPI.post_login_authorize("v1.1", request)
