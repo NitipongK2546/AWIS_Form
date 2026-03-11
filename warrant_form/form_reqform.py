@@ -2,7 +2,6 @@ import datetime
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms.models import model_to_dict
 
 from warrant_form import forms_central as CentralForm
 from warrant_form.model_reqform import WarrantDataModel

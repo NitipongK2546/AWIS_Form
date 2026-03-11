@@ -46,3 +46,22 @@ def reattachDateTime(current_dict : dict, field : str):
     current_dict.update({f"{field}": combined_datetime})
 
     return current_dict
+
+def createDupe(duped_list : list[str], target_dict : dict) -> dict[str,]:
+    for item in duped_list:
+        target_dict.update({f"{item}_1" : target_dict.get(item)})
+        target_dict.update({f"{item}_2" : target_dict.get(item)})
+
+    return target_dict
+
+def splitTime(time_split_list : list[str], target_dict : dict) -> dict[str,]:
+    for item in time_split_list:
+        datetime_obj : datetime.datetime = target_dict.get(item)
+
+        target_dict.update({f"{item}_day" : datetime_obj.day})
+        target_dict.update({f"{item}_month" : datetime_obj.month})
+        target_dict.update({f"{item}_year" : datetime_obj.year})
+
+        target_dict.update({f"{item}_timehalf" : datetime_obj.time().isoformat()})
+
+    return target_dict
