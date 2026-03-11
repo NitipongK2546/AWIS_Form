@@ -27,7 +27,7 @@ def reattachDateTime(current_dict : dict, field : str):
     scene_date_day = current_dict.get(f"{field}_day")
     scene_date_timehalf = current_dict.get(f"{field}_timehalf")
     combined_date = ""
-    combined_datetime = "1970-01-01 00:00:00"
+    combined_datetime = "1970-01-01T00:00:00Z"
     if scene_date_year and scene_date_month and scene_date_day:
         converted_year = scene_date_year 
         padded_month = str(scene_date_month).zfill(2)
@@ -36,7 +36,7 @@ def reattachDateTime(current_dict : dict, field : str):
         combined_date = f"{converted_year}-{padded_month}-{padded_day}"
 
     if combined_date and scene_date_timehalf:
-        combined_datetime = f"{combined_date} {scene_date_timehalf}"
+        combined_datetime = f"{combined_date}T{scene_date_timehalf}+07:00"
 
     current_dict.pop(f"{field}_year", None)
     current_dict.pop(f"{field}_month", None)

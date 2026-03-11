@@ -90,7 +90,7 @@ form textarea:focus {
 }
 
 .warrant_checking_section p span {
-    width: 5rem;
+    width: 2rem;
     display: flex;
     justify-content: left;
 }
@@ -126,7 +126,7 @@ form textarea:focus {
 
 .next-to-acc-name-label span.other-charge {
     flex: none;
-    width: 5rem;
+    width: 2rem;
 }
 
 .warrant_info p {
