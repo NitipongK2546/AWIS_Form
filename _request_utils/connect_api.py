@@ -54,8 +54,8 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
     # username = request.POST.get("username")
     # password = request.POST.get("password")
 
-    username = os.getenv("username")
-    password = os.getenv("password")
+    username = os.getenv("API_USERNAME")
+    password = os.getenv("API_PASSWORD")
 
     post_data = {
         "username": username,
