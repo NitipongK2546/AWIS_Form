@@ -37,6 +37,10 @@ def _prepare_request_data(target_url : str, data : dict, parameter_data : list, 
         raise Exception("The URL wasn't entered.")
 
     dict_header = header_data
+
+    if not dict_header:
+        dict_header = {}
+
     if auth_token:
         dict_header.update({"Authorization": f"Bearer {auth_token}"})
     # PASS THE DATA AS DICT
