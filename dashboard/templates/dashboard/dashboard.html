@@ -5,6 +5,9 @@
 
 {% block body %}
 <div id="header-container">
+    <div class="logo-row">
+        <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
+    </div>
     <div class="header-row"> 
         <h1>Dashboard</h1> 
         <p>Username: <span class="username-value">{{ user.username }}</span> <a href="{% url 'users:logout' %}" class="button-logout">logout</a></p>
