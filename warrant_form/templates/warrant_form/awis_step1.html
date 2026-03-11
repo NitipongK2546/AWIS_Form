@@ -12,10 +12,10 @@
 {% endblock %}
 
 {% block defer_script %}
-<script src="{% static 'js/reqform/_var_reqform.js'%}"></script>
 {% endblock %}
 {% block script %}
 {% if not disabled.is_true %}
+<script src="{% static 'js/reqform/_var_reqform.js'%}"></script>
 <script src="{% static 'js/reqform/adjustDate.js' %}"></script>
 <script src="{% static 'js/reqform/adjustTime.js' %}"></script>
 <script src="{% static 'js/reqform/handleDistrict.js' %}"></script>

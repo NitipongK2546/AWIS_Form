@@ -48,6 +48,7 @@ def dashboard(request : HttpRequest):
     warrants_list = []
     for warrant_wrap in warrants:
         warrant_data = warrant_wrap.warrant
+
         data_dict = {
             "court_injunction": warrant_wrap.get_court_injunction_display, 
             "reqno": warrant_data.reqforms.all().first().reqno,
@@ -56,10 +57,19 @@ def dashboard(request : HttpRequest):
             "woa_type": warrant_data.woa_type,
             "woa_refno": warrant_data.woa_refno,
             "judge_name": warrant_wrap.judge_name,
-            "injunction_date": warrant_wrap.injunction_date.strftime("%d/%m/%Y, %H:%M น."),
+            "injunction_date": warrant_wrap.injunction_date,
             "file_path": warrant_wrap.file_path,
             "because": warrant_wrap.because,
         }
+
+        if warrant_wrap.injunction_date:
+            data_dict.update({
+                "injunction_date": warrant_wrap.injunction_date.strftime("%d/%m/%Y, %H:%M น."),
+            })
+        else:
+            data_dict.update({
+                "injunction_date": "-"
+            })
 
         warrants_list.append(data_dict)
 

@@ -95,8 +95,9 @@ def step1_reqform(request : HttpRequest):
         if form.is_valid():
             
             data = form.cleaned_data
-            acc_info = form.dupeNeccesary(data)
+            acc_info = dupeNeccesary(data)
 
+            print(data)
             print(acc_info)
 
             request.session.update({
@@ -133,6 +134,9 @@ def step2_warrantform(request : HttpRequest):
                 warrant_data = form.cleaned_data
 
                 reqform_data = request.session.get("step1")
+
+                print(reqform_data)
+
                 reqform : ReqformDataModel = ReqformDataModel.objects.create(**reqform_data)
 
                 warrant : WarrantDataModel = WarrantDataModel.objects.create(
@@ -191,5 +195,14 @@ def step2_warrantform(request : HttpRequest):
         "step": 2,
     })
 
-# def step3_confirmation(request : HttpRequest):
-#     pass
+##########################################################################
+
+def dupeNeccesary(incoming_dict : dict):
+        dupe = ["acc_full_name"]
+        new_dict = incoming_dict.copy()
+
+        for field in dupe:
+            new_dict.update({f"{field}_1": incoming_dict.get(field)})
+            new_dict.update({f"{field}_2": incoming_dict.get(field)})
+
+        return new_dict
