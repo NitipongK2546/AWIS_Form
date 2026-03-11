@@ -5,8 +5,6 @@ from django.contrib.auth.models import User, Group
 from django import forms
 from django.db import models
 
-from users.models import UserDataModel
-
 class CustomizedUserCreationForm(UserCreationForm):
     class RoleChoices(models.IntegerChoices):
         OUTSIDE = (0, "Outside")
