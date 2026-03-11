@@ -139,7 +139,7 @@ def get_req_form_status(version : str, request : HttpRequest, req_no_plaintiff :
     data : list[dict] = response.json()
 
     if data:
-        return data
+        return response
     
     return None
 

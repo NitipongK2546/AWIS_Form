@@ -17,3 +17,6 @@ def health_check(request : HttpRequest) -> dict:
 
 def fetch_token(request : HttpRequest) -> JsonResponse:
     return AWISConnectAPI.post_login_authorize("v1.1", request)
+
+def check_all_reqforms(request : HttpRequest) -> JsonResponse:
+    return AWISConnectAPI.get_req_form_status("v1.1", request, "tcctd20260304002",)
