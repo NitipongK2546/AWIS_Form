@@ -121,7 +121,7 @@ def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -
 
 ##############################################################################
 # 4. 
-def get_req_form_status(version : str, request : HttpRequest, req_no_plaintiff : str) -> JsonResponse:
+def get_req_form_status(version : str, request : HttpRequest, req_no_plaintiff : str) -> dict[str,]:
     """
     Return List ที่เป็น Dictionary ออกมา เป็นข้อมูลสถานะคำร้อง ReqForm
     """
@@ -140,7 +140,7 @@ def get_req_form_status(version : str, request : HttpRequest, req_no_plaintiff :
     )
     data : list[dict] = response.json()
 
-    return JsonResponse(data)
+    return data
 
 ##############################################################################
 # 5.
