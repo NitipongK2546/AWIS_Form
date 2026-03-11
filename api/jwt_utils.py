@@ -15,8 +15,8 @@ JWT_EXP_DELTA_SECONDS = 3600
 def create_jwt(user_id):
     payload = {
         "user_id": user_id,
-        "expire": timezone.now() + timedelta(seconds=JWT_EXP_DELTA_SECONDS),
-        "created": timezone.now(),
+        "expire": (timezone.now() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)).isoformat(),
+        "created": (timezone.now()).isoformat(),
     }
 
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)

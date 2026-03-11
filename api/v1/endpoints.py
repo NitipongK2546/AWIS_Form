@@ -30,24 +30,32 @@ def auth_api(request : HttpRequest) -> JsonResponse:
     # Failed.
     if isinstance(data, JsonResponse):
         return data
-
-    username = data.get("username")
-    password = data.get("password")
     
-    user = authenticate(username=username, password=password)
+    try:
+        username = data.get("username")
+        password = data.get("password")
+        
+        user = authenticate(username=username, password=password)
 
-    if not user:
+        if not user:
+            return JsonResponse({
+                "status": 401,
+                "message": "Wrong Username or Password"
+            }, status=401)
+        
+        token = JWTHandle.create_jwt(user.id)
+
         return JsonResponse({
-            "status": 401,
-            "message": "Wrong Username or Password"
-        }, status=401)
-    
-    token = JWTHandle.create_jwt(user.id)
+            "status": 200,
+            "token": token,
+        })
+    except Exception as e:
+        print(e)
 
-    return JsonResponse({
-        "status": 200,
-        "token": token,
-    })
+        return JsonResponse({
+            "status": 400,
+            "message": "Authentication failed."
+        }, status=400)
 
 @csrf_exempt
 def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
