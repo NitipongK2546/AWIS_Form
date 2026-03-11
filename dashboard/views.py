@@ -4,9 +4,8 @@ from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledFormStep1
+from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledFormStep1, DisabledWarrantForm
 
-# from dashboard.test_models import FormApprovalDataContainer as FormData
 from dashboard.models import VisualFormApprovalData as FormData
 from dashboard.models import VisualFinalizedFormData as FormSent
 from dashboard.warrant_wrapper import VisualWarrantData
@@ -47,11 +46,30 @@ def dashboard(request : HttpRequest):
         output_list.append(data_dict)
 
     warrants_list = []
-    for warrant in warrants:
+    for warrant_wrap in warrants:
+        warrant_data = warrant_wrap.warrant
+
         data_dict = {
-            "court_injunction": warrant.get_court_injunction_display,  
-            "woa_no": f"{warrant.warrant.woa_no}/{warrant.warrant.woa_date.year + 543}"
+            "court_injunction": warrant_wrap.get_court_injunction_display, 
+            "reqno": warrant_data.reqforms.all().first().reqno,
+            "woa_no": f"{warrant_data.woa_no}/{warrant_data.woa_date.year + 543}",
+            "woa_year": warrant_data.woa_date.year + 543,
+            "woa_type": warrant_data.woa_type,
+            "woa_refno": warrant_data.woa_refno,
+            "judge_name": warrant_wrap.judge_name,
+            "injunction_date": warrant_wrap.injunction_date,
+            "file_path": warrant_wrap.file_path,
+            "because": warrant_wrap.because,
         }
+
+        if warrant_wrap.injunction_date:
+            data_dict.update({
+                "injunction_date": warrant_wrap.injunction_date.strftime("%d/%m/%Y, %H:%M น."),
+            })
+        else:
+            data_dict.update({
+                "injunction_date": "-"
+            })
 
         warrants_list.append(data_dict)
 
@@ -86,13 +104,22 @@ def view_form(request : HttpRequest, form_id : int):
 
     selected_form = FormData.objects.filter(id=form_id).first().form
 
-    print(selected_form.convertBacktoFormView())
+    warrants : list[WarrantDataModel] = selected_form.warrants.all()
+
+    warrant_list = []
+    for item in warrants:
+        dict_item = item.convertBacktoFormView()
+        form = DisabledWarrantForm(initial=dict_item)
+        warrant_list.append(
+            form
+        )
     
     form = DisabledFormStep1(initial=selected_form.convertBacktoFormView(), prefix="main_form")
     
-    return render(request, "warrant_form/awis_step1.html", {
+    return render(request, "warrant_form/view_all.html", {
         "user": request.user,
         "form": form,
+        "warrant_list": warrant_list,
         "disabled": True,
     })
 
@@ -116,14 +143,15 @@ def confirm_approve(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
 
-    selected_form = FormData.objects.filter(id=form_id).first()
+    selected_form = FormData.objects.filter(pk=form_id).first()
+    print(selected_form)
     if request.method == "POST":
         try:
-            selected_form.approve_status = FormData.ApprovalStatus.APPROVED
-            selected_form.save()
-
             if settings.ENABLE_API:
                 dict = AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
+
+            selected_form.approve_status = FormData.ApprovalStatus.APPROVED
+            selected_form.save()
             
             FormSent.objects.create(
                 form=selected_form.form,

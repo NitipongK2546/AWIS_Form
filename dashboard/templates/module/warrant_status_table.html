@@ -4,18 +4,19 @@
     <table class="styled-table">
         <thead>
             <tr>
-                <th colspan="7">สถานะของหมายศาล</th>
+                <th colspan="10">สถานะของหมายศาล</th>
             </tr>
             <tr>
-                <th>สถานะหมายจับ</th>
-                <th>เลขที่คดี</th>
+                <th>คำสั่งศาล</th>
+                <th>เลขที่ร้อง</th>
                 <th>เลขที่หมายจับ</th>
-                <th>ชื่อ-สกุล ผู้ต้องหา</th>
-                <th>ข้อหา</th>
-                <th>นับตั้งแต่วันที่</th>
-                <th>แต่ไม่เกินวันที่</th>
-                <th>อายุความ (ปี)</th>
-                <th>สถานที่เกิดเหตุ</th>
+                <th>ปีหมายจับ</th>
+                <th>ประเภทหมายจับ</th>
+                <th>เลขอ้างอิงจากศาล</th>
+                <th>ชื่อผู้พิพากษาที่ลงนาม</th>
+                <th>สันที่ศาลมีคำสั่ง</th>
+                <th>ที่อยู่ไฟล์หมายจับ</th>
+                <th>หมายเหตุ</th>
             </tr>
         </thead>
         <tbody>
@@ -28,11 +29,37 @@
                         รอการพิจารณา
                     {% endif %}
                 </td>
-                <td>{{ form.woa_no }}</td>
+                <td>
+                    {{ form.reqno }}
+                </td>
+                <td>
+                    {{ form.woa_no }}
+                </td>
+                <td>
+                    {{ form.woa_year }}
+                </td>
+                <td>
+                    {{ form.woa_type }}
+                </td>
+                <td>
+                    {{ form.woa_refno }}
+                </td>
+                <td>
+                    {{ form.judge_name }}
+                </td>
+                <td>
+                    {{ form.injunction_date }}
+                </td>
+                <td>
+                    <a href="{{ form.file_path }}">Link</a>
+                </td>
+                <td>
+                    {{ form.because }}
+                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7">No forms available.</td>
+                <td colspan="10">No forms available.</td>
             </tr>
             {% endfor %}
         </tbody>

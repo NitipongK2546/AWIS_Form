@@ -30,24 +30,32 @@ def auth_api(request : HttpRequest) -> JsonResponse:
     # Failed.
     if isinstance(data, JsonResponse):
         return data
-
-    username = data.get("username")
-    password = data.get("password")
     
-    user = authenticate(username=username, password=password)
+    try:
+        username = data.get("username")
+        password = data.get("password")
+        
+        user = authenticate(username=username, password=password)
 
-    if not user:
+        if not user:
+            return JsonResponse({
+                "status": 401,
+                "message": "Wrong Username or Password"
+            }, status=401)
+        
+        token = JWTHandle.create_jwt(user.id)
+
         return JsonResponse({
-            "status": 401,
-            "message": "Wrong Username or Password"
-        }, status=401)
-    
-    token = JWTHandle.create_jwt(user.id)
+            "status": 200,
+            "token": token,
+        })
+    except Exception as e:
+        print(e)
 
-    return JsonResponse({
-        "status": 200,
-        "token": token,
-    })
+        return JsonResponse({
+            "status": 400,
+            "message": "Authentication failed."
+        }, status=400)
 
 @csrf_exempt
 def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
@@ -145,20 +153,19 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
             reqno = data.get("reqno"),
         ).first()
 
-        warrants_list = form_obj.warrants
+        related_warrants = form_obj.warrants.all()
 
-        target_object = WarrantDataModel.objects.filter(
+        warrants_matched : WarrantDataModel = related_warrants.filter(
             woa_no = data.get("woa_no"),
             woa_date__year = data.get("woa_year") - 543,
             woa_type = data.get("woa_type"),
-            woa_refno = data.get("woa_refno"),
         ).first()
 
-        target_object = VisualWarrantData.objects.filter(
-            warrant=target_object,
+        woa_wrapper_matched = VisualWarrantData.objects.filter(
+            warrant=warrants_matched,
         )
 
-        if len(target_object) == 0:
+        if len(woa_wrapper_matched) == 0:
             raise Exception("No Match Found.")
 
         iso8601_str_format = "%Y-%m-%dT%H:%M:%S"    
@@ -166,13 +173,16 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
         injunction_date = timezone.datetime.strptime(data.get("injunction_date"), iso8601_str_format)
         injunction_date = timezone.make_aware(injunction_date, timezone.UTC,)
 
-        target_object.update(
+        woa_wrapper_matched.update(
             judge_name = data.get("judge_name"),
             court_injunction = data.get("court_injunction"),
             injunction_date = injunction_date,
-            file_path = "",
+            file_path = "https://www.example.com",
             because = "",
         )
+        warrants_matched.woa_refno = data.get("woa_refno")
+        warrants_matched.save()
+        # warrants_matched.
 
         return JsonResponse({
             "status": 200,

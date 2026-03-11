@@ -4,7 +4,7 @@
 <h3>ข้อมูลที่กรอกมีข้อผิดพลาด</h3>
 {% endif %}
 
-<form id="awis-form" onsubmit="confirmForm()" method="post">
+<form id="awis-form" method="post">
     {% csrf_token %}
     
     {{ form.court_code.as_hidden }}
@@ -117,6 +117,8 @@
       ผู้ร้อง
     </p>
 
+    {% if not disabled %}
     <button type="submit">Next</button>
+    {% endif %}
 </form>
 
