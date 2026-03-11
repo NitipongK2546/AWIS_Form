@@ -45,8 +45,8 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
     Token จะถูกใส่ลงไปใน Session/Cookie
     """
 
-    if not get_health_check("v1"):
-        return False
+    # if not get_health_check("v1"):
+    #     return False
     
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "authorize"]
