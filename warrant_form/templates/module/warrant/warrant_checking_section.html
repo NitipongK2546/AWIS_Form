@@ -13,5 +13,15 @@
             <span> {{ form.charge_type_2_3 }} </span> 2.3 ก่อเหตุอันตรายประการอื่น
         </p>
     </div>
-    <p><span> {{ form.charge_type_3 }} </span> อื่น ๆ <span input style="width: 20rem; margin-left: 1rem;"> {{ form.charge_other_text }} </span> </p>
+    <p class="next-to-acc-name-label">
+        <span>
+            <span style="max-width: 9rem;">
+                <span class="other-charge">
+                    <span>{{ form.charge_type_3 }}</span>
+                </span> 
+                อื่น ๆ
+            </span>
+            {{ form.charge_other_text }}
+        </span>
+    </p>
 </div>

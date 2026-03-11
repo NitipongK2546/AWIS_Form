@@ -95,65 +95,107 @@ form textarea:focus {
     justify-content: left;
 }
 
-.warrant_checking_section p span input {
-    width: 20rem;
-}
-
 .warrant_checking_subclass {
     margin-left: 5rem;
 }
 
+.next-to-acc-name-label {
+    display: flex;
+    justify-content: space-between;
+}
+
+.next-to-acc-name-label span {
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.next-to-acc-name-label input[type="checkbox"] {
+    padding-right: 5rem;
+    flex: none;
+}
+
+.next-to-acc-name-label input {
+    flex: 1;
+}
+
+.next-to-acc-name-label span {
+    flex: 1;
+}
+
+.next-to-acc-name-label span.other-charge {
+    flex: none;
+    width: 5rem;
+}
+
 .warrant_info p {
     display: flex;
-    gap: 1rem;
-    margin: 0;
+    justify-content: space-between;
 }
 
 .warrant_info p span {
+    white-space: nowrap;
     display: flex;
     align-items: center;
-}
-
-/* สัดส่วน */
-.col-1 {
     flex: 1;
 }
 
-.col-2 {
-    flex: 2;
+.warrant_info p span input {
+    flex: 1;
+}
+
+.warrant_info p span select {
+    flex: 1;
+}
+
+.warrant_info p span span {
+    flex: 1;
+}
+
+.warrant_info p span.acc-name-label {
+    flex: none;
+    width: 9rem;
+}
+
+.warrant_info p span.acc-info-label {
+    flex: none;
+    width: 5rem;
+}
+
+.warrant_info p span+span span.acc-info-label {
+    flex: none;
+    margin-left: 0.5rem;
+    width: 4rem;
 }
 
 /* ช่องที่อยู่แบบ double */
-.double_input {
-    flex: 1;
-    /* กิน 1 ส่วนทั้งหมด */
+.warrant_info .double_input {
+    flex: 1 1;
+    min-width: 0px;
     display: flex;
-    gap: 0.5rem;
+    /* justify-content: space-between; */
 }
 
-.double_input_inside {
+
+.warrant_info .double_input input{
+    width: 100%;
+    min-width: 0px;
+    /* display: flex;
+    justify-content: space-between;
+    align-items: center; */
+}
+
+.warrant_info .col-half {
     flex: 0.5;
 }
 
-
-/* ID ALERT!!!!!!!!!!!!!!!!!! */
-
-#id_acc_card_id {
-    width: 20rem;
+/* สัดส่วน */
+.warrant_info .col-1 {
+    flex: 1;
 }
 
-#id_acc_origin {
-    width: 15rem;
+.warrant_info .col-2 {
+    flex: 2;
 }
 
-#id_acc_nation {
-    width: 11rem;
-}
-
-#id_acc_addno {
-    width: 5rem;
-}
-
-#id_acc_vilno {
-    width: 5rem;
-}
