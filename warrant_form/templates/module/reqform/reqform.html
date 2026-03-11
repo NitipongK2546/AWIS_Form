@@ -68,7 +68,7 @@
         </p>
     </div> 
     
-    {% include 'module/cause_type_num1.html' %}
+    {% include 'module/reqform/cause_type_num1.html' %}
 
     <p style="max-width: 42rem; margin-left: 8rem; display:flex; align-items:center; flex-wrap:nowrap;">
       {{ form.cause_type_id_2 }} ปรากฎจากการสืบสวน/สอบสวนของ 
@@ -77,7 +77,7 @@
       </span>
     </p>
     
-    {% include 'module/acc_info.html' %}
+    {% include 'module/reqform/acc_info.html' %}
 
     <p> {{ form.charge_type_1 }} ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี</p>
     <p> {{ form.charge_type_2 }} ได้หรือน่าจะได้กระทำความผิดอาญา และน่าจะหลบหนีหรือจะไปยุ่งเหยิงกับพยานหลักฐานหรือก่ออันตรายประการอื่น</p>
@@ -99,7 +99,7 @@
     
     <p>จึงขอให้ศาลออกหมายจับ   {{ form.accused_2 }} มาดำเนินคดี</p>
 
-    {% include 'module/woa_date.html' %}
+    {% include 'module/reqform/woa_date.html' %}
     
     <p>ในการยื่นคำร้องนี้ ผู้ร้องได้มอบหมายให้ {{ form.agent_name }}</p>
     <p>ตำแหน่ง {{ form.agent_pos }} ซึ่งเป็นผู้ใต้บังคับบัญชา เป็นผู้นำคำร้องมายื่นต่อศาล <br>และหากศาลเรียกสอบถามเมื่อใด ผู้ร้องพร้อมจะมาให้ศาลสอบในทันที</p>

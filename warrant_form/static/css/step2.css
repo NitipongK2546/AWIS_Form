@@ -17,7 +17,6 @@ input[type="checkbox"] {
 
 form input {
     border: 1px solid #6f6767;
-    /* width: 11em; */
     border-radius: 3px;
     font-size: 17px;
     font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
@@ -102,4 +101,59 @@ form textarea:focus {
 
 .warrant_checking_subclass {
     margin-left: 5rem;
+}
+
+.warrant_info p {
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+}
+
+.warrant_info p span {
+    display: flex;
+    align-items: center;
+}
+
+/* สัดส่วน */
+.col-1 {
+    flex: 1;
+}
+
+.col-2 {
+    flex: 2;
+}
+
+/* ช่องที่อยู่แบบ double */
+.double_input {
+    flex: 1;
+    /* กิน 1 ส่วนทั้งหมด */
+    display: flex;
+    gap: 0.5rem;
+}
+
+.double_input_inside {
+    flex: 0.5;
+}
+
+
+/* ID ALERT!!!!!!!!!!!!!!!!!! */
+
+#id_acc_card_id {
+    width: 20rem;
+}
+
+#id_acc_origin {
+    width: 15rem;
+}
+
+#id_acc_nation {
+    width: 11rem;
+}
+
+#id_acc_addno {
+    width: 5rem;
+}
+
+#id_acc_vilno {
+    width: 5rem;
 }

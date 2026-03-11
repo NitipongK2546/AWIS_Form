@@ -1,0 +1,53 @@
+<div class="warrant_info">
+    <p>
+        <span class="col-2">เลขบัตรประชาชน {{ form.acc_card_id }}</span>
+        <span class="col-1">เชื้อชาติ {{ form.acc_origin }}</span>
+    </p>
+    <p>
+        <span class="col-1">สัญชาติ {{ form.acc_nation }}</span>
+        <span class="col-1">อาชีพ {{ form.acc_occupation }}</span>
+        <span class="double_input">
+            <span class="double_input_inside">อยู่บ้านเลขที่ {{ form.acc_addno }}</span>
+            <span class="double_input_inside">หมู่ที่ {{ form.acc_vilno }}</span>
+        </span>
+    </p>
+</div>
+
+
+ {% comment %} <div class="warrant_info" >
+    <p>
+        <span> เลขบัตรประชาชน {{ form.acc_card_id }} </span> <!-- 2 ส่วน -->
+        <span> เชื้อชาติ {{ form.acc_origin }} </span> <!-- 1 ส่วน -->
+    </p>
+    <p>
+        <span> สัญชาติ {{ form.acc_nation }} </span> <!-- 1 ส่วน -->
+        <span> อาชีพ {{ form.acc_occupation }}  </span>
+        <span class="double_input"> 
+            <span class="double_input_inside" > อยู่บ้านเลขที่ {{ form.acc_addno }} </span> 
+            <span class="double_input_inside" > หมู่ที่ {{ form.acc_vilno }} </span> 
+        </span>
+    </p>
+    <p>
+        <span> ถนน {{ form.acc_road }} </span>
+        <span> ตรอก/ซอย {{ form.acc_soi }} </span>
+        <span> ใกล้เคียง {{ form.acc_near }} </span>
+    </p>
+    <p>
+        <span> ตำบล/แขวง {{ form.acc_sub_district}} </span>
+        <span> อำเภอ/เขต {{ form.acc_district }} </span>
+        <span> จังหวัด {{ form.acc_province }} </span>
+    </p>
+    <p>
+        <span> โทรศัพท์ {{ form.acc_tel }} </span>
+        <!-- <span> ส่งไปที่ {{ form.acc_send_to }} </span>  -->
+    </p>
+    <!-- <p>
+        <span> นับตั้งแต่วันที่ {{ form.acc_start }} </span>
+        <span> เพื่อที่ จะดำเนินตามกฎหมายแต่ไม่เกินวันที่ {{ form.acc_end }} </span>s
+    </p> -->
+</div>  {% endcomment %}
+
+<!-- <p>
+    <span> ภายในอายุความ {{ form.acc_limitation }} ปี </span>
+</p> -->
+
