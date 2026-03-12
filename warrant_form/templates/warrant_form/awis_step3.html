@@ -1,0 +1,36 @@
+{% extends 'warrant_form/base.html' %}
+{% load static %}
+
+{% block title %}Warrant Form{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/step1.css' %}">
+    <link rel="stylesheet" href="{% static 'css/step2.css' %}">
+{% endblock %}
+
+{% block form %}
+<div>
+    {% include 'module/reqform/reqform.html' %}
+</div>
+
+{% for form in warrant_list %}
+<hr>
+<div>
+    {% include 'module/warrant/warrant_form.html' %}
+</div>
+{% empty %}
+<p>No warrant</p>
+{% endfor %}
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Submit</button>
+    <a href="{% url 'forms:step2' %}">Return</a>
+</form>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+

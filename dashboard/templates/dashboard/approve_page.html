@@ -1,0 +1,14 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Approve{% endblock %}
+
+{% block body %}
+  <div id="header-container">
+    <h1 style="margin: 0px 20px;">Approve Form</h1>
+
+    {% include 'module/approve_table.html' %}
+
+    <p><a class="button-logout" href="{% url 'dashboard:dashboard' %}">GO BACK</a></p>
+  </div>
+{% endblock %}

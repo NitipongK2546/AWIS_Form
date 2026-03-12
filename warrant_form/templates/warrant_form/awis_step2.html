@@ -1,0 +1,26 @@
+{% extends 'warrant_form/base.html' %}
+{% load static %}
+
+{% block title %}Warrant Form{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/step2.css' %}">
+    <link rel="stylesheet" href="{% static 'css/progressbar.css' %}">
+{% endblock %}
+
+{% block progress_bar %}
+{% include 'module/warrant/progressive_bar_2.html'%}
+{% endblock %}
+
+{% block form %}
+{% include 'module/warrant/warrant_form.html' %}
+{% endblock %}
+
+{% block script %}
+{% if not disabled.is_true %}
+<script src="{% static 'js/warrantform/_var_warrant.js'%}"></script>
+<script src="{% static 'js/warrantform/adjustDate.js' %}"></script>
+<script src="{% static 'js/warrantform/handleDistrict.js' %}"></script>
+<script src="{% static 'js/warrantform/autoFillField.js' %}"></script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Approve THIS Form NOWWWWWWWWWWWW</h1>
+
+    {{ form }}
+    <pre>{{ data }}</pre>
+
+    <p><a href="{% url 'dashboard:confirm_approve' form.id %}">APPROVE</a></p>
+    <p><a href="{% url 'dashboard:confirm_reject' form.id %}">REJECT</a></p>
+    <p><a href="{% url 'dashboard:approve_form_page' %}">GO BACK</a></p>
+</body>
+</html>

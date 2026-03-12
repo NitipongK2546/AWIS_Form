@@ -1,0 +1,28 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+<div id="header-container">
+    <div class="logo-row">
+        <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
+    </div>
+    <div class="header-row"> 
+        <h1>Dashboard</h1> 
+        <p>Username: <span class="username-value">{{ user.username }}</span> <a href="{% url 'users:logout' %}" class="button-logout">logout</a></p>
+    </div>
+    <div class="header-button-row">
+        <p><a href="{% url 'forms:step1' %}" class="button">เพิ่มคำร้องหมายจับ</a></p>
+        <p><a href="{% url 'dashboard:approve_form_page' %}" class="button">อนุมัติแบบฟอร์ม</a></p>
+        <p><a href="{% url 'api:test:login' %}" class="button">ทดสอบเอา token ใส่คุ้กกี้</a></p>
+        <p><a href="{% url 'api:test:health' %}" class="button">ทดสอบ HEALTH CHECK</a></p>
+        <p><a href="{% url 'api:test:check_reqform' %}" class="button">ทดสอบ CHECK REQFORM</a></p>
+    </div>
+    {% include 'module/approve_table.html' %}
+
+    {% include 'module/accept_table.html' %}
+
+    {% include 'module/warrant_status_table.html' %}
+</div>
+{% endblock %}

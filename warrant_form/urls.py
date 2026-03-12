@@ -1,12 +1,17 @@
 from django.urls import path
 from warrant_form import views
 
-app_name = "awis"
+app_name = "forms"
 
 urlpatterns = [
-    # path('', views.AWISFormWizard.as_view(ALL_FORMS), name="main_page"),
-    path('', views.index, name="main_page"),
-    # path('submission/second_stage/', views.second_stage_prepared_view, name="second_stage"),
-    path('submit/', views.form_submission, name="submit"),
+    path("", views.plain_form, name="plain-form"),
+    path('plain-submit/', views.plain_form_submission, name="plain-submit"),
     path('success/', views.success_page, name="success"),
+
+    ######################################################################
+
+    # path('submit/<int:step>', views.form_submission, name="submit"),
+    path('create-reqform/step1/', views.step1_reqform, name="step1"),
+    path('create-reqform/step2/', views.step2_warrantform, name="step2"),
+    path('create-reqform/step3/', views.step3_confirm_form, name="step3"),
 ]

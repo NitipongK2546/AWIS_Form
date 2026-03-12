@@ -1,0 +1,67 @@
+{% load static %}
+
+<div id="body-table">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th colspan="10">สถานะของหมายศาล</th>
+            </tr>
+            <tr>
+                <th>คำสั่งศาล</th>
+                <th>เลขที่ร้อง</th>
+                <th>เลขที่หมายจับ</th>
+                <th>ปีหมายจับ</th>
+                <th>ประเภทหมายจับ</th>
+                <th>เลขอ้างอิงจากศาล</th>
+                <th>ชื่อผู้พิพากษาที่ลงนาม</th>
+                <th>สันที่ศาลมีคำสั่ง</th>
+                <th>ที่อยู่ไฟล์หมายจับ</th>
+                <th>หมายเหตุ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in warrants %}
+            <tr>
+                <td>
+                    {% if form.court_injunction %}
+                        {{ form.court_injunction }}
+                    {% else %}
+                        รอการพิจารณา
+                    {% endif %}
+                </td>
+                <td>
+                    {{ form.reqno }}
+                </td>
+                <td>
+                    {{ form.woa_no }}
+                </td>
+                <td>
+                    {{ form.woa_year }}
+                </td>
+                <td>
+                    {{ form.woa_type }}
+                </td>
+                <td>
+                    {{ form.woa_refno }}
+                </td>
+                <td>
+                    {{ form.judge_name }}
+                </td>
+                <td>
+                    {{ form.injunction_date|date:"d M Y, H:i น." }}
+                </td>
+                <td>
+                    <a href="{{ form.file_path }}">Link</a>
+                </td>
+                <td>
+                    {{ form.because }}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10">No forms available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

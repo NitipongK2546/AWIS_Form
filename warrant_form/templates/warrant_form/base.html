@@ -5,11 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Document{% endblock %}</title>
+    <link href="https://fonts.cdnfonts.com/css/th-sarabunpsk" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/pdf_setup.css' %}" media="print">
     {% block style %}{% endblock %}
+    {% if not disabled  %}
+    <script src="{% static 'js/get_cookie.js' %}"></script>
+    {% endif %}
 </head>
 <body>
+    {% block progress_bar %}
+    {% endblock %}
+
     {% block form %}
     {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% block defer_script %}
+    {% endblock %}
+    
     {% block script %}
     {% endblock %}
 </body>

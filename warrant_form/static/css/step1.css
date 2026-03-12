@@ -9,10 +9,10 @@ form {
 }
 
 input[type="checkbox"] {
-  width: 1.25rem;
-  height: 1.25rem;
-  vertical-align: middle;
-  border-color: black;
+    width: 1.25rem;
+    height: 1.25rem;
+    vertical-align: middle;
+    border-color: black;
 }
 
 form input {
@@ -51,12 +51,30 @@ form textarea:focus {
     border: 1px solid #3399ff;
 }
 
+.judge-paragraph {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.judge-input {
+    width: 15rem;
+    margin-right: 1rem;
+}
+
+.judge-input input {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+
 .special-multi-flex p {
     display: flex;
     justify-content: space-between;
 }
 
-.special-multi-flex p span.double-input{
+.special-multi-flex p span.double-input {
     min-width: 16rem;
     max-width: 16rem;
     display: flex;
@@ -71,7 +89,7 @@ form textarea:focus {
     align-items: center;
 }
 
-.acc-info p{
+.acc-info p {
     display: flex;
     justify-content: space-between;
 }
@@ -102,6 +120,17 @@ p.cause-id-paragraph {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.accused-input {
+    flex: 1;
+    margin-left: 1rem;
+    text-align: left;
+}
+
+.accused-input input {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-header-row {
@@ -313,7 +342,26 @@ p.cause-id-paragraph {
     width: 707px;
 }
 
-#id_main_form-scene textarea {
+form textarea {
+    width: 800px;
+    height: 120px;
+}
+
+.plaintiff_2 input {
+    width: 15rem;
+    max-width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* #id_main_form-scene textarea {
     width: 500px;
 }
 
+#id_main_form-act textarea {
+    width: 500px;
+}
+
+#id_main_form-charge textarea {
+    width: 500px;
+} */

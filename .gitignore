@@ -6,7 +6,11 @@
 /test_files
 /.test_files
 
+<<<<<<< HEAD
 # resources
+=======
+/_test_json
+>>>>>>> dev
 
 ### Django ###
 *.log
