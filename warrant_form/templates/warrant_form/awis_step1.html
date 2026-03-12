@@ -5,6 +5,11 @@
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'css/step1.css' %}">
+    <link rel="stylesheet" href="{% static 'css/progressbar.css' %}">
+{% endblock %}
+
+{% block progress_bar %}
+{% include 'module/reqform/progressive_bar.html'%}
 {% endblock %}
 
 {% block form %}
