@@ -7,12 +7,22 @@ from django.forms.models import model_to_dict
 from warrant_form import forms_central as CentralForm
 from warrant_form.model_reqform import WarrantDataModel
 
-appointment_type_choices = [
+WOA_TYPE_CHOICES = [
+    (1, "47"),
+    (2, "47 ทวิ"),
+]
+
+FAULT_TYPE_ID_CHOICES = [
+    (1, "แพ่ง"),
+    (2, "อาญา"),
+]
+
+APPOINTMENT_TYPE_CHOICES = [
     (1, "กำหนดอายุความ"),
     (2, "กำหนดนัด")
 ]
 
-account_card_type_choices = [
+ACCOUNT_CARD_TYPE_CHOICES = [
     (1, "เลขประจำตัวประชาชน"),
     (2, "เลขหนังสือเดินทาง"),
     (3, "เลขคนซึ่งไม่มีสัญชาติไทย"),
@@ -62,7 +72,7 @@ class WarrantForm(forms.Form):
     woa_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
     woa_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
 
-    fault_type_id = forms.IntegerField() 
+    fault_type_id = forms.IntegerField(widget=forms.Select(choices=FAULT_TYPE_ID_CHOICES)) 
     send_to_name = forms.CharField(max_length=250) # ส่งหมายถึงใคร
     cause_text = forms.CharField(max_length=400) # ด้วย
 
@@ -78,7 +88,8 @@ class WarrantForm(forms.Form):
     acc_full_name_1 = forms.CharField(max_length=250)
     acc_full_name_2 = forms.CharField(max_length=250)
 
-    acc_card_type = forms.IntegerField(required=False, )
+    acc_card_type = forms.IntegerField(required=False, 
+    widget=forms.Select(choices=ACCOUNT_CARD_TYPE_CHOICES))
     acc_card_id = forms.CharField(max_length=20)
     # acc_age = forms.IntegerField(required=False, )
     acc_origin = forms.IntegerField(required=False, )
@@ -94,7 +105,7 @@ class WarrantForm(forms.Form):
     acc_province = forms.CharField(max_length=2, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getProvinceChoices()))
     acc_tel = forms.CharField(max_length=20, required=False)
 
-    appointment_type = forms.IntegerField(widget=forms.Select(choices=appointment_type_choices), required=False,)
+    appointment_type = forms.IntegerField(widget=forms.Select(choices=APPOINTMENT_TYPE_CHOICES), required=False,)
     # appointment_date = models.CharField(max_length=19, required=False, ) # SAME DATE FORMAT AS BELOW
 
     appointment_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
@@ -104,7 +115,7 @@ class WarrantForm(forms.Form):
 
     woa_no = forms.IntegerField()
     woa_refno = forms.CharField(max_length=16, required=False)
-    woa_type = forms.IntegerField()
+    woa_type = forms.IntegerField(widget=forms.Select(choices=WOA_TYPE_CHOICES))
 
     def cleanDateTimeFields(self, current_dict : dict):
 

@@ -9,6 +9,8 @@
     {% csrf_token %}
     {% endif %}
     
+    <p>หมายจับที่ {{ form.woa_no }}</p>
+    <p>ประเภทของหมายจับ {{ form.woa_type }}</p>
     <p align="right"> {{form.court_name}} ศาล </p>
     <p align="right" class="date-widget"><span>เรียกสอบ</span><span>วัน {{form.woa_date_day}} เดือน {{form.woa_date_month}} พ.ศ. {{form.woa_date_year}}</span></p>
     <p align="center">ความอาญา {{ form.fault_type_id }} </p>
@@ -22,9 +24,6 @@
     {% include 'module/warrant/warrant_info.html' %}
 
     <p align="right" > {{ form.judge_name }} ผู้พิพากษา </p>
-
-    หมายจับที่ {{ form.woa_no }}
-    ประเภทของหมายจับ {{ form.woa_type }}
     
     {% if not disabled %}
     <button type="submit">Next</button>
