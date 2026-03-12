@@ -148,11 +148,6 @@ def step2_warrantform(request : HttpRequest):
 
                     # Fix below/above for more than 1 warrant
 
-                    VisualWarrantData.objects.create(
-                        warrant=warrant,
-                        judge_name=reqform.judge_name,
-                    )
-
                 # data = reqform.toAPICompatibleDictWithConvertedWarrants()
 
                 # print(json.dumps(data, indent=2, ensure_ascii=False))

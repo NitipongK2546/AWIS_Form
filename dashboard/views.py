@@ -17,6 +17,7 @@ import _request_utils.connect_api as AWISConnectAPI
 
 import json
 from datetime import datetime
+from django.utils import timezone
 
 # Create your views here.
 
@@ -151,11 +152,19 @@ def confirm_approve(request : HttpRequest, form_id : int):
             print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False))
 
             selected_form.approve_status = FormData.ApprovalStatus.APPROVED
+            selected_form.date_approved = timezone.now()
             selected_form.save()
+
+            warrant = selected_form.form.warrants.all().first()
             
             FormSent.objects.create(
                 form=selected_form.form,
                 accept=FormSent.AcceptStatus.WAITING,
+            )
+
+            VisualWarrantData.objects.create(
+                warrant=warrant,
+                judge_name=selected_form.form.judge_name,
             )
                   
             # print(f"Result: {json.dumps(dict)}")
@@ -163,6 +172,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
             return redirect(reverse("dashboard:success_page"))
         except Exception as e:
             print(e)
+            raise Exception("Form already approved.")
 
     return render(request, "dashboard/confirmation_page.html", {
         "user": request.user,

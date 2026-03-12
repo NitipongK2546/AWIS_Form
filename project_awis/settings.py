@@ -20,6 +20,8 @@ load_dotenv()
 ENABLE_API = False
 DEBUG = True
 
+TIME_ZONE = "Asia/Bangkok"
+
 
 # SESSION_COOKIE_AGE = os.getenv("SESSION_TIMEOUT")
 # SESSION_EXPIRE_AT_BROWSER_CLOSE =
@@ -116,8 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
