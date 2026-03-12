@@ -23,10 +23,10 @@
                 <td>{{ form.get_approve_status_display }}</td>
                 <td>{{ form.form_creator }}</td>
                 <td>{{ form.form_owner }}</td>
-                <td>{{ form.date_created|date:"d M Y, H:i" }}</td>
+                <td>{{ form.date_created|date:"d M Y, H:i น." }}</td>
                 <td>
                     {% if form.date_approved %}
-                        {{ form.date_approved|date:"d M Y, H:i" }}
+                        {{ form.date_approved|date:"d M Y, H:i น." }}
                     {% else %}
                         -
                     {% endif %}

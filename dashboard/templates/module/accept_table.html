@@ -23,14 +23,14 @@
                 <td>{{ form.req_no_plaintiff }}</td>
                 <td>{{ form.reqno }}</td>
                 <td>{% if form.recive_date %}
-                        {{ form.recive_date|date:"d M Y, H:i" }}
+                        {{ form.recive_date | date:"d M Y, H:i น."}}
                     {% else %}
                         -
                     {% endif %}</td>
                 <td>{{ form.accept }}</td>
                 <td>
                     {% if form.accept_date %}
-                        {{ form.accept_date|date:"d M Y, H:i" }}
+                        {{ form.accept_date|date:"d M Y, H:i น." }}
                     {% else %}
                         -
                     {% endif %}

@@ -16,8 +16,14 @@ from users.models import UserDataModel
 import _request_utils.connect_api as AWISConnectAPI
 
 import json
+from datetime import datetime
+from django.utils import timezone
 
 # Create your views here.
+
+# I will seperate dashboard + index, just in case.
+def index(request : HttpRequest):
+    return redirect("dashboard:dashboard")
 
 @login_required(login_url="/users/login/")
 def dashboard(request : HttpRequest):
@@ -36,9 +42,9 @@ def dashboard(request : HttpRequest):
     for obj in form_sent:
         data_dict = {
             "id": obj.form.id,
-            "recive_date": obj.recive_date,
+            "recive_date": convert_time(obj.recive_date),
             "accept": obj.get_accept_display,
-            "accept_date": obj.accept_date,
+            "accept_date": convert_time(obj.accept_date),
             "req_no_plaintiff": obj.getReqNoPlaintiff(),
             "reqno": obj.getReqNo(),
         }
@@ -57,19 +63,10 @@ def dashboard(request : HttpRequest):
             "woa_type": warrant_data.woa_type,
             "woa_refno": warrant_data.woa_refno,
             "judge_name": warrant_wrap.judge_name,
-            "injunction_date": warrant_wrap.injunction_date,
+            "injunction_date": convert_time(warrant_wrap.injunction_date),
             "file_path": warrant_wrap.file_path,
             "because": warrant_wrap.because,
         }
-
-        if warrant_wrap.injunction_date:
-            data_dict.update({
-                "injunction_date": warrant_wrap.injunction_date.strftime("%d/%m/%Y, %H:%M น."),
-            })
-        else:
-            data_dict.update({
-                "injunction_date": "-"
-            })
 
         warrants_list.append(data_dict)
 
@@ -123,21 +120,6 @@ def view_form(request : HttpRequest, form_id : int):
         "disabled": True,
     })
 
-# def edit_form(request : HttpRequest, form_id : int):
-#     if not request.user.has_perm("dashboard.can_approve_form"):
-#         return HttpResponseForbidden("403 Forbidden: No Permission")
-
-#     selected_form = FormData.objects.filter(id=form_id).first().form
-
-#     print(selected_form.convertBacktoFormView())
-    
-#     form = AWISFormStep1(initial=selected_form.convertBacktoFormView(), prefix="main_form")
-    
-#     return render(request, "warrant_form/awis_step1.html", {
-#         "user": request.user,
-#         "form": form,
-#     })
-
 @login_required(login_url="/users/login/")
 def confirm_approve(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
@@ -150,21 +132,30 @@ def confirm_approve(request : HttpRequest, form_id : int):
             if settings.ENABLE_API:
                 dict = AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
 
+            print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False))
+
             selected_form.approve_status = FormData.ApprovalStatus.APPROVED
+            selected_form.date_approved = timezone.now()
             selected_form.save()
+
+            warrant = selected_form.form.warrants.all().first()
             
             FormSent.objects.create(
                 form=selected_form.form,
                 accept=FormSent.AcceptStatus.WAITING,
             )
 
-            print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False))
+            VisualWarrantData.objects.create(
+                warrant=warrant,
+                judge_name=selected_form.form.judge_name,
+            )
                   
             # print(f"Result: {json.dumps(dict)}")
 
             return redirect(reverse("dashboard:success_page"))
         except Exception as e:
             print(e)
+            raise Exception("Form already approved.")
 
     return render(request, "dashboard/confirmation_page.html", {
         "user": request.user,
@@ -260,3 +251,11 @@ def edit_form(request : HttpRequest, form_id : int):
         "action": "Edit",
         "form": main_form,
     })
+    
+###########################################################################
+
+def convert_time(datetime_obj : datetime):
+    if datetime_obj:
+        return datetime_obj
+    else:
+        return f"-"

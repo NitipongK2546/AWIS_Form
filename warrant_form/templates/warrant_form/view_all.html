@@ -5,17 +5,21 @@
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'css/step1.css' %}">
+    <link rel="stylesheet" href="{% static 'css/step2.css' %}">
 {% endblock %}
 
 {% block form %}
-{% include 'module/reqform.html' %}
-
-<hr>
+<div>
+    {% include 'module/reqform/reqform.html' %}
+</div>
 
 {% for form in warrant_list %}
-{{ form }}
+<hr>
+<div>
+    {% include 'module/warrant/warrant_form.html' %}
+</div>
 {% empty %}
-No warrant
+<p>No warrant</p>
 {% endfor %}
 {% endblock %}
 

@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.forms.models import model_to_dict
 import datetime
+from warrant_form import forms_central as CentralForm
 
 from warrant_form.model_warrant import WarrantDataModel
 
@@ -157,7 +158,7 @@ class ReqformDataModel(models.Model):
         for field in included_fields:
             datetime_obj : datetime.datetime = dict_main_awis.get(field)
             dict_main_awis.update({
-                field: datetime_obj.strftime("%d/%m/%Y %H:%M:%S")
+                field: datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
             })
 
         for key in empty_key_list:
@@ -218,25 +219,25 @@ class ReqformDataModel(models.Model):
         return cleaned_dict
     
 
-    def convertBacktoFormView(self) -> dict[str, object]:
+    def convertBacktoFormView(self) -> dict[str,]:
         dict_main_awis = model_to_dict(self)
 
         duped_list = ["accused", "plaintiff", "court_name"]
+        time_split_list = ["woa_start_date", "woa_end_date", "scene_date"]
 
-        for item in duped_list:
-            dict_main_awis.update({f"{item}_1" : dict_main_awis.get(item)})
-            dict_main_awis.update({f"{item}_2" : dict_main_awis.get(item)})
+        dict_main_awis = CentralForm.createDupe(duped_list, dict_main_awis)
+        dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis)
 
         return dict_main_awis
 
 ################################################################################
 
-def cleanDateTimeFields(current_dict : dict):
+# def cleanDateTimeFields(current_dict : dict):
 
-    included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
+#     included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
 
-    for field in included_fields:
-        str_datetime = datetime.datetime.strftime(current_dict.get(field),"%Y-%m-%d %H:%M:%S")
-        current_dict.update({field : str_datetime})
+#     for field in included_fields:
+#         str_datetime = datetime.datetime.strftime(current_dict.get(field),"%Y-%m-%d %H:%M:%S")
+#         current_dict.update({field : str_datetime})
     
-    return current_dict
+#     return current_dict

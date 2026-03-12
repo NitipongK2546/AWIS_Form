@@ -4,7 +4,8 @@ from dashboard import views
 app_name = "dashboard"
 
 urlpatterns = [
-    path("", views.dashboard, name="dashboard"),
+    path("", views.index, name="index"),
+    path("dashboard/", views.dashboard, name="dashboard"),
     path("success/", views.success_page, name="success_page"),
 
     ##########################################

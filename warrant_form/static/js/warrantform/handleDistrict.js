@@ -36,10 +36,7 @@ async function setUpArray() {
         })
     }
 
-    changeSelectValue("10", req_district_sel, all_district)
     changeSelectValue("10", acc_district_sel, all_district)
-
-    changeSelectValue("1001", req_sub_district_sel, all_sub_district)
     changeSelectValue("1001", acc_sub_district_sel, all_sub_district)
 }
 
@@ -68,7 +65,6 @@ setUpArray()
 
 // EVENT LISTENERS
 code_select_arr = [
-    [req_province_sel, req_district_sel, req_sub_district_sel,],
     [acc_province_sel, acc_district_sel, acc_sub_district_sel,],
 ]
 code_select_arr.forEach(element => {
@@ -82,7 +78,7 @@ code_select_arr.forEach(element => {
         changeSelectValue(element[1].value, element[2], all_sub_district);
     });
 });
-awis_form.addEventListener("submit", function () {
+warrant_form.addEventListener("submit", function () {
     is_submitting_form = true;
 });
 window.addEventListener("beforeunload", function (e) {
