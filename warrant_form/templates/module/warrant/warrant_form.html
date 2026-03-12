@@ -4,8 +4,10 @@
 <h3>ข้อมูลที่กรอกมีข้อผิดพลาด</h3>
 {% endif %}
 
-<form id="awis-form" onsubmit="confirmForm()" method="post">
+<form id="warrant-form" method="post">
+    {% if not disabled %}
     {% csrf_token %}
+    {% endif %}
     
     <p align="right"> {{form.court_name}} ศาล </p>
     <p align="right" class="date-widget"><span>เรียกสอบ</span><span>วัน {{form.woa_date_day}} เดือน {{form.woa_date_month}} พ.ศ. {{form.woa_date_year}}</span></p>
@@ -24,5 +26,7 @@
     หมายจับที่ {{ form.woa_no }}
     ประเภทของหมายจับ {{ form.woa_type }}
     
+    {% if not disabled %}
     <button type="submit">Next</button>
+    {% endif %}
 </form>

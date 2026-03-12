@@ -50,8 +50,8 @@ class AWISFormStep1(forms.Form):
     req_age = forms.IntegerField()
 
     req_office = forms.CharField(max_length=300)
-    req_sub_district = forms.CharField(max_length=6, widget=forms.Select(choices=CentralForm.thai_codes.getSubDistrictChoices())) # tb_sub_district / sub_district_code
-    req_district = forms.CharField(max_length=4, widget=forms.Select(choices=CentralForm.thai_codes.getDistrictChoices()))
+    req_sub_district = forms.CharField(max_length=6, widget=forms.Select(choices=CentralForm.thai_codes.getSubDistrictChoices()[:5])) # tb_sub_district / sub_district_code
+    req_district = forms.CharField(max_length=4, widget=forms.Select(choices=CentralForm.thai_codes.getDistrictChoices()[:5]))
     req_province = forms.CharField(max_length=2, widget=forms.Select(choices=CentralForm.thai_codes.getProvinceChoices()))
     req_tel = forms.CharField(max_length=50)
 
@@ -145,8 +145,8 @@ class AWISFormStep1(forms.Form):
     acc_road = forms.CharField(max_length=100, required=False)
     acc_soi = forms.CharField(max_length=100, required=False)
     acc_near = forms.CharField(max_length=200, required=False)
-    acc_sub_district = forms.CharField(max_length=6, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getSubDistrictChoices()))
-    acc_district = forms.CharField(max_length=4, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getDistrictChoices()))
+    acc_sub_district = forms.CharField(max_length=6, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getSubDistrictChoices()[:5]))
+    acc_district = forms.CharField(max_length=4, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getDistrictChoices()[:5]))
     acc_province = forms.CharField(max_length=2, required=False, widget=forms.Select(choices=CentralForm.thai_codes.getProvinceChoices()))
     acc_tel = forms.CharField(max_length=20, required=False)
 
