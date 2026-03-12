@@ -3,8 +3,8 @@ from django.urls import reverse
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from warrant_form.forms import WarrantForm, AWISFormStep1
-from warrant_form.doc_create import doc_create_with_context
+from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledWarrantForm, DisabledFormStep1
+# from warrant_form.doc_create import doc_create_with_context
 from warrant_form.model_warrant import WarrantDataModel
 from warrant_form.model_reqform import ReqformDataModel
 
@@ -95,13 +95,13 @@ def step1_reqform(request : HttpRequest):
         if form.is_valid():
             
             data = form.cleaned_data
-            acc_info = dupeNeccesary(data)
+            acc_info = dupeNeccesary(data, ["acc_full_name"])
 
-            # print(data)
-            # print(acc_info)
+            form_data = dupeNeccesary(data, ["accused", "plaintiff", "court_name"])
 
             request.session.update({
-                "step1": data,
+                "step1": form_data,
+                "step1_cleaned": data,
                 "acc_info": acc_info 
             })
 
@@ -112,7 +112,7 @@ def step1_reqform(request : HttpRequest):
                 "form": form,
                 "step": 1,
             })
-
+        
     old_data : dict = request.session.get("step1")
 
     if old_data:
@@ -133,67 +133,97 @@ def step2_warrantform(request : HttpRequest):
             if form.is_valid():
                 warrant_data = form.cleaned_data
 
-                reqform_data = request.session.get("step1")
+                form_data = dupeNeccesary(warrant_data, ["acc_full_name",])
 
-                print(reqform_data)
-
-                reqform : ReqformDataModel = ReqformDataModel.objects.create(**reqform_data)
-
-                warrant : WarrantDataModel = WarrantDataModel.objects.create(
-                    **warrant_data
-                )
-
-                if reqform:
-                    reqform.warrants.add(warrant)
-
-                    # Fix below/above for more than 1 warrant
-
-                # data = reqform.toAPICompatibleDictWithConvertedWarrants()
-
-                # print(json.dumps(data, indent=2, ensure_ascii=False))
-
-                request.session.pop("step1", None)
-                request.session.pop("step2", None)
-
-                user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
-                VisualFormApprovalData.objects.create(
-                    form=reqform, 
-                    form_creator=user_obj, 
-                    form_owner=user_obj, 
-                    approve_status=VisualFormApprovalData.ApprovalStatus.PENDING
-                )
-                return JsonResponse({
-                    "status": 200,
-                    "message": "Success"
+                request.session.update({
+                    "step2": [form_data],
+                    "step2_cleaned": [warrant_data],
                 })
-            else:
-                print(form.errors.as_text())
-        except:
-            ReqformDataModel.objects.filter(pk=reqform.pk).first().delete()
-            WarrantDataModel.objects.filter(pk=warrant.pk).first().delete()
+        except Exception as e:
+            print(e)
+            pass
 
-        return render(request, "warrant_form/awis_step2.html", {
-            "form": form,
-            "step": 2,
-        })
+        return redirect(reverse("forms:step3"))
             
-        
     if not request.session.get("step1"):
         return redirect(reverse("forms:step1"))
+    
+    initial_data = {}
 
-    form = WarrantForm(initial=request.session.get("acc_info"))
+    if request.session.get("step2"):
+        initial_data.update(request.session.get("step2")[0])
+    else:
+        initial_data.update(request.session.get("acc_info"))
 
-    request.session.pop("acc_info", None)
+    form = WarrantForm(initial=initial_data)
 
     return render(request, "warrant_form/awis_step2.html", {
         "form": form,
         "step": 2,
     })
 
+def step3_confirm_form(request : HttpRequest):
+    if request.method == "POST":
+        try:
+            reqform_data = request.session.get("step1_cleaned")
+            warrant_data = request.session.get("step2_cleaned")[0]
+
+            reqform : ReqformDataModel = ReqformDataModel.objects.create(**reqform_data)
+
+            warrant : WarrantDataModel = WarrantDataModel.objects.create(
+                **warrant_data
+            )
+
+            if reqform:
+                reqform.warrants.add(warrant)
+
+                # Fix below/above for more than 1 warrant
+
+            # data = reqform.toAPICompatibleDictWithConvertedWarrants()
+
+            # print(json.dumps(data, indent=2, ensure_ascii=False))
+
+            user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
+            VisualFormApprovalData.objects.create(
+                form=reqform, 
+                form_creator=user_obj, 
+                form_owner=user_obj, 
+                approve_status=VisualFormApprovalData.ApprovalStatus.PENDING
+            )
+
+            request.session.pop("step1", None)
+            request.session.pop("step1_cleaned", None)
+            request.session.pop("acc_info", None)
+            request.session.pop("step2", None)
+            request.session.pop("step2_cleaned", None)
+
+            return redirect("dashboard:dashboard")
+        except:
+            ReqformDataModel.objects.filter(pk=reqform.pk).first().delete()
+            WarrantDataModel.objects.filter(pk=warrant.pk).first().delete()
+    
+    form = DisabledFormStep1(initial=request.session.get("step1"), prefix="main_form",)
+
+    warrants : list[dict] = request.session.get("step2")
+
+    warrant_list = []
+    for item in warrants:
+        warrant_form = DisabledWarrantForm(initial=item)
+        warrant_list.append(
+            warrant_form
+        )
+
+    return render(request, "warrant_form/awis_step3.html", {
+        "user": request.user,
+        "form": form,
+        "warrant_list": warrant_list,
+        "disabled": True,
+    })
+
 ##########################################################################
 
-def dupeNeccesary(incoming_dict : dict):
-        dupe = ["acc_full_name"]
+def dupeNeccesary(incoming_dict : dict, field_list : list):
+        dupe = field_list
         new_dict = incoming_dict.copy()
 
         for field in dupe:
