@@ -21,11 +21,9 @@ from django.utils import timezone
 
 # Create your views here.
 
-def convert_time(datetime_obj : datetime):
-    if datetime_obj:
-        return datetime_obj.strftime("%d/%m/%Y, %H:%M น.")
-    else:
-        return f"-"
+# I will seperate dashboard + index, just in case.
+def index(request : HttpRequest):
+    return redirect("dashboard:dashboard")
 
 @login_required(login_url="/users/login/")
 def dashboard(request : HttpRequest):
@@ -121,21 +119,6 @@ def view_form(request : HttpRequest, form_id : int):
         "warrant_list": warrant_list,
         "disabled": True,
     })
-
-# def edit_form(request : HttpRequest, form_id : int):
-#     if not request.user.has_perm("dashboard.can_approve_form"):
-#         return HttpResponseForbidden("403 Forbidden: No Permission")
-
-#     selected_form = FormData.objects.filter(id=form_id).first().form
-
-#     print(selected_form.convertBacktoFormView())
-    
-#     form = AWISFormStep1(initial=selected_form.convertBacktoFormView(), prefix="main_form")
-    
-#     return render(request, "warrant_form/awis_step1.html", {
-#         "user": request.user,
-#         "form": form,
-#     })
 
 @login_required(login_url="/users/login/")
 def confirm_approve(request : HttpRequest, form_id : int):
@@ -268,3 +251,11 @@ def edit_form(request : HttpRequest, form_id : int):
         "action": "Edit",
         "form": main_form,
     })
+    
+###########################################################################
+
+def convert_time(datetime_obj : datetime):
+    if datetime_obj:
+        return datetime_obj
+    else:
+        return f"-"

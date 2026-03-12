@@ -48,7 +48,7 @@
                     {{ form.judge_name }}
                 </td>
                 <td>
-                    {{ form.injunction_date }}
+                    {{ form.injunction_date|date:"d M Y, H:i น." }}
                 </td>
                 <td>
                     <a href="{{ form.file_path }}">Link</a>
