@@ -97,8 +97,8 @@ def step1_reqform(request : HttpRequest):
             data = form.cleaned_data
             acc_info = dupeNeccesary(data)
 
-            print(data)
-            print(acc_info)
+            # print(data)
+            # print(acc_info)
 
             request.session.update({
                 "step1": data,
@@ -113,10 +113,10 @@ def step1_reqform(request : HttpRequest):
                 "step": 1,
             })
 
-    # old_data : dict = request.session.get("step1")
+    old_data : dict = request.session.get("step1")
 
-    # if old_data:
-    #     static_data.update(old_data)
+    if old_data:
+        static_data.update(old_data)
 
     form = AWISFormStep1(initial=static_data, prefix="main_form")
     return render(request, "warrant_form/awis_step1.html", {
