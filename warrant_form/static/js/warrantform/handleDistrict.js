@@ -82,11 +82,3 @@ code_select_arr.forEach(element => {
         changeSelectValue(element[1].value, element[2], all_sub_district);
     });
 });
-warrant_form.addEventListener("submit", function () {
-    is_submitting_form = true;
-});
-window.addEventListener("beforeunload", function (e) {
-    if (!is_submitting_form) {
-        e.preventDefault();
-    }
-});
