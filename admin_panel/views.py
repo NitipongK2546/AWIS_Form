@@ -30,7 +30,7 @@ role_dict = {
 
 @login_required(login_url="/users/login/")
 def signup(request : HttpRequest):
-    if not request.user.is_superuser:
+    if not request.user.is_staff:
         return FORBIDDEN_MSG
 
     if request.method == "POST":
