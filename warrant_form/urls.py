@@ -7,6 +7,7 @@ urlpatterns = [
     path("", views.plain_form, name="plain-form"),
     path('plain-submit/', views.plain_form_submission, name="plain-submit"),
     path('success/', views.success_page, name="success"),
+    path('create-reqform/step1/', views.step1_reqform, name="step1"),
 
     ######################################################################
 

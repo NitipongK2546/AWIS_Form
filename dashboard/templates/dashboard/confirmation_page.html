@@ -1,16 +1,20 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="{% static 'dashboard/css/approve_page.css' %}">
 </head>
 <body>
-    <h1>{{ action }}</h1>
-    <form method="post">
-        {% csrf_token %}
-        <p><button type="submit">CONFIRM</button></p>
-        <p><a href="{% url 'dashboard:approve_form_page' %}">GO BACK</a></p>
-    </form>
+    <div class="confirm-container">
+        <h1 style="text-align: center;">{{ action }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            <p><button type="submit">CONFIRM</button></p>
+            <p><a href="{% url 'dashboard:approve_form_page' %}">GO BACK</a></p>
+        </form>
+    </div>
 </body>
 </html>

@@ -50,6 +50,31 @@ form textarea:focus {
     border: 1px solid #3399ff;
 }
 
+.button {
+    display: inline-block;
+    padding: 6px 10px;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    color: #ffffff;
+    background: #30568f;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-left: 30px;
+}
+
+.button:hover {
+    background: #5673a2;
+}
+
+.button:active {
+    background: #193a6f;
+}
+
+
 .warrant_header p {
     display: flex;
     justify-content: space-between;
@@ -178,7 +203,7 @@ form textarea:focus {
 }
 
 
-.warrant_info .double_input input{
+.warrant_info .double_input input {
     width: 100%;
     min-width: 0px;
     /* display: flex;
@@ -198,4 +223,3 @@ form textarea:focus {
 .warrant_info .col-2 {
     flex: 2;
 }
-

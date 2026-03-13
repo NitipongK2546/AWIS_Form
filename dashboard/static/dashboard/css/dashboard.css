@@ -139,12 +139,18 @@ body {
     text-align: center;
 }
 
-.styled-table th,
-.styled-table td {
+.styled-table th {
     border: 1px solid #88d5ff;
     padding: 12px 15px;
     text-align: left;
+    min-width: 100px;
+}
 
+.styled-table td {
+    /* border: 1px solid #88d5ff; */
+    padding: 12px 15px;
+    text-align: left;
+    min-width: 100px;
 }
 
 .styled-table thead {
