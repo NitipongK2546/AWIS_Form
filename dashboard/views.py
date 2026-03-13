@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
 
 from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledFormStep1, DisabledWarrantForm
 
-from dashboard.models import VisualFormApprovalData as FormData
-from dashboard.models import VisualFinalizedFormData as FormSent
+from dashboard.models import FormAwaitingApproval as FormData
+from dashboard.models import VisualReqformData as FormSent
 from dashboard.warrant_wrapper import VisualWarrantData
 
 from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
@@ -25,7 +25,7 @@ from django.utils import timezone
 def index(request : HttpRequest):
     return redirect("dashboard:dashboard")
 
-@login_required(login_url="/users/login/")
+@login_required
 def dashboard(request : HttpRequest):
 
     user_data = UserDataModel.objects.filter(user=request.user).first()
@@ -82,7 +82,8 @@ def dashboard(request : HttpRequest):
 # FORM APPROVE SECTION
 #
 
-@login_required(login_url="/users/login/")
+@login_required
+@permission_required("dashboard.can_approve_form", raise_exception=True)
 def approve_form_page(request : HttpRequest):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
@@ -94,7 +95,7 @@ def approve_form_page(request : HttpRequest):
         "forms": all_forms,
     })
 
-@login_required(login_url="/users/login/")
+@login_required
 def view_form(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
@@ -120,13 +121,13 @@ def view_form(request : HttpRequest, form_id : int):
         "disabled": True,
     })
 
-@login_required(login_url="/users/login/")
+@login_required
 def confirm_approve(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
 
     selected_form = FormData.objects.filter(pk=form_id).first()
-    print(selected_form)
+    # print(selected_form)
     if request.method == "POST":
         try:
             if settings.ENABLE_API:
@@ -164,7 +165,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
     })
     
 
-@login_required(login_url="/users/login/")
+@login_required
 def confirm_reject(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
@@ -182,7 +183,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
         "form": selected_form,
     })
 
-@login_required(login_url="/users/login/")
+@login_required
 def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {
         "user": request.user,
@@ -191,7 +192,7 @@ def success_page(request : HttpRequest):
 ######################################################################
 #EDIT THE FORM
 
-@login_required(login_url="/users/login/")
+@login_required
 def edit_form(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")

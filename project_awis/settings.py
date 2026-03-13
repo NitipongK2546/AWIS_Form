@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
+LOGIN_URL = "/users/login/"
 ENABLE_API = False
 DEBUG = True
 

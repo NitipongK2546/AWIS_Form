@@ -9,7 +9,7 @@ from warrant_form.model_warrant import WarrantDataModel
 from warrant_form.model_reqform import ReqformDataModel
 
 
-from dashboard.models import VisualFormApprovalData
+from dashboard.models import VisualReqformData as VisualFormApprovalData
 from dashboard.warrant_wrapper import VisualWarrantData
 from users.models import UserDataModel
 
@@ -18,7 +18,7 @@ import json
 ##############################################################################
 # FORM VIEWS
 
-@login_required(login_url="/users/login/")
+@login_required
 def plain_form(request : HttpRequest):    
     main_form = VisualFormApprovalData(prefix="main_form")
     sub_form = WarrantForm(prefix="sub_form")
@@ -33,7 +33,7 @@ def plain_form(request : HttpRequest):
 
     return render(request, "warrant_form/plain-reqform.html", context)
 
-@login_required(login_url="/users/login/")
+@login_required
 def plain_form_submission(request : HttpRequest):
     # The expected outcome.
     if request.method == "POST":
@@ -72,7 +72,7 @@ def plain_form_submission(request : HttpRequest):
 ###############################################################################
         
 
-@login_required(login_url="/users/login/")
+@login_required
 def success_page(request : HttpRequest):
     return JsonResponse({
         "status_code": "200",
@@ -81,7 +81,7 @@ def success_page(request : HttpRequest):
 
 ##############################################################################
 
-@login_required(login_url="/users/login/")
+@login_required
 def step1_reqform(request : HttpRequest):
     static_data = {
         "court_code": "0000011",
@@ -124,7 +124,7 @@ def step1_reqform(request : HttpRequest):
         "step": 1,
     })
 
-@login_required(login_url="/users/login/")
+@login_required
 def step2_warrantform(request : HttpRequest):
     if request.method == "POST":
         try:
