@@ -1,6 +1,8 @@
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
+# from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.models import User
 
 from api import check_utils as UtilsHandle
 from api import jwt_utils as JWTHandle
@@ -43,7 +45,7 @@ def auth_api(request : HttpRequest) -> JsonResponse:
                 "message": "Wrong Username or Password"
             }, status=401)
         
-        token = JWTHandle.create_jwt(user.id)
+        token = JWTHandle.create_jwt(user.pk)
 
         return JsonResponse({
             "status": 200,
@@ -65,6 +67,17 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
             "status": 405,
             "message": "Wrong Request Method"
         }, status=405)
+    
+    # payload = JWTHandle.extract_jwt(request)
+    # if isinstance(payload, JsonResponse):
+    #     return payload
+    
+    # user = User.objects.filter(
+    #     pk=payload.get("user_id")
+    # ).first()
+
+    # if not user.has_perm("dashboard.update_visualreqformdata"):
+    #     return HttpResponseForbidden()
 
     data = UtilsHandle.json_retrieval(request)
 
@@ -140,6 +153,17 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
             "status": 405,
             "message": "Wrong Request Method"
         }, status=405)
+    
+    # payload = JWTHandle.extract_jwt(request)
+    # if isinstance(payload, JsonResponse):
+    #     return payload
+    
+    # user = User.objects.filter(
+    #     pk=payload.get("user_id")
+    # ).first()
+
+    # if not user.has_perm("dashboard.update_visualwarrantdata"):
+    #     return HttpResponseForbidden()
 
     data = UtilsHandle.json_retrieval(request)
 

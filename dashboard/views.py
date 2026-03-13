@@ -83,10 +83,8 @@ def dashboard(request : HttpRequest):
 #
 
 @login_required
-@permission_required("dashboard.can_approve_form", raise_exception=True)
+@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
 def approve_form_page(request : HttpRequest):
-    if not request.user.has_perm("dashboard.can_approve_form"):
-        return HttpResponseForbidden("403 Forbidden: No Permission")
 
     all_forms = FormData.objects.all()
 
@@ -97,8 +95,6 @@ def approve_form_page(request : HttpRequest):
 
 @login_required
 def view_form(request : HttpRequest, form_id : int):
-    if not request.user.has_perm("dashboard.can_approve_form"):
-        return HttpResponseForbidden("403 Forbidden: No Permission")
 
     selected_form = FormData.objects.filter(id=form_id).first().form
 
@@ -122,9 +118,8 @@ def view_form(request : HttpRequest, form_id : int):
     })
 
 @login_required
+@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
 def confirm_approve(request : HttpRequest, form_id : int):
-    if not request.user.has_perm("dashboard.can_approve_form"):
-        return HttpResponseForbidden("403 Forbidden: No Permission")
 
     selected_form = FormData.objects.filter(pk=form_id).first()
     # print(selected_form)
@@ -166,6 +161,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
     
 
 @login_required
+@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
 def confirm_reject(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
@@ -193,6 +189,7 @@ def success_page(request : HttpRequest):
 #EDIT THE FORM
 
 @login_required
+@permission_required("dashboard.edit_formawaitingapproval", raise_exception=True)
 def edit_form(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
