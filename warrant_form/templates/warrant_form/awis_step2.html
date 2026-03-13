@@ -10,7 +10,7 @@
 
 {% block progress_bar %}
 {% include 'module/warrant/progressive_bar_2.html'%}
-<p><a href="{% url 'forms:step1' %}" class="button" >กลับ</a></p>
+<p><a href="{% url 'forms:to-step1' %}" class="button" >กลับ</a></p>
 {% endblock %}
 
 {% block form %}
@@ -19,8 +19,8 @@
 
 {% block script %}
 {% if not disabled.is_true %}
-<script src="{% static 'js/warrantform/_var_warrant.js'%}"></script>
-<script src="{% static 'js/warrantform/adjustDate.js' %}"></script>
+<script src="{% static 'js/warrantform/handleQoL.js'%}"></script>
+<script src="{% static 'js/warrantform/adjustDateTime.js' %}"></script>
 <script src="{% static 'js/warrantform/handleDistrict.js' %}"></script>
 <script src="{% static 'js/warrantform/autoFillField.js' %}"></script>
 {% endif %}

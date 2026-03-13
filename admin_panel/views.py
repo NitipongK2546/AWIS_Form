@@ -30,7 +30,7 @@ role_dict = {
 
 @login_required(login_url="/users/login/")
 def signup(request : HttpRequest):
-    if not request.user.is_superuser:
+    if not request.user.is_staff:
         return FORBIDDEN_MSG
 
     if request.method == "POST":
@@ -64,7 +64,7 @@ def signup(request : HttpRequest):
                 raise Exception(e)
     else:
         form = CustomizedUserCreationForm()
-    return render(request, "users/signup.html", {"form": form})
+    return render(request, "admin_panel/signup.html", {"form": form})
 
 # def check_all_users(request : HttpRequest):
 #     user_list = User.objects.all()

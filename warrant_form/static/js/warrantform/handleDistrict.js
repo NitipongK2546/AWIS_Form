@@ -1,3 +1,7 @@
+let acc_province_sel = document.getElementById("id_acc_province");
+let acc_district_sel = document.getElementById("id_acc_district");
+let acc_sub_district_sel = document.getElementById("id_acc_sub_district");
+
 let is_submitting_form = false;
 
 let all_district = [];
@@ -77,12 +81,4 @@ code_select_arr.forEach(element => {
     element[1].addEventListener("change", function () {
         changeSelectValue(element[1].value, element[2], all_sub_district);
     });
-});
-warrant_form.addEventListener("submit", function () {
-    is_submitting_form = true;
-});
-window.addEventListener("beforeunload", function (e) {
-    if (!is_submitting_form) {
-        e.preventDefault();
-    }
 });

@@ -12,7 +12,13 @@
     </div>
     <div class="header-row"> 
         <h1>Dashboard</h1> 
-        <p>Username: <span class="username-value">{{ user.username }}</span> <a href="{% url 'users:logout' %}" class="button-logout">logout</a></p>
+        <p>
+            {% if request.user.is_staff %}
+            <a href="{% url 'admin_panel:collections' %}" class="button">Go to Admin Page</a>
+            {% endif %}
+            Username: <span class="username-value">{{ user.username }}</span> 
+            <a href="{% url 'users:logout' %}" class="button-logout">logout</a>
+        </p>
     </div>
     <div class="header-button-row">
         <p><a href="{% url 'forms:step1' %}" class="button">เพิ่มคำร้องหมายจับ</a></p>

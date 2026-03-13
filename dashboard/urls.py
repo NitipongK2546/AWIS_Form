@@ -15,6 +15,7 @@ urlpatterns = [
     path("approve/<int:form_id>/confirm_reject/", views.confirm_reject, name="confirm_reject"),
 
     path("view/<int:form_id>/", views.view_form, name="get_form"),
+    # path("view/<str:form_id>/", views.view_form, name="get_form"),
     path("edit/<int:form_id>/", views.edit_form, name="edit_form"),
 
 ]

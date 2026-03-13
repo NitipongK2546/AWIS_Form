@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
 
 from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledFormStep1, DisabledWarrantForm
 
-from dashboard.models import VisualFormApprovalData as FormData
-from dashboard.models import VisualFinalizedFormData as FormSent
+from dashboard.models import FormAwaitingApproval as FormData
+from dashboard.models import VisualReqformData as FormSent
 from dashboard.warrant_wrapper import VisualWarrantData
 
 from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
@@ -25,7 +25,7 @@ from django.utils import timezone
 def index(request : HttpRequest):
     return redirect("dashboard:dashboard")
 
-@login_required(login_url="/users/login/")
+@login_required
 def dashboard(request : HttpRequest):
 
     user_data = UserDataModel.objects.filter(user=request.user).first()
@@ -38,10 +38,12 @@ def dashboard(request : HttpRequest):
 
     warrants : list[VisualWarrantData] = VisualWarrantData.objects.all()
 
+    print(form_sent)
+
     output_list = []
     for obj in form_sent:
         data_dict = {
-            "id": obj.form.id,
+            "id": obj.form.req_form_number,
             "recive_date": convert_time(obj.recive_date),
             "accept": obj.get_accept_display,
             "accept_date": convert_time(obj.accept_date),
@@ -60,7 +62,7 @@ def dashboard(request : HttpRequest):
             "reqno": warrant_data.reqforms.all().first().reqno,
             "woa_no": f"{warrant_data.woa_no}/{warrant_data.woa_date.year + 543}",
             "woa_year": warrant_data.woa_date.year + 543,
-            "woa_type": warrant_data.woa_type,
+            "woa_type": f"หมายจับ {warrant_data.get_woa_type_text()}",
             "woa_refno": warrant_data.woa_refno,
             "judge_name": warrant_wrap.judge_name,
             "injunction_date": convert_time(warrant_wrap.injunction_date),
@@ -82,10 +84,9 @@ def dashboard(request : HttpRequest):
 # FORM APPROVE SECTION
 #
 
-@login_required(login_url="/users/login/")
+@login_required
+@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
 def approve_form_page(request : HttpRequest):
-    if not request.user.has_perm("dashboard.can_approve_form"):
-        return HttpResponseForbidden("403 Forbidden: No Permission")
 
     all_forms = FormData.objects.all()
 
@@ -94,12 +95,10 @@ def approve_form_page(request : HttpRequest):
         "forms": all_forms,
     })
 
-@login_required(login_url="/users/login/")
+@login_required
 def view_form(request : HttpRequest, form_id : int):
-    if not request.user.has_perm("dashboard.can_approve_form"):
-        return HttpResponseForbidden("403 Forbidden: No Permission")
 
-    selected_form = FormData.objects.filter(id=form_id).first().form
+    selected_form = FormData.objects.filter(form__req_form_number=form_id).first().form
 
     warrants : list[WarrantDataModel] = selected_form.warrants.all()
 
@@ -112,7 +111,13 @@ def view_form(request : HttpRequest, form_id : int):
         )
     
     form = DisabledFormStep1(initial=selected_form.convertBacktoFormView(), prefix="main_form")
-    
+
+    print(
+        json.dumps(
+            selected_form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False
+        )
+    )
+
     return render(request, "warrant_form/view_all.html", {
         "user": request.user,
         "form": form,
@@ -120,13 +125,12 @@ def view_form(request : HttpRequest, form_id : int):
         "disabled": True,
     })
 
-@login_required(login_url="/users/login/")
+@login_required
+@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
 def confirm_approve(request : HttpRequest, form_id : int):
-    if not request.user.has_perm("dashboard.can_approve_form"):
-        return HttpResponseForbidden("403 Forbidden: No Permission")
 
     selected_form = FormData.objects.filter(pk=form_id).first()
-    print(selected_form)
+    # print(selected_form)
     if request.method == "POST":
         try:
             if settings.ENABLE_API:
@@ -164,7 +168,8 @@ def confirm_approve(request : HttpRequest, form_id : int):
     })
     
 
-@login_required(login_url="/users/login/")
+@login_required
+@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
 def confirm_reject(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
@@ -182,7 +187,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
         "form": selected_form,
     })
 
-@login_required(login_url="/users/login/")
+@login_required
 def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {
         "user": request.user,
@@ -191,7 +196,8 @@ def success_page(request : HttpRequest):
 ######################################################################
 #EDIT THE FORM
 
-@login_required(login_url="/users/login/")
+@login_required
+@permission_required("dashboard.edit_formawaitingapproval", raise_exception=True)
 def edit_form(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
