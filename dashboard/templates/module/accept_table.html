@@ -1,4 +1,5 @@
 {% load static %}
+{% load thai_locale %}
 
 <div id="body-table">
     <table class="styled-table">
@@ -23,14 +24,14 @@
                 <td>{{ form.req_no_plaintiff }}</td>
                 <td>{{ form.reqno }}</td>
                 <td>{% if form.recive_date %}
-                        {{ form.recive_date | date:"d M Y, H:i น."}}
+                        {{ form.recive_date | buddhist_date}}
                     {% else %}
                         -
                     {% endif %}</td>
                 <td>{{ form.accept }}</td>
                 <td>
                     {% if form.accept_date %}
-                        {{ form.accept_date|date:"d M Y, H:i น." }}
+                        {{ form.accept_date|buddhist_date }}
                     {% else %}
                         -
                     {% endif %}

@@ -60,7 +60,7 @@ def dashboard(request : HttpRequest):
             "reqno": warrant_data.reqforms.all().first().reqno,
             "woa_no": f"{warrant_data.woa_no}/{warrant_data.woa_date.year + 543}",
             "woa_year": warrant_data.woa_date.year + 543,
-            "woa_type": warrant_data.woa_type,
+            "woa_type": f"หมายจับ {warrant_data.get_woa_type_text()}",
             "woa_refno": warrant_data.woa_refno,
             "judge_name": warrant_wrap.judge_name,
             "injunction_date": convert_time(warrant_wrap.injunction_date),

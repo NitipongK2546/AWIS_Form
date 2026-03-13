@@ -1,4 +1,5 @@
 {% load static %}
+{% load thai_locale %}
 
 <div id="body-table">
     <table class="styled-table">
@@ -48,7 +49,7 @@
                     {{ form.judge_name }}
                 </td>
                 <td>
-                    {{ form.injunction_date|date:"d M Y, H:i น." }}
+                    {{ form.injunction_date|buddhist_date }}
                 </td>
                 <td>
                     <a href="{{ form.file_path }}">Link</a>

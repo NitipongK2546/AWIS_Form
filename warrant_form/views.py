@@ -9,7 +9,7 @@ from warrant_form.model_warrant import WarrantDataModel
 from warrant_form.model_reqform import ReqformDataModel
 
 
-from dashboard.models import VisualReqformData as VisualFormApprovalData
+from dashboard.models import FormAwaitingApproval as VisualFormApprovalData
 from dashboard.warrant_wrapper import VisualWarrantData
 from users.models import UserDataModel
 
@@ -20,56 +20,8 @@ import json
 
 @login_required
 def plain_form(request : HttpRequest):    
-    main_form = VisualFormApprovalData(prefix="main_form")
-    sub_form = WarrantForm(prefix="sub_form")
-
-    context = {
-        "main_form": main_form,
-        "sub_form": sub_form
-    }
-
-    # if request.GET.get("status") == "error":
-    #     context.update({"status": "error"})
-
-    return render(request, "warrant_form/plain-reqform.html", context)
-
-@login_required
-def plain_form_submission(request : HttpRequest):
-    # The expected outcome.
-    if request.method == "POST":
-        main_form = VisualFormApprovalData(request.POST, prefix="main_form")
-        sub_form = WarrantForm(request.POST, prefix="sub_form")
-
-        if main_form.is_valid():
-            awis_obj : VisualFormApprovalData = main_form.save(commit=False)
-            warrant_obj : WarrantDataModel = sub_form.save()
-
-            cleaned_dict = awis_obj.toAPICompatibleDict()
-            warrant_dict = warrant_obj.toAPICompatibleDict()
-
-            warrants_list = [warrant_dict,]
-
-            cleaned_dict.update({"warrants": warrants_list})
-
-            awis_obj.save()
-            awis_obj.warrants.add(warrant_obj)
-
-            # print(awis_obj.toAPICompatibleDictWithConvertedWarrants())
-
-            user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
-            
-            VisualFormApprovalData.objects.create(form=awis_obj, form_creator=user_obj, form_owner=user_obj, approve_status=1)
-
-            ###################################################################
-
-            # success = AWISConnectAPI.post_send_req_form("v1.1", request, cleaned_dict)
-            
-            # if not success:
-            #     raise Exception("Form submission failed.")
-
-            return redirect(reverse("forms:success"))
-        
-###############################################################################
+   
+    return redirect(reverse("forms:step1"))
         
 
 @login_required
@@ -198,7 +150,8 @@ def step3_confirm_form(request : HttpRequest):
             request.session.pop("step2_cleaned", None)
 
             return redirect("dashboard:dashboard")
-        except:
+        except Exception as e:
+            print(e)
             ReqformDataModel.objects.filter(pk=reqform.pk).first().delete()
             WarrantDataModel.objects.filter(pk=warrant.pk).first().delete()
     

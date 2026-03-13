@@ -37,6 +37,11 @@ def toAPICompatibleDictGeneral(incoming_model : models.Model) -> dict[str, objec
 
         return model_dict
 
+WOA_TYPE_CHOICES = [
+    (1, "47"),
+    (2, "47 ทวิ"),
+]
+
 # หมายเรียกที่ติดไปด้วย
 class WarrantDataModel(models.Model):
     """
@@ -97,6 +102,11 @@ class WarrantDataModel(models.Model):
 
     plaintiff = models.CharField(max_length=400, blank=True)
     court_name = models.CharField(max_length=250, blank=True)
+
+    def get_woa_type_text(self) -> str:
+        woa_type_dict = dict(WOA_TYPE_CHOICES)
+
+        return woa_type_dict.get(self.woa_type, "-----")
 
     def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:
         """
