@@ -19,8 +19,11 @@ THAI_MONTHS = {
 }
 
 @register.filter(name="buddhist_date")
-def buddhist_date(value : datetime.datetime):
+def buddhist_date(value : datetime.datetime | str):
     if not value:
         return ""
+    
+    if isinstance(value, str):
+        return value
     
     return f"{value.strftime("%d")} {THAI_MONTHS.get(value.month)[1]} {str(value.year + 543)}, {value.strftime("%H:%M")} น."

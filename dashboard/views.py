@@ -38,6 +38,8 @@ def dashboard(request : HttpRequest):
 
     warrants : list[VisualWarrantData] = VisualWarrantData.objects.all()
 
+    print(form_sent)
+
     output_list = []
     for obj in form_sent:
         data_dict = {

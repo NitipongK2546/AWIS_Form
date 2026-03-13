@@ -166,6 +166,7 @@ def reattachDateTime(current_dict : dict, field : str):
     scene_date_timehalf = current_dict.get(f"{field}_timehalf")
     combined_date = ""
     combined_datetime = "1970-01-01 00:00:00"
+    # combined_datetime = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
     if scene_date_year and scene_date_month and scene_date_day:
         converted_year = scene_date_year 
         padded_month = str(scene_date_month).zfill(2)

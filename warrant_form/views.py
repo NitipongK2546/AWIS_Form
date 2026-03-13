@@ -13,6 +13,8 @@ from dashboard.models import FormAwaitingApproval as VisualFormApprovalData
 from dashboard.warrant_wrapper import VisualWarrantData
 from users.models import UserDataModel
 
+from django.utils import timezone
+
 import json
 
 ##############################################################################
@@ -100,7 +102,9 @@ def step2_warrantform(request : HttpRequest):
     if not request.session.get("step1"):
         return redirect(reverse("forms:step1"))
     
-    initial_data = {}
+    initial_data = {
+        "woa_date_timehalf": timezone.datetime.now().time()
+    }
 
     if request.session.get("step2"):
         initial_data.update(request.session.get("step2")[0])
