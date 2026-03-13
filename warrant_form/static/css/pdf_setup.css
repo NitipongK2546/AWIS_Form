@@ -7,4 +7,35 @@
     .no-print {
         display: none !important;
     }
+    .page-break {
+        page-break-after: always !important;
+        break-after: page !important;
+    }
+    form input, form select {
+        font-size: 18px !important;
+        border: none !important;
+        border-bottom: 1.5px black !important;
+        border-bottom-style: dotted !important;
+        text-align: center !important;
+        border-radius: 0px !important;
+        color: black;
+    }
+    select {
+        background: none;
+        min-width: 2rem;
+        appearance: none; 
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+    input:disabled,
+    select:disabled,
+    textarea:disabled {
+        color: black;
+        -webkit-text-fill-color: black; /* fixes Chrome grey text */
+        opacity: 1;
+    }
+
+    input[type="time"] {
+        width: 120px;
+    }
 }
