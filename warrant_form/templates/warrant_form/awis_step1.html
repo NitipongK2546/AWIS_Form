@@ -20,10 +20,10 @@
 {% endblock %}
 {% block script %}
 {% if not disabled.is_true %}
-<script src="{% static 'js/reqform/_var_reqform.js'%}"></script>
-<script src="{% static 'js/reqform/adjustDate.js' %}"></script>
-<script src="{% static 'js/reqform/adjustTime.js' %}"></script>
+<script src="{% static 'js/reqform/adjustDateTime.js' %}"></script>
+<script src="{% static 'js/reqform/handleQoL.js' %}"></script>
 <script src="{% static 'js/reqform/handleDistrict.js' %}"></script>
 <script src="{% static 'js/reqform/autoFillField.js' %}"></script>
+<script src="{% static 'js/reqform/autoDisableField.js' %}"></script>
 {% endif %}
 {% endblock %}

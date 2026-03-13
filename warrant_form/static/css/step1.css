@@ -8,13 +8,6 @@ form {
 
 }
 
-input[type="checkbox"] {
-    width: 1.25rem;
-    height: 1.25rem;
-    vertical-align: middle;
-    border-color: black;
-}
-
 form input {
     border: 1px solid #6f6767;
     /* width: 11em; */
@@ -22,6 +15,13 @@ form input {
     font-size: 17px;
     font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
     background-color: #efefef;
+}
+
+form input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    vertical-align: middle;
+    border-color: black;
 }
 
 form select {
@@ -33,6 +33,13 @@ form select {
     background-color: #efefef;
     /* box-sizing: border-box; */
 }
+
+form :disabled {
+    cursor: not-allowed;
+    background-color: #c1c1c1;
+    /* box-sizing: border-box; */
+}
+
 
 form textarea {
     border: 1px solid #6f6767;

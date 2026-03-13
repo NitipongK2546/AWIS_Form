@@ -1,3 +1,11 @@
+let req_province_sel = document.getElementById("id_main_form-req_province");
+let req_district_sel = document.getElementById("id_main_form-req_district");
+let req_sub_district_sel = document.getElementById("id_main_form-req_sub_district");
+
+let acc_province_sel = document.getElementById("id_main_form-acc_province");
+let acc_district_sel = document.getElementById("id_main_form-acc_district");
+let acc_sub_district_sel = document.getElementById("id_main_form-acc_sub_district");
+
 let is_submitting_form = false;
 
 let all_district = [];
@@ -82,11 +90,4 @@ code_select_arr.forEach(element => {
         changeSelectValue(element[1].value, element[2], all_sub_district);
     });
 });
-awis_form.addEventListener("submit", function () {
-    is_submitting_form = true;
-});
-window.addEventListener("beforeunload", function (e) {
-    if (!is_submitting_form) {
-        e.preventDefault();
-    }
-});
+

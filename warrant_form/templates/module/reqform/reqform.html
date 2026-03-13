@@ -72,11 +72,13 @@
     
     {% include 'module/reqform/cause_type_num1.html' %}
 
-    <p style="max-width: 42rem; margin-left: 8rem; display:flex; align-items:center; flex-wrap:nowrap;">
-      {{ form.cause_type_id_2 }} ปรากฎจากการสืบสวน/สอบสวนของ 
-      <span style="flex:1; margin-left:0.5rem;">
-        {{ form.cause_text_2 }}
-      </span>
+    <p style="align-items:center; margin-left: 4.95rem;">
+        <span>
+            {{ form.cause_type_id_2 }} ปรากฎจากการสืบสวน/สอบสวนของ 
+            <span style="margin-left:0.5rem;">
+                {{ form.cause_text_2 }}
+            </span>
+        </span>
     </p>
     
     {% include 'module/reqform/acc_info.html' %}

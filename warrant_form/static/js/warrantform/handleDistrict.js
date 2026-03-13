@@ -1,3 +1,7 @@
+let acc_province_sel = document.getElementById("id_acc_province");
+let acc_district_sel = document.getElementById("id_acc_district");
+let acc_sub_district_sel = document.getElementById("id_acc_sub_district");
+
 let is_submitting_form = false;
 
 let all_district = [];
