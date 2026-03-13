@@ -226,6 +226,49 @@ class AWISFormStep1(forms.Form):
             current_dict = CentralForm.reattachDateTime(current_dict, field)
         
         return current_dict
+    
+    def cleanCauseIDAndCauseText(self, current_dict : dict):
+
+        id1 = current_dict.get(f"cause_type_id_1")
+        id2 = current_dict.get(f"cause_type_id_2")
+
+        text1 = current_dict.get(f"cause_text_1")
+        text2 = current_dict.get(f"cause_text_2")
+
+        if id1 and id2: # Both are true
+            raise Exception("Cause Type ID picked 2 types at the same time.")
+            
+        if (id1 and text2) or (id2 and text1): # Cause and Text field not matched.
+            raise Exception("User put cause text into the wrong field?")
+        
+        if id1:
+            current_dict.update({"cause_type_id": 1})
+            current_dict.update({"cause_text": text1})
+        elif id2:
+            current_dict.update({"cause_type_id": 2})
+            current_dict.update({"cause_text": text2})
+        
+        current_dict.pop(f"cause_type_id_1", None)
+        current_dict.pop(f"cause_type_id_2", None)
+        current_dict.pop(f"cause_text_1", None)
+        current_dict.pop(f"cause_text_2", None)
+
+
+    def cleanHaveReq(self, current_dict : dict):
+
+        id1 = current_dict.get(f"have_req_1")
+        id2 = current_dict.get(f"have_req_2")
+
+        if id1 and id2: # Both are true
+            raise Exception("Cause Type ID picked 2 types at the same time.")
+            
+        if id1:
+            current_dict.update({"have_req": 0})
+        elif id2:
+            current_dict.update({"have_req": 1})
+
+        current_dict.pop(f"have_req_1", None)
+        current_dict.pop(f"have_req_2", None)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -233,6 +276,8 @@ class AWISFormStep1(forms.Form):
         self.clean_multi_boolean(cleaned_data)
         self.combineDupe(cleaned_data)
         self.cleanDateTimeFields(cleaned_data)
+        self.cleanCauseIDAndCauseText(cleaned_data)
+        self.cleanHaveReq(cleaned_data)
 
         case_type_text = {
             1: "จ.",

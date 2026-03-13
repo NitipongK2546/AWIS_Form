@@ -33,10 +33,10 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:get_form' form.id %}">View</a> |
-                    {% comment %}<a href="{% url 'dashboard:edit_form' form.id %}">Edit</a> |{% endcomment %}
-                    <a href="{% url 'dashboard:confirm_approve' form.id %}">Approve</a> |
-                    <a href="{% url 'dashboard:confirm_reject' form.id %}">Reject</a>
+                    <a href="{% url 'dashboard:get_form' form.form.req_form_number %}">View</a> |
+                    {% comment %}<a href="{% url 'dashboard:edit_form' form.form.req_form_number %}">Edit</a> |{% endcomment %}
+                    <a href="{% url 'dashboard:confirm_approve' form.form.req_form_number %}">Approve</a> |
+                    <a href="{% url 'dashboard:confirm_reject' form.form.req_form_number %}">Reject</a>
                 </td>
             </tr>
             {% empty %}

@@ -46,10 +46,8 @@ class ReqformDataModel(models.Model):
 
     # Start of a few unrequired field.
     # cause_type_id 
-    cause_type_id_1 = models.BooleanField()
-    cause_type_id_2 = models.BooleanField()
-    cause_text_1 = models.CharField(max_length=500, blank=True)
-    cause_text_2 = models.CharField(max_length=500, blank=True)
+    cause_type_id = models.IntegerField(blank=True, null=True)
+    cause_text = models.CharField(max_length=500, blank=True)
 
     charge = models.CharField(max_length=50, blank=True)
     charge_type_1 = models.BooleanField() 
@@ -85,8 +83,7 @@ class ReqformDataModel(models.Model):
     agent_name = models.CharField(max_length=400, blank=True)
     agent_pos = models.CharField(max_length=400, blank=True)
 
-    have_req_1 = models.BooleanField() 
-    have_req_2 = models.BooleanField() 
+    have_req = models.IntegerField(blank=True, null=True)
 
     have_court_code = models.CharField(max_length=7, blank=True) # tb_office court_code
     have_act = models.CharField(max_length=400, blank=True)
@@ -216,6 +213,10 @@ class ReqformDataModel(models.Model):
             return cleaned_dict
         
         cleaned_dict.update({f"warrants": warrants_list})
+
+        cleaned_dict.pop("reqno")
+        cleaned_dict.pop("req_form_number")
+
         return cleaned_dict
     
 
@@ -228,16 +229,12 @@ class ReqformDataModel(models.Model):
         dict_main_awis = CentralForm.createDupe(duped_list, dict_main_awis)
         dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis)
 
+        if self.cause_type_id:
+            dict_main_awis.update({f"cause_type_id_{self.cause_type_id}": 1})
+            dict_main_awis.update({f"cause_text_{self.cause_type_id}": self.cause_text})
+
+        if self.have_req:
+            dict_main_awis.update({f"have_req_{self.have_req + 1}": 1})
+
         return dict_main_awis
-
-################################################################################
-
-# def cleanDateTimeFields(current_dict : dict):
-
-#     included_fields = ["scene_date", "woa_start_date", "woa_end_date"]
-
-#     for field in included_fields:
-#         str_datetime = datetime.datetime.strftime(current_dict.get(field),"%Y-%m-%d %H:%M:%S")
-#         current_dict.update({field : str_datetime})
     
-#     return current_dict

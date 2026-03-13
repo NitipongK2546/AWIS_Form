@@ -43,7 +43,7 @@ def dashboard(request : HttpRequest):
     output_list = []
     for obj in form_sent:
         data_dict = {
-            "id": obj.form.id,
+            "id": obj.form.req_form_number,
             "recive_date": convert_time(obj.recive_date),
             "accept": obj.get_accept_display,
             "accept_date": convert_time(obj.accept_date),
@@ -98,7 +98,7 @@ def approve_form_page(request : HttpRequest):
 @login_required
 def view_form(request : HttpRequest, form_id : int):
 
-    selected_form = FormData.objects.filter(id=form_id).first().form
+    selected_form = FormData.objects.filter(form__req_form_number=form_id).first().form
 
     warrants : list[WarrantDataModel] = selected_form.warrants.all()
 
@@ -111,7 +111,13 @@ def view_form(request : HttpRequest, form_id : int):
         )
     
     form = DisabledFormStep1(initial=selected_form.convertBacktoFormView(), prefix="main_form")
-    
+
+    print(
+        json.dumps(
+            selected_form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False
+        )
+    )
+
     return render(request, "warrant_form/view_all.html", {
         "user": request.user,
         "form": form,

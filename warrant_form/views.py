@@ -118,6 +118,7 @@ def step2_warrantform(request : HttpRequest):
         "step": 2,
     })
 
+@login_required
 def step3_confirm_form(request : HttpRequest):
     if request.method == "POST":
         try:
@@ -158,6 +159,9 @@ def step3_confirm_form(request : HttpRequest):
             print(e)
             ReqformDataModel.objects.filter(pk=reqform.pk).first().delete()
             WarrantDataModel.objects.filter(pk=warrant.pk).first().delete()
+
+    if not request.session.get("step2"):
+        return redirect(reverse("forms:step2"))
     
     form = DisabledFormStep1(initial=request.session.get("step1"), prefix="main_form",)
 
@@ -186,5 +190,13 @@ def dupeNeccesary(incoming_dict : dict, field_list : list):
         for field in dupe:
             new_dict.update({f"{field}_1": incoming_dict.get(field)})
             new_dict.update({f"{field}_2": incoming_dict.get(field)})
+
+        if incoming_dict.get("cause_type_id"):
+            new_dict.update({f"cause_type_id_{incoming_dict.get("cause_type_id")}": 1})
+            new_dict.update({f"cause_text_{incoming_dict.get("cause_type_id")}": incoming_dict.get("cause_text")})
+
+        if incoming_dict.get("have_req"):
+            new_dict.update({f"have_req_{incoming_dict.get("have_req") + 1}": 1})
+
 
         return new_dict
