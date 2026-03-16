@@ -1,6 +1,10 @@
 {% load static %}
 
-<p> {{ form.woa_start_date_day }} {{ form.woa_start_date_month }} {{ form.woa_start_date_year }}</p>
-<p>woa start time {{ form.woa_start_date_timehalf }}</p>
-<p>woa end date {{ form.woa_end_date_day }} {{ form.woa_end_date_month }} {{ form.woa_end_date_year }}</p>
-<p>woa end time {{ form.woa_end_date_timehalf }}</p>
+<div>
+    <span>
+        <span>นับตั้งแต่วันที่</span> {{ form.woa_start_date_day }} {{ form.woa_start_date_month }} {{ form.woa_start_date_year }} {{ form.woa_start_date_timehalf }} น.
+    </span>
+    <span>
+        <span>แต่ไม่เกิน</span> {{ form.woa_end_date_day }} {{ form.woa_end_date_month }} {{ form.woa_end_date_year }} {{ form.woa_end_date_timehalf }} น.
+    </span>
+</div>
