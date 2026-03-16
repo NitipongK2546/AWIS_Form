@@ -1,6 +1,7 @@
 body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    background-image: url("/static/dashboard/images/background.jpg");
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    /* background-image: url("/static/dashboard/images/background.jpg"); */
+    background: linear-gradient(to bottom, rgb(226, 158, 32) 50%, rgb(220, 220, 220) 50%);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -10,12 +11,13 @@ body {
 .confirm-container {
     width: 400px;
     height: 300px;
-    background-color: rgb(103, 150, 150);
+    background-color: rgb(255, 255, 255);
     justify-content: center;
     align-items: center;
-    border-radius: 5%;
-    border: solid 1px black;
+    /* border-radius: 5%; */
+    border: none;
     text-align: center;
+    color: rgb(0, 0, 0);
 }
 
 .confirm-button {
@@ -27,4 +29,22 @@ body {
     font-weight: bold;
     cursor: pointer;
     border: none;
+}
+
+.confirm-container p:last-child {
+    text-align: left;
+    padding-top: 15px;
+    padding-left: 30px;
+}
+
+.confirm-button:hover {
+    background-color: rgb(211, 49, 49);
+}
+
+.confirm-button:active {
+    background-color: rgb(137, 14, 14);
+}
+
+.back-button {
+    text-decoration: none;
 }
