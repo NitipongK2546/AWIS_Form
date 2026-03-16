@@ -12,6 +12,7 @@
     {{ form.police_station_id.as_hidden}}
     {{ form.req_no_plaintiff.as_hidden }}
     {{ form.create_uid.as_hidden }}
+    {{ form.ref_no.as_hidden }}
     {% endif %}
 
     <div class="form-header-row">    
@@ -72,7 +73,7 @@
     
     {% include 'module/reqform/cause_type_num1.html' %}
 
-    <p style="align-items:center; margin-left: 4.95rem;">
+    <p style="align-items:center; margin-left: 4.9rem;">
         <span>
             {{ form.cause_type_id_2 }} ปรากฎจากการสืบสวน/สอบสวนของ 
             <span style="margin-left:0.5rem;">

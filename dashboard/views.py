@@ -129,7 +129,7 @@ def view_form(request : HttpRequest, form_id : int):
 @permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
 def confirm_approve(request : HttpRequest, form_id : int):
 
-    selected_form = FormData.objects.filter(pk=form_id).first()
+    selected_form = FormData.objects.filter(form__req_form_number=form_id).first()
     # print(selected_form)
     if request.method == "POST":
         try:

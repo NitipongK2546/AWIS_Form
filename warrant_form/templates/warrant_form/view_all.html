@@ -9,18 +9,29 @@
 {% endblock %}
 
 {% block form %}
-<p><a href="{% url 'dashboard:dashboard' %}" class="button" >กลับ</a></p>
+
+{% block return %}
+<p class="no-print">
+    <a href="{% url 'dashboard:dashboard' %}" class="button" >กลับ</a>
+</p>
+{% endblock %}
 <div>
     {% include 'module/reqform/reqform.html' %}
 </div>
 
 {% for form in warrant_list %}
-<hr>
+<div class="page-break">
+    <hr class="no-print">
+</div>
 <div>
     {% include 'module/warrant/warrant_form.html' %}
 </div>
 {% empty %}
 <p>No warrant</p>
 {% endfor %}
+
+{% block step3_special %}
+{% endblock %}
+
 {% endblock %}
 

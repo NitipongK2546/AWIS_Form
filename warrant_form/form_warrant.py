@@ -68,8 +68,12 @@ class WarrantForm(forms.Form):
     plaintiff = forms.CharField(max_length=400)
 
     woa_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
-    woa_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
-    woa_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
+    woa_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'onchange': 'changeDate(woa_date_day, woa_date_month, woa_date_year)'
+    }))
+    woa_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices, attrs={
+        'onchange': 'changeDate(woa_date_day, woa_date_month, woa_date_year)'
+    }))
     woa_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
 
     fault_type_id = forms.IntegerField(widget=forms.Select(choices=FAULT_TYPE_ID_CHOICES)) 
@@ -109,8 +113,12 @@ class WarrantForm(forms.Form):
     # appointment_date = models.CharField(max_length=19, required=False, ) # SAME DATE FORMAT AS BELOW
 
     appointment_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
-    appointment_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices))
-    appointment_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices))
+    appointment_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'onchange': 'changeDate(appointment_date_day, appointment_date_month, appointment_date_year)'
+    }))
+    appointment_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices, attrs={
+        'onchange': 'changeDate(appointment_date_day, appointment_date_month, appointment_date_year)'
+    }))
     appointment_date_timehalf = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'type': 'time'})) 
 
     woa_no = forms.IntegerField()

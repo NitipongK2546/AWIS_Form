@@ -34,12 +34,6 @@ form select {
     /* box-sizing: border-box; */
 }
 
-form :disabled {
-    cursor: not-allowed;
-    background-color: #c1c1c1;
-    /* box-sizing: border-box; */
-}
-
 
 form textarea {
     border: 1px solid #6f6767;
@@ -123,6 +117,8 @@ form textarea:focus {
 .acc-info p {
     display: flex;
     justify-content: space-between;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .acc-info p span {

@@ -103,7 +103,9 @@ def step2_warrantform(request : HttpRequest):
         return redirect(reverse("forms:step1"))
     
     initial_data = {
-        "woa_date_timehalf": timezone.datetime.now().time()
+        "woa_date_timehalf": timezone.datetime.now().time(),
+        "acc_card_type": 1,
+        "woa_refno": "tcctd20260304002",
     }
 
     if request.session.get("step2"):

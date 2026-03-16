@@ -96,6 +96,8 @@ class ReqformDataModel(models.Model):
 
     create_uid = models.IntegerField()
 
+    ref_no = models.CharField(max_length=50, blank=True)
+
     woa_start_date = models.DateTimeField(blank=True, null=True)
     woa_end_date = models.DateTimeField(blank=True, null=True)
 
@@ -193,11 +195,29 @@ class ReqformDataModel(models.Model):
         current_dict.pop("req_day")
         current_dict.pop("req_month")
 
+        current_dict.update({"req_year": current_dict.get("req_year") + 543})
+
+        current_dict.pop("court_name")
+
         current_dict.pop("acc_full_name")
+
+        current_dict.pop("acc_origin")
+        current_dict.pop("acc_nation")
+        current_dict.pop("acc_occupation")
+
         current_dict.pop("acc_card_id")
+        current_dict.pop("acc_card_type")
+
         current_dict.pop("acc_sub_district")
         current_dict.pop("acc_district")
         current_dict.pop("acc_province")
+
+        current_dict.pop("acc_addno")
+        current_dict.pop("acc_vilno")
+        current_dict.pop("acc_road")
+        current_dict.pop("acc_soi")
+        current_dict.pop("acc_near")
+        current_dict.pop("acc_tel")
 
         return current_dict
     
