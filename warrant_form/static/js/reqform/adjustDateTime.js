@@ -48,10 +48,16 @@ function createDayOption(maxDays, target_element) {
     }
 }
 
-function changeDate(day_element, month_element) {
+function changeDate(day_element, month_element, year_element) {
     day_element.innerHTML = ""
     if (month_element.value == 2) {
-        createDayOption(28, day_element)
+
+        if (isLeapYear(year_element.value)) {
+            createDayOption(29, day_element)
+        }
+        else {
+            createDayOption(28, day_element)
+        }
     }
     else if ([4,6,9,11].includes(Number(month_element.value))) {
         createDayOption(30, day_element)
@@ -61,14 +67,20 @@ function changeDate(day_element, month_element) {
     }
 }
 
+function isLeapYear(year) {
+    // year = year - 543
+    // console.log(year)
+    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+}
+
 function adjustTimeToLatest() {
 
     let hours = current_date.getHours();
     let mins = current_date.getMinutes();
 
-    scene_timehalf_selector.value = hours + ":" + mins
-    woa_start_timehalf.value = hours + ":" + mins
-    woa_end_timehalf.value = hours + ":" + mins
+    scene_timehalf_selector.value = hours + ":" + mins + ":00"
+    woa_start_timehalf.value = hours + ":" + mins + ":00"
+    woa_end_timehalf.value = hours + ":" + mins + ":00"
 }
 
 adjustTimeToLatest();
