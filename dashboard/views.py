@@ -174,7 +174,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
 
-    selected_form = FormData.objects.filter(id=form_id).first()
+    selected_form = FormData.objects.filter(form__req_form_number=form_id).first()
     if request.method == "POST":
         selected_form.approve_status = FormData.ApprovalStatus.REJECTED
         selected_form.save()
