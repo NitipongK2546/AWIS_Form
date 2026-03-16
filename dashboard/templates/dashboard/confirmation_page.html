@@ -10,9 +10,10 @@
 <body>
     <div class="confirm-container">
         <h1 style="text-align: center;">{{ action }}</h1>
+        
         <form method="post">
             {% csrf_token %}
-            <p><button type="submit">CONFIRM</button></p>
+            <p><button type="submit" class="confirm-button">CONFIRM</button></p>
             <p><a href="{% url 'dashboard:approve_form_page' %}">GO BACK</a></p>
         </form>
     </div>

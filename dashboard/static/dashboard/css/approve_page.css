@@ -17,3 +17,14 @@ body {
     border: solid 1px black;
     text-align: center;
 }
+
+.confirm-button {
+    width: 100px;
+    height: 40px;
+    background-color: brown;
+    border-radius: 25px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
