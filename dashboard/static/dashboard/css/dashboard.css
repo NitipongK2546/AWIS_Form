@@ -11,6 +11,7 @@ body {
     justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
 }
 
 #dashboard-container {
@@ -58,6 +59,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0px 10px;
+    margin-top: 20px;
 }
 
 .header-button-row {
@@ -134,7 +136,7 @@ body {
     border-collapse: collapse;
     margin: 25px 0;
     font-size: 16px;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     text-align: center;
 }
@@ -165,4 +167,30 @@ body {
 
 .styled-table tbody tr {
     background-color: #ffffff;
+}
+
+.header-bar {
+    background-color: #3d4653;
+    align-items: center;
+    height: 80px;
+    width: 100%;
+    justify-content: right;
+    display: flex;
+}
+
+.header-bar a {
+    color: #ffffff;
+    padding: 8px 12px;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: 600;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+}
+
+.header-bar :hover {
+    color: #ec341f;
+}
+
+.header-bar :active {
+    color: #b92818;
 }

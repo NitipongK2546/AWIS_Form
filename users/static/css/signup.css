@@ -5,7 +5,7 @@
 }
 
 body {
-    font-family: "Segoe UI", Arial, sans-serif;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
     background: linear-gradient(135deg, #3e434b, #222831);
     height: 100vh;
     display: flex;
@@ -101,9 +101,7 @@ body {
 
 .signup-header .back-button:hover {
     background-color: #9d1000;
-    /* darker red on hover */
     transform: translateY(-2px);
-    /* subtle lift effect */
 }
 
 /* Animation */
