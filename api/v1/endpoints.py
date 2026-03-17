@@ -68,16 +68,16 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
             "message": "Wrong Request Method"
         }, status=405)
     
-    # payload = JWTHandle.extract_jwt(request)
-    # if isinstance(payload, JsonResponse):
-    #     return payload
+    payload = JWTHandle.extract_jwt(request)
+    if isinstance(payload, JsonResponse):
+        return payload
     
-    # user = User.objects.filter(
-    #     pk=payload.get("user_id")
-    # ).first()
+    user = User.objects.filter(
+        pk=payload.get("user_id")
+    ).first()
 
-    # if not user.has_perm("dashboard.update_visualreqformdata"):
-    #     return HttpResponseForbidden()
+    if not user.has_perm("dashboard.update_visualreqformdata"):
+        return HttpResponseForbidden()
 
     data = UtilsHandle.json_retrieval(request)
 
@@ -154,16 +154,16 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
             "message": "Wrong Request Method"
         }, status=405)
     
-    # payload = JWTHandle.extract_jwt(request)
-    # if isinstance(payload, JsonResponse):
-    #     return payload
+    payload = JWTHandle.extract_jwt(request)
+    if isinstance(payload, JsonResponse):
+        return payload
     
-    # user = User.objects.filter(
-    #     pk=payload.get("user_id")
-    # ).first()
+    user = User.objects.filter(
+        pk=payload.get("user_id")
+    ).first()
 
-    # if not user.has_perm("dashboard.update_visualwarrantdata"):
-    #     return HttpResponseForbidden()
+    if not user.has_perm("dashboard.update_visualwarrantdata"):
+        return HttpResponseForbidden()
 
     data = UtilsHandle.json_retrieval(request)
 

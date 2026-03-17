@@ -1,11 +1,12 @@
 import jwt
-from datetime import timedelta
 from django.conf import settings
 
-from django.utils import timezone 
 from dotenv import load_dotenv
 import os
 from django.http import HttpRequest, JsonResponse
+
+from django.utils import timezone 
+from datetime import timedelta
 
 load_dotenv()
 
@@ -13,12 +14,16 @@ JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 3600
 
+# CURRENT_TIMEZONE = timezone.get_current_timezone()
+
 def create_jwt(user_id):
     payload = {
         "user_id": user_id,
-        "expire": (timezone.now() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)).isoformat(),
-        "created": (timezone.now()).isoformat(),
+        "exp": (timezone.now() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)),
+        "iat": (timezone.now()),
     }
+
+    # print(timezone.now().isoformat())
 
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
@@ -33,9 +38,9 @@ def _verify_jwt(token : str):
         )
         return payload
     except jwt.ExpiredSignatureError:
-        return None
+        return "Token Expired"
     except jwt.InvalidTokenError:
-        return None
+        return "Invalid Token"
     
 def _extract_jwt_from_header(headers : dict[str]):
     
@@ -45,7 +50,7 @@ def _extract_jwt_from_header(headers : dict[str]):
         return JsonResponse({
             "status": 401,
             "message": "No Authorization Header?"
-        })
+        }, status=401)
     
     splitted_header = auth_header.split()
 
@@ -53,21 +58,40 @@ def _extract_jwt_from_header(headers : dict[str]):
         return JsonResponse({
             "status": 400,
             "message": "Mistake in Authorization Header?"
-        })
+        }, status=401)
     
     token : str = splitted_header[1]
 
     payload = _verify_jwt(token)
 
-    if not payload:
+    # FAILED BECAUSE ERROR
+    if isinstance(payload, str):
         return JsonResponse({
             "status": 401,
-            "message": "Token Invalid."
-        })
-
+            "message": payload
+        }, status=401)
+    
+    # Finally extract the payload, which is USER_ID and others, maybe...
     return payload
 
 def extract_jwt(request : HttpRequest):
     result = _extract_jwt_from_header(request.headers)
     
     return result
+
+##################################################################
+
+from django.contrib.auth.models import User
+
+def get_user(request : HttpRequest):
+    payload = extract_jwt(request)
+    if isinstance(payload, JsonResponse):
+        return payload
+    
+    user_id = payload.get("user_id")
+
+    user = User.objects.filter(
+        pk=user_id
+    ).first()
+
+    return user

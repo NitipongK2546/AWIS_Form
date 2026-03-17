@@ -1,5 +1,6 @@
 from django import template
 import datetime
+from django.utils import timezone
 
 register = template.Library()
 
@@ -25,5 +26,7 @@ def buddhist_date(value : datetime.datetime | str):
     
     if isinstance(value, str):
         return value
+    
+    value = timezone.localtime(value)
     
     return f"{value.strftime("%d")} {THAI_MONTHS.get(value.month)[1]} {str(value.year + 543)}, {value.strftime("%H:%M")} น."
