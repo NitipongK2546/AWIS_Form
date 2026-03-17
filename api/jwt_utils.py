@@ -78,3 +78,20 @@ def extract_jwt(request : HttpRequest):
     result = _extract_jwt_from_header(request.headers)
     
     return result
+
+##################################################################
+
+from django.contrib.auth.models import User
+
+def get_user(request : HttpRequest):
+    payload = extract_jwt(request)
+    if isinstance(payload, JsonResponse):
+        return payload
+    
+    user_id = payload.get("user_id")
+
+    user = User.objects.filter(
+        pk=user_id
+    ).first()
+
+    return user
