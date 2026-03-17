@@ -17,6 +17,14 @@ def check_status_code(response : HttpResponse):
         raise Exception("Unauthorized. Is the Token expired?")
     elif response.status_code == "403":
         raise Exception("Forbidden. Current IP Address perhaps not allowed?")
+    
+def toDjangoJsonResponse(response : Response) -> JsonResponse:
+    data = response.json()
+
+    return JsonResponse(
+        data, safe=False, status=response.status_code
+    )
+
 
 #############################################################################
 # API REQUEST
@@ -26,7 +34,7 @@ def get_health_check(version : str) -> bool:
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "healthcheck"]
 
-    response : JsonResponse = RequestUtils.get_request(
+    response : Response = RequestUtils.get_request(
         base_url, 
         parameter_data=parameter
     )
@@ -108,9 +116,7 @@ def post_send_req_form(version : str, request : HttpRequest, post_data : dict) -
         post_data=post_data, 
         auth_token=auth_token
     )
-    data : dict = response.json()
-
-    print(data)
+    data = toDjangoJsonResponse(response)
 
     return data
 
@@ -138,7 +144,7 @@ def get_req_form_status(version : str, request : HttpRequest, req_no_plaintiff :
         parameter_data=parameter, 
         auth_token=auth_token
     )
-    data : list[dict] = response.json()
+    data = toDjangoJsonResponse(response)
 
     return data
 
