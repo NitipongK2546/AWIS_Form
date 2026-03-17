@@ -38,7 +38,7 @@ def dashboard(request : HttpRequest):
 
     warrants : list[VisualWarrantData] = VisualWarrantData.objects.all()
 
-    print(form_sent)
+    # print(form_sent)
 
     output_list = []
     for obj in form_sent:
@@ -109,8 +109,10 @@ def view_form(request : HttpRequest, form_id : int):
         warrant_list.append(
             form
         )
+
+    form_data = selected_form.convertBacktoFormView()
     
-    form = DisabledFormStep1(initial=selected_form.convertBacktoFormView(), prefix="main_form")
+    form = DisabledFormStep1(initial=form_data, prefix="main_form")
 
     print(
         json.dumps(
@@ -123,6 +125,13 @@ def view_form(request : HttpRequest, form_id : int):
         "form": form,
         "warrant_list": warrant_list,
         "disabled": True,
+
+        "req_province": form_data.get("req_province"),
+        "req_district": form_data.get("req_district"),
+        "req_sub_district": form_data.get("req_sub_district"),
+        "acc_province": form_data.get("acc_province"),
+        "acc_district": form_data.get("acc_district"),
+        "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
 @login_required
@@ -158,8 +167,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
 
             return redirect(reverse("dashboard:success_page"))
         except Exception as e:
-            print(e)
-            raise Exception("Form already approved.")
+            return redirect(reverse("dashboard:dashboard"))
 
     return render(request, "dashboard/confirmation_page.html", {
         "user": request.user,

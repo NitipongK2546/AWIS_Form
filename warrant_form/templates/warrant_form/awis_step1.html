@@ -20,10 +20,18 @@
 {% block defer_script %}
 {% endblock %}
 {% block script %}
+<script>
+    const req_province = "{{ req_province|escapejs|default:10 }}"
+    const req_district = "{{ req_district|escapejs|default:1001 }}"
+    const req_sub_district = "{{ req_sub_district|escapejs|default:100101 }}"
+    const acc_province = "{{ acc_province|escapejs|default:10 }}"
+    const acc_district = "{{ acc_district|escapejs|default:1001 }}"
+    const acc_sub_district = "{{ acc_sub_district|escapejs|default:100101 }}"
+</script>
+<script src="{% static 'js/reqform/handleDistrict.js' %}"></script>
 {% if not disabled.is_true %}
 <script src="{% static 'js/reqform/adjustDateTime.js' %}"></script>
 <script src="{% static 'js/reqform/handleQoL.js' %}"></script>
-<script src="{% static 'js/reqform/handleDistrict.js' %}"></script>
 <script src="{% static 'js/reqform/autoFillField.js' %}"></script>
 <script src="{% static 'js/reqform/autoDisableField.js' %}"></script>
 {% endif %}

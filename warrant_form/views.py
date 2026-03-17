@@ -66,17 +66,30 @@ def step1_reqform(request : HttpRequest):
                 "form": form,
                 "step": 1,
             })
+    
+
+    form = AWISFormStep1(initial=static_data, prefix="main_form")
+    context = {
+        "form": form,
+        "step": 1,
+    }
         
     old_data : dict = request.session.get("step1")
 
     if old_data:
         static_data.update(old_data)
 
-    form = AWISFormStep1(initial=static_data, prefix="main_form")
-    return render(request, "warrant_form/awis_step1.html", {
-        "form": form,
-        "step": 1,
-    })
+        context.update({
+            "req_province": old_data.get("req_province"),
+            "req_district": old_data.get("req_district"),
+            "req_sub_district": old_data.get("req_sub_district"),
+            "acc_province": old_data.get("acc_province"),
+            "acc_district": old_data.get("acc_district"),
+            "acc_sub_district": old_data.get("acc_sub_district"),
+        })
+    print(static_data)
+
+    return render(request, "warrant_form/awis_step1.html", context)
 
 @login_required
 def step2_warrantform(request : HttpRequest):
@@ -108,17 +121,28 @@ def step2_warrantform(request : HttpRequest):
         "woa_refno": "tcctd20260304002",
     }
 
-    if request.session.get("step2"):
+    old_data : list[dict] = request.session.get("step2")
+
+    if old_data:
         initial_data.update(request.session.get("step2")[0])
     else:
         initial_data.update(request.session.get("acc_info"))
 
     form = WarrantForm(initial=initial_data)
-
-    return render(request, "warrant_form/awis_step2.html", {
+    context = {
         "form": form,
         "step": 2,
+    }
+
+    # print(request.session.get("acc_info"))
+    
+    context.update({
+        "acc_province": request.session.get("acc_info").get("acc_province"),
+        "acc_district": request.session.get("acc_info").get("acc_district"),
+        "acc_sub_district": request.session.get("acc_info").get("acc_sub_district"),
     })
+
+    return render(request, "warrant_form/awis_step2.html", context)
 
 @login_required
 def step3_confirm_form(request : HttpRequest):
@@ -169,6 +193,11 @@ def step3_confirm_form(request : HttpRequest):
 
     warrants : list[dict] = request.session.get("step2")
 
+    # print(request.session.get("step1"))
+    # print(request.session.get("step2"))
+
+    old_data_1 = request.session.get("step1")
+
     warrant_list = []
     for item in warrants:
         warrant_form = DisabledWarrantForm(initial=item)
@@ -180,7 +209,13 @@ def step3_confirm_form(request : HttpRequest):
         "user": request.user,
         "form": form,
         "warrant_list": warrant_list,
-        "disabled": True,
+
+        "req_province": old_data_1.get("req_province"),
+        "req_district": old_data_1.get("req_district"),
+        "req_sub_district": old_data_1.get("req_sub_district"),
+        "acc_province": old_data_1.get("acc_province"),
+        "acc_district": old_data_1.get("acc_district"),
+        "acc_sub_district": old_data_1.get("acc_sub_district"),
     })
 
 ##########################################################################

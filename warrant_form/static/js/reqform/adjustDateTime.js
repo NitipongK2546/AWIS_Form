@@ -44,6 +44,8 @@ function createDayOption(maxDays, target_element) {
             break;
         }
 
+        if (i == 1) { option.selected = true; }
+
         target_element.appendChild(option);
     }
 }

@@ -1,6 +1,9 @@
 from warrant_form.code_handler import ThaiCountryAreaCode
 import datetime
 from django import forms
+from django.utils import timezone
+
+CURRENT_TIMEZONE = timezone.get_current_timezone()
 
 today_year = datetime.date.today().year
 year_choices = [(year, year + 543) for year in range(1970, today_year + 1)]
@@ -37,7 +40,7 @@ def reattachDateTime(current_dict : dict, field : str):
         combined_date = f"{converted_year}-{padded_month}-{padded_day}"
 
     if combined_date and scene_date_timehalf:
-        combined_datetime = f"{combined_date}T{scene_date_timehalf}+07:00"
+        combined_datetime = f"{combined_date}T{scene_date_timehalf}"
 
     current_dict.pop(f"{field}_year", None)
     current_dict.pop(f"{field}_month", None)
@@ -58,6 +61,7 @@ def createDupe(duped_list : list[str], target_dict : dict) -> dict[str,]:
 def splitTime(time_split_list : list[str], target_dict : dict) -> dict[str,]:
     for item in time_split_list:
         datetime_obj : datetime.datetime = target_dict.get(item)
+        datetime_obj = datetime_obj.astimezone(CURRENT_TIMEZONE)
 
         target_dict.update({f"{item}_day" : datetime_obj.day})
         target_dict.update({f"{item}_month" : datetime_obj.month})

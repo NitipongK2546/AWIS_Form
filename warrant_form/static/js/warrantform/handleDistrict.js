@@ -1,66 +1,16 @@
-let acc_province_sel = document.getElementById("id_acc_province");
-let acc_district_sel = document.getElementById("id_acc_district");
-let acc_sub_district_sel = document.getElementById("id_acc_sub_district");
-
-let is_submitting_form = false;
-
-let all_district = [];
-let all_sub_district = [];
-
-// NEW Setup Code
-const csrftoken = getCookie("csrftoken")
-
-async function fetchSelectItems(target_url) {
-    const response = await fetch(target_url, {
-        method: 'GET',
-        headers: {
-            'X-CSRFToken': csrftoken,
-        },
-    })
-
-    const data = await response.json();
-    
-    return data["data"]
-}
+let warrant_acc_province_sel = document.getElementById("id_acc_province");
+let warrant_acc_district_sel = document.getElementById("id_acc_district");
+let warrant_acc_sub_district_sel = document.getElementById("id_acc_sub_district");
 
 async function setUpArray() {
-    all_district_array = await fetchSelectItems('/api/internal/get-district/')
-    all_sub_district_array = await fetchSelectItems('/api/internal/get-sub-district/')
+    await fetchDistrictDataFromServer()
 
-    for (let element of all_district_array) {
-    all_district.push({
-        "value": element[0],
-        "innerText": element[1],
-    })
-    }
-    for (let element of all_sub_district_array) {
-        all_sub_district.push({
-            "value": element[0],
-            "innerText": element[1],
-        })
-    }
+    changeSelectValue(acc_province, warrant_acc_district_sel, all_district)
+    changeSelectValue(acc_district, warrant_acc_sub_district_sel, all_sub_district)
 
-    changeSelectValue("10", acc_district_sel, all_district)
-    changeSelectValue("1001", acc_sub_district_sel, all_sub_district)
-}
-
-// Non-Async Function
-
-function changeSelectValue(frontal_substring, targeted_sel, full_list) {
-    let options = [];
-    for (let child of full_list) {
-        if (String(child.value).startsWith(frontal_substring)) {
-            options.push(child);
-        }
-    }
-    targeted_sel.innerHTML = "";
-    options.forEach(dict => {
-        let optionElement = document.createElement("option");
-        optionElement.value = dict.value;
-        optionElement.innerText = dict.innerText;
-
-        targeted_sel.appendChild(optionElement);
-    });
+    warrant_acc_province_sel.value = acc_province
+    warrant_acc_district_sel.value = acc_district
+    warrant_acc_sub_district_sel.value = acc_sub_district
 }
 
 // AUTORUN ON START

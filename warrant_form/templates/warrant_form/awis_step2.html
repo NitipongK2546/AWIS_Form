@@ -18,10 +18,15 @@
 {% endblock %}
 
 {% block script %}
+<script>
+    const acc_province = "{{ acc_province|escapejs|default:10 }}"
+    const acc_district = "{{ acc_district|escapejs|default:1001 }}"
+    const acc_sub_district = "{{ acc_sub_district|escapejs|default:100101 }}"
+</script>
+<script src="{% static 'js/warrantform/handleDistrict.js' %}"></script>
 {% if not disabled.is_true %}
 <script src="{% static 'js/warrantform/handleQoL.js'%}"></script>
 <script src="{% static 'js/warrantform/adjustDateTime.js' %}"></script>
-<script src="{% static 'js/warrantform/handleDistrict.js' %}"></script>
 <script src="{% static 'js/warrantform/autoFillField.js' %}"></script>
 {% endif %}
 {% endblock %}
