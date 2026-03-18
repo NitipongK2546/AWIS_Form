@@ -3,10 +3,14 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout 
 from django.http import HttpRequest
 from django.core.mail import send_mail
-import _request_utils.connect_api as AWISConnectAPI
+from django.contrib.auth.models import User
 import pyotp
-from django.core.mail import send_mail
 from .models import OTPCollection
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def user_login(request : HttpRequest):
     if request.user.is_authenticated:
@@ -16,9 +20,13 @@ def user_login(request : HttpRequest):
         if form.is_valid():
             user = form.get_user()
             if user is not None:
-                login(request, user)
-                # if user.is_superuser:
-                #     return redirect("admin_panel:collections")
+                if not (os.getenv("PRODUCTION") == "YES"):
+                    login(request, user)
+                    if user.is_superuser:
+                        return redirect("admin_panel:collections")
+                    return redirect("dashboard:dashboard")
+                    
+                # PRODUCTION
                 send_email_otp(user)
 
                 return redirect("users:verify_otp")
@@ -26,11 +34,7 @@ def user_login(request : HttpRequest):
         form = AuthenticationForm()
     return render(request, "users/login.html", {"form": form})
 
-def custom_logout(request : HttpRequest): 
-    logout(request) 
-    return redirect("users:login")
-
-def send_email_otp(user):
+def send_email_otp(user : User):
     otp_obj, created = OTPCollection.objects.get_or_create(user=user)
     if not otp_obj.secret:
         otp_obj.secret = pyotp.random_base32()
@@ -42,11 +46,12 @@ def send_email_otp(user):
     send_mail(
         subject="Your OTP Code",
         message=f"Your OTP code is {otp_code}. It expires in 5 minutes.",
-        from_email="plowitzaaa@gmail.com",
+        from_email=os.getenv("EMAIL_HOST_USER"),
         recipient_list=[user.email],
+        fail_silently=False,
     )
 
-def verify_email_otp(user, entered_code):
+def verify_email_otp(user : User, entered_code : str):
     otp_obj = OTPCollection.objects.get(user=user)
     totp = pyotp.TOTP(otp_obj.secret, interval=300)
     return totp.verify(entered_code)
@@ -56,7 +61,18 @@ def verify_otp_view(request: HttpRequest):
         entered_code = request.POST.get("otp")
         if verify_email_otp(request.user, entered_code):
             request.session['otp_verified'] = True
+
+            otp_obj = OTPCollection.objects.get(user=request.user)
+            otp_obj.delete()
+
+            login(request, request.user)
+
             return redirect("dashboard:dashboard")
         else:
             return render(request, "users/verify_otp.html", {"error": "Invalid or expired OTP"})
     return render(request, "users/verify_otp.html")
+
+
+def custom_logout(request : HttpRequest): 
+    logout(request) 
+    return redirect("users:login")
