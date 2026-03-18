@@ -8,6 +8,9 @@ pwd
 if command -v python3 >/dev/null 2>&1; then
     PYTHON=python3
     VENV_TYPE=bin
+
+    chmod +x _scripts/_quick_migrate.sh
+
 elif command -v python >/dev/null 2>&1; then
     PYTHON=python
     VENV_TYPE=Scripts
@@ -17,8 +20,6 @@ else
 fi
 
 $PYTHON --version
-
-# "$DIR/_print_dir.sh"
 
 "./_scripts/_quick_migrate.sh"
 
