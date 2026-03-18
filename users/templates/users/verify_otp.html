@@ -1,9 +1,17 @@
-<h2>Enter OTP</h2>
-{% if error %}
-<p style="color:red;">{{ error }}</p>
-{% endif %}
-<form method="post">
-  {% csrf_token %}
-  <input type="text" name="otp" placeholder="Enter 6-digit code" maxlength="6" required>
-  <button type="submit">Verify</button>
-</form>
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/verify_otp.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
+
+<div class="verify-container">
+  <p>ใส่รหัส OTP 6 หลัก</p>
+  <p style="font-size: 1rem; font-weight: normal; margin: 0px;">กรอกรหัส OTP ที่ได้รับจาก gmail ของท่าน</p>
+  {% if error %}
+  <p style="color:red;">{{ error }}</p>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="text" name="otp" class="otp-input" placeholder="กรอกรหัส OTP 6 หลัก" maxlength="6" required>
+    <button type="submit" class="otp-button">Verify</button>
+  </form>
+</div>

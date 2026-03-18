@@ -43,7 +43,7 @@ def signup(request : HttpRequest):
                 selected_role = data.get("role")
 
                 choices = dict(CustomizedUserCreationForm.RoleChoices.choices)
-                selected_role_string = choices.get(int(selected_role))   
+                selected_role_string = choices.get(int(selected_role))
 
                 # print(choices)
                 # print(selected_role)
