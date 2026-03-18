@@ -1,13 +1,21 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="{% static 'dashboard/css/approve_page.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
 </head>
 <body>
-    SUCCESS
+    <div class="confirm-container">
+        <h1 style="text-align: center;">สำเร็จ</h1>
+        <p style="margin: 40px 0px">
+            กรุณากดปุ่มเพื่อกลับหน้าแรก
+        </p>
 
-    <p><a href="{% url 'dashboard:dashboard' %}">GO BACK</a></p>
+        <p><a href="{% url 'dashboard:dashboard' %}" class="back-button">กลับ</a></p>
+    </div>
 </body>
 </html>

@@ -58,8 +58,8 @@ form textarea:focus {
 
 .button {
     display: inline-block;
-    padding: 6px 10px;
-    font-size: 18px;
+    padding: 2px 10px;
+    font-size: 1.5rem;
     font-weight: 600;
     font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
     color: #ffffff;
@@ -70,6 +70,7 @@ form textarea:focus {
     text-decoration: none;
     transition: background 0.3s ease, transform 0.2s ease;
     margin-left: 30px;
+    text-align: center;
 }
 
 .button:hover {

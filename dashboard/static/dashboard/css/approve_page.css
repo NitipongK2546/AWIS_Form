@@ -32,9 +32,9 @@ body {
 }
 
 .confirm-container p:last-child {
-    text-align: left;
+    text-align: center;
     padding-top: 15px;
-    padding-left: 30px;
+
 }
 
 .confirm-button:hover {
