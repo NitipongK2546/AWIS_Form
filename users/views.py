@@ -42,7 +42,7 @@ def send_email_otp(user):
     send_mail(
         subject="Your OTP Code",
         message=f"Your OTP code is {otp_code}. It expires in 5 minutes.",
-        from_email="plowitzaaa@gmail.com",
+        from_email="tcct.otp@gmail.com",
         recipient_list=[user.email],
     )
 
