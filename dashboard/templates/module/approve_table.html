@@ -8,7 +8,7 @@
                 <th colspan="7">สถานะคำร้องที่รอการอนุมัติเพื่อส่งให้กับศาล</th>
             </tr>
             <tr>
-                <!-- <th>ID</th> -->
+                <th>เลขที่คำร้อง</th>
                 <th>สถานะการอนุมัติ</th>
                 <th>ผู้ร่าง</th>
                 <th>เจ้าของร่าง</th>
@@ -19,8 +19,9 @@
         </thead>
         <tbody>
             {% for form in forms %}
+            {% if form.approve_status != 2  %}
             <tr>
-                <!-- <td>{{ form.id }}</td> -->
+                <td>{{ form.form.reqno }}</td>
                 <td>{{ form.get_approve_status_display }}</td>
                 <td>{{ form.form_creator }}</td>
                 <td>{{ form.form_owner }}</td>
@@ -34,11 +35,14 @@
                 </td>
                 <td>
                     <a href="{% url 'dashboard:get_form' form.form.req_form_number %}">View</a> |
-                    {% comment %}<a href="{% url 'dashboard:edit_form' form.form.req_form_number %}">Edit</a> |{% endcomment %}
+                    <a href="{% url 'dashboard:edit_form' form.form.req_form_number %}">Edit</a> |
+                    {% comment %}
                     <a href="{% url 'dashboard:confirm_approve' form.form.req_form_number %}">Approve</a> |
                     <a href="{% url 'dashboard:confirm_reject' form.form.req_form_number %}">Reject</a>
+                    {% endcomment %}
                 </td>
             </tr>
+            {% endif %}
             {% empty %}
             <tr>
                 <td colspan="7">No forms available.</td>
