@@ -148,23 +148,17 @@ def step2_warrantform(request : HttpRequest):
 def step3_confirm_form(request : HttpRequest):
     if request.method == "POST":
         try:
-            reqform_data = request.session.get("step1_cleaned")
-            warrant_data = request.session.get("step2_cleaned")[0]
+            reqform_data : dict = request.session.get("step1_cleaned")
+            warrant_data : list[dict] = request.session.get("step2_cleaned")
 
             reqform : ReqformDataModel = ReqformDataModel.objects.create(**reqform_data)
 
-            warrant : WarrantDataModel = WarrantDataModel.objects.create(
-                **warrant_data
-            )
-
-            if reqform:
-                reqform.warrants.add(warrant)
-
-                # Fix below/above for more than 1 warrant
-
-            # data = reqform.toAPICompatibleDictWithConvertedWarrants()
-
-            # print(json.dumps(data, indent=2, ensure_ascii=False))
+            for item_dict in warrant_data:
+                warrant : WarrantDataModel = WarrantDataModel.objects.create(
+                    **item_dict
+                )
+                if reqform:
+                    reqform.warrants.add(warrant)
 
             user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
             VisualFormApprovalData.objects.create(
