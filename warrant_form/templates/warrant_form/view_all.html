@@ -12,7 +12,7 @@
 
     {% block return %}
     <p class="no-print">
-        <a href="{% url 'dashboard:dashboard' %}" class="button" >กลับ</a>
+        <p style="margin-left: 15%;"> <a href="{% url 'dashboard:dashboard' %}" class="button" >กลับ</a> </p>
     </p>
     {% endblock %}
     <div>
@@ -29,6 +29,9 @@
         {% empty %}
         <p>No warrant</p>
     {% endfor %}
+
+    {% block step3_special %}
+    {% endblock %}
 {% endblock %}
 
 {% block script %}
