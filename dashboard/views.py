@@ -79,21 +79,10 @@ def dashboard(request : HttpRequest):
         "warrants": warrants_list,
     })
 
-#######################################################3
+#######################################################
 #
-# FORM APPROVE SECTION
+# Form Edit and View Section 
 #
-
-@login_required
-@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
-def approve_form_page(request : HttpRequest):
-
-    all_forms = FormData.objects.all()
-
-    return render(request, "dashboard/approve_page.html", {
-        "user": request.user,
-        "forms": all_forms,
-    })
 
 @login_required
 def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
@@ -184,6 +173,22 @@ def edit_form(request : HttpRequest, form_id : int):
     return view_form(request, form_id, WarrantForm, AWISFormStep1, "edit_form.html")
 
 
+#######################################################3
+#
+# FORM APPROVE SECTION
+#
+
+@login_required
+@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
+def approve_form_page(request : HttpRequest):
+
+    all_forms = FormData.objects.all()
+
+    return render(request, "dashboard/approve_page.html", {
+        "user": request.user,
+        "forms": all_forms,
+    })
+
 @login_required
 @permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
 def confirm_approve(request : HttpRequest, form_id : int):
@@ -250,73 +255,6 @@ def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {
         "user": request.user,
     })
-
-######################################################################
-#EDIT THE FORM
-
-# @login_required
-# @permission_required("dashboard.edit_formawaitingapproval", raise_exception=True)
-# def edit_form(request : HttpRequest, form_id : int):
-#     if not request.user.has_perm("dashboard.can_approve_form"):
-#         return HttpResponseForbidden("403 Forbidden: No Permission")
-    
-#     selected_form = FormData.objects.filter(id=form_id).first()
-#     current_user = request.user
-
-#     if not ((current_user == selected_form.form_creator.user) or (current_user == selected_form.form_owner.user)):
-#         return JsonResponse({
-#             "status": 403,
-#             "message": "Not the owner or creator."
-#         }, status=403)
-    
-#     # if selected_form.approve_status == FormData.ApprovalStatus.APPROVED:
-#     #     return JsonResponse({
-#     #         "status": 405,
-#     #         "message": "API already sent. Can't edit anymore."
-#     #     }, status=405)
-
-#     if request.method == "POST":
-#         main_form = AWISFormStep1(request.POST, prefix="main_form")
-#         sub_form = WarrantForm(request.POST, prefix="sub_form")
-
-#         if main_form.is_valid() and sub_form.is_valid():
-#             awis_obj : ReqformDataModel = main_form.save(commit=False)
-#             warrant_obj : WarrantDataModel = sub_form.save()
-
-#             awis_obj.save()
-#             awis_obj.warrants.add(warrant_obj)
-            
-#             selected_form.form.delete()
-            
-#             # The old object is replaced by the new one.
-#             selected_form.form = awis_obj
-#             # Enable approval again.
-#             selected_form.approve_status = FormData.ApprovalStatus.PENDING
-
-#             selected_form.save()
-
-#             return redirect(reverse("dashboard:success_page"))
-#         else:
-#             print(main_form.errors.as_text())
-#             print(sub_form.errors.as_text())
-    
-#     form_obj : ReqformDataModel = selected_form.form.convertBacktoFormView()
-#     warrants_list : list[WarrantDataModel] = selected_form.form.warrants.all()[0].toAPICompatibleDict()
-
-#     # warrants_list = [warrant.toAPICompatibleDict() for warrant in warrants_list][0]
-
-#     main_form = AWISFormStep1(initial=form_obj, prefix="main_form",)
-#     sub_form = WarrantForm(initial=warrants_list, prefix="sub_form")
-
-#     return render(request, "warrant_form/awis_step1.html", {
-#         # "main_form": main_form,
-#         "sub_form": sub_form,
-#         "user": request.user,
-#         "action": "Edit",
-#         "form": main_form,
-#     })
-    
-###########################################################################
 
 def convert_time(datetime_obj : datetime):
     if datetime_obj:

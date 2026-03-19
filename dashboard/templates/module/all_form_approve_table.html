@@ -21,6 +21,9 @@
             {% for form in forms %}
             {% if form.approve_status != 2 %}
             <tr>
+            {% else %}
+            <tr style="filter: brightness(0.8);">
+            {% endif %}
                 <td>{{ form.form.reqno }}</td>
                 <td>{{ form.get_approve_status_display }}</td>
                 <td>{{ form.form_creator }}</td>
@@ -42,7 +45,6 @@
                     {% endcomment %}
                 </td>
             </tr>
-            {% endif %}
             {% empty %}
             <tr>
                 <td colspan="7">No forms available.</td>
