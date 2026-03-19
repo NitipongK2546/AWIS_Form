@@ -50,6 +50,9 @@ def step1_reqform(request : HttpRequest):
             
             data = form.cleaned_data
             acc_info = dupeNeccesary(data, ["acc_full_name"])
+            acc_info.update({
+                "cause_text": data.get("accused")
+            })
 
             form_data = dupeNeccesary(data, ["accused", "plaintiff", "court_name"])
 

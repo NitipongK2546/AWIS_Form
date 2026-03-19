@@ -5,9 +5,14 @@
 
 {% block body %}
   <div id="header-container">
-    <h1 style="margin: 0px 20px;">Approve Form</h1>
+    <h1 style="margin: 0px 20px;">แบบฟอร์มที่รอการอนุมัติ</h1>
     {% include 'module/approve_table.html' %}
 
-    <p><a class="button-logout" href="{% url 'dashboard:dashboard' %}">GO BACK</a></p>
+    <h1 style="margin: 0px 20px;">แบบฟอร์มทั้งหมด</h1>
+    {% include 'module/all_form_approve_table.html' %}
+
+    <p>
+      <a class="button-logout" href="{% url 'dashboard:dashboard' %}">GO BACK</a>
+    </p>
   </div>
 {% endblock %}
