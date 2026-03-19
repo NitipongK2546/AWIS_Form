@@ -96,7 +96,7 @@ def approve_form_page(request : HttpRequest):
     })
 
 @login_required
-def view_form(request : HttpRequest, form_id : int):
+def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
 
     selected_form = FormData.objects.filter(form__req_form_number=form_id).first().form
 
@@ -105,22 +105,22 @@ def view_form(request : HttpRequest, form_id : int):
     warrant_list = []
     for item in warrants:
         dict_item = item.convertBacktoFormView()
-        form = DisabledWarrantForm(initial=dict_item)
+        form = ObjWarrantForm(initial=dict_item)
         warrant_list.append(
             form
         )
 
     form_data = selected_form.convertBacktoFormView()
     
-    form = DisabledFormStep1(initial=form_data, prefix="main_form")
+    form = ObjStep1Form(initial=form_data, prefix="main_form")
 
-    print(
-        json.dumps(
-            selected_form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False
-        )
-    )
+    # print(
+    #     json.dumps(
+    #         selected_form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False
+    #     )
+    # )
 
-    return render(request, "warrant_form/view_all.html", {
+    return render(request, f"warrant_form/{selected_html}", {
         "user": request.user,
         "form": form,
         "warrant_list": warrant_list,
@@ -133,6 +133,49 @@ def view_form(request : HttpRequest, form_id : int):
         "acc_district": form_data.get("acc_district"),
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
+
+@login_required
+@permission_required("dashboard.edit_formawaitingapproval", raise_exception=True)
+def edit_form(request : HttpRequest, form_id : int):
+
+    form_await = FormData.objects.filter(form__req_form_number=form_id).first()
+    reqform = None
+
+    if request.method == "POST":
+        try:
+            form = AWISFormStep1(request.POST, prefix="main_form")
+            warrants = WarrantForm(request.POST,)
+
+            if form.is_valid():
+                    reqform : ReqformDataModel = ReqformDataModel.objects.create(**form.cleaned_data)
+            else:
+                print(form.errors.as_text())
+
+            if warrants.is_valid():
+                for item_dict in [warrants]:
+                    warrant : WarrantDataModel = WarrantDataModel.objects.create(
+                        **item_dict.cleaned_data
+                    )
+                    if reqform:
+                        reqform.warrants.add(warrant)
+
+            old_form = form_await.form
+
+            old_form.delete()
+
+            form_await.form = reqform
+            form_await.approve_status = 1
+
+            form_await.save()
+
+            return redirect(reverse("dashboard:dashboard"))
+
+        except Exception as e:
+            print(e)
+            pass
+        
+    return view_form(request, form_id, WarrantForm, AWISFormStep1, "edit_form.html")
+
 
 @login_required
 @permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
@@ -204,67 +247,67 @@ def success_page(request : HttpRequest):
 ######################################################################
 #EDIT THE FORM
 
-@login_required
-@permission_required("dashboard.edit_formawaitingapproval", raise_exception=True)
-def edit_form(request : HttpRequest, form_id : int):
-    if not request.user.has_perm("dashboard.can_approve_form"):
-        return HttpResponseForbidden("403 Forbidden: No Permission")
+# @login_required
+# @permission_required("dashboard.edit_formawaitingapproval", raise_exception=True)
+# def edit_form(request : HttpRequest, form_id : int):
+#     if not request.user.has_perm("dashboard.can_approve_form"):
+#         return HttpResponseForbidden("403 Forbidden: No Permission")
     
-    selected_form = FormData.objects.filter(id=form_id).first()
-    current_user = request.user
+#     selected_form = FormData.objects.filter(id=form_id).first()
+#     current_user = request.user
 
-    if not ((current_user == selected_form.form_creator.user) or (current_user == selected_form.form_owner.user)):
-        return JsonResponse({
-            "status": 403,
-            "message": "Not the owner or creator."
-        }, status=403)
+#     if not ((current_user == selected_form.form_creator.user) or (current_user == selected_form.form_owner.user)):
+#         return JsonResponse({
+#             "status": 403,
+#             "message": "Not the owner or creator."
+#         }, status=403)
     
-    # if selected_form.approve_status == FormData.ApprovalStatus.APPROVED:
-    #     return JsonResponse({
-    #         "status": 405,
-    #         "message": "API already sent. Can't edit anymore."
-    #     }, status=405)
+#     # if selected_form.approve_status == FormData.ApprovalStatus.APPROVED:
+#     #     return JsonResponse({
+#     #         "status": 405,
+#     #         "message": "API already sent. Can't edit anymore."
+#     #     }, status=405)
 
-    if request.method == "POST":
-        main_form = AWISFormStep1(request.POST, prefix="main_form")
-        sub_form = WarrantForm(request.POST, prefix="sub_form")
+#     if request.method == "POST":
+#         main_form = AWISFormStep1(request.POST, prefix="main_form")
+#         sub_form = WarrantForm(request.POST, prefix="sub_form")
 
-        if main_form.is_valid() and sub_form.is_valid():
-            awis_obj : ReqformDataModel = main_form.save(commit=False)
-            warrant_obj : WarrantDataModel = sub_form.save()
+#         if main_form.is_valid() and sub_form.is_valid():
+#             awis_obj : ReqformDataModel = main_form.save(commit=False)
+#             warrant_obj : WarrantDataModel = sub_form.save()
 
-            awis_obj.save()
-            awis_obj.warrants.add(warrant_obj)
+#             awis_obj.save()
+#             awis_obj.warrants.add(warrant_obj)
             
-            selected_form.form.delete()
+#             selected_form.form.delete()
             
-            # The old object is replaced by the new one.
-            selected_form.form = awis_obj
-            # Enable approval again.
-            selected_form.approve_status = FormData.ApprovalStatus.PENDING
+#             # The old object is replaced by the new one.
+#             selected_form.form = awis_obj
+#             # Enable approval again.
+#             selected_form.approve_status = FormData.ApprovalStatus.PENDING
 
-            selected_form.save()
+#             selected_form.save()
 
-            return redirect(reverse("dashboard:success_page"))
-        else:
-            print(main_form.errors.as_text())
-            print(sub_form.errors.as_text())
+#             return redirect(reverse("dashboard:success_page"))
+#         else:
+#             print(main_form.errors.as_text())
+#             print(sub_form.errors.as_text())
     
-    form_obj : ReqformDataModel = selected_form.form.convertBacktoFormView()
-    warrants_list : list[WarrantDataModel] = selected_form.form.warrants.all()[0].toAPICompatibleDict()
+#     form_obj : ReqformDataModel = selected_form.form.convertBacktoFormView()
+#     warrants_list : list[WarrantDataModel] = selected_form.form.warrants.all()[0].toAPICompatibleDict()
 
-    # warrants_list = [warrant.toAPICompatibleDict() for warrant in warrants_list][0]
+#     # warrants_list = [warrant.toAPICompatibleDict() for warrant in warrants_list][0]
 
-    main_form = AWISFormStep1(initial=form_obj, prefix="main_form",)
-    sub_form = WarrantForm(initial=warrants_list, prefix="sub_form")
+#     main_form = AWISFormStep1(initial=form_obj, prefix="main_form",)
+#     sub_form = WarrantForm(initial=warrants_list, prefix="sub_form")
 
-    return render(request, "warrant_form/awis_step1.html", {
-        # "main_form": main_form,
-        "sub_form": sub_form,
-        "user": request.user,
-        "action": "Edit",
-        "form": main_form,
-    })
+#     return render(request, "warrant_form/awis_step1.html", {
+#         # "main_form": main_form,
+#         "sub_form": sub_form,
+#         "user": request.user,
+#         "action": "Edit",
+#         "form": main_form,
+#     })
     
 ###########################################################################
 

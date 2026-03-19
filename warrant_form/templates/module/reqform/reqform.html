@@ -4,16 +4,16 @@
 <h3>ข้อมูลที่กรอกมีข้อผิดพลาด</h3>
 {% endif %}
 
-<form id="awis-form" method="post">
     {% if not disabled %}
     {% csrf_token %}
-    
+    {% endif %}
+
     {{ form.court_code.as_hidden }}
     {{ form.police_station_id.as_hidden}}
     {{ form.req_no_plaintiff.as_hidden }}
     {{ form.create_uid.as_hidden }}
     {{ form.ref_no.as_hidden }}
-    {% endif %}
+    
 
     <div class="form-header-row">    
         <p>(คำร้อง) <br><br>ขอออกหมายจับ </p>
@@ -125,5 +125,3 @@
     {% if not disabled %}
     <p style="display: flex; justify-content: center; margin: 30px 0px"> <button type="submit" class="button" style="background-color: green; margin: 0px;font-size: 2rem;">หน้าถัดไป</button> </p>
     {% endif %}
-</form>
-

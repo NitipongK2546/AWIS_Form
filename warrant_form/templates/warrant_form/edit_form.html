@@ -9,14 +9,15 @@
 {% endblock %}
 
 {% block form %}
-<form>
+<form method="post">
+    {% csrf_token %}
     {% block return %}
     <p class="no-print">
-        <p style="margin-left: 15%;"> <a href="{% url 'dashboard:dashboard' %}" class="button" >กลับ</a> </p>
+        <a href="{% url 'dashboard:dashboard' %}" class="button" >กลับ</a>
     </p>
     {% endblock %}
     <div>
-        {% include 'module/reqform/reqform.html' %}
+        {% include 'module/reqform/reqform.html' with form=form %}
     </div>
 
     {% for form in warrant_list %}
@@ -29,9 +30,8 @@
         {% empty %}
         <p>No warrant</p>
     {% endfor %}
-
-    {% block step3_special %}
-    {% endblock %}
+    <button type="submit">Confirm Edit</button>
+</form>
 {% endblock %}
 
 {% block script %}
