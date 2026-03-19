@@ -120,7 +120,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
     #     )
     # )
 
-    return render(request, f"warrant_form/{selected_html}", {
+    return render(request, f"dashboard/{selected_html}", {
         "user": request.user,
         "form": form,
         "warrant_list": warrant_list,
@@ -146,22 +146,29 @@ def edit_form(request : HttpRequest, form_id : int):
             form = AWISFormStep1(request.POST, prefix="main_form")
             warrants = WarrantForm(request.POST,)
 
+            temp_warrants_store = []
+
             if form.is_valid():
-                    reqform : ReqformDataModel = ReqformDataModel.objects.create(**form.cleaned_data)
+                pass
             else:
                 print(form.errors.as_text())
+                raise Exception("Failed")
 
             if warrants.is_valid():
                 for item_dict in [warrants]:
                     warrant : WarrantDataModel = WarrantDataModel.objects.create(
                         **item_dict.cleaned_data
                     )
-                    if reqform:
-                        reqform.warrants.add(warrant)
+                    temp_warrants_store.append(warrant)
 
             old_form = form_await.form
-
             old_form.delete()
+
+            reqform : ReqformDataModel = ReqformDataModel.objects.create(**form.cleaned_data)
+
+            for item in temp_warrants_store:
+                if reqform:
+                    reqform.warrants.add(item)
 
             form_await.form = reqform
             form_await.approve_status = 1
