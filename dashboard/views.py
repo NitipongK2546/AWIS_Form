@@ -19,6 +19,9 @@ import json
 from datetime import datetime
 from django.utils import timezone
 
+def getFormAwaitViaReqno(reqno : str):
+    return FormData.objects.filter(form__reqno=reqno).first()
+
 # Create your views here.
 
 # I will seperate dashboard + index, just in case.
@@ -87,7 +90,7 @@ def dashboard(request : HttpRequest):
 @login_required
 def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
 
-    selected_form = FormData.objects.filter(form__req_form_number=form_id).first().form
+    selected_form = getFormAwaitViaReqno(form_id).form
 
     warrants : list[WarrantDataModel] = selected_form.warrants.all()
 
@@ -127,8 +130,14 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
 @permission_required("dashboard.edit_formawaitingapproval", raise_exception=True)
 def edit_form(request : HttpRequest, form_id : int):
 
-    form_await = FormData.objects.filter(form__req_form_number=form_id).first()
+    form_await = getFormAwaitViaReqno(form_id)
     reqform = None
+
+    if form_await.approve_status == 2:
+        return JsonResponse({
+            "status": 400,
+            "message": "Can't edit a reqform that has already been sent."
+        }, status=400)
 
     if request.method == "POST":
         try:
@@ -193,7 +202,7 @@ def approve_form_page(request : HttpRequest):
 @permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
 def confirm_approve(request : HttpRequest, form_id : int):
 
-    selected_form = FormData.objects.filter(form__req_form_number=form_id).first()
+    selected_form = getFormAwaitViaReqno(form_id)
     # print(selected_form)
     if request.method == "POST":
         try:
@@ -237,7 +246,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
 
-    selected_form = FormData.objects.filter(form__req_form_number=form_id).first()
+    selected_form = getFormAwaitViaReqno(form_id)
     if request.method == "POST":
         selected_form.approve_status = FormData.ApprovalStatus.REJECTED
         selected_form.save()

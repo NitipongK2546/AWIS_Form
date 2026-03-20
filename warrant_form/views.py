@@ -90,7 +90,7 @@ def step1_reqform(request : HttpRequest):
             "acc_district": old_data.get("acc_district"),
             "acc_sub_district": old_data.get("acc_sub_district"),
         })
-    print(static_data)
+    # print(static_data)
 
     return render(request, "warrant_form/awis_step1.html", context)
 

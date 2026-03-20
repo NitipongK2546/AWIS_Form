@@ -25,7 +25,7 @@ class ReqformDataModel(models.Model):
     court_name = models.CharField(max_length=250, blank=True)
     court_code = models.CharField(max_length=7, verbose_name="รหัส")
 
-    judge_name = models.CharField(max_length=250)
+    judge_name = models.CharField(max_length=250, blank=True)
 
     police_station_id = models.CharField(max_length=8) #REFER id -> tb_police_station
     req_no_plaintiff = models.CharField(max_length=50)
