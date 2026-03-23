@@ -27,15 +27,17 @@
         -webkit-appearance: none;
         -moz-appearance: none;
     }
+
+    form input[type="checkbox"] {
+        border: 1.5px black !important;
+        accent-color: white;
+    }
+
     input:disabled,
     select:disabled,
     textarea:disabled {
         color: black;
         -webkit-text-fill-color: black; /* fixes Chrome grey text */
         opacity: 1;
-    }
-
-    input[type="time"] {
-        width: 120px;
     }
 }

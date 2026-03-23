@@ -36,10 +36,8 @@
                 <td>
                     <a href="{% url 'dashboard:get_form' form.form.reqno %}">View</a> |
                     <a href="{% url 'dashboard:edit_form' form.form.reqno %}">Edit</a> |
-                    {% comment %}
                     <a href="{% url 'dashboard:confirm_approve' form.form.reqno %}">Approve</a> |
                     <a href="{% url 'dashboard:confirm_reject' form.form.reqno %}">Reject</a>
-                    {% endcomment %}
                 </td>
             </tr>
             {% endif %}
