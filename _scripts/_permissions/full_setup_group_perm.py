@@ -16,7 +16,7 @@ for role in settings.RoleList:
     role_group, created = Group.objects.get_or_create(
         name=role.value
     )
-    default_permission = default_perms.get_perm(role.name)
+    # default_permission = default_perms.get_perm(role.name)
 
     # role_group.permissions.add(default_permission)
 
