@@ -1,6 +1,23 @@
 from enum import Enum
 from django.db import models
 
+# import enum
+
+# # Dynamic data (e.g., from a database or external configuration)
+# dynamic_data = {
+#     'RED': '#FF0000',
+#     'GREEN': '#00FF00',
+#     'BLUE': '#0000FF'
+# }
+
+# # Create the Enum dynamically
+# Color = enum.Enum('Color', dynamic_data)
+
+# # Accessing members
+# print(Color.RED)
+# print(Color.RED.name)
+# print(Color.RED.value)
+
 # เพิ่มตามที่ต้องการ
 class PermissionList(Enum):
     ADMIN_PANEL = "adminPanel"
