@@ -24,9 +24,3 @@ class OTPCollection(models.Model):
 
     def __str__(self):
         return f"OTP secret for {self.user.username}"
-    
-class PermissionList:
-    class AdminPanel(models.Model):
-        class Meta:
-            default_permissions = ()
-            permissions = perms.getPermissions()
