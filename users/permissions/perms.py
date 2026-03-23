@@ -1,12 +1,5 @@
 from users.permissions.base import BasePerms, PermissionType
-
-from enum import Enum
-
-class PermissionList(Enum):
-    ADMIN_PANEL = "adminPanel"
-    
-    REQFORM_AWAIT_APPROVAL = "reqformAwaitApproval"
-    REQFORM_SUBMITTED = "reqformSubmitted"
+from awis_custom_settings.settings import PermissionList
 
 def _returnAllPermissions():
     output_list = []

@@ -1,11 +1,11 @@
-from users.permissions import forms
+from users.permissions import perms
 
 class AWISPermissions:
     permissison_list : list[tuple] = []
 
     def __init__(self):
         self.permissison_list.extend(
-            forms.all_permissions
+            perms.all_permissions
         )
     
     def __len__(self):
