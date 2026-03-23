@@ -1,25 +1,23 @@
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Group, Permission
 
-employee_group, created = Group.objects.get_or_create(name='Employee')
-manager_group, created = Group.objects.get_or_create(name='Manager')
-director_group, created = Group.objects.get_or_create(name='Director')
-system_admin_group, created = Group.objects.get_or_create(name='System Admin')
+from awis_custom_settings import settings, default_perms
 
-outside_group, created = Group.objects.get_or_create(name='Outside')
+from users import PermissionList, PermissionType, perm_str
+from users.permissions import AWISPermissions, PermissionList, PermissionType, creation
 
-###############################################################################
+for name in PermissionList:
+    ct = creation.createContentType(name)
 
-awaitform_content = ContentType.objects.get(app_label="dashboard", model="formawaitingapproval")
+    for perm in PermissionType:
+        creation.createPermissionObj(ct, perm, name)
 
-reqform_content = ContentType.objects.get(app_label="dashboard", model="visualreqformdata")
+for role in settings.RoleList:
+    role_group, created = Group.objects.get_or_create(
+        name=role.value
+    )
+    # default_permission = default_perms.get_perm(role.name)
 
-warrant_content = ContentType.objects.get(app_label="dashboard", model="visualwarrantdata")
-
-###############################################################################
-
-permission_awaitform = Permission.objects.filter(
-    content_type=awaitform_content
-)
+    # role_group.permissions.add(default_permission)
 
 # employee_group.permissions.add

@@ -1,14 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
-from admin_panel.forms import CustomizedUserCreationForm
-
+from admin_panel.forms import CustomizedUserCreationForm, RoleChoices
+from .permissions import permissions as perms
 
 # Create your models here.
 
 class UserDataModel(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.PROTECT)
-    role = models.IntegerField(choices=CustomizedUserCreationForm.RoleChoices)
+    role = models.IntegerField(choices=RoleChoices)
 
     # uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 

@@ -3,18 +3,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 
 from django import forms
-from django.db import models
+
+from awis_custom_settings.settings import RoleChoices
 
 class CustomizedUserCreationForm(UserCreationForm):
-    class RoleChoices(models.IntegerChoices):
-        OUTSIDE = (0, "Outside")
-
-        EMPLOYEE = (10, "Employee") 
-        MANAGER = (11, "Manager")
-        DIRECTOR = (12, "Director")
-
-        SYSTEM_ADMIN = (99, "System Admin")
-
     role = forms.ChoiceField(choices=RoleChoices)
     class Meta:
         model = User
