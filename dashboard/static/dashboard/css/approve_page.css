@@ -1,7 +1,7 @@
 body {
     font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
     /* background-image: url("/static/dashboard/images/background.jpg"); */
-    background: linear-gradient(to bottom, rgb(226, 158, 32) 50%, rgb(220, 220, 220) 50%);
+    background: linear-gradient(to bottom, rgb(32, 165, 226) 50%, rgb(220, 220, 220) 50%);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -21,6 +21,8 @@ body {
 }
 
 .confirm-button {
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    font-size: 1.1rem;
     width: 100px;
     height: 40px;
     background-color: brown;
@@ -29,6 +31,7 @@ body {
     font-weight: bold;
     cursor: pointer;
     border: none;
+    text-decoration-line: none;
 }
 
 .confirm-container p:last-child {

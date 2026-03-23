@@ -12,7 +12,7 @@
 <form>
     {% block return %}
     <p class="no-print">
-        <p style="margin-left: 15%;"> <a href="{% url 'dashboard:dashboard' %}" class="button" >กลับ</a> </p>
+         <a href="{% url 'dashboard:dashboard' %}" class="button" style="margin: 0px;" >กลับ</a> 
     </p>
     {% endblock %}
     <div>
@@ -46,4 +46,3 @@
 <script src="{% static 'js/reqform/handleDistrict.js' %}"></script>
 <script src="{% static 'js/warrantform/handleDistrict.js' %}"></script>
 {% endblock %}
-
