@@ -18,10 +18,10 @@ class RoleList(Enum):
     SYSTEM_ADMIN = "System Admin"
 
 class RoleChoices(models.IntegerChoices):
-    OUTSIDE = (0, RoleList.OUTSIDE)
+    OUTSIDE = (0, RoleList.OUTSIDE.value)
 
-    EMPLOYEE = (10, RoleList.EMPLOYEE) 
-    MANAGER = (11, RoleList.MANAGER)
-    DIRECTOR = (12, RoleList.DIRECTOR)
+    EMPLOYEE = (10, RoleList.EMPLOYEE.value) 
+    MANAGER = (11, RoleList.MANAGER.value)
+    DIRECTOR = (12, RoleList.DIRECTOR.value)
 
-    SYSTEM_ADMIN = (99, RoleList.SYSTEM_ADMIN)
+    SYSTEM_ADMIN = (99, RoleList.SYSTEM_ADMIN.value)

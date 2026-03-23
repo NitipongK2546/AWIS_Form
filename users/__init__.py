@@ -1,1 +1,1 @@
-from users.permissions.perms import PermissionList, PermissionType, perm_str
+from .permissions.perms import PermissionList, PermissionType, perm_str

@@ -1,4 +1,4 @@
-from users.permissions.base import BasePerms, PermissionType
+from .base import BasePerms, PermissionType
 from awis_custom_settings.settings import PermissionList
 
 def _returnAllPermissions():
