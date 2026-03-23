@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from admin_panel.forms import CustomizedUserCreationForm
-
+from users.permissions import permissions as perms
 
 # Create your models here.
 
@@ -24,3 +24,8 @@ class OTPCollection(models.Model):
 
     def __str__(self):
         return f"OTP secret for {self.user.username}"
+    
+class PermissionList(models.Model):
+    class Meta:
+        default_permissions = ()
+        permissions = perms.getPermissions()

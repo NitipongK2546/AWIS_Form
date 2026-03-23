@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, JsonResponse
 from admin_panel.forms import CustomizedUserCreationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User, Group
 
 from users.models import UserDataModel
+
+from users.permissions.perms import PermissionList, PermissionType, perm_str
 
 FORBIDDEN_MSG = JsonResponse({
                 "status": "403",
@@ -14,7 +16,7 @@ FORBIDDEN_MSG = JsonResponse({
 
 # VIEWS
 
-@login_required(login_url="/users/login/")
+@permission_required(perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL), raise_exception=True)
 def collections(request : HttpRequest):
     if not request.user.is_superuser:
         return FORBIDDEN_MSG
@@ -28,7 +30,7 @@ role_dict = {
     "99": "System Admin",
 }
 
-@login_required(login_url="/users/login/")
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.ADMIN_PANEL), raise_exception=True)
 def signup(request : HttpRequest):
     if not request.user.is_staff:
         return FORBIDDEN_MSG

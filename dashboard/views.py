@@ -19,6 +19,8 @@ import json
 from datetime import datetime
 from django.utils import timezone
 
+from users.permissions.perms import PermissionList, PermissionType, perm_str
+
 def getFormAwaitViaReqno(reqno : str):
     return FormData.objects.filter(form__reqno=reqno).first()
 
@@ -87,7 +89,7 @@ def dashboard(request : HttpRequest):
 # Form Edit and View Section 
 #
 
-@login_required
+@permission_required(perm_str(PermissionType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
 
     selected_form = getFormAwaitViaReqno(form_id).form
@@ -126,8 +128,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
-@login_required
-@permission_required("dashboard.edit_formawaitingapproval", raise_exception=True)
+@permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def edit_form(request : HttpRequest, form_id : int):
 
     form_await = getFormAwaitViaReqno(form_id)
@@ -187,8 +188,7 @@ def edit_form(request : HttpRequest, form_id : int):
 # FORM APPROVE SECTION
 #
 
-@login_required
-@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def approve_form_page(request : HttpRequest):
 
     all_forms = FormData.objects.all()
@@ -198,8 +198,7 @@ def approve_form_page(request : HttpRequest):
         "forms": all_forms,
     })
 
-@login_required
-@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def confirm_approve(request : HttpRequest, form_id : int):
 
     selected_form = getFormAwaitViaReqno(form_id)
@@ -240,8 +239,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
     })
     
 
-@login_required
-@permission_required("dashboard.approve_formawaitingapproval", raise_exception=True)
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def confirm_reject(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
