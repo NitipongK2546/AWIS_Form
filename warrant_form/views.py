@@ -37,7 +37,7 @@ def success_page(request : HttpRequest):
 
 ##############################################################################
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def step1_reqform(request : HttpRequest):
     static_data = {
         "court_code": "0000011",
@@ -96,7 +96,7 @@ def step1_reqform(request : HttpRequest):
 
     return render(request, "warrant_form/awis_step1.html", context)
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def step2_warrantform(request : HttpRequest):
     if request.method == "POST":
         try:
@@ -149,7 +149,7 @@ def step2_warrantform(request : HttpRequest):
 
     return render(request, "warrant_form/awis_step2.html", context)
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def step3_confirm_form(request : HttpRequest):
     if request.method == "POST":
         try:
@@ -165,7 +165,7 @@ def step3_confirm_form(request : HttpRequest):
                 if reqform:
                     reqform.warrants.add(warrant)
 
-            user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
+            user_obj = UserDataModel.objects.get(username=request.user.username)
             VisualFormApprovalData.objects.create(
                 form=reqform, 
                 form_creator=user_obj, 

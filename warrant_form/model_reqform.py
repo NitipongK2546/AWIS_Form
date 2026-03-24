@@ -259,6 +259,105 @@ class ReqformDataModel(models.Model):
         return dict_main_awis
     
     def prepareTextToSpeech(self):
-        prepared_text = ""
+        prepared_text = \
+f"""
+คำร้องขอออกหมายจับที่ {self.req_form_number}\n
+วันที่ {self.req_day} เดือน {self.req_month} ปี พ.ศ. {self.req_year}\n
+ผู้ร้อง {self.req_name}\n
+
+ข้าพเจ้า {self.req_name} ตำแหน่ง {self.req_pos}
+อายุ {self.req_age} ปี อาชีพ พนักงานของรัฐ สถานที่ทำงาน {self.req_office}
+จังหวัด {self.req_province}
+อำเภอ/เขต {self.req_district}
+ตำบล/แขวง {self.req_sub_district}
+โทรศัพท์ {self.req_tel}
+
+ขอยื่นคำร้องขอออกหมายจับยื่นต่อศาลดังมีข้อความที่จะกล่าวดังต่อไปนี้\n
+
+ข้อ 1. 
+ด้วย {assemble_cause(self.cause_type_id, self.cause_text)}
+
+ว่า {self.acc_full_name}
+เลขบัตรประชาชน {self.acc_card_id}
+
+อายุ {self.acc_age}
+เชื้อชาติ {self.acc_origin}
+สัญชาติ {self.acc_nation}
+อาชีพ {self.acc_occupation}
+
+อยู่บ้านเลขที่ {self.acc_addno}
+หมู่ที่ {self.acc_vilno}
+ถนน {self.acc_road}
+
+ตรอก/ซอย {self.acc_soi}
+ใกล้เคียง {self.acc_near}
+จังหวัด {self.acc_province}
+อำเภอ/เขต {self.acc_district}
+ตำบล/แขวง {self.acc_sub_district}
+
+โทรศัพท์ {self.acc_tel}
+
+{"ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี" if self.charge_type_1 else ""}
+
+{"ได้หรือน่าจะได้กระทำความผิดอาญาและน่าจะหลบหนีหรือจะไปยุ่งเหยิงกับพยานหลักฐานหรือก่ออันตรายประการอื่น" if self.charge_type_2 else ""}
+
+เหตุเกิดที่ {self.scene}
+
+เมื่อวันที่ {self.scene_date.day} เดือน {self.scene_date.month} พ.ศ. {self.scene_date.year} เวลา {self.scene_date.time()} นาฬิกา
+
+มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับ คือ {self.cause_text}
+
+เป็นการกระทำความผิดฐาน {self.act}
+
+ตามกฎหมาย {self.law}
+
+รายละเอียดข้อมูลและพยานหลักฐาน ปรากฎตามที่เอกสารที่แนบมาพร้อมนี้
+
+ข้อ 2. ผู้ร้องประสงค์จะทำการจับกุม
+
+จึงขอให้ศาลออกหมายจับ 
+{self.accused} มาดำเนินคดี
+
+นับตั้งแต่วันที่ 
+{self.woa_start_date.day}
+
+{self.woa_start_date.month}
+
+{self.woa_start_date.year}
+
+{self.woa_start_date.time()} น. 
+แต่ไม่เกิน 
+{self.woa_end_date.day}
+
+{self.woa_end_date.month}
+
+{self.woa_end_date.year}
+
+{self.woa_end_date.time()} น. 
+ในการยื่นคำร้องนี้ ผู้ร้องได้มอบหมายให้ {self.writer_name}
+ตำแหน่ง {self.write_position}
+
+ซึ่งเป็นผู้ใต้บังคับบัญชา เป็นผู้นำคำร้องมายื่นต่อศาล
+และหากศาลเรียกสอบถามเมื่อใด ผู้ร้องพร้อมจะมาให้ศาลสอบในทันที
+
+ผู้ร้อง {"เคย" if self.have_req else "ไม่เคย"} ร้องขอให้ศาล {self.have_court_code}
+
+ออกหมายจับบุคคลดังกล่าว โดยอาศัยเหตุแห่งการร้องขอเดียวกันนี้ หรือเหตุอื่น (ระบุ)
+{self.have_act}
+และศาลสั่ง 
+{self.have_injunc}
+
+ควรมิควรแล้วแต่จะโปรด.
+{self.req_name}
+ผู้ร้อง
+"""
 
         return prepared_text
+        
+def assemble_cause(cause_id : int, cause_text : str):
+    temp = {
+        1: f"{cause_text} มาแจ้งความร้องทุกข์ต่อพนักงานสอบสวน",
+        2: f"ปรากฎจากการสืบสวน/สอบสวนของ {cause_text}"
+    }
+
+    return temp.get(cause_id, "")

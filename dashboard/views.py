@@ -33,11 +33,7 @@ def index(request : HttpRequest):
 @login_required
 def dashboard(request : HttpRequest):
 
-    user_data = UserDataModel.objects.filter(username=request.user.username).first()
-
-    creator = FormData.objects.filter(form_creator=user_data)
-    owner = FormData.objects.filter(form_owner=user_data)
-    waiting_approval_forms = creator.union(owner)
+    waiting_approval_forms = FormData.objects.all()
 
     form_sent = FormSent.objects.all()
 
@@ -90,10 +86,18 @@ def dashboard(request : HttpRequest):
 # Form Edit and View Section 
 #
 
-@permission_required(perm_str(PermissionType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@permission_required(perm_str(PermissionType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL))
 def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
 
-    selected_form = getFormAwaitViaReqno(form_id).form
+    user_data = UserDataModel.objects.filter(username=request.user.username).first()
+
+    selected_form = getFormAwaitViaReqno(form_id)
+
+    if not (selected_form.form_creator == user_data):
+        return HttpResponseForbidden()
+
+    selected_form = selected_form.form
+    # print(selected_form.prepareTextToSpeech())
 
     warrants : list[WarrantDataModel] = selected_form.warrants.all()
 
@@ -129,12 +133,17 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
-@permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL))
 def edit_form(request : HttpRequest, form_id : int):
+
+    user_data = UserDataModel.objects.filter(username=request.user.username).first()
 
     form_await = getFormAwaitViaReqno(form_id)
     reqform = None
 
+    if not (form_await.form_creator == user_data):
+        return HttpResponseForbidden()
+    
     if form_await.approve_status == 2:
         return JsonResponse({
             "status": 400,
@@ -189,7 +198,7 @@ def edit_form(request : HttpRequest, form_id : int):
 # FORM APPROVE SECTION
 #
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def approve_form_page(request : HttpRequest):
 
     all_forms = FormData.objects.all()
@@ -199,7 +208,7 @@ def approve_form_page(request : HttpRequest):
         "forms": all_forms,
     })
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def confirm_approve(request : HttpRequest, form_id : int):
 
     selected_form = getFormAwaitViaReqno(form_id)
@@ -240,7 +249,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
     })
     
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def confirm_reject(request : HttpRequest, form_id : int):
     if not request.user.has_perm("dashboard.can_approve_form"):
         return HttpResponseForbidden("403 Forbidden: No Permission")
