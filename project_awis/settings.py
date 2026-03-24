@@ -68,6 +68,8 @@ INSTALLED_APPS = [
     # 'permissions',
 ]
 
+AUTH_USER_MODEL = "users.UserDataModel"
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, JsonResponse
-from admin_panel.forms import CustomizedUserCreationForm, RoleChoices
+from admin_panel.forms import CustomizedUserCreationForm
+
+from awis_custom_settings.settings import RoleChoices
+
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User, Group
 

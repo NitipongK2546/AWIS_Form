@@ -258,3 +258,7 @@ class ReqformDataModel(models.Model):
 
         return dict_main_awis
     
+    def prepareTextToSpeech(self):
+        prepared_text = ""
+
+        return prepared_text

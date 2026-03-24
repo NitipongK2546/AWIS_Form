@@ -33,7 +33,7 @@ def index(request : HttpRequest):
 @login_required
 def dashboard(request : HttpRequest):
 
-    user_data = UserDataModel.objects.filter(user=request.user).first()
+    user_data = UserDataModel.objects.filter(username=request.user.username).first()
 
     creator = FormData.objects.filter(form_creator=user_data)
     owner = FormData.objects.filter(form_owner=user_data)
