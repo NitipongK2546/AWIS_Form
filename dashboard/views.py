@@ -65,7 +65,8 @@ def dashboard(request : HttpRequest):
         data_dict = {
             "court_injunction": warrant_wrap.get_court_injunction_display, 
             "reqno": warrant_data.reqforms.all().first().reqno,
-            "woa_no": f"{warrant_data.woa_no}/{warrant_data.woa_date.year + 543}",
+            #"woa_no": f"{warrant_data.woa_no}/{warrant_data.woa_date.year + 543}",
+            "woa_no": f"{warrant_data.woa_no}",
             "woa_year": warrant_data.woa_date.year + 543,
             "woa_type": f"หมายจับ {warrant_data.get_woa_type_text()}",
             "woa_refno": warrant_data.woa_refno,

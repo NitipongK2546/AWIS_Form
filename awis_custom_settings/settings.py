@@ -25,6 +25,12 @@ class PermissionList(Enum):
     REQFORM_AWAIT_APPROVAL = "reqformAwaitApproval"
     REQFORM_SUBMITTED = "reqformSubmitted"
 
+class PermissionListGrouping(Enum):
+    REQFORM = [
+        PermissionList.REQFORM_AWAIT_APPROVAL, 
+        PermissionList.REQFORM_SUBMITTED,
+    ]
+
 class RoleList(Enum):
     OUTSIDE = "Outside"
 
