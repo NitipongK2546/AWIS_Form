@@ -16,8 +16,8 @@
 <form id="ownership-form" method="post">
     {% csrf_token %}
 
-    Form Creator {{ form.form_creator }}
-    Form Owner {{ form.form_owner }}
+    <p><span>Form Creator:</span> {{ creator }}</p>
+    <p><span>Form Owner:</span> {{ form.form_owner }}</p>
 
     <button type="submit">Confirm</button>
 </form>

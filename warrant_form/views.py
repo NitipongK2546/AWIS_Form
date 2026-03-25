@@ -48,14 +48,17 @@ def step0_confirm_owner(request : HttpRequest):
             request.session.update({
                 "step0": True,
                 "form_owner": data.get("form_owner").pk,
-                "form_creator": data.get("form_creator").pk,
+                "form_creator": request.user.id,
             })
 
             return redirect(reverse("forms:step1"))
         
-    form = OwnershipForm()
+    form = OwnershipForm(initial={
+        "form_owner": request.user.id,
+    })
     return render(request, "warrant_form/awis_step0.html", {
-        "form": form
+        "creator": request.user.get_full_name(),
+        "form": form,
     })
 
 @permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
