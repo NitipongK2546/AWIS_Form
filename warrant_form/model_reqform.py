@@ -292,14 +292,14 @@ class ReqformDataModel(models.Model):
         prepared_text = \
 f"""
 คำร้องขอออกหมายจับที่ {self.req_form_number}\n
-วันที่ {self.req_day} เดือน {THAI_MONTHS.get(self.req_month)} ปี พ.ศ. {self.req_year}\n
+วันที่ {self.req_day} เดือน {THAI_MONTHS.get(self.req_month)} ปี พ.ศ. {self.req_year + 543}\n
 ผู้ร้อง {self.req_name}\n
 
 ข้าพเจ้า {self.req_name} ตำแหน่ง {self.req_pos}
 อายุ {self.req_age} ปี อาชีพ พนักงานของรัฐ สถานที่ทำงาน {self.req_office}
 จังหวัด {CentralForm.thai_codes.getValueOfCode(self.req_province)}
-อำเภอ/เขต {CentralForm.thai_codes.getValueOfCode(self.req_district)}
-ตำบล/แขวง {CentralForm.thai_codes.getValueOfCode(self.req_sub_district)}
+{"อำเภอ" if self.req_province != 10 else "เขต"} {CentralForm.thai_codes.getValueOfCode(self.req_district)},
+{"ตำบล" if self.req_province != 10 else "แขวง"} {CentralForm.thai_codes.getValueOfCode(self.req_sub_district)},
 โทรศัพท์ {self.req_tel}
 
 ขอยื่นคำร้องขอออกหมายจับยื่นต่อศาลดังมีข้อความที่จะกล่าวดังต่อไปนี้\n
@@ -308,22 +308,22 @@ f"""
 ด้วย {assemble_cause(self.cause_type_id, self.cause_text)}
 
 ว่า {self.acc_full_name}
-เลขบัตรประชาชน {self.acc_card_id}
+เลขบัตรประชาชน {self.acc_card_id},
 
-อายุ {self.acc_age}
-เชื้อชาติ {self.acc_origin}
-สัญชาติ {self.acc_nation}
-อาชีพ {self.acc_occupation}
+อายุ {self.acc_age},
+เชื้อชาติ {self.acc_origin},
+สัญชาติ {self.acc_nation},
+อาชีพ {self.acc_occupation},
 
-อยู่บ้านเลขที่ {self.acc_addno}
-หมู่ที่ {self.acc_vilno}
-ถนน {self.acc_road}
+อยู่บ้านเลขที่ {self.acc_addno},
+หมู่ที่ {self.acc_vilno},
+ถนน {self.acc_road},
 
-ตรอก/ซอย {self.acc_soi}
-ใกล้เคียง {self.acc_near}
-จังหวัด {CentralForm.thai_codes.getValueOfCode(self.acc_province)}
-อำเภอ/เขต {CentralForm.thai_codes.getValueOfCode(self.acc_district)}
-ตำบล/แขวง {CentralForm.thai_codes.getValueOfCode(self.acc_sub_district)}
+ตรอก ซอย {self.acc_soi},
+ใกล้เคียง {self.acc_near},
+จังหวัด {CentralForm.thai_codes.getValueOfCode(self.acc_province)},
+{"อำเภอ" if self.acc_province != 10 else "เขต"} {CentralForm.thai_codes.getValueOfCode(self.acc_district)},
+{"ตำบล" if self.acc_province != 10 else "แขวง"} {CentralForm.thai_codes.getValueOfCode(self.acc_sub_district)},
 
 โทรศัพท์ {self.acc_tel}
 
@@ -333,7 +333,7 @@ f"""
 
 เหตุเกิดที่ {self.scene}
 
-เมื่อวันที่ {self.scene_date.day} เดือน {THAI_MONTHS.get(self.scene_date.month)} พ.ศ. {self.scene_date.year} เวลา {self.scene_date.time()} นาฬิกา
+เมื่อวันที่ {self.scene_date.day} เดือน {THAI_MONTHS.get(self.scene_date.month)} พ.ศ. {self.scene_date.year + 543} เวลา {self.scene_date.time()} นาฬิกา
 
 มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับ คือ {self.cause_text}
 
@@ -343,7 +343,7 @@ f"""
 
 รายละเอียดข้อมูลและพยานหลักฐาน ปรากฎตามที่เอกสารที่แนบมาพร้อมนี้
 
-ข้อ 2. ผู้ร้องประสงค์จะทำการจับกุม
+ข้อ 2. ผู้ร้องประสงค์จะทำการจับกุม {self.accused}
 
 จึงขอให้ศาลออกหมายจับ 
 {self.accused} มาดำเนินคดี
@@ -353,7 +353,7 @@ f"""
 
 {THAI_MONTHS.get(self.woa_start_date.month)}
 
-{self.woa_start_date.year}
+{self.woa_start_date.year + 543}
 
 {self.woa_start_date.time()} น. 
 แต่ไม่เกิน 
@@ -361,7 +361,7 @@ f"""
 
 {THAI_MONTHS.get(self.woa_end_date.month)}
 
-{self.woa_end_date.year}
+{self.woa_end_date.year + 543}
 
 {self.woa_end_date.time()} น. 
 ในการยื่นคำร้องนี้ ผู้ร้องได้มอบหมายให้ {self.writer_name}
@@ -370,12 +370,18 @@ f"""
 ซึ่งเป็นผู้ใต้บังคับบัญชา เป็นผู้นำคำร้องมายื่นต่อศาล
 และหากศาลเรียกสอบถามเมื่อใด ผู้ร้องพร้อมจะมาให้ศาลสอบในทันที
 
-ผู้ร้อง {"เคย" if self.have_req else "ไม่เคย"} ร้องขอให้ศาล {self.have_court_code}
+ผู้ร้อง {"เคย" if self.have_req else "ไม่เคย"} ร้องขอให้ศาล {self.have_court_code} ออกหมายจับบุคคลดังกล่าว 
 
-ออกหมายจับบุคคลดังกล่าว โดยอาศัยเหตุแห่งการร้องขอเดียวกันนี้ หรือเหตุอื่น (ระบุ)
+{
+f"""
+โดยอาศัยเหตุแห่งการร้องขอเดียวกันนี้ หรือเหตุอื่น (ระบุ)
 {self.have_act}
 และศาลสั่ง 
 {self.have_injunc}
+"""
+
+if self.have_req else ""
+}
 
 ควรมิควรแล้วแต่จะโปรด.
 {self.req_name}.

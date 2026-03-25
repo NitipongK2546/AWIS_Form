@@ -272,9 +272,9 @@ class AWISFormStep1(forms.Form):
             raise Exception("Cause Type ID picked 2 types at the same time.")
             
         if id1:
-            current_dict.update({"have_req": 0})
-        elif id2:
             current_dict.update({"have_req": 1})
+        elif id2:
+            current_dict.update({"have_req": 0})
 
         current_dict.pop(f"have_req_1", None)
         current_dict.pop(f"have_req_2", None)

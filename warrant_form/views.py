@@ -7,6 +7,7 @@ from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledWarrantForm, 
 # from warrant_form.doc_create import doc_create_with_context
 from warrant_form.model_warrant import WarrantDataModel
 from warrant_form.model_reqform import ReqformDataModel
+from warrant_form.form_ownership import OwnershipForm
 
 
 from dashboard.models import FormAwaitingApproval as VisualFormApprovalData
@@ -38,7 +39,31 @@ def success_page(request : HttpRequest):
 ##############################################################################
 
 @permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
+def step0_confirm_owner(request : HttpRequest):
+    if request.method == "POST":
+        form = OwnershipForm(request.POST)
+        if form.is_valid():
+            data : dict[str, UserDataModel] = form.cleaned_data
+
+            request.session.update({
+                "step0": True,
+                "form_owner": data.get("form_owner").pk,
+                "form_creator": data.get("form_creator").pk,
+            })
+            
+            return redirect(reverse("forms:step1"))
+        
+    form = OwnershipForm()
+    return render(request, "warrant_form/awis_step0.html", {
+        "form": form
+    })
+
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def step1_reqform(request : HttpRequest):
+    
+    if not request.session.get("step0"):
+        return redirect(reverse("forms:step0"))
+
     static_data = {
         "court_code": "0000011",
         "police_station_id": "TCCT0001",

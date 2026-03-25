@@ -5,7 +5,9 @@ app_name = "forms"
 
 urlpatterns = [
     path("", views.plain_form, name="to-new-form"),
-    path("create-reqform/", views.plain_form, name="to-step1"),
+    # path("create-reqform/", views.plain_form, name="to-step1"),
+
+    path("create-reqform/", views.step0_confirm_owner, name="step0"),
 
     path('create-reqform/step1/', views.step1_reqform, name="step1"),
     path('create-reqform/step2/', views.step2_warrantform, name="step2"),

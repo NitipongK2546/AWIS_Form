@@ -1,0 +1,25 @@
+{% extends 'warrant_form/awis_base.html' %}
+{% load static %}
+
+{% block title %}Request Form{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/step1.css' %}">
+    <link rel="stylesheet" href="{% static 'css/progressbar.css' %}">
+{% endblock %}
+
+{% block progress_bar %}
+<p style="margin-left: 20%;"><a href="{% url 'dashboard:dashboard' %}" class="button">กลับ</a></p>
+{% endblock %}
+
+{% block form %}
+<form id="ownership-form" method="post">
+    {% csrf_token %}
+
+    Form Creator {{ form.form_creator }}
+    Form Owner {{ form.form_owner }}
+
+    <button type="submit">Confirm</button>
+</form>
+{% endblock %}
+
