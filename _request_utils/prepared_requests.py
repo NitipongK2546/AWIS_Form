@@ -24,6 +24,9 @@ def get_base_url_from_env(var_name : str = "BASE_URL") -> str:
 def get_full_url_from_env(var_name : str = "FULL_API_URL") -> str:
     return os.getenv(var_name)
 
+def get_url_from_env(var_name : str) -> str:
+    return os.getenv(var_name)
+
 # Request function.
 
 def _prepare_request_data(target_url : str, data : dict, parameter_data : list, header_data : dict, auth_token : str) -> tuple:
