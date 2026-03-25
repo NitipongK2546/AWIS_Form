@@ -52,7 +52,15 @@
                     {{ form.injunction_date|buddhist_date }}
                 </td>
                 <td>
-                    <a href="{{ form.file_path }}">Link</a>
+                    {% if form.file_path != "" %}
+                    <a href="{{ form.file_path }}">
+                        Link
+                    </a>
+                    {% else %}
+                    <span>
+                        -
+                    </span>
+                    {% endif %}
                 </td>
                 <td>
                     {{ form.because }}

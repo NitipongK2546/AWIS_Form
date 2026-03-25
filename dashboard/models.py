@@ -13,10 +13,10 @@ class FormAwaitingApproval(models.Model):
     """
 
     class Meta:
-        # default_permissions = ()
-        permissions = [
-            ("approve_formawaitingapproval", ""),
-        ]
+        default_permissions = ()
+        # permissions = [
+        #     ("approve_formawaitingapproval", ""),
+        # ]
 
     class ApprovalStatus(models.IntegerChoices):
         REJECTED = (0, "ไม่ผ่านการอนุมติ")
@@ -50,10 +50,10 @@ class VisualReqformData(models.Model):
     เก็บข้อมูลฟอร์มที่ได้ทำการส่งไปแล้ว และสามารถให้บุคคลภายนอกเชื่อม API เข้ามาแก้ไขข้อมูลสถานะได้
     """
     class Meta:
-        # default_permissions = ()
-        permissions = [
-            ("approve_visualreqformdata", ""),
-        ]
+        default_permissions = ()
+        # permissions = [
+        #     ("approve_visualreqformdata", ""),
+        # ]
 
     class AcceptStatus(models.IntegerChoices):
         DENIED = (0, "ไม่รับ")

@@ -34,10 +34,10 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:get_form' form.form.req_form_number %}">View</a> |
-                    <a href="{% url 'dashboard:edit_form' form.form.req_form_number %}">Edit</a> |
-                    <a href="{% url 'dashboard:confirm_approve' form.form.req_form_number %}">Approve</a> |
-                    <a href="{% url 'dashboard:confirm_reject' form.form.req_form_number %}">Reject</a>
+                    <a href="{% url 'dashboard:get_form' form.form.reqno %}">View</a> |
+                    <a href="{% url 'dashboard:edit_form' form.form.reqno %}">Edit</a> |
+                    <a href="{% url 'dashboard:confirm_approve' form.form.reqno %}">Approve</a> |
+                    <a href="{% url 'dashboard:confirm_reject' form.form.reqno %}">Reject</a>
                 </td>
             </tr>
             {% endif %}

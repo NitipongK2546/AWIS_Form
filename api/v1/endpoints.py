@@ -12,6 +12,8 @@ from dashboard.warrant_wrapper import VisualWarrantData, WarrantDataModel
 
 from django.utils import timezone
 
+from users import PermissionList, PermissionType, perm_str
+
 # V1 ENDPOINTS
 
 # Of course, we except from having to use csrf token, because... it's cross site.
@@ -76,7 +78,7 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
         pk=payload.get("user_id")
     ).first()
 
-    if not user.has_perm("dashboard.update_visualreqformdata"):
+    if not user.has_perm(perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED)):
         return HttpResponseForbidden()
 
     data = UtilsHandle.json_retrieval(request)
@@ -162,7 +164,7 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
         pk=payload.get("user_id")
     ).first()
 
-    if not user.has_perm("dashboard.update_visualwarrantdata"):
+    if not user.has_perm(perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED)):
         return HttpResponseForbidden()
 
     data = UtilsHandle.json_retrieval(request)

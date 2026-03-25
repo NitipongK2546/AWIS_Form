@@ -1,15 +1,13 @@
-import os
-import django
+# import os
+# import django
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project_awis.settings")
+# # os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project_awis.settings")
 
-django.setup()
+# # django.setup()
 
 ###############################################################################
 
-import _scripts.create_superuser as create_superuser
+import _scripts.create_superuser
 import _scripts._permissions.full_setup_group_perm 
-
-create_superuser.create_superuser()
 
 ###############################################################################

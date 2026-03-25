@@ -37,7 +37,7 @@ class AWISFormStep1(forms.Form):
     court_name_2 = forms.CharField(max_length=250, required=False)
     court_code = forms.CharField(max_length=7,)
 
-    judge_name = forms.CharField(max_length=250)
+    judge_name = forms.CharField(max_length=250, required=False)
 
     police_station_id = forms.CharField(max_length=8) #REFER id -> tb_police_station
     req_no_plaintiff = forms.CharField(max_length=50)

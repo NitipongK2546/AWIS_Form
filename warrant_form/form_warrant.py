@@ -64,7 +64,7 @@ def toAPICompatibleDictGeneral(incoming_model : models.Model) -> dict[str, objec
 
 class WarrantForm(forms.Form):
 
-    court_name = forms.CharField(max_length=250)
+    court_name = forms.CharField(max_length=250, required=False)
     plaintiff = forms.CharField(max_length=400)
 
     woa_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))

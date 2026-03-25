@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpRequest, JsonResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledWarrantForm, DisabledFormStep1
 # from warrant_form.doc_create import doc_create_with_context
@@ -16,6 +16,8 @@ from users.models import UserDataModel
 from django.utils import timezone
 
 import json
+
+from users import PermissionList, PermissionType, perm_str
 
 ##############################################################################
 # FORM VIEWS
@@ -35,7 +37,7 @@ def success_page(request : HttpRequest):
 
 ##############################################################################
 
-@login_required
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def step1_reqform(request : HttpRequest):
     static_data = {
         "court_code": "0000011",
@@ -90,11 +92,11 @@ def step1_reqform(request : HttpRequest):
             "acc_district": old_data.get("acc_district"),
             "acc_sub_district": old_data.get("acc_sub_district"),
         })
-    print(static_data)
+    # print(static_data)
 
     return render(request, "warrant_form/awis_step1.html", context)
 
-@login_required
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def step2_warrantform(request : HttpRequest):
     if request.method == "POST":
         try:
@@ -147,7 +149,7 @@ def step2_warrantform(request : HttpRequest):
 
     return render(request, "warrant_form/awis_step2.html", context)
 
-@login_required
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def step3_confirm_form(request : HttpRequest):
     if request.method == "POST":
         try:
@@ -163,7 +165,7 @@ def step3_confirm_form(request : HttpRequest):
                 if reqform:
                     reqform.warrants.add(warrant)
 
-            user_obj, success = UserDataModel.objects.get_or_create(user=request.user, role=0)
+            user_obj = UserDataModel.objects.get(id=request.user.id)
             VisualFormApprovalData.objects.create(
                 form=reqform, 
                 form_creator=user_obj, 

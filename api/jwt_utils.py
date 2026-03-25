@@ -81,7 +81,7 @@ def extract_jwt(request : HttpRequest):
 
 ##################################################################
 
-from django.contrib.auth.models import User
+from users.models import UserDataModel
 
 def get_user(request : HttpRequest):
     payload = extract_jwt(request)
@@ -90,7 +90,7 @@ def get_user(request : HttpRequest):
     
     user_id = payload.get("user_id")
 
-    user = User.objects.filter(
+    user = UserDataModel.objects.filter(
         pk=user_id
     ).first()
 
