@@ -1,8 +1,8 @@
-# from django.contrib import admin
-# from users.models import UserDataModel 
+from django.contrib import admin
+from users.models import UserDataModel 
 
-# # Register your models here.
+# Register your models here.
 
-# @admin.register(UserDataModel)
-# class UserDataModelAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'user', 'role')
+@admin.register(UserDataModel)
+class UserDataModelAdmin(admin.ModelAdmin):
+    list_display = ('id', 'username', 'role')

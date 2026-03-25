@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
+from django.http import HttpRequest, HttpResponseForbidden, JsonResponse, Http404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
 
@@ -23,6 +23,16 @@ from users.permissions.perms import PermissionList, PermissionType, perm_str
 
 def getFormAwaitViaReqno(reqno : str):
     return FormData.objects.filter(form__reqno=reqno).first()
+
+def isNotUserAndNotHaveApprovePerm(form : FormData, user_data : UserDataModel):
+
+    is_not_user = not (user_data in (form.form_creator, form.form_owner))
+
+    not_has_approve_perm = not (user_data.has_perm(perm_str(PermissionType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL)))
+
+    print(is_not_user)
+
+    return is_not_user and not_has_approve_perm
 
 # Create your views here.
 
@@ -93,7 +103,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
 
     selected_form = getFormAwaitViaReqno(form_id)
 
-    if not (selected_form.form_creator == user_data):
+    if isNotUserAndNotHaveApprovePerm(selected_form, user_data):
         return HttpResponseForbidden()
 
     selected_form = selected_form.form
@@ -141,7 +151,10 @@ def edit_form(request : HttpRequest, form_id : int):
     form_await = getFormAwaitViaReqno(form_id)
     reqform = None
 
-    if not (form_await.form_creator == user_data):
+    if not form_await:
+        return Http404()
+
+    if isNotUserAndNotHaveApprovePerm(form_await, user_data):
         return HttpResponseForbidden()
     
     if form_await.approve_status == 2:
