@@ -50,7 +50,7 @@ def step0_confirm_owner(request : HttpRequest):
                 "form_owner": data.get("form_owner").pk,
                 "form_creator": data.get("form_creator").pk,
             })
-            
+
             return redirect(reverse("forms:step1"))
         
     form = OwnershipForm()
@@ -190,11 +190,13 @@ def step3_confirm_form(request : HttpRequest):
                 if reqform:
                     reqform.warrants.add(warrant)
 
-            user_obj = UserDataModel.objects.get(id=request.user.id)
+            creator = UserDataModel.objects.get(id=request.session.get("form_creator"))
+            owner = UserDataModel.objects.get(id=request.session.get("form_owner"))
+
             VisualFormApprovalData.objects.create(
                 form=reqform, 
-                form_creator=user_obj, 
-                form_owner=user_obj, 
+                form_creator=creator, 
+                form_owner=owner, 
                 approve_status=VisualFormApprovalData.ApprovalStatus.PENDING
             )
 
@@ -203,6 +205,9 @@ def step3_confirm_form(request : HttpRequest):
             request.session.pop("acc_info", None)
             request.session.pop("step2", None)
             request.session.pop("step2_cleaned", None)
+            request.session.pop("step0", None)
+            request.session.pop("form_owner", None)
+            request.session.pop("form_creator", None)
 
             return redirect("dashboard:dashboard")
         except Exception as e:
