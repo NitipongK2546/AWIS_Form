@@ -1,0 +1,14 @@
+{% extends 'warrant_form/base.html' %}
+{% load static %}
+
+{% block title %}User List{% endblock %}
+
+{% block style %}
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+{% endblock %}
+
+{% block content %}
+<div>
+    {% include 'module/user_table.html' %}
+</div>
+{% endblock %}
