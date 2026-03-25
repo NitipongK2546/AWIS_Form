@@ -6,6 +6,36 @@ from warrant_form import forms_central as CentralForm
 
 from warrant_form.model_warrant import WarrantDataModel
 
+# THAI_MONTHS = {
+#     1: ("ม.ค.", "มกราคม"),
+#     2: ("ก.พ.", "กุมภาพันธ์"),
+#     3: ("มี.ค.", "มีนาคม"),
+#     4: ("เม.ย.", "เมษายน"),
+#     5: ("พ.ค.", "พฤษภาคม"),
+#     6: ("มิ.ย.", "มิถุนายน"),
+#     7: ("ก.ค.", "กรกฎาคม"),
+#     8: ("ส.ค.", "สิงหาคม"),
+#     9: ("ก.ย.", "กันยายน"),
+#     10:("ต.ค.", "ตุลาคม"),
+#     11:("พ.ย.", "พฤศจิกายน"),
+#     12:("ธ.ค.", "มกราคม"),
+# }
+
+THAI_MONTHS = {
+    1: "มกราคม",
+    2: "กุมภาพันธ์",
+    3: "มีนาคม",
+    4: "เมษายน",
+    5: "พฤษภาคม",
+    6: "มิถุนายน",
+    7: "กรกฎาคม",
+    8: "สิงหาคม",
+    9: "กันยายน",
+    10:"ตุลาคม",
+    11:"พฤศจิกายน",
+    12:"มกราคม",
+}
+
 class ReqformDataModel(models.Model):
     class ReqCaseTypeIDChoices(models.IntegerChoices):
         GENERAL = (1, "ทั่วไป") # จ.
@@ -262,14 +292,14 @@ class ReqformDataModel(models.Model):
         prepared_text = \
 f"""
 คำร้องขอออกหมายจับที่ {self.req_form_number}\n
-วันที่ {self.req_day} เดือน {self.req_month} ปี พ.ศ. {self.req_year}\n
+วันที่ {self.req_day} เดือน {THAI_MONTHS.get(self.req_month)} ปี พ.ศ. {self.req_year}\n
 ผู้ร้อง {self.req_name}\n
 
 ข้าพเจ้า {self.req_name} ตำแหน่ง {self.req_pos}
 อายุ {self.req_age} ปี อาชีพ พนักงานของรัฐ สถานที่ทำงาน {self.req_office}
-จังหวัด {self.req_province}
-อำเภอ/เขต {self.req_district}
-ตำบล/แขวง {self.req_sub_district}
+จังหวัด {CentralForm.thai_codes.getValueOfCode(self.req_province)}
+อำเภอ/เขต {CentralForm.thai_codes.getValueOfCode(self.req_district)}
+ตำบล/แขวง {CentralForm.thai_codes.getValueOfCode(self.req_sub_district)}
 โทรศัพท์ {self.req_tel}
 
 ขอยื่นคำร้องขอออกหมายจับยื่นต่อศาลดังมีข้อความที่จะกล่าวดังต่อไปนี้\n
@@ -291,9 +321,9 @@ f"""
 
 ตรอก/ซอย {self.acc_soi}
 ใกล้เคียง {self.acc_near}
-จังหวัด {self.acc_province}
-อำเภอ/เขต {self.acc_district}
-ตำบล/แขวง {self.acc_sub_district}
+จังหวัด {CentralForm.thai_codes.getValueOfCode(self.acc_province)}
+อำเภอ/เขต {CentralForm.thai_codes.getValueOfCode(self.acc_district)}
+ตำบล/แขวง {CentralForm.thai_codes.getValueOfCode(self.acc_sub_district)}
 
 โทรศัพท์ {self.acc_tel}
 
@@ -303,7 +333,7 @@ f"""
 
 เหตุเกิดที่ {self.scene}
 
-เมื่อวันที่ {self.scene_date.day} เดือน {self.scene_date.month} พ.ศ. {self.scene_date.year} เวลา {self.scene_date.time()} นาฬิกา
+เมื่อวันที่ {self.scene_date.day} เดือน {THAI_MONTHS.get(self.scene_date.month)} พ.ศ. {self.scene_date.year} เวลา {self.scene_date.time()} นาฬิกา
 
 มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับ คือ {self.cause_text}
 
@@ -321,7 +351,7 @@ f"""
 นับตั้งแต่วันที่ 
 {self.woa_start_date.day}
 
-{self.woa_start_date.month}
+{THAI_MONTHS.get(self.woa_start_date.month)}
 
 {self.woa_start_date.year}
 
@@ -329,7 +359,7 @@ f"""
 แต่ไม่เกิน 
 {self.woa_end_date.day}
 
-{self.woa_end_date.month}
+{THAI_MONTHS.get(self.woa_end_date.month)}
 
 {self.woa_end_date.year}
 
@@ -348,7 +378,7 @@ f"""
 {self.have_injunc}
 
 ควรมิควรแล้วแต่จะโปรด.
-{self.req_name}
+{self.req_name}.
 ผู้ร้อง
 """
 

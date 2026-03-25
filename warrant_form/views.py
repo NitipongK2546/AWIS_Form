@@ -165,7 +165,7 @@ def step3_confirm_form(request : HttpRequest):
                 if reqform:
                     reqform.warrants.add(warrant)
 
-            user_obj = UserDataModel.objects.get(username=request.user.username)
+            user_obj = UserDataModel.objects.get(id=request.user.id)
             VisualFormApprovalData.objects.create(
                 form=reqform, 
                 form_creator=user_obj, 

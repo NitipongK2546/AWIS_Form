@@ -30,7 +30,7 @@ def isNotUserAndNotHaveApprovePerm(form : FormData, user_data : UserDataModel):
 
     not_has_approve_perm = not (user_data.has_perm(perm_str(PermissionType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL)))
 
-    print(is_not_user)
+    # print(is_not_user)
 
     return is_not_user and not_has_approve_perm
 
@@ -99,7 +99,7 @@ def dashboard(request : HttpRequest):
 @permission_required(perm_str(PermissionType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL))
 def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
 
-    user_data = UserDataModel.objects.filter(username=request.user.username).first()
+    user_data = UserDataModel.objects.filter(id=request.user.id).first()
 
     selected_form = getFormAwaitViaReqno(form_id)
 
@@ -107,7 +107,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         return HttpResponseForbidden()
 
     selected_form = selected_form.form
-    # print(selected_form.prepareTextToSpeech())
+    print(selected_form.prepareTextToSpeech())
 
     warrants : list[WarrantDataModel] = selected_form.warrants.all()
 
@@ -146,7 +146,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
 @permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL))
 def edit_form(request : HttpRequest, form_id : int):
 
-    user_data = UserDataModel.objects.filter(username=request.user.username).first()
+    user_data = UserDataModel.objects.filter(id=request.user.id).first()
 
     form_await = getFormAwaitViaReqno(form_id)
     reqform = None

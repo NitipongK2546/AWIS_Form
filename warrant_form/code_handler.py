@@ -33,9 +33,11 @@ class ThaiCountryAreaCode:
     province_choices = []
     district_choices = []
     sub_district_choices = []
+    code_dict = {}
 
     def __init__(self):
         self.province_choices, self.district_choices, self.sub_district_choices = set_up_codes()
+        self.code_dict = self.getCodeDict()
 
     def getProvinceChoices(self):
         return self.province_choices
@@ -53,6 +55,9 @@ class ThaiCountryAreaCode:
         [output_dict.update({code:text}) for code, text in self.sub_district_choices]
 
         return output_dict
+    
+    def getValueOfCode(self, code : str):
+        return self.code_dict.get(code)
     
 if __name__ == "__main__":
     test = ThaiCountryAreaCode()
