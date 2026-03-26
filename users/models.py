@@ -16,7 +16,14 @@ class UserDataModel(AbstractUser):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-        
+
+
+class UserAccess(models.Model):
+    user_id = models.IntegerField()
+    username = models.CharField(max_length=100)
+    fullname = models.CharField(max_length=250)
+    department = models.CharField(max_length=200)
+
 
 class OTPCollection(models.Model):
     user = models.OneToOneField(UserDataModel, on_delete=models.CASCADE)

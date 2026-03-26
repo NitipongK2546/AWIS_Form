@@ -264,10 +264,10 @@ def confirm_approve(request : HttpRequest, form_id : int):
 
 @permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL))
 def confirm_reject(request : HttpRequest, form_id : int):
-    if not request.user.has_perm("dashboard.can_approve_form"):
-        return HttpResponseForbidden("403 Forbidden: No Permission")
 
+    
     selected_form = getFormAwaitViaReqno(form_id)
+
     if request.method == "POST":
         selected_form.approve_status = FormData.ApprovalStatus.REJECTED
         selected_form.save()
@@ -279,6 +279,27 @@ def confirm_reject(request : HttpRequest, form_id : int):
         "action": "Reject",
         "form": selected_form,
     })
+
+
+@permission_required(perm_str(PermissionType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL))
+def delete_form(request : HttpRequest, form_id : int):
+
+    selected_form = getFormAwaitViaReqno(form_id)
+
+    if isNotUserAndNotHaveApprovePerm(selected_form, request.user):
+        return HttpResponseForbidden()
+
+    if request.method == "POST":
+        selected_form.delete()
+  
+        return redirect(reverse("dashboard:success_page"))
+    
+    return render(request, "dashboard/confirmation_page.html", {
+        "user": request.user,
+        "action": "Delete",
+        "form": selected_form,
+    })
+
 
 @login_required
 def success_page(request : HttpRequest):

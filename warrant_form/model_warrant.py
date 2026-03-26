@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.forms.models import model_to_dict
 # from warrant_form.model_reqform import ReqformDataModel
 
+import warrant_form.forms_central as CentralForm
+
 def toAPICompatibleDictGeneral(incoming_model : models.Model) -> dict[str, object]:
         """
         Convert the model object into a dictionary that fits what the API required.
@@ -140,6 +142,9 @@ class WarrantDataModel(models.Model):
         dict_main_awis = model_to_dict(self)
 
         duped_list = ["acc_full_name", ]
+        time_split_list = ["woa_date", "appointment_date"]
+
+        dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis)
 
         for item in duped_list:
             dict_main_awis.update({f"{item}_1" : dict_main_awis.get(item)})

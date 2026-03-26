@@ -38,6 +38,7 @@
                     <a href="{% url 'dashboard:edit_form' form.form.reqno %}">Edit</a> |
                     <a href="{% url 'dashboard:confirm_approve' form.form.reqno %}">Approve</a> |
                     <a href="{% url 'dashboard:confirm_reject' form.form.reqno %}">Reject</a>
+                    <a href="{% url 'dashboard:delete_form' form.form.reqno %}">Delete</a> |
                 </td>
             </tr>
             {% endif %}

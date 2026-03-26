@@ -64,6 +64,20 @@ def signup(request : HttpRequest):
         form = CustomizedUserCreationForm()
     return render(request, "admin_panel/signup.html", {"form": form})
 
-# def check_all_users(request : HttpRequest):
-#     user_list = User.objects.all()
+def check_all_users(request : HttpRequest):
+    all_users = UserDataModel.objects.all()
+
+    user_display_list = [
+        {
+            "id": user.pk, 
+            "full_name": user.get_full_name(), 
+            "group_perm": user.groups.all() if not user.is_superuser else "SUPERUSER",
+            "user_perm": user.get_user_permissions() if not user.is_superuser else "SUPERUSER",
+        }
+        for user in all_users
+    ]
+
+    return render(request, "admin_panel/user_list.html", {
+        "user_list": user_display_list
+    })
 
