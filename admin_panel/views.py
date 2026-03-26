@@ -11,6 +11,10 @@ from users.models import UserDataModel
 
 from users.permissions.perms import PermissionList, PermissionType, perm_str
 
+import requests
+from users.models import UserAccess
+import os
+
 FORBIDDEN_MSG = JsonResponse({
                 "status": "403",
                 "message": "forbidden",
@@ -81,3 +85,64 @@ def check_all_users(request : HttpRequest):
         "user_list": user_display_list
     })
 
+ORG_API_FETCH_USERS = os.getenv("ORG_API_FETCH_USERS")
+
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.ADMIN_PANEL), raise_exception=True)
+def admin_select_users(request):
+    response = requests.get(ORG_API_FETCH_USERS)
+    users = response.json()
+
+    if request.method == "POST":
+        selected_ids = request.POST.getlist("selected_users")
+        for uid in selected_ids:
+            user_data = next((u for u in users if str(u["USR_ID"]) == uid), None)
+            if user_data and not UserAccess.objects.filter(user_id=uid).exists():
+                UserAccess.objects.create(
+                    user_id=user_data["USR_ID"],
+                    username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
+                    fullname=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']} {user_data['USR_LNAME']}",
+                    department=user_data["Dept"]
+                )
+        return render(request, "admin_panel/select_users.html", {
+            "users": users,
+            "success": "Selected users have been granted access."
+        })
+
+    return render(request, "admin_panel/select_users.html", {"users": users})
+
+def add_user_to_access(user_data):
+    uid = user_data["USR_ID"]
+    if not UserAccess.objects.filter(user_id=uid).exists():
+        UserAccess.objects.create(
+            user_id=uid,
+            username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
+            fullname=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']} {user_data['USR_LNAME']}",
+            department=user_data["Dept"]
+        )
+        return True
+    return False
+
+def add_specific_user(request: HttpRequest):
+    user_data = {
+        "USR_ID": 9644,
+        "USR_PREFIX": "นาย",
+        "USR_FNAME": "ชลสิทธิ์",
+        "USR_LNAME": "มูลคร",
+        "Dept": "ฝ่ายเทคโนโลยีดิจิทัล",
+        "Position": "เจ้าหน้าที่พัฒนาโปรแกรม",
+    }
+
+    added = add_user_to_access(user_data)
+
+    if added:
+        return redirect("admin_panel:select_users")
+    else:
+        return redirect("admin_panel:select_users")
+
+def access_list(request):
+    # ดึงข้อมูลทั้งหมดจาก UserAccess
+    allowed_users = UserAccess.objects.all()
+
+    return render(request, "admin_panel/access_list.html", {
+        "allowed_users": allowed_users
+    })

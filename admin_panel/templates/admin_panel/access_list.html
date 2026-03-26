@@ -1,0 +1,24 @@
+<h1>Granted Access Users</h1>
+
+<table border="1">
+  <tr>
+    <th>User ID</th>
+    <th>Username</th>
+    <th>Full Name</th>
+    <th>Department</th>
+  </tr>
+  {% for user in allowed_users %}
+  <tr>
+    <td>{{ user.user_id }}</td>
+    <td>{{ user.username }}</td>
+    <td>{{ user.fullname }}</td>
+    <td>{{ user.department }}</td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan="4">No users have been granted access yet.</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<a href="{% url 'admin_panel:select_users' %}">Back to Select Users</a>

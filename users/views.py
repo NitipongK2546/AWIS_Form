@@ -34,6 +34,8 @@ def user_login(request : HttpRequest):
         form = AuthenticationForm()
     return render(request, "users/login.html", {"form": form})
 
+# def insert_userID_
+
 def send_email_otp(user : User):
     otp_obj, created = OTPCollection.objects.get_or_create(user=user)
     if not otp_obj.secret:
