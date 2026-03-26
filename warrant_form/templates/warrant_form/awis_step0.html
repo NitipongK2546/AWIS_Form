@@ -16,10 +16,10 @@
 <form id="ownership-form" method="post">
     {% csrf_token %}
 
-    <p><span>Form Creator:</span> {{ creator }}</p>
-    <p><span>Form Owner:</span> {{ form.form_owner }}</p>
+    <p style="font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;"><span>ผู้เขียนคำร้อง:</span> {{ creator }}</p>
+    <p style="font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;"><span>เจ้าของคำร้อง:</span> {{ form.form_owner }}</p>
 
-    <button type="submit">Confirm</button>
+    <button type="submit" class="confirm-button">ตกลง</button>
 </form>
 {% endblock %}
 
