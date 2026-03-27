@@ -14,7 +14,8 @@ def createContentType(name : PermissionList):
 def createPermissionObj(content_type : ContentType, perm_type : PermissionType, name : PermissionList):
     permission_obj, created = Permission.objects.get_or_create(
         content_type=content_type,
-        codename=f"{perm_type.value}_{name.value}"
+        codename=f"{perm_type.value}_{name.value}",
+        name=f"{perm_type.value.capitalize()} {name.value.capitalize()}",
     )
 
     return permission_obj

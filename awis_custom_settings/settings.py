@@ -40,6 +40,12 @@ class RoleList(Enum):
 
     SYSTEM_ADMIN = "System Admin"
 
+    def getDefaultRole():
+        return RoleList.EMPLOYEE
+    
+    def getDefaultRoleValue():
+        return RoleList.EMPLOYEE.value
+
 class RoleChoices(models.IntegerChoices):
     OUTSIDE = (0, RoleList.OUTSIDE.value)
 

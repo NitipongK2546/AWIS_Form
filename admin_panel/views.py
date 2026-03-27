@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, JsonResponse
 from admin_panel.forms import CustomizedUserCreationForm
 
-from awis_custom_settings.settings import RoleChoices
+from awis_custom_settings.settings import RoleChoices, RoleList
 
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User, Group
@@ -120,8 +120,13 @@ def add_user_to_access(user_data : dict):
         user = UserDataModel.objects.create_user(
             username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
             api_uid=user_data['USR_ID'],
-            role=99,
         )
+
+        group_name = RoleList.getDefaultRoleValue()
+        group = Group.objects.get(name=group_name)
+
+        user.groups.add(group)
+
         user.set_unusable_password()
         user.save()
 
@@ -159,6 +164,7 @@ def update_role(request, user_id, role_value):
     user = get_object_or_404(UserAccess, user_id=user_id)
     if int(role_value) in [choice[0] for choice in RoleChoices.choices]:
         user.role = int(role_value)
+
         user.save()
     return redirect("admin_panel:access_list")
 
