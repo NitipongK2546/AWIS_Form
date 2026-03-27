@@ -120,6 +120,8 @@ def add_user_to_access(user_data : dict):
         user = UserDataModel.objects.create_user(
             username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
             api_uid=user_data['USR_ID'],
+            first_name=user_data['USR_FNAME'],
+            last_name=user_data['USR_LNAME'],
         )
 
         group_name = RoleList.getDefaultRoleValue()
