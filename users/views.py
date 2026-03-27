@@ -1,14 +1,20 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, logout 
+from django.contrib.auth import login, logout , authenticate
 from django.http import HttpRequest
 from django.core.mail import send_mail
-from django.contrib.auth.models import User
+
 import pyotp
 from .models import OTPCollection
 
+from api.internal.endpoints import login_via_api
+from .forms import UserAuthForm
+from .models import UserDataModel
+
 import os
 from dotenv import load_dotenv
+
+##########################################
 
 load_dotenv()
 
@@ -16,15 +22,24 @@ def user_login(request : HttpRequest):
     if request.user.is_authenticated:
         return redirect("dashboard:dashboard")
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
+        form = UserAuthForm(request.POST)
         if form.is_valid():
-            user = form.get_user()
+            data = form.cleaned_data
+            user = authenticate(request, username=data.get("username"), password=data.get("password"))
             if user is not None:
                 if not (os.getenv("PRODUCTION") == "YES"):
                     login(request, user)
                     if user.is_superuser:
                         return redirect("admin_panel:collections")
                     return redirect("dashboard:dashboard")
+            else:
+                result_user_id = login_via_api(request)
+                if result_user_id:
+                    user = UserDataModel.objects.get(api_uid=result_user_id)
+                    login(request, user)
+                    return redirect("dashboard:dashboard")
+
+                return render(request, "users/login.html", {"form": form})
                     
                 # PRODUCTION
                 send_email_otp(user)
@@ -36,7 +51,7 @@ def user_login(request : HttpRequest):
 
 # def insert_userID_
 
-def send_email_otp(user : User):
+def send_email_otp(user : UserDataModel):
     otp_obj, created = OTPCollection.objects.get_or_create(user=user)
     if not otp_obj.secret:
         otp_obj.secret = pyotp.random_base32()
@@ -53,7 +68,7 @@ def send_email_otp(user : User):
         fail_silently=False,
     )
 
-def verify_email_otp(user : User, entered_code : str):
+def verify_email_otp(user : UserDataModel, entered_code : str):
     otp_obj = OTPCollection.objects.get(user=user)
     totp = pyotp.TOTP(otp_obj.secret, interval=300)
     return totp.verify(entered_code)

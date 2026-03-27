@@ -2,7 +2,7 @@ from django.http import HttpRequest, JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 # from django.contrib.auth.decorators import permission_required
-from django.contrib.auth.models import User
+from users.models import UserDataModel
 
 from api import check_utils as UtilsHandle
 from api import jwt_utils as JWTHandle
@@ -74,7 +74,7 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     if isinstance(payload, JsonResponse):
         return payload
     
-    user = User.objects.filter(
+    user = UserDataModel.objects.filter(
         pk=payload.get("user_id")
     ).first()
 
@@ -160,7 +160,7 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
     if isinstance(payload, JsonResponse):
         return payload
     
-    user = User.objects.filter(
+    user = UserDataModel.objects.filter(
         pk=payload.get("user_id")
     ).first()
 

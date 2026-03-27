@@ -88,7 +88,7 @@ def check_all_users(request : HttpRequest):
 ORG_API_FETCH_USERS = os.getenv("ORG_API_FETCH_USERS")
 
 @permission_required(perm_str(PermissionType.CREATE, PermissionList.ADMIN_PANEL), raise_exception=True)
-def admin_select_users(request):
+def admin_select_users(request : HttpRequest):
     response = requests.get(ORG_API_FETCH_USERS)
     users = response.json()
 
@@ -107,7 +107,7 @@ def admin_select_users(request):
 
     return render(request, "admin_panel/select_users.html", {"users": users})
 
-def add_user_to_access(user_data):
+def add_user_to_access(user_data : dict):
     uid = user_data["USR_ID"]
     if not UserAccess.objects.filter(user_id=uid).exists():
         UserAccess.objects.create(
@@ -116,17 +116,27 @@ def add_user_to_access(user_data):
             fullname=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']} {user_data['USR_LNAME']}",
             department=user_data["Dept"]
         )
+
+        user = UserDataModel.objects.create_user(
+            username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
+            api_uid=user_data['USR_ID'],
+            role=99,
+        )
+        user.set_unusable_password()
+        user.save()
+
         return True
     return False
 
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.ADMIN_PANEL), raise_exception=True)
 def add_specific_user(request: HttpRequest):
     user_data = {
-        "USR_ID": 9644,
-        "USR_PREFIX": "นาย",
-        "USR_FNAME": "ชลสิทธิ์",
-        "USR_LNAME": "มูลคร",
-        "Dept": "ฝ่ายเทคโนโลยีดิจิทัล",
-        "Position": "เจ้าหน้าที่พัฒนาโปรแกรม",
+        "USR_ID": os.getenv("TEST_ID"),
+        "USR_PREFIX": os.getenv("TEST_PREFIX"),
+        "USR_FNAME": os.getenv("TEST_FNAME"),
+        "USR_LNAME": os.getenv("TEST_LNAME"),
+        "Dept": os.getenv("TEST_DEPT"),
+        "Position": os.getenv("TEST_POSITION"),
     }
 
     added = add_user_to_access(user_data)
@@ -136,6 +146,7 @@ def add_specific_user(request: HttpRequest):
     else:
         return redirect("admin_panel:access_list")
 
+@permission_required(perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL), raise_exception=True)
 def access_list(request):
     # ดึงข้อมูลทั้งหมดจาก UserAccess
     allowed_users = UserAccess.objects.all()
