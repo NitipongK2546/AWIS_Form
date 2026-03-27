@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, JsonResponse
 from admin_panel.forms import CustomizedUserCreationForm
 
@@ -103,10 +103,7 @@ def admin_select_users(request):
                     fullname=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']} {user_data['USR_LNAME']}",
                     department=user_data["Dept"]
                 )
-        return render(request, "admin_panel/select_users.html", {
-            "users": users,
-            "success": "Selected users have been granted access."
-        })
+        return redirect("admin_panel:access_list")
 
     return render(request, "admin_panel/select_users.html", {"users": users})
 
@@ -135,9 +132,9 @@ def add_specific_user(request: HttpRequest):
     added = add_user_to_access(user_data)
 
     if added:
-        return redirect("admin_panel:select_users")
+        return redirect("admin_panel:access_list")
     else:
-        return redirect("admin_panel:select_users")
+        return redirect("admin_panel:access_list")
 
 def access_list(request):
     # ดึงข้อมูลทั้งหมดจาก UserAccess
@@ -146,3 +143,15 @@ def access_list(request):
     return render(request, "admin_panel/access_list.html", {
         "allowed_users": allowed_users
     })
+    
+def update_role(request, user_id, role_value):
+    user = get_object_or_404(UserAccess, user_id=user_id)
+    if int(role_value) in [choice[0] for choice in RoleChoices.choices]:
+        user.role = int(role_value)
+        user.save()
+    return redirect("admin_panel:access_list")
+
+def delete_access(request, user_id):
+    user = get_object_or_404(UserAccess, user_id=user_id)
+    user.delete()
+    return redirect("admin_panel:access_list")

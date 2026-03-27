@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from awis_custom_settings import settings
 from .permissions import permissions as perms
-
+from awis_custom_settings.settings import RoleChoices
 from django.contrib.auth import get_user_model
 
 # Create your models here.
@@ -23,7 +23,10 @@ class UserAccess(models.Model):
     username = models.CharField(max_length=100)
     fullname = models.CharField(max_length=250)
     department = models.CharField(max_length=200)
-
+    role = models.IntegerField(
+        choices=RoleChoices.choices,
+        default=RoleChoices.EMPLOYEE
+    )
 
 class OTPCollection(models.Model):
     user = models.OneToOneField(UserDataModel, on_delete=models.CASCADE)

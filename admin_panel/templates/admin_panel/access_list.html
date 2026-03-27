@@ -1,24 +1,33 @@
 <h1>Granted Access Users</h1>
-
-<table border="1">
+<a href="{% url 'admin_panel:collections' %}">Back to Collections</a>
+<table border="1" style="margin: 10 10px">
   <tr>
     <th>User ID</th>
-    <th>Username</th>
     <th>Full Name</th>
     <th>Department</th>
+    <th>Role</th>
+    <th>Actions</th>
   </tr>
   {% for user in allowed_users %}
   <tr>
     <td>{{ user.user_id }}</td>
-    <td>{{ user.username }}</td>
     <td>{{ user.fullname }}</td>
     <td>{{ user.department }}</td>
+    <td>{{ user.get_role_display }}</td>
+    <td>
+      <a href="{% url 'admin_panel:update_role' user.user_id 10 %}">Set Employee</a> |
+      <a href="{% url 'admin_panel:update_role' user.user_id 12 %}">Set Director</a> |
+      <a href="{% url 'admin_panel:delete_access' user.user_id %}" 
+         onclick="return confirm('Are you sure you want to remove access for {{ user.fullname }}?');">
+         Delete
+      </a>
+    </td>
   </tr>
   {% empty %}
   <tr>
-    <td colspan="4">No users have been granted access yet.</td>
+    <td colspan="5">No users have been granted access yet.</td>
   </tr>
   {% endfor %}
 </table>
 
-<a href="{% url 'admin_panel:select_users' %}">Back to Select Users</a>
+<a href="{% url 'admin_panel:select_users' %}">Go to Select Users</a>
