@@ -131,7 +131,7 @@ def add_user_to_access(user_data : dict):
 @permission_required(perm_str(PermissionType.CREATE, PermissionList.ADMIN_PANEL), raise_exception=True)
 def add_specific_user(request: HttpRequest):
     user_data = {
-        "USR_ID": os.getenv("TEST_ID"),
+        "USR_ID": int(os.getenv("TEST_ID")),
         "USR_PREFIX": os.getenv("TEST_PREFIX"),
         "USR_FNAME": os.getenv("TEST_FNAME"),
         "USR_LNAME": os.getenv("TEST_LNAME"),
