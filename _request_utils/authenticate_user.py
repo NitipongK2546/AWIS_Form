@@ -1,13 +1,11 @@
-"""
-File สำหรับรวม Function ทุกตัว ที่มีไว้สำหรับการส่งข้อมูลให้ API Server\n
-ใส่ข้อมูลตามที่ Function ขอมา แล้วจะได้ข้อมูล Output หรือ ข้อมูลเป็น Boolean ออกมาใช้ต่อ\n
-"""
-
 from django.http import HttpRequest, JsonResponse, HttpResponse
 import _request_utils.prepared_requests as RequestUtils
 import os
 
+from users.models import UserAccess, UserDataModel
+
 from requests import Response
+import requests
 # import base64
 
 # Some special case for status code.
@@ -55,21 +53,37 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
     
     if not data.get("authenticated"):
         return JsonResponse({
-            "status": "Authentication Failed"
+            "status": 400,
+            "message": "Authentication Failed"
         }, status=400)
     
     ##############################################################
 
     # user_data : dict = data.get("user_data")
-    # db_user : dict = data.get("db_user")
-    # 
-    # 
-    # status = checkDataBase(
-    #   db_user.get("USR_ID")
-    # )
+    db_user : list[dict] = data.get("db_user")
 
-    # if not status:
-    #   return False
-    #
+    status : UserAccess = None
+    for usr in db_user:
+        status = checkUserAccess(
+            usr.get("USR_ID")
+        )
+
+    if not status:
+      return JsonResponse({
+            "status": 403,
+            "message": "Forbidden"
+        }, status=403)
     
-    # return True
+    return JsonResponse({
+        "status": 200,
+        "message": "Success",
+        "id": status.user_id,
+    })
+
+def checkUserAccess(incoming_user_id) -> bool:
+    result = UserAccess.objects.filter(user_id=incoming_user_id).first()
+
+    if result:
+        return result
+    
+    return None
