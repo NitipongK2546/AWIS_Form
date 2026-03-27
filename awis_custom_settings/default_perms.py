@@ -2,7 +2,7 @@ from .settings import RoleList
 from enum import Enum
 import csv
 
-from users.permissions import perm_str
+from users.permissions import perm_str, perm_str_list
 from users.permissions import PermissionList as N
 from users.permissions import PermissionType as T
 
@@ -63,28 +63,22 @@ class DefaultPermission(Enum):
     OUTSIDE = [
             perm_str(T.EDIT, N.REQFORM_SUBMITTED),
         ]
-    EMPLOYEE = [
-            perm_str(T.VIEW, N.REQFORM_AWAIT_APPROVAL),
-            perm_str(T.CREATE, N.REQFORM_AWAIT_APPROVAL),
-            perm_str(T.EDIT, N.REQFORM_AWAIT_APPROVAL),
-            perm_str(T.DELETE, N.REQFORM_AWAIT_APPROVAL),
-        ]
+    EMPLOYEE = perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE], 
+        N.REQFORM_AWAIT_APPROVAL
+    )
     
     MANAGER = []
 
-    DIRECTOR = [
-            perm_str(T.VIEW, N.REQFORM_AWAIT_APPROVAL),
-            perm_str(T.CREATE, N.REQFORM_AWAIT_APPROVAL),
-            perm_str(T.EDIT, N.REQFORM_AWAIT_APPROVAL),
-            perm_str(T.DELETE, N.REQFORM_AWAIT_APPROVAL),
-            perm_str(T.APPROVE, N.REQFORM_AWAIT_APPROVAL),
-        ]
+    DIRECTOR = perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
+        N.REQFORM_AWAIT_APPROVAL
+    )
 
-    SYSTEM_ADMIN = [
-            perm_str(T.VIEW, N.ADMIN_PANEL),
-            perm_str(T.CREATE, N.ADMIN_PANEL),
-            perm_str(T.EDIT, N.ADMIN_PANEL),
-            perm_str(T.DELETE, N.ADMIN_PANEL),
-            perm_str(T.APPROVE, N.ADMIN_PANEL),
-        ]
+    SYSTEM_ADMIN = perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
+        N.ADMIN_PANEL
+    )
 
+# for perm in DefaultPermission:
+#     print(perm.value)
