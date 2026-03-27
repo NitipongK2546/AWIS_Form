@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 
 # Create your models here.
 
-DEFAULT_ROLE = RoleList.getDefaultRole()
+DEFAULT_ROLE = RoleList.getDefaultRoleChoiceAssigned()
 
 class UserDataModel(AbstractUser):
     # role = models.IntegerField(choices=settings.RoleChoices, default=DEFAULT_ROLE)
@@ -50,7 +50,6 @@ def create_superuser():
         username="admin",
         email="admin@example.com",
         password="adminpass999999",
-        role=99,
     )
 
     user.first_name = "Mr. Admin"
