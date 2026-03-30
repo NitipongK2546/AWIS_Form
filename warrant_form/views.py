@@ -12,13 +12,11 @@ from warrant_form.form_ownership import OwnershipForm
 
 from dashboard.models import FormAwaitingApproval as VisualFormApprovalData
 from dashboard.warrant_wrapper import VisualWarrantData
-from users.models import UserDataModel
+from users.models import UserDataModel, createLog
 
 from django.utils import timezone
 
-import json
-
-from users import PermissionList, PermissionType, perm_str
+from users import PermissionList, PermissionType, perm_str, AccessType
 
 ##############################################################################
 # FORM VIEWS
@@ -211,6 +209,9 @@ def step3_confirm_form(request : HttpRequest):
             request.session.pop("step0", None)
             request.session.pop("form_owner", None)
             request.session.pop("form_creator", None)
+
+            user : UserDataModel = request.user
+            createLog(user_id=user.api_uid, action=AccessType.CREATE, system=PermissionList.REQFORM_AWAIT_APPROVAL)
 
             return redirect("dashboard:dashboard")
         except Exception as e:

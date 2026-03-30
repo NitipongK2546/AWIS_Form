@@ -7,6 +7,15 @@ class PermissionType(Enum):
     DELETE = "delete"
     APPROVE = "approve"
 
+class AccessType(Enum):
+    VIEW = "View"
+    CREATE = "Create"
+    EDIT = "Edit"
+    DELETE = "Delete"
+    APPROVE = "Approve"
+    REJECT = "Reject"
+    LOGIN = "Login"
+
 class BasePerms:
     permission_name = ""
     reqform_permissions = []

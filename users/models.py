@@ -2,22 +2,28 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from awis_custom_settings import settings
 from .permissions import permissions as perms
+from users.permissions import PermissionList, PermissionType, AccessType
 from awis_custom_settings.settings import RoleChoices, RoleList
 from django.contrib.auth import get_user_model
+
+from django.utils import timezone
+
+LOG_DIR = "output/"
 
 # Create your models here.
 
 DEFAULT_ROLE = RoleList.getDefaultRoleChoiceAssigned()
 
 class UserDataModel(AbstractUser):
-    # role = models.IntegerField(choices=settings.RoleChoices, default=DEFAULT_ROLE)
-
-    # uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    # May be unused. Here for now.
     api_uid = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+    def getUserLog(self):
+        all_logs = LogSystem.objects.filter(user_id=self.api_uid)
+
+        return all_logs
         
 class UserAccess(models.Model):
     user_id = models.IntegerField()
@@ -29,15 +35,8 @@ class UserAccess(models.Model):
         default=DEFAULT_ROLE
     )
 
-class OTPCollection(models.Model):
-    user = models.OneToOneField(UserDataModel, on_delete=models.CASCADE)
-    secret = models.CharField(max_length=32, default="", blank=True)
-
-    def __str__(self):
-        return f"OTP secret for {self.user.username}"
-
 def create_superuser():
-    User = get_user_model()
+    User : UserDataModel = get_user_model()
 
     user = User.objects.filter(
         username="admin",
@@ -55,24 +54,79 @@ def create_superuser():
     user.first_name = "Mr. Admin"
     user.last_name = "Superuser"
 
+    user.api_uid = 9_999_999
+
     user.save()
 
-# def create_user():
-#     User = get_user_model()
+############################################################################
 
-#     user = User.objects.filter(
-#         username=self.username,
-#     ).first()
+class OTPCollection(models.Model):
+    user = models.OneToOneField(UserDataModel, on_delete=models.CASCADE)
+    secret = models.CharField(max_length=32, default="", blank=True)
 
-#     if user:
-#         return
+    def __str__(self):
+        return f"OTP secret for {self.user.username}"
+    
+###############################################################################
 
-#     user = User.objects.create_user(
-#         username="admin",
-#         email="admin@example.com",
-#         password="adminpass999999"
-#     )
+class LogSystem(models.Model):
+    user_id : int = models.IntegerField()
+    action : str = models.CharField()
+    system : str = models.CharField()
+    time_logged : timezone.datetime = models.DateTimeField()
 
-#     user.first_name = "Mr. Admin"
-#     user.last_name = "Superuser"
-#     user.save()
+    def __str__(self):
+        user_obj = UserDataModel.objects.get(api_uid=self.user_id)
+        return f"[{self.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {self.action} the {self.system}"
+
+    def createLog(self, filename):
+        createLog(self.user_id, self.action.value, self.system.value, filename)
+
+def createLog(user_id : int, action : AccessType, system : PermissionList, filename : str = "access_log.txt") -> LogSystem:
+
+    time_logged : timezone.datetime = timezone.now()
+
+    log_obj = LogSystem.objects.create(user_id=user_id, action=action.value, system=system.value, time_logged=time_logged)
+
+    with open(LOG_DIR + filename, mode="a", encoding="utf-8") as file:
+        file.write(f"{log_obj}\n")
+
+    return log_obj  
+
+def exportLogAsFile(filename : str = "all_access_log.txt"):
+    all_logs = list(LogSystem.objects.all())
+
+    with open(LOG_DIR + filename, mode="w", encoding="utf-8") as file:
+        for log in all_logs:
+            user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
+            file.write(f"[{log.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {log.action} the {log.system}\n")
+    
+
+def getUserLog(user_id : int):
+    all_logs = LogSystem.objects.filter(user_id=user_id)
+
+    return all_logs
+
+###############################################################################
+
+class PathPermission(models.Model):
+    url_path : dict = models.JSONField(default=dict)
+
+    def get_perms(self, view_name : str) -> list[str]:
+        return self.url_path.get(view_name)
+
+    def set_perms(self, view_name : str, perms : list[str]):
+        self.url_path.update({view_name: perms})
+        self.save()
+
+    @staticmethod
+    def of_view(target_view : str) -> list[str]:
+        path_perm = PathPermission.objects.all().first()
+
+        return path_perm.get_perms(target_view)
+
+# PathPermission.objects.create(url_path=)
+
+# {
+    
+# }

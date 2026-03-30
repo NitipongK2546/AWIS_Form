@@ -4,7 +4,9 @@ from django.contrib.auth.models import Group, Permission
 from awis_custom_settings import settings, default_perms
 
 from users import PermissionList, PermissionType, perm_str
-from users.permissions import AWISPermissions, PermissionList, PermissionType, creation
+from users.permissions import AWISPermissions, PermissionList, PermissionType, creation, perm_str_list
+
+from users.models import PathPermission
 
 for name in PermissionList:
     ct = creation.createContentType(name)
@@ -21,4 +23,15 @@ for role in settings.RoleList:
     for item in default_permissions:
         role_group.permissions.add(item)
 
-# employee_group.permissions.add
+
+instance, created = PathPermission.objects.get_or_create(pk=1)
+
+instance.set_perms(
+    "create_reqform", perm_str_list([PermissionType.VIEW, PermissionType.CREATE,], PermissionList.REQFORM_AWAIT_APPROVAL)
+)
+instance.set_perms(
+    "approve_reqform", perm_str_list([PermissionType.VIEW, PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL)
+)
+
+print(PathPermission.of_view("create_reqform"))
+print(PathPermission.of_view("approve_reqform"))

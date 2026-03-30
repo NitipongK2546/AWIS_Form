@@ -1,2 +1,2 @@
 from .permissions.perms import PermissionList, PermissionType, perm_str
-from .permissions import perms
+from .permissions import perms, AccessType
