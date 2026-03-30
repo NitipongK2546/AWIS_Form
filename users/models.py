@@ -2,13 +2,15 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from awis_custom_settings import settings
 from .permissions import permissions as perms
-from awis_custom_settings.settings import RoleChoices
+from awis_custom_settings.settings import RoleChoices, RoleList
 from django.contrib.auth import get_user_model
 
 # Create your models here.
 
+DEFAULT_ROLE = RoleList.getDefaultRoleChoiceAssigned()
+
 class UserDataModel(AbstractUser):
-    role = models.IntegerField(choices=settings.RoleChoices)
+    # role = models.IntegerField(choices=settings.RoleChoices, default=DEFAULT_ROLE)
 
     # uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     # May be unused. Here for now.
@@ -16,16 +18,15 @@ class UserDataModel(AbstractUser):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
-
+        
 class UserAccess(models.Model):
     user_id = models.IntegerField()
     username = models.CharField(max_length=100)
     fullname = models.CharField(max_length=250)
     department = models.CharField(max_length=200)
     role = models.IntegerField(
-        choices=RoleChoices,
-        default=RoleChoices.EMPLOYEE
+        choices=RoleChoices.choices,
+        default=DEFAULT_ROLE
     )
 
 class OTPCollection(models.Model):
@@ -49,7 +50,6 @@ def create_superuser():
         username="admin",
         email="admin@example.com",
         password="adminpass999999",
-        role=99,
     )
 
     user.first_name = "Mr. Admin"

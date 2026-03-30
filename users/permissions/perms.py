@@ -16,4 +16,23 @@ def _returnPermissionString(type : PermissionType, name : PermissionList):
     return f"{source}.{type.value}_{name.value}"
 
 def perm_str(type : PermissionType, name : PermissionList):
+    """
+    Example:\n
+    perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL)
+    """
     return _returnPermissionString(type, name)
+
+def perm_str_list(type_list : list[PermissionType], name : PermissionList):
+    """
+    Example:\n
+    perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL)
+    """
+
+    output_list : list[str] = []
+
+    for type in type_list:
+        output_list.append(
+            _returnPermissionString(type, name)
+        )
+
+    return output_list

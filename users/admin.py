@@ -5,4 +5,4 @@ from users.models import UserDataModel
 
 @admin.register(UserDataModel)
 class UserDataModelAdmin(admin.ModelAdmin):
-    list_display = ('id', 'username', 'role')
+    list_display = ('id', 'api_uid', 'username',)

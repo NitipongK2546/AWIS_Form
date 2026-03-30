@@ -1,28 +1,47 @@
-# # from .settings import RoleList
-# # from enum import Enum
-# import csv
+from .settings import RoleList
+from enum import Enum
+import csv
 
-# # from users.permissions import perm_str
-# # from users.permissions import PermissionList
-# # from users.permissions import PermissionType
+from users.permissions import perm_str, perm_str_list
+from users.permissions import PermissionList as N
+from users.permissions import PermissionType as T
 
-# # from django.contrib.contenttypes.models import ContentType
-# # from django.contrib.auth.models import Permission
+# from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Permission
 
-# # class PermissionTypeNum(Enum):
-# #     T.CREATE = 16
-# #     T.
+# class PermissionTypeNum(Enum):
+#     T.CREATE = 16
+#     T.
 
-# def getBinaryString(number : int):
-#     return f"{number:b}"
+def getBinaryString(number : int):
+    return f"{number:b}"
 
-# # def handleEachBit(binary_string : str, ):
-# #     for bit, perm_type in zip(binary_string, PermissionType):
-# #         if bit == "1":
-# #             codename = perm_str(perm_type,)
+# def handleEachBit(binary_string : str, ):
+#     for bit, perm_type in zip(binary_string, PermissionType):
+#         if bit == "1":
+#             codename = perm_str(perm_type,)
 
-# # def get_perm(role : RoleList):
-# #     return DefaultPermission[role]
+def get_perm(role : RoleList) -> list[str]:
+    return DefaultPermission[role].value
+
+def get_perm_objs(role : RoleList) -> list[Permission]:
+    perm_obj_list : list[Permission] = []
+    
+    all_perms = get_perm(role)
+    for perm in all_perms:
+
+        app_label, codename = perm.split(".")
+
+        perm_obj = Permission.objects.filter(
+            content_type__app_label=app_label,
+            codename=codename
+        ).first()
+
+        if perm_obj:
+            perm_obj_list.append(perm_obj.pk)
+
+    return perm_obj_list
+
 
 # PERMISSION_PATH = "awis_custom_settings/permission.csv"
 
@@ -40,21 +59,26 @@
 #     print(e)
 
 
-# # class DefaultPermission(Enum):
-# #     OUTSIDE = [
-# #             perm(T.EDIT, N.REQFORM_SUBMITTED),
-# #         ]
-# #     EMPLOYEE = [
-# #             perm(T.VIEW, N.REQFORM_AWAIT_APPROVAL),
-# #         ]
-# #     MANAGER = [
-# #             perm(T.EDIT, N.REQFORM_SUBMITTED),
-# #         ]
-# #     DIRECTOR = [
-# #             perm(T.EDIT, N.REQFORM_SUBMITTED),
-# #         ]
+class DefaultPermission(Enum):
+    OUTSIDE = [
+            perm_str(T.EDIT, N.REQFORM_SUBMITTED),
+        ]
+    EMPLOYEE = perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE], 
+        N.REQFORM_AWAIT_APPROVAL
+    )
+    
+    MANAGER = []
 
-# #     SYSTEM_ADMIN = [
-# #             perm(T.EDIT, N.REQFORM_SUBMITTED),
-# #         ]
+    DIRECTOR = perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
+        N.REQFORM_AWAIT_APPROVAL
+    )
 
+    SYSTEM_ADMIN = perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
+        N.ADMIN_PANEL
+    )
+
+# for perm in DefaultPermission:
+#     print(perm.value)
