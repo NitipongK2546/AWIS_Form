@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, JsonResponse
-from admin_panel.forms import CustomizedUserCreationForm
 
 from awis_custom_settings.settings import RoleChoices, RoleList
 
@@ -30,43 +29,43 @@ def collections(request : HttpRequest):
 
     return render(request, "admin_panel/collections.html")
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.ADMIN_PANEL), raise_exception=True)
-def signup(request : HttpRequest):
-    if not request.user.is_staff:
-        return FORBIDDEN_MSG
+# @permission_required(perm_str(PermissionType.CREATE, PermissionList.ADMIN_PANEL), raise_exception=True)
+# def signup(request : HttpRequest):
+#     if not request.user.is_staff:
+#         return FORBIDDEN_MSG
 
-    if request.method == "POST":
-        form = CustomizedUserCreationForm(request.POST)
-        if form.is_valid():
-            try:
-                user_obj : User = form.save(commit=False)
+#     if request.method == "POST":
+#         form = CustomizedUserCreationForm(request.POST)
+#         if form.is_valid():
+#             try:
+#                 user_obj : User = form.save(commit=False)
 
-                data = form.cleaned_data
-                selected_role = data.get("role")
+#                 data = form.cleaned_data
+#                 selected_role = data.get("role")
 
-                choices = dict(RoleChoices.choices)
-                selected_role_string = choices.get(int(selected_role))
+#                 choices = dict(RoleChoices.choices)
+#                 selected_role_string = choices.get(int(selected_role))
 
-                # print(choices)
-                # print(selected_role)
-                # print(selected_role_string)
+#                 # print(choices)
+#                 # print(selected_role)
+#                 # print(selected_role_string)
 
-                selected_group = Group.objects.get(name=selected_role_string)
+#                 selected_group = Group.objects.get(name=selected_role_string)
 
-                # print(selected_group)
+#                 # print(selected_group)
 
-                user_obj.is_active = False
-                user_obj.save()
+#                 user_obj.is_active = False
+#                 user_obj.save()
 
-                user_obj.groups.add(selected_group)
-                UserDataModel.objects.create(user=user_obj, role=selected_role,)
+#                 user_obj.groups.add(selected_group)
+#                 UserDataModel.objects.create(user=user_obj, role=selected_role,)
 
-                return redirect("admin_panel:collections")
-            except Exception as e:
-                raise Exception(e)
-    else:
-        form = CustomizedUserCreationForm()
-    return render(request, "admin_panel/signup.html", {"form": form})
+#                 return redirect("admin_panel:collections")
+#             except Exception as e:
+#                 raise Exception(e)
+#     else:
+#         form = CustomizedUserCreationForm()
+#     return render(request, "admin_panel/signup.html", {"form": form})
 
 def check_all_users(request : HttpRequest):
     all_users = UserDataModel.objects.all()
@@ -184,3 +183,35 @@ def delete_access(request, user_id):
     user = get_object_or_404(UserAccess, user_id=user_id)
     user.delete()
     return redirect("admin_panel:access_list")
+
+####################################################################
+
+from users.models import PathPermission
+from .forms import PermissionAddForm
+
+def display_all_views_permissions(request : HttpRequest):
+    if request.method == "POST":
+        form = PermissionAddForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            perm = data.pop("perm")
+            view_name = data.pop("selected_type")
+
+            perm_list = []
+            for key, item in data.items():
+                if item:
+                    perm_list.append(f"users.{key}_{perm}")
+
+            PathPermission.add_perms(view_name, perm_list)
+
+    views_perms = PathPermission.get_all_perms()        
+    form = PermissionAddForm()
+    return render(request, "admin_panel/views_perms.html", {
+        "dict_item": views_perms,
+        "form": form,
+    })
+
+def delete_perm_from_view(request : HttpRequest, view_name : str, perm_name : str):
+    PathPermission.delete_perms(view_name, perm_name)
+
+    return redirect("admin_panel:views_perms")

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% for view_key, perm_arr in dict_item.items %}
+    <p>
+        <span>{{ view_key }}: </span>
+        [
+        {% for perm in perm_arr %} 
+        <span>{{ perm }} <a href="{% url 'admin_panel:delete_perms' view_key perm %}">X</a>,</span>
+        {% endfor %}
+        ]
+    </p>
+    {% empty %}
+    <p>None</p>
+    {% endfor %}
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+    </form>
+</body>
+</html>

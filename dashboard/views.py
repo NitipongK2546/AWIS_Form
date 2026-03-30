@@ -11,7 +11,7 @@ from dashboard.models import VisualReqformData as FormSent
 from dashboard.warrant_wrapper import VisualWarrantData
 
 from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
-from users.models import UserDataModel, createLog, exportLogAsFile
+from users.models import UserDataModel, createLog, PathPermission
 
 import _request_utils.connect_api as AWISConnectAPI
 
@@ -98,7 +98,7 @@ def dashboard(request : HttpRequest):
 # Form Edit and View Section 
 #
 
-@permission_required(perm_str(PermissionType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(PathPermission.of_view("view_reqformawaitapproval"),)
 def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
@@ -147,7 +147,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
-@permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(PathPermission.of_view("edit_reqformawaitapproval"),)
 def edit_form(request : HttpRequest, form_id : int):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
@@ -217,7 +217,7 @@ def edit_form(request : HttpRequest, form_id : int):
 # FORM APPROVE SECTION
 #
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(PathPermission.of_view("approve_reqformawaitapproval"),)
 def approve_form_page(request : HttpRequest):
 
     all_forms = FormData.objects.all()
@@ -227,7 +227,7 @@ def approve_form_page(request : HttpRequest):
         "forms": all_forms,
     })
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(PathPermission.of_view("approve_reqformawaitapproval"),)
 def confirm_approve(request : HttpRequest, form_id : int):
 
     selected_form = getFormAwaitViaReqno(form_id)
