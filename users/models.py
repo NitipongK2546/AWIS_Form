@@ -108,3 +108,25 @@ def getUserLog(user_id : int):
     return all_logs
 
 ###############################################################################
+
+class PathPermission(models.Model):
+    url_path : dict = models.JSONField(default=dict)
+
+    def get_perms(self, view_name : str) -> list[str]:
+        return self.url_path.get(view_name)
+
+    def set_perms(self, view_name : str, perms : list[str]):
+        self.url_path.update({view_name: perms})
+        self.save()
+
+    @staticmethod
+    def of_view(target_view : str) -> list[str]:
+        path_perm = PathPermission.objects.all().first()
+
+        return path_perm.get_perms(target_view)
+
+# PathPermission.objects.create(url_path=)
+
+# {
+    
+# }
