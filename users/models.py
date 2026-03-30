@@ -7,8 +7,11 @@ from awis_custom_settings.settings import RoleChoices, RoleList
 from django.contrib.auth import get_user_model
 
 from django.utils import timezone
+import os
 
 LOG_DIR = "output/"
+
+os.makedirs(LOG_DIR, exist_ok=True)
 
 # Create your models here.
 
@@ -82,6 +85,21 @@ class LogSystem(models.Model):
     def createLog(self, filename):
         createLog(self.user_id, self.action.value, self.system.value, filename)
 
+    @staticmethod
+    def exportLogAsFile(filename : str = "all_access_log.txt"):
+        all_logs = list(LogSystem.objects.all())
+
+        with open(LOG_DIR + filename, mode="w", encoding="utf-8") as file:
+            for log in all_logs:
+                user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
+                file.write(f"[{log.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {log.action} the {log.system}\n")
+
+    @staticmethod
+    def getUserLog(user_id : int):
+        all_logs = LogSystem.objects.filter(user_id=user_id)
+
+        return all_logs
+
 def createLog(user_id : int, action : AccessType, system : PermissionList, filename : str = "access_log.txt") -> LogSystem:
 
     time_logged : timezone.datetime = timezone.now()
@@ -92,20 +110,6 @@ def createLog(user_id : int, action : AccessType, system : PermissionList, filen
         file.write(f"{log_obj}\n")
 
     return log_obj  
-
-def exportLogAsFile(filename : str = "all_access_log.txt"):
-    all_logs = list(LogSystem.objects.all())
-
-    with open(LOG_DIR + filename, mode="w", encoding="utf-8") as file:
-        for log in all_logs:
-            user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
-            file.write(f"[{log.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {log.action} the {log.system}\n")
-    
-
-def getUserLog(user_id : int):
-    all_logs = LogSystem.objects.filter(user_id=user_id)
-
-    return all_logs
 
 ###############################################################################
 
@@ -120,10 +124,38 @@ class PathPermission(models.Model):
         self.save()
 
     @staticmethod
+    def add_perms(view_name : str, perm_list : list[str]):
+        target_obj = PathPermission.objects.all().first()
+        target_list : list[str] = target_obj.url_path.get(view_name)
+        for perm in perm_list:
+            if perm not in target_list:
+                target_list.append(perm)
+
+        target_obj.save()
+
+    @staticmethod
+    def delete_perms(view_name : str, perm : str):
+        target_obj = PathPermission.objects.all().first()
+        target_list : list = target_obj.url_path.get(view_name)
+        target_list.remove(perm)
+        target_obj.save()
+
+    @staticmethod
     def of_view(target_view : str) -> list[str]:
         path_perm = PathPermission.objects.all().first()
 
         return path_perm.get_perms(target_view)
+    
+    @staticmethod
+    def get_all_perms() -> dict:
+        path_perm = PathPermission.objects.all().first()
+        return path_perm.url_path
+    
+    def get_all_keys() -> list[str]:
+        path_perm = PathPermission.objects.all().first()
+        output_list = [(key, key) for key in path_perm.url_path.keys()]
+
+        return output_list
 
 # PathPermission.objects.create(url_path=)
 
