@@ -24,7 +24,7 @@ class UserAccess(models.Model):
     fullname = models.CharField(max_length=250)
     department = models.CharField(max_length=200)
     role = models.IntegerField(
-        choices=RoleChoices.choices,
+        choices=RoleChoices,
         default=RoleChoices.EMPLOYEE
     )
 
