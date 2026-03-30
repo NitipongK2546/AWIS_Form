@@ -9,7 +9,9 @@ from .models import OTPCollection
 
 from api.internal.endpoints import login_via_api
 from .forms import UserAuthForm
-from .models import UserDataModel
+from .models import UserDataModel, createLog
+
+from .permissions import PermissionList, PermissionType
 
 import os
 from dotenv import load_dotenv
@@ -25,10 +27,11 @@ def user_login(request : HttpRequest):
         form = UserAuthForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            user = authenticate(request, username=data.get("username"), password=data.get("password"))
+            user : UserDataModel = authenticate(request, username=data.get("username"), password=data.get("password"))
             if user is not None:
                 if not (os.getenv("PRODUCTION") == "YES"):
                     login(request, user)
+                    createLog(user.api_uid, PermissionType.VIEW, PermissionList.LOGIN_PAGE,)
                     if user.is_superuser:
                         return redirect("admin_panel:collections")
                     return redirect("dashboard:dashboard")

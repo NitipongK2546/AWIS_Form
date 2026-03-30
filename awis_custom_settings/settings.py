@@ -25,6 +25,8 @@ class PermissionList(Enum):
     REQFORM_AWAIT_APPROVAL = "reqformAwaitApproval"
     REQFORM_SUBMITTED = "reqformSubmitted"
 
+    LOGIN_PAGE = "loginPage"
+
 class PermissionListGrouping(Enum):
     REQFORM = [
         PermissionList.REQFORM_AWAIT_APPROVAL, 

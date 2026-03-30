@@ -107,6 +107,8 @@ def admin_select_users(request : HttpRequest):
 
     return render(request, "admin_panel/select_users.html", {"users": users})
 
+################################################################################
+
 def add_user_to_access(user_data : dict):
     uid = user_data["USR_ID"]
     if not UserAccess.objects.filter(user_id=uid).exists():
@@ -163,11 +165,19 @@ def access_list(request):
     })
     
 def update_role(request, user_id, role_value):
-    user = get_object_or_404(UserAccess, user_id=user_id)
+    user : UserAccess = get_object_or_404(UserAccess, user_id=user_id)
+    django_user : UserDataModel = UserDataModel.objects.filter(api_uid=user_id).first()
     if int(role_value) in [choice[0] for choice in RoleChoices.choices]:
         user.role = int(role_value)
 
+        group_name = user.get_role_display()
+        group = Group.objects.get(name=group_name)
+
+        django_user.groups.clear()
+        django_user.groups.add(group)
+        
         user.save()
+        django_user.save()
     return redirect("admin_panel:access_list")
 
 def delete_access(request, user_id):
