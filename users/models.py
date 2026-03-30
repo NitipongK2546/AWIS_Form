@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from awis_custom_settings import settings
 from .permissions import permissions as perms
-from users.permissions import PermissionList, PermissionType
+from users.permissions import PermissionList, PermissionType, AccessType
 from awis_custom_settings.settings import RoleChoices, RoleList
 from django.contrib.auth import get_user_model
 
@@ -71,22 +71,22 @@ class OTPCollection(models.Model):
 
 class LogSystem(models.Model):
     user_id : int = models.IntegerField()
-    action : PermissionType = models.CharField()
-    system : PermissionList = models.CharField()
+    action : str = models.CharField()
+    system : str = models.CharField()
     time_logged : timezone.datetime = models.DateTimeField()
 
     def __str__(self):
         user_obj = UserDataModel.objects.get(api_uid=self.user_id)
-        return f"[{self.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {self.action.value.capitalize()} the {self.system.value.capitalize()}"
-    
-    def createLog(self, filename):
-        createLog(self.user_id, self.action, self.system, filename)
+        return f"[{self.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {self.action} the {self.system}"
 
-def createLog(user_id : int, action : PermissionType, system : PermissionList, filename : str = "access_log.txt") -> LogSystem:
+    def createLog(self, filename):
+        createLog(self.user_id, self.action.value, self.system.value, filename)
+
+def createLog(user_id : int, action : AccessType, system : PermissionList, filename : str = "access_log.txt") -> LogSystem:
 
     time_logged : timezone.datetime = timezone.now()
 
-    log_obj = LogSystem.objects.create(user_id=user_id, action=action, system=system, time_logged=time_logged)
+    log_obj = LogSystem.objects.create(user_id=user_id, action=action.value, system=system.value, time_logged=time_logged)
 
     with open(LOG_DIR + filename, mode="a", encoding="utf-8") as file:
         file.write(f"{log_obj}\n")
@@ -94,11 +94,12 @@ def createLog(user_id : int, action : PermissionType, system : PermissionList, f
     return log_obj  
 
 def exportLogAsFile(filename : str = "all_access_log.txt"):
-    all_logs = LogSystem.objects.all()
+    all_logs = list(LogSystem.objects.all())
 
-    with open(LOG_DIR + filename, mode="a", encoding="utf-8") as file:
+    with open(LOG_DIR + filename, mode="w", encoding="utf-8") as file:
         for log in all_logs:
-            file.write(f"{log}\n")
+            user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
+            file.write(f"[{log.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {log.action} the {log.system}\n")
     
 
 def getUserLog(user_id : int):

@@ -11,7 +11,7 @@ from api.internal.endpoints import login_via_api
 from .forms import UserAuthForm
 from .models import UserDataModel, createLog
 
-from .permissions import PermissionList, PermissionType
+from .permissions import PermissionList, PermissionType, AccessType
 
 import os
 from dotenv import load_dotenv
@@ -31,7 +31,7 @@ def user_login(request : HttpRequest):
             if user is not None:
                 if not (os.getenv("PRODUCTION") == "YES"):
                     login(request, user)
-                    createLog(user.api_uid, PermissionType.VIEW, PermissionList.LOGIN_PAGE,)
+                    createLog(user.api_uid, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
                     if user.is_superuser:
                         return redirect("admin_panel:collections")
                     return redirect("dashboard:dashboard")
