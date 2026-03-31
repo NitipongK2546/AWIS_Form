@@ -6,8 +6,6 @@ from awis_custom_settings import settings, default_perms
 from users import PermissionList, PermissionType, perm_str
 from users.permissions import AWISPermissions, PermissionList, PermissionType, creation, perm_str_list
 
-from users.models import PathPermission
-
 for name in PermissionList:
     ct = creation.createContentType(name)
 
@@ -24,20 +22,20 @@ for role in settings.RoleList:
         role_group.permissions.add(item)
 
 
-instance, created = PathPermission.objects.get_or_create(pk=1)
+# instance, created = PathPermission.objects.get_or_create(pk=1)
 
-instance.set_perms(
-    "view_reqformawaitapproval", perm_str_list([PermissionType.VIEW,], PermissionList.REQFORM_AWAIT_APPROVAL)
-)
-instance.set_perms(
-    "edit_reqformawaitapproval", perm_str_list([PermissionType.VIEW, PermissionType.EDIT], PermissionList.REQFORM_AWAIT_APPROVAL)
-)
-instance.set_perms(
-    "create_reqformawaitapproval", perm_str_list([PermissionType.VIEW, PermissionType.CREATE,], PermissionList.REQFORM_AWAIT_APPROVAL)
-)
-instance.set_perms(
-    "approve_reqformawaitapproval", perm_str_list([PermissionType.VIEW, PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL)
-)
+# instance.set_perms(
+#     "view_reqformawaitapproval", perm_str_list([PermissionType.VIEW,], PermissionList.REQFORM_AWAIT_APPROVAL)
+# )
+# instance.set_perms(
+#     "edit_reqformawaitapproval", perm_str_list([PermissionType.VIEW, PermissionType.EDIT], PermissionList.REQFORM_AWAIT_APPROVAL)
+# )
+# instance.set_perms(
+#     "create_reqformawaitapproval", perm_str_list([PermissionType.VIEW, PermissionType.CREATE,], PermissionList.REQFORM_AWAIT_APPROVAL)
+# )
+# instance.set_perms(
+#     "approve_reqformawaitapproval", perm_str_list([PermissionType.VIEW, PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL)
+# )
 
-print(PathPermission.of_view("create_reqformawaitapproval"))
-print(PathPermission.of_view("approve_reqformawaitapproval"))
+# print(PathPermission.of_view("create_reqformawaitapproval"))
+# print(PathPermission.of_view("approve_reqformawaitapproval"))

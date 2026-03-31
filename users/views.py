@@ -9,7 +9,7 @@ from .models import OTPCollection
 
 from api.internal.endpoints import login_via_api
 from .forms import UserAuthForm
-from .models import UserDataModel, createLog, PathPermission
+from .models import UserDataModel, createLog
 
 from .permissions import PermissionList, PermissionType, AccessType
 
@@ -27,6 +27,7 @@ def user_login(request : HttpRequest):
         form = UserAuthForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
+            print(data)
             user : UserDataModel = authenticate(request, username=data.get("username"), password=data.get("password"))
             if user is not None:
                 if not (os.getenv("PRODUCTION") == "YES"):

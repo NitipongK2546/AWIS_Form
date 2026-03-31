@@ -85,20 +85,18 @@ class LogSystem(models.Model):
     def createLog(self, filename):
         createLog(self.user_id, self.action.value, self.system.value, filename)
 
-    @staticmethod
-    def exportLogAsFile(filename : str = "all_access_log.txt"):
-        all_logs = list(LogSystem.objects.all())
+def exportLogAsFile(filename : str = "all_access_log.txt"):
+    all_logs = list(LogSystem.objects.all())
 
-        with open(LOG_DIR + filename, mode="w", encoding="utf-8") as file:
-            for log in all_logs:
-                user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
-                file.write(f"[{log.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {log.action} the {log.system}\n")
+    with open(LOG_DIR + filename, mode="w", encoding="utf-8") as file:
+        for log in all_logs:
+            user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
+            file.write(f"[{log.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {log.action} the {log.system}\n")
 
-    @staticmethod
-    def getUserLog(user_id : int):
-        all_logs = LogSystem.objects.filter(user_id=user_id)
+def getUserLog(user_id : int):
+    all_logs = LogSystem.objects.filter(user_id=user_id)
 
-        return all_logs
+    return all_logs
 
 def createLog(user_id : int, action : AccessType, system : PermissionList, filename : str = "access_log.txt") -> LogSystem:
 
@@ -113,49 +111,56 @@ def createLog(user_id : int, action : AccessType, system : PermissionList, filen
 
 ###############################################################################
 
-class PathPermission(models.Model):
-    url_path : dict = models.JSONField(default=dict)
+# class PathPermission(models.Model):
+#     url_path : dict = models.JSONField(default=dict)
 
-    def get_perms(self, view_name : str) -> list[str]:
-        return self.url_path.get(view_name)
+#     def get_perms(self, view_name : str) -> list[str] | None:
+#         return self.url_path.get(view_name)
 
-    def set_perms(self, view_name : str, perms : list[str]):
-        self.url_path.update({view_name: perms})
-        self.save()
+#     def set_perms(self, view_name : str, perms : list[str]):
+#         self.url_path.update({view_name: perms})
+#         self.save()
 
-    @staticmethod
-    def add_perms(view_name : str, perm_list : list[str]):
-        target_obj = PathPermission.objects.all().first()
-        target_list : list[str] = target_obj.url_path.get(view_name)
-        for perm in perm_list:
-            if perm not in target_list:
-                target_list.append(perm)
+#     @staticmethod
+#     def add_perms(view_name : str, perm_list : list[str]):
+#         target_obj = PathPermission.objects.all().first()
+#         target_list : list[str] = target_obj.url_path.get(view_name)
+#         # if not target_list:
+#         #     target_obj.url_path.update({view_name: []})
 
-        target_obj.save()
+#         for perm in perm_list:
+#             if perm not in target_list:
+#                 target_list.append(perm)
 
-    @staticmethod
-    def delete_perms(view_name : str, perm : str):
-        target_obj = PathPermission.objects.all().first()
-        target_list : list = target_obj.url_path.get(view_name)
-        target_list.remove(perm)
-        target_obj.save()
+#         target_obj.save()
 
-    @staticmethod
-    def of_view(target_view : str) -> list[str]:
-        path_perm = PathPermission.objects.all().first()
+#     @staticmethod
+#     def delete_perms(view_name : str, perm : str):
+#         target_obj = PathPermission.objects.first()
+#         target_list : list = target_obj.url_path.get(view_name)
+#         target_list.remove(perm)
+#         target_obj.save()
 
-        return path_perm.get_perms(target_view)
+#     @staticmethod
+#     def of_view(target_view : str) -> list[str]:
+#         path_perm = PathPermission.objects.first()
+
+#         required_permissions = path_perm.get_perms(target_view)
+#         if not required_permissions:
+#             return []
+
+#         return required_permissions
     
-    @staticmethod
-    def get_all_perms() -> dict:
-        path_perm = PathPermission.objects.all().first()
-        return path_perm.url_path
+#     @staticmethod
+#     def get_all_perms() -> dict:
+#         path_perm = PathPermission.objects.all().first()
+#         return path_perm.url_path
     
-    def get_all_keys() -> list[str]:
-        path_perm = PathPermission.objects.all().first()
-        output_list = [(key, key) for key in path_perm.url_path.keys()]
+#     def get_all_keys() -> list[str]:
+#         path_perm = PathPermission.objects.all().first()
+#         output_list = [(key, key) for key in path_perm.url_path.keys()]
 
-        return output_list
+#         return output_list
 
 # PathPermission.objects.create(url_path=)
 
