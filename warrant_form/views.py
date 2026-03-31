@@ -12,11 +12,14 @@ from warrant_form.form_ownership import OwnershipForm
 
 from dashboard.models import FormAwaitingApproval as VisualFormApprovalData
 from dashboard.warrant_wrapper import VisualWarrantData
-from users.models import UserDataModel, createLog
+from users.models import UserDataModel
 
 from django.utils import timezone
 
-from users import PermissionList, PermissionType, perm_str, AccessType
+import _log_utils.file_logger as FileLogger
+from _log_utils.file_logger import AccessType
+
+from users import PermissionList, PermissionType, perm_str
 
 ##############################################################################
 # FORM VIEWS
@@ -194,7 +197,7 @@ def step3_confirm_form(request : HttpRequest):
             creator = UserDataModel.objects.get(id=request.session.get("form_creator"))
             owner = UserDataModel.objects.get(id=request.session.get("form_owner"))
 
-            VisualFormApprovalData.objects.create(
+            target_obj = VisualFormApprovalData.objects.create(
                 form=reqform, 
                 form_creator=creator, 
                 form_owner=owner, 
@@ -210,12 +213,14 @@ def step3_confirm_form(request : HttpRequest):
             request.session.pop("form_owner", None)
             request.session.pop("form_creator", None)
 
-            user : UserDataModel = request.user
-            createLog(user_id=user.api_uid, action=AccessType.CREATE, system=PermissionList.REQFORM_AWAIT_APPROVAL)
+            FileLogger.createNormalLog(request, AccessType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL, [target_obj])
 
             return redirect("dashboard:dashboard")
         except Exception as e:
             print(e)
+
+            FileLogger.createErrorLog(request, AccessType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL, str(e))
+
             ReqformDataModel.objects.filter(pk=reqform.pk).first().delete()
             WarrantDataModel.objects.filter(pk=warrant.pk).first().delete()
 

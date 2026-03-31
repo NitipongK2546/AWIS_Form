@@ -152,6 +152,9 @@ class ReqformDataModel(models.Model):
 
     warrants = models.ManyToManyField(WarrantDataModel, related_name="reqforms")
 
+    def __str__(self):
+        return f"(pk: {self.pk}, reqno: {self.reqno})"
+
 
     def toDocumentCompatibleDict(self) -> dict[str, object]:
         """

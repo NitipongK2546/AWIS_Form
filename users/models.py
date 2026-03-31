@@ -2,16 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from awis_custom_settings import settings
 from .permissions import permissions as perms
-from users.permissions import PermissionList, PermissionType, AccessType
+from users.permissions import PermissionList, PermissionType
 from awis_custom_settings.settings import RoleChoices, RoleList
 from django.contrib.auth import get_user_model
 
 from django.utils import timezone
 import os
 
-LOG_DIR = "output/"
-
-os.makedirs(LOG_DIR, exist_ok=True)
 
 # Create your models here.
 
@@ -77,37 +74,55 @@ class LogSystem(models.Model):
     action : str = models.CharField()
     system : str = models.CharField()
     time_logged : timezone.datetime = models.DateTimeField()
+    relevant_info : list = models.JSONField(blank=True, null=True,)
 
     def __str__(self):
+        datetime_info = self.time_logged.astimezone(timezone.get_current_timezone())
+
         user_obj = UserDataModel.objects.get(api_uid=self.user_id)
-        return f"[{self.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {self.action} the {self.system}"
+        user_info = f"{user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
 
-    def createLog(self, filename):
-        createLog(self.user_id, self.action.value, self.system.value, filename)
+        action_info = f"{self.action} the {self.system}"
 
-def exportLogAsFile(filename : str = "all_access_log.txt"):
-    all_logs = list(LogSystem.objects.all())
+        ####
 
-    with open(LOG_DIR + filename, mode="w", encoding="utf-8") as file:
-        for log in all_logs:
-            user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
-            file.write(f"[{log.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {log.action} the {log.system}\n")
+        basic_info : str = f"[{datetime_info}]: {user_info} {action_info}"
 
-def getUserLog(user_id : int):
-    all_logs = LogSystem.objects.filter(user_id=user_id)
+        return basic_info
+    
+    def toStrFailed(self, reason):
+        if not self.relevant_info:
+            return f"{self}"
+        
+        info_list : list[str] = self.relevant_info
 
-    return all_logs
+        affected_obj = ""
 
-def createLog(user_id : int, action : AccessType, system : PermissionList, filename : str = "access_log.txt") -> LogSystem:
+        for info in info_list:
+            affected_obj = affected_obj + f"{info}, "
 
-    time_logged : timezone.datetime = timezone.now()
+        failed_info : str = f"{reason}: [ {affected_obj} ]"
 
-    log_obj = LogSystem.objects.create(user_id=user_id, action=action.value, system=system.value, time_logged=time_logged)
+        return f"{self} | {failed_info}"
+        # return f"{failed_info} | {self}"
 
-    with open(LOG_DIR + filename, mode="a", encoding="utf-8") as file:
-        file.write(f"{log_obj}\n")
+    def toStrExtra(self,):
+        if not self.relevant_info:
+            return f"{self}"
+        
+        info_list : list[str] = self.relevant_info
 
-    return log_obj  
+        affected_obj = ""
+
+        for info in info_list:
+            affected_obj = affected_obj + f"{info}, "
+
+        extra_info : str = f"Affected: [ {affected_obj} ]"
+
+        return f"{self} | {extra_info}"
+
+    # def createLog(self, filename):
+    #     createLog(self.user_id, self.action, self.system, filename)
 
 ###############################################################################
 

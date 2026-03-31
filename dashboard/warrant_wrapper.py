@@ -31,3 +31,6 @@ class VisualWarrantData(models.Model):
 
     file_path = models.CharField(max_length=250, blank=True,)
     because = models.CharField(max_length=300, blank=True,)
+
+    def __str__(self):
+        return f"<Warrant Data (pk: {self.pk}, {self.warrant})>"
