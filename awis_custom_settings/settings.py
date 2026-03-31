@@ -20,7 +20,11 @@ from django.db import models
 
 # เพิ่มตามที่ต้องการ
 class PermissionList(Enum):
+
     ADMIN_PANEL = "adminPanel"
+
+    USER_ACCESS = "userAccess"
+    USER_ROLE = "userRole"
     
     REQFORM_AWAIT_APPROVAL = "reqformAwaitApproval"
     REQFORM_SUBMITTED = "reqformSubmitted"

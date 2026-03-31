@@ -13,6 +13,8 @@ from _log_utils.file_logger import AccessType
 
 from users.permissions.perms import PermissionList, PermissionType, perm_str, perm_str_list
 
+from users.permissions.decorators import perm_req_log
+
 import requests
 from users.models import UserAccess
 import os
@@ -25,7 +27,7 @@ FORBIDDEN_MSG = JsonResponse({
 
 # VIEWS
 
-@permission_required(perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL), raise_exception=True)
+@perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL)
 def collections(request : HttpRequest):
     if not request.user.is_staff:
         return FORBIDDEN_MSG
@@ -91,25 +93,28 @@ def check_all_users(request : HttpRequest):
 
 ORG_API_FETCH_USERS = os.getenv("ORG_API_FETCH_USERS")
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.ADMIN_PANEL), raise_exception=True)
+@perm_req_log([PermissionType.CREATE], PermissionList.ADMIN_PANEL)
 def admin_select_users(request : HttpRequest):
-    response = requests.get(ORG_API_FETCH_USERS)
-    users = response.json()
+    try:
+        response = requests.get(ORG_API_FETCH_USERS)
+        users = response.json()
 
-    if request.method == "POST":
-        selected_ids = request.POST.getlist("selected_users")
-        for uid in selected_ids:
-            user_data = next((u for u in users if str(u["USR_ID"]) == uid), None)
-            if user_data and not UserAccess.objects.filter(user_id=uid).exists():
-                UserAccess.objects.create(
-                    user_id=user_data["USR_ID"],
-                    username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
-                    fullname=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']} {user_data['USR_LNAME']}",
-                    department=user_data["Dept"]
-                )
-        return redirect("admin_panel:access_list")
+        if request.method == "POST":
+            selected_ids = request.POST.getlist("selected_users")
+            for uid in selected_ids:
+                user_data = next((u for u in users if str(u["USR_ID"]) == uid), None)
+                if user_data and not UserAccess.objects.filter(user_id=uid).exists():
+                    UserAccess.objects.create(
+                        user_id=user_data["USR_ID"],
+                        username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
+                        fullname=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']} {user_data['USR_LNAME']}",
+                        department=user_data["Dept"]
+                    )
+            return redirect("admin_panel:access_list")
 
-    return render(request, "admin_panel/select_users.html", {"users": users})
+        return render(request, "admin_panel/select_users.html", {"users": users})
+    except Exception as e:
+        FileLogger.createErrorLog(request, AccessType.CREATE, PermissionList.USER_ACCESS, [str(e)])
 
 ################################################################################
 
@@ -141,7 +146,7 @@ def add_user_to_access(user_data : dict):
         return True
     return False
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.ADMIN_PANEL), raise_exception=True)
+@perm_req_log([PermissionType.CREATE], PermissionList.USER_ACCESS)
 def add_specific_user(request: HttpRequest):
     user_data = {
         "USR_ID": int(os.getenv("TEST_ID")),
@@ -161,7 +166,7 @@ def add_specific_user(request: HttpRequest):
 
 ##############################################################################
 
-@permission_required(perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL), raise_exception=True)
+@perm_req_log([PermissionType.CREATE], PermissionList.ADMIN_PANEL)
 def access_list(request):
     # ดึงข้อมูลทั้งหมดจาก UserAccess
     allowed_users = UserAccess.objects.all()
@@ -170,7 +175,7 @@ def access_list(request):
         "allowed_users": allowed_users
     })
 
-@permission_required(perm_str(PermissionType.EDIT, PermissionList.ADMIN_PANEL), raise_exception=True)
+@perm_req_log([PermissionType.EDIT], PermissionList.ADMIN_PANEL)
 def update_role(request, user_id, role_value):
     user : UserAccess = get_object_or_404(UserAccess, user_id=user_id)
     django_user : UserDataModel = UserDataModel.objects.filter(api_uid=user_id).first()
@@ -187,7 +192,7 @@ def update_role(request, user_id, role_value):
         django_user.save()
     return redirect("admin_panel:access_list")
 
-@permission_required(perm_str_list([PermissionType.DELETE, PermissionType.VIEW], PermissionList.ADMIN_PANEL), raise_exception=True)
+@perm_req_log([PermissionType.DELETE], PermissionList.ADMIN_PANEL)
 def delete_access(request, user_id):
     user = get_object_or_404(UserAccess, user_id=user_id)
     user.delete()
