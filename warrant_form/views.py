@@ -12,7 +12,7 @@ from warrant_form.form_ownership import OwnershipForm
 
 from dashboard.models import FormAwaitingApproval as VisualFormApprovalData
 from dashboard.warrant_wrapper import VisualWarrantData
-from users.models import UserDataModel, createLog, PathPermission
+from users.models import UserDataModel, createLog
 
 from django.utils import timezone
 
