@@ -147,7 +147,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
-@permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def edit_form(request : HttpRequest, form_id : int):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
@@ -217,7 +217,7 @@ def edit_form(request : HttpRequest, form_id : int):
 # FORM APPROVE SECTION
 #
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def approve_form_page(request : HttpRequest):
 
     all_forms = FormData.objects.all()
@@ -227,7 +227,7 @@ def approve_form_page(request : HttpRequest):
         "forms": all_forms,
     })
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def confirm_approve(request : HttpRequest, form_id : int):
 
     selected_form = getFormAwaitViaReqno(form_id)
@@ -270,7 +270,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
     })
     
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def confirm_reject(request : HttpRequest, form_id : int):
     selected_form = getFormAwaitViaReqno(form_id)
 
@@ -289,7 +289,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
     })
 
 
-@permission_required(perm_str(PermissionType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(perm_str(PermissionType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def delete_form(request : HttpRequest, form_id : int):
 
     selected_form = getFormAwaitViaReqno(form_id)

@@ -16,6 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from django.shortcuts import render
+
+def global_403(request, exception=None):
+    return render(request, "errors/403.html", status=403)
+
+def global_404(request, exception=None):
+    return render(request, "errors/404.html", status=404)
+
+def global_500(request):
+    return render(request, "errors/500.html", status=500)
+
+handler403 = global_403
+handler404 = global_404
+handler500 = global_500
 
 urlpatterns = [
     path('admin/', admin.site.urls),

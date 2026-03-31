@@ -36,7 +36,7 @@ def success_page(request : HttpRequest):
 
 ##############################################################################
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def step0_confirm_owner(request : HttpRequest):
     if request.method == "POST":
         form = OwnershipForm(request.POST)
@@ -59,7 +59,7 @@ def step0_confirm_owner(request : HttpRequest):
         "form": form,
     })
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def step1_reqform(request : HttpRequest):
     
     if not request.session.get("step0"):
@@ -122,7 +122,7 @@ def step1_reqform(request : HttpRequest):
 
     return render(request, "warrant_form/awis_step1.html", context)
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def step2_warrantform(request : HttpRequest):
     if request.method == "POST":
         try:
@@ -175,7 +175,7 @@ def step2_warrantform(request : HttpRequest):
 
     return render(request, "warrant_form/awis_step2.html", context)
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL))
+@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def step3_confirm_form(request : HttpRequest):
     if request.method == "POST":
         try:
