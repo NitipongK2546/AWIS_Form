@@ -9,7 +9,7 @@ from .models import OTPCollection
 
 from api.internal.endpoints import login_via_api
 from .forms import UserAuthForm
-from .models import UserDataModel, createLog
+from .models import UserDataModel, createLog, PathPermission
 
 from .permissions import PermissionList, PermissionType, AccessType
 
