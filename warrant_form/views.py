@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.decorators import login_required, permission_required
 
+from users.permissions.decorators import perm_req_log
+
 from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledWarrantForm, DisabledFormStep1
 # from warrant_form.doc_create import doc_create_with_context
 from warrant_form.model_warrant import WarrantDataModel
@@ -39,7 +41,7 @@ def success_page(request : HttpRequest):
 
 ##############################################################################
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL)
 def step0_confirm_owner(request : HttpRequest):
     if request.method == "POST":
         form = OwnershipForm(request.POST)
@@ -62,7 +64,7 @@ def step0_confirm_owner(request : HttpRequest):
         "form": form,
     })
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL)
 def step1_reqform(request : HttpRequest):
     
     if not request.session.get("step0"):
