@@ -53,6 +53,7 @@ def _createLog(request : HttpRequest, action : AccessType, system : PermissionLi
         relevant_info_str = []
     
     user : UserDataModel = request.user
+
     user_id = user.api_uid
 
     time_logged : timezone.datetime = timezone.now()
