@@ -34,7 +34,7 @@ def user_login(request : HttpRequest):
             if user is not None:
                 if not (os.getenv("PRODUCTION") == "YES"):
                     login(request, user)
-                    FileLogger.createNormalLog(user.api_uid, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
+                    FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
                     if user.is_superuser:
                         return redirect("admin_panel:collections")
                     return redirect("dashboard:dashboard")
