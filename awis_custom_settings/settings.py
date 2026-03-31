@@ -27,11 +27,13 @@ class PermissionList(Enum):
 
     LOGIN_PAGE = "loginPage"
 
-class PermissionListGrouping(Enum):
-    REQFORM = [
-        PermissionList.REQFORM_AWAIT_APPROVAL, 
-        PermissionList.REQFORM_SUBMITTED,
-    ]
+class PermissionChoices(models.TextChoices):
+    ADMIN_PANEL = "adminPanel"
+    
+    REQFORM_AWAIT_APPROVAL = "reqformAwaitApproval"
+    REQFORM_SUBMITTED = "reqformSubmitted"
+
+    LOGIN_PAGE = "loginPage"
 
 class RoleList(Enum):
     OUTSIDE = "Outside"

@@ -1,24 +1,14 @@
-# # from django import forms
-# from django.contrib.auth.forms import UserCreationForm
-# from django.contrib.auth.models import User, Group
+from django import forms
+from users.models import PermissionList, PermissionType, PathPermission
 
-# from django import forms
+from awis_custom_settings.settings import PermissionChoices
 
-# from awis_custom_settings.settings import RoleChoices
+class PermissionAddForm(forms.Form):
+    view = forms.BooleanField(required=False)
+    edit = forms.BooleanField(required=False)
+    create = forms.BooleanField(required=False)
+    delete = forms.BooleanField(required=False)
+    approve = forms.BooleanField(required=False)
+    perm = forms.ChoiceField(choices=PermissionChoices)
 
-class CustomizedUserCreationForm():
-    pass
-#     role = forms.ChoiceField(choices=RoleChoices)
-#     class Meta:
-#         model = User
-#         fields = ("username", "email", "first_name", "last_name", "password1", "password2")
-
-########################################################
-
-
-
-# class UserActiveForm(forms.Form):
-#     user = forms.ModelChoiceField(
-#         queryset=UserDataModel.objects.all()
-#     )
-#     is_active = forms.BooleanField(required=False)
+    selected_type = forms.ChoiceField(choices=PathPermission.get_all_keys())
