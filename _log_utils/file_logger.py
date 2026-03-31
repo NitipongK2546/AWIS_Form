@@ -41,11 +41,12 @@ def getUserLog(user_id : int):
 #############################################################################
 
 def _createLog(request : HttpRequest, action : AccessType, system : PermissionList, relevant_info = None, remark : str = None, filename : str = ERROR_LOG, ) -> LogSystem:
-    if relevant_info and (not isinstance(relevant_info, list)):
-        if isinstance(relevant_info, str):
-            relevant_info = [relevant_info]
-        else:
-            relevant_info = list(relevant_info)
+    if relevant_info:
+        if not isinstance(relevant_info, list):
+            if isinstance(relevant_info, str):
+                relevant_info = [relevant_info]
+            else:
+                relevant_info = list(relevant_info)
 
         relevant_info_str : list[str] = [str(info) for info in relevant_info]
     else:
