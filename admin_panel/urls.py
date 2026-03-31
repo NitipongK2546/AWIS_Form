@@ -14,6 +14,6 @@ urlpatterns = [
     path("delete-access/<int:user_id>/", views.delete_access, name="delete_access"),
 
 
-    path("views_perms/", views.display_all_views_permissions, name="views_perms"),
-    path("views_perms/remove/<str:view_name>/<str:perm_name>/", views.delete_perm_from_view, name="delete_perms"),
+    # path("views_perms/", views.display_all_views_permissions, name="views_perms"),
+    # path("views_perms/remove/<str:view_name>/<str:perm_name>/", views.delete_perm_from_view, name="delete_perms"),
 ]

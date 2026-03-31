@@ -6,8 +6,6 @@ from awis_custom_settings import settings, default_perms
 from users import PermissionList, PermissionType, perm_str
 from users.permissions import AWISPermissions, PermissionList, PermissionType, creation, perm_str_list
 
-from users.models import PathPermission
-
 for name in PermissionList:
     ct = creation.createContentType(name)
 
