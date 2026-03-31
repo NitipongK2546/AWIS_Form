@@ -3,6 +3,8 @@
 
 ### PERSONAL IGNORE ###
 
+_log_output
+
 /output
 /test_files
 /.test_files

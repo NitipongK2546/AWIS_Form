@@ -1,5 +1,5 @@
 from . import perms
-from .perms import PermissionList, PermissionType, perm_str, perm_str_list, AccessType
+from .perms import PermissionList, PermissionType, perm_str, perm_str_list
 
 class AWISPermissions:
     permissison_list : list[tuple] = []

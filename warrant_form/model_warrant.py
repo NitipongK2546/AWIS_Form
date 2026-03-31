@@ -105,6 +105,9 @@ class WarrantDataModel(models.Model):
     plaintiff = models.CharField(max_length=400, blank=True)
     court_name = models.CharField(max_length=250, blank=True)
 
+    def __str__(self):
+        return f"(pk: {self.pk}, woa_no: {self.woa_no})"
+
     def get_woa_type_text(self) -> str:
         woa_type_dict = dict(WOA_TYPE_CHOICES)
 

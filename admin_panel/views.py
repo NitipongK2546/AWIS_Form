@@ -8,7 +8,10 @@ from django.contrib.auth.models import User, Group
 
 from users.models import UserDataModel
 
-from users.permissions.perms import PermissionList, PermissionType, perm_str
+import _log_utils.file_logger as FileLogger
+from _log_utils.file_logger import AccessType
+
+from users.permissions.perms import PermissionList, PermissionType, perm_str, perm_str_list
 
 import requests
 from users.models import UserAccess
@@ -26,6 +29,8 @@ FORBIDDEN_MSG = JsonResponse({
 def collections(request : HttpRequest):
     if not request.user.is_staff:
         return FORBIDDEN_MSG
+    
+    FileLogger.createNormalLog(request, AccessType.VIEW, PermissionList.ADMIN_PANEL,)
 
     return render(request, "admin_panel/collections.html")
 
@@ -154,6 +159,8 @@ def add_specific_user(request: HttpRequest):
     else:
         return redirect("admin_panel:access_list")
 
+##############################################################################
+
 @permission_required(perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL), raise_exception=True)
 def access_list(request):
     # ดึงข้อมูลทั้งหมดจาก UserAccess
@@ -162,7 +169,8 @@ def access_list(request):
     return render(request, "admin_panel/access_list.html", {
         "allowed_users": allowed_users
     })
-    
+
+@permission_required(perm_str(PermissionType.EDIT, PermissionList.ADMIN_PANEL), raise_exception=True)
 def update_role(request, user_id, role_value):
     user : UserAccess = get_object_or_404(UserAccess, user_id=user_id)
     django_user : UserDataModel = UserDataModel.objects.filter(api_uid=user_id).first()
@@ -179,9 +187,13 @@ def update_role(request, user_id, role_value):
         django_user.save()
     return redirect("admin_panel:access_list")
 
+@permission_required(perm_str_list([PermissionType.DELETE, PermissionType.VIEW], PermissionList.ADMIN_PANEL), raise_exception=True)
 def delete_access(request, user_id):
     user = get_object_or_404(UserAccess, user_id=user_id)
     user.delete()
+
+    # FileLogger.createNormalLogRequest(request, AccessType.DELETE, PermissionList.ADMIN_PANEL,)
+
     return redirect("admin_panel:access_list")
 
 ####################################################################

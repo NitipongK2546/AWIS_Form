@@ -11,7 +11,10 @@ from dashboard.models import VisualReqformData as FormSent
 from dashboard.warrant_wrapper import VisualWarrantData
 
 from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
-from users.models import UserDataModel, createLog
+from users.models import UserDataModel
+
+import _log_utils.file_logger as FileLogger
+from _log_utils.file_logger import AccessType
 
 import _request_utils.connect_api as AWISConnectAPI
 
@@ -19,7 +22,7 @@ import json
 from datetime import datetime
 from django.utils import timezone
 
-from users.permissions.perms import PermissionList, PermissionType, perm_str, AccessType
+from users.permissions.perms import PermissionList, PermissionType, perm_str
 
 def getFormAwaitViaReqno(reqno : str):
     return FormData.objects.filter(form__reqno=reqno).first()
@@ -108,10 +111,10 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
     if isNotUserAndNotHaveApprovePerm(selected_form, user_data):
         return HttpResponseForbidden()
 
-    selected_form = selected_form.form
-    print(selected_form.prepareTextToSpeech())
+    reqform = selected_form.form
+    # print(selected_form.prepareTextToSpeech())
 
-    warrants : list[WarrantDataModel] = selected_form.warrants.all()
+    warrants : list[WarrantDataModel] = reqform.warrants.all()
 
     warrant_list = []
     for item in warrants:
@@ -121,7 +124,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
             form
         )
 
-    form_data = selected_form.convertBacktoFormView()
+    form_data = reqform.convertBacktoFormView()
     
     form = ObjStep1Form(initial=form_data, prefix="main_form")
 
@@ -131,7 +134,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
     #     )
     # )
 
-    createLog(request.user.api_uid, AccessType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL)
+    FileLogger.createNormalLog(request, AccessType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL, [selected_form])
 
     return render(request, f"dashboard/{selected_html}", {
         "user": request.user,
@@ -201,7 +204,7 @@ def edit_form(request : HttpRequest, form_id : int):
 
             form_await.save()
 
-            createLog(request.user.api_uid, AccessType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL)
+            FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL, [form_await])
 
             return redirect(reverse("dashboard:dashboard"))
 
@@ -237,7 +240,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
             if settings.ENABLE_API:
                 dict = AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
 
-            print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False))
+            # print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False))
 
             selected_form.approve_status = FormData.ApprovalStatus.APPROVED
             selected_form.date_approved = timezone.now()
@@ -257,10 +260,11 @@ def confirm_approve(request : HttpRequest, form_id : int):
                   
             # print(f"Result: {json.dumps(dict)}")
 
-            createLog(request.user.api_uid, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL)
+            FileLogger.createNormalLog(request, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL, [selected_form],)
 
             return redirect(reverse("dashboard:success_page"))
         except Exception as e:
+
             return redirect(reverse("dashboard:dashboard"))
 
     return render(request, "dashboard/confirmation_page.html", {
@@ -278,7 +282,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
         selected_form.approve_status = FormData.ApprovalStatus.REJECTED
         selected_form.save()
 
-        createLog(request.user.api_uid, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL,)
+        FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, [selected_form])
   
         return redirect(reverse("dashboard:success_page"))
     
