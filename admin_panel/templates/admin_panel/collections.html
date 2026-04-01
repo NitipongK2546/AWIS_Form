@@ -1,21 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Tools Collections</title>
-</head>
-<body>
+{% extends "admin_panel/base.html" %}
+{% load static %}
+
+{% block title %}Admin Tools Collections{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'admin_panel/css/admin_collection.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-tools">
     <h1>Admin Tools Collections</h1>
 
-    <h3><a href="/admin/" style="text-decoration: none;">Django Built-in Admin Site</a></h3>
-    {% comment %}
-    <h3><a href="{% url 'admin_panel:signup' %}" style="text-decoration: none;">Easy User Signup</a></h3>
-    {% endcomment %}
-    <h3><a href="{% url 'admin_panel:user_list' %}" style="text-decoration: none;">Check All Users and Permissions</a></h3>
-    <h3><a href="{% url 'admin_panel:select_users' %}" style="text-decoration: none;">Select ERP Users for Access</a></h3>
-    <h3><a href="{% url 'admin_panel:access_list' %}" style="text-decoration: none;">See ERP Users that can Access</a></h3>
+    <h3><a href="/admin/">หน้า admin Built-in ของ Django</a></h3>
 
-    {% comment %} <h3><a href="{% url ''%}">  {% endcomment %}
-</body>
-</html>
+    {% comment %}
+    <h3><a href="{% url 'admin_panel:signup' %}">Easy User Signup</a></h3>
+    {% endcomment %}
+
+    <h3><a href="{% url 'admin_panel:user_list' %}">ตรวจสอบผู้ใช้และสิทธิ์ของผู้ใช้</a></h3>
+    <h3><a href="{% url 'admin_panel:select_users' %}">เลือกผู้ใช้งานใน ERP เพื่อให้สิทธิ์การใช้ในเว็ปนี้</a></h3>
+    <h3><a href="{% url 'admin_panel:access_list' %}">ตรวจสอบสอบรายชื่อผู้มีสิทธิ์และจัดการสิทธิ์</a></h3>
+</div>
+{% endblock %}

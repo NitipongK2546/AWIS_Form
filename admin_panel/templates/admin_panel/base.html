@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}base{% endblock %}</title>
+
+    {% block style %}
+    {% endblock %}
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'admin_panel/css/admin_collection.css' %}">
+    
+    {% block header_script %}
+    {% endblock %}
+    <script src="{% static 'js/get_cookie.js' %}"></script>
+    <script src="{% static 'js/fetchDistrict.js' %}"></script>
+</head>
+<body>
+
+    {% block form %}
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% block defer_script %}
+    {% endblock %}
+    
+    {% block script %}
+    {% endblock %}
+</body>
+</html>

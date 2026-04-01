@@ -1,0 +1,24 @@
+body {
+    background-color: rgb(234, 234, 234);
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+}
+
+.admin-tools {
+    max-width: 800px;
+    margin: 50px auto;
+    font-family: 'Noto Sans Thai', sans-serif;
+}
+
+.admin-tools h1 {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.admin-tools h3 a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.admin-tools h3 a:hover {
+    text-decoration: underline;
+}
