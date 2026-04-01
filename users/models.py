@@ -24,6 +24,10 @@ class UserDataModel(AbstractUser):
         all_logs = LogSystem.objects.filter(user_id=self.api_uid)
 
         return all_logs
+    
+    def getGroupString(self):
+        group_list = list(self.groups.all())
+        return [group.name for group in group_list]
         
 class UserAccess(models.Model):
     user_id = models.IntegerField()
@@ -87,7 +91,7 @@ class LogSystem(models.Model):
         datetime_info = self.time_logged.astimezone(timezone.get_current_timezone())
 
         user_obj = UserDataModel.objects.get(api_uid=self.user_id)
-        user_info = f"{user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
+        user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
 
         action_info = f"{self.action} -> {self.system}"
 

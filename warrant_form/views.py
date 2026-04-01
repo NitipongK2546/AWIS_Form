@@ -3,8 +3,6 @@ from django.urls import reverse
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.decorators import login_required, permission_required
 
-from users.permissions.decorators import perm_req_log
-
 from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledWarrantForm, DisabledFormStep1
 # from warrant_form.doc_create import doc_create_with_context
 from warrant_form.model_warrant import WarrantDataModel
@@ -20,8 +18,8 @@ from django.utils import timezone
 
 import _log_utils.file_logger as FileLogger
 from _log_utils.file_logger import AccessType
-
-from users import PermissionList, PermissionType, perm_str
+from users import PermissionList, PermissionType
+from users.permissions.decorators import perm_req_log, perm_str_list
 
 ##############################################################################
 # FORM VIEWS
@@ -41,7 +39,7 @@ def success_page(request : HttpRequest):
 
 ##############################################################################
 
-@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL)
+@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
 def step0_confirm_owner(request : HttpRequest):
     if request.method == "POST":
         form = OwnershipForm(request.POST)
@@ -64,7 +62,7 @@ def step0_confirm_owner(request : HttpRequest):
         "form": form,
     })
 
-@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL)
+@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
 def step1_reqform(request : HttpRequest):
     
     if not request.session.get("step0"):
@@ -127,7 +125,7 @@ def step1_reqform(request : HttpRequest):
 
     return render(request, "warrant_form/awis_step1.html", context)
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
 def step2_warrantform(request : HttpRequest):
     if request.method == "POST":
         try:
@@ -180,7 +178,7 @@ def step2_warrantform(request : HttpRequest):
 
     return render(request, "warrant_form/awis_step2.html", context)
 
-@permission_required(perm_str(PermissionType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
 def step3_confirm_form(request : HttpRequest):
     if request.method == "POST":
         try:
@@ -221,7 +219,7 @@ def step3_confirm_form(request : HttpRequest):
         except Exception as e:
             print(e)
 
-            FileLogger.createErrorLog(request, AccessType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL, str(e))
+            # FileLogger.createErrorLog(request, AccessType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL, str(e))
 
             ReqformDataModel.objects.filter(pk=reqform.pk).first().delete()
             WarrantDataModel.objects.filter(pk=warrant.pk).first().delete()

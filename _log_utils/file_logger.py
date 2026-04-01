@@ -30,8 +30,18 @@ def exportLogAsFile(filename : str = ALL_LOG_NAME):
 
     with open(LOG_DIR + filename, mode="w", encoding="utf-8") as file:
         for log in all_logs:
-            user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
-            file.write(f"[{log.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {log.action} the {log.system}\n")
+            # user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
+            pass
+
+            # if log.type == "errors":
+            #     prepared_text = log.toStrFailed("ACCESS DENIED", request.get_full_path(True))
+            # if remark:
+            #     prepared_text = prepared_text + f" ({remark})"
+            # if log.type == "denied":
+            #     file.write(f"{log.toStrFailed("ACCESS DENIED")}")
+
+            # file.write(f"{prepared_text}\n")
+            # file.write(f"[{log.time_logged.astimezone(timezone.get_current_timezone())}]: {user_obj.username} ({user_obj.first_name} {user_obj.last_name}) {log.action} the {log.system}\n")
 
 def getUserLog(user_id : int):
     all_logs = LogSystem.objects.filter(user_id=user_id)

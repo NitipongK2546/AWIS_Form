@@ -27,7 +27,7 @@ FORBIDDEN_MSG = JsonResponse({
 
 # VIEWS
 
-@perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL)
+@perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
 def collections(request : HttpRequest):
     if not request.user.is_staff:
         return FORBIDDEN_MSG
@@ -93,7 +93,7 @@ def check_all_users(request : HttpRequest):
 
 ORG_API_FETCH_USERS = os.getenv("ORG_API_FETCH_USERS")
 
-@perm_req_log([PermissionType.CREATE], PermissionList.ADMIN_PANEL)
+@perm_req_log([PermissionType.CREATE], PermissionList.ADMIN_PANEL, AccessType.CREATE)
 def admin_select_users(request : HttpRequest):
     try:
         response = requests.get(ORG_API_FETCH_USERS)
@@ -146,7 +146,7 @@ def add_user_to_access(user_data : dict):
         return True
     return False
 
-@perm_req_log([PermissionType.CREATE], PermissionList.USER_ACCESS)
+@perm_req_log([PermissionType.CREATE], PermissionList.USER_ACCESS, AccessType.CREATE)
 def add_specific_user(request: HttpRequest):
     user_data = {
         "USR_ID": int(os.getenv("TEST_ID")),
@@ -166,7 +166,7 @@ def add_specific_user(request: HttpRequest):
 
 ##############################################################################
 
-@perm_req_log([PermissionType.CREATE], PermissionList.ADMIN_PANEL)
+@perm_req_log([PermissionType.VIEW], PermissionList.USER_ACCESS, AccessType.VIEW)
 def access_list(request):
     # ดึงข้อมูลทั้งหมดจาก UserAccess
     allowed_users = UserAccess.objects.all()
@@ -175,7 +175,7 @@ def access_list(request):
         "allowed_users": allowed_users
     })
 
-@perm_req_log([PermissionType.EDIT], PermissionList.ADMIN_PANEL)
+@perm_req_log([PermissionType.EDIT], PermissionList.USER_ROLE, AccessType.EDIT)
 def update_role(request, user_id, role_value):
     user : UserAccess = get_object_or_404(UserAccess, user_id=user_id)
     django_user : UserDataModel = UserDataModel.objects.filter(api_uid=user_id).first()
@@ -192,7 +192,7 @@ def update_role(request, user_id, role_value):
         django_user.save()
     return redirect("admin_panel:access_list")
 
-@perm_req_log([PermissionType.DELETE], PermissionList.ADMIN_PANEL)
+@perm_req_log([PermissionType.DELETE], PermissionList.USER_ACCESS, AccessType.DELETE)
 def delete_access(request, user_id):
     user = get_object_or_404(UserAccess, user_id=user_id)
     user.delete()
