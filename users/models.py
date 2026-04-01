@@ -26,6 +26,8 @@ class UserDataModel(AbstractUser):
         return all_logs
     
     def getGroupString(self):
+        if self.is_superuser:
+            return ["Superuser"]
         group_list = list(self.groups.all())
         return [group.name for group in group_list]
         
@@ -81,11 +83,13 @@ log_type = (
 
 class LogSystem(models.Model):
     user_id : int = models.IntegerField()
-    action : str = models.CharField()
-    system : str = models.CharField()
+    action : str = models.CharField(max_length=100)
+    system : str = models.CharField(max_length=100)
     time_logged : timezone.datetime = models.DateTimeField()
     relevant_info : list = models.JSONField(blank=True, null=True,)
     type : int = models.CharField(max_length=6, choices=log_type)
+    url_path : str = models.CharField(max_length=255)
+    remark : str = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         datetime_info = self.time_logged.astimezone(timezone.get_current_timezone())
@@ -101,10 +105,10 @@ class LogSystem(models.Model):
 
         return basic_info
     
-    def toStrFailed(self, reason : str, url_path : str = ""):
+    def toStrFailed(self, reason : str):
         current_string = f"{self}"
-        if url_path:
-            current_string = f"{current_string} (Path: {url_path})"
+        if self.url_path:
+            current_string = f"{current_string} (Path: {self.url_path})"
 
         if not self.relevant_info:
             return current_string
@@ -121,10 +125,10 @@ class LogSystem(models.Model):
         return f"{self} | {failed_info}"
         # return f"{failed_info} | {self}"
 
-    def toStrExtra(self, url_path : str = ""):
+    def toStrExtra(self,):
         current_string = f"{self}"
-        if url_path:
-            current_string = f"{current_string} (Path: {url_path})"
+        if self.url_path:
+            current_string = f"{current_string} (Path: {self.url_path})"
 
         if not self.relevant_info:
             return current_string

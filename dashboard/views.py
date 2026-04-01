@@ -302,6 +302,8 @@ def delete_form(request : HttpRequest, form_id : int):
         return HttpResponseForbidden()
 
     if request.method == "POST":
+        FileLogger.createNormalLog(request, AccessType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL, [selected_form])
+
         selected_form.delete()
   
         return redirect(reverse("dashboard:success_page"))
