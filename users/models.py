@@ -24,6 +24,10 @@ class UserDataModel(AbstractUser):
         all_logs = LogSystem.objects.filter(user_id=self.api_uid)
 
         return all_logs
+    
+    def getGroupString(self):
+        group_list = list(self.groups.all())
+        return [group.name for group in group_list]
         
 class UserAccess(models.Model):
     user_id = models.IntegerField()
@@ -69,20 +73,27 @@ class OTPCollection(models.Model):
     
 ###############################################################################
 
+log_type = (
+    ("normal", "normal"),
+    ("errors", "errors"),
+    ("denied", "denied"),
+)
+
 class LogSystem(models.Model):
     user_id : int = models.IntegerField()
     action : str = models.CharField()
     system : str = models.CharField()
     time_logged : timezone.datetime = models.DateTimeField()
     relevant_info : list = models.JSONField(blank=True, null=True,)
+    type : int = models.CharField(max_length=6, choices=log_type)
 
     def __str__(self):
         datetime_info = self.time_logged.astimezone(timezone.get_current_timezone())
 
         user_obj = UserDataModel.objects.get(api_uid=self.user_id)
-        user_info = f"{user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
+        user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
 
-        action_info = f"{self.action} the {self.system}"
+        action_info = f"{self.action} -> {self.system}"
 
         ####
 
@@ -90,9 +101,13 @@ class LogSystem(models.Model):
 
         return basic_info
     
-    def toStrFailed(self, reason):
+    def toStrFailed(self, reason : str, url_path : str = ""):
+        current_string = f"{self}"
+        if url_path:
+            current_string = f"{current_string} (Path: {url_path})"
+
         if not self.relevant_info:
-            return f"{self}"
+            return current_string
         
         info_list : list[str] = self.relevant_info
 
@@ -106,9 +121,13 @@ class LogSystem(models.Model):
         return f"{self} | {failed_info}"
         # return f"{failed_info} | {self}"
 
-    def toStrExtra(self,):
+    def toStrExtra(self, url_path : str = ""):
+        current_string = f"{self}"
+        if url_path:
+            current_string = f"{current_string} (Path: {url_path})"
+
         if not self.relevant_info:
-            return f"{self}"
+            return current_string
         
         info_list : list[str] = self.relevant_info
 
@@ -119,7 +138,7 @@ class LogSystem(models.Model):
 
         extra_info : str = f"Affected: [ {affected_obj} ]"
 
-        return f"{self} | {extra_info}"
+        return f"{current_string} | {extra_info}"
 
     # def createLog(self, filename):
     #     createLog(self.user_id, self.action, self.system, filename)
