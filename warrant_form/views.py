@@ -181,48 +181,41 @@ def step2_warrantform(request : HttpRequest):
 @perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
 def step3_confirm_form(request : HttpRequest):
     if request.method == "POST":
-        try:
-            reqform_data : dict = request.session.get("step1_cleaned")
-            warrant_data : list[dict] = request.session.get("step2_cleaned")
+        reqform_data : dict = request.session.get("step1_cleaned")
+        warrant_data : list[dict] = request.session.get("step2_cleaned")
 
-            reqform : ReqformDataModel = ReqformDataModel.objects.create(**reqform_data)
+        reqform : ReqformDataModel = ReqformDataModel.objects.create(**reqform_data)
 
-            for item_dict in warrant_data:
-                warrant : WarrantDataModel = WarrantDataModel.objects.create(
-                    **item_dict
-                )
-                if reqform:
-                    reqform.warrants.add(warrant)
-
-            creator = UserDataModel.objects.get(id=request.session.get("form_creator"))
-            owner = UserDataModel.objects.get(id=request.session.get("form_owner"))
-
-            target_obj = VisualFormApprovalData.objects.create(
-                form=reqform, 
-                form_creator=creator, 
-                form_owner=owner, 
-                approve_status=VisualFormApprovalData.ApprovalStatus.PENDING
+        for item_dict in warrant_data:
+            warrant : WarrantDataModel = WarrantDataModel.objects.create(
+                **item_dict
             )
+            if reqform:
+                reqform.warrants.add(warrant)
 
-            request.session.pop("step1", None)
-            request.session.pop("step1_cleaned", None)
-            request.session.pop("acc_info", None)
-            request.session.pop("step2", None)
-            request.session.pop("step2_cleaned", None)
-            request.session.pop("step0", None)
-            request.session.pop("form_owner", None)
-            request.session.pop("form_creator", None)
+        creator = UserDataModel.objects.get(id=request.session.get("form_creator"))
+        owner = UserDataModel.objects.get(id=request.session.get("form_owner"))
 
-            FileLogger.createNormalLog(request, AccessType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL, [target_obj])
+        target_obj = VisualFormApprovalData.objects.create(
+            form=reqform, 
+            form_creator=creator, 
+            form_owner=owner, 
+            approve_status=VisualFormApprovalData.ApprovalStatus.PENDING
+        )
 
-            return redirect("dashboard:dashboard")
-        except Exception as e:
-            print(e)
+        request.session.pop("step1", None)
+        request.session.pop("step1_cleaned", None)
+        request.session.pop("acc_info", None)
+        request.session.pop("step2", None)
+        request.session.pop("step2_cleaned", None)
+        request.session.pop("step0", None)
+        request.session.pop("form_owner", None)
+        request.session.pop("form_creator", None)
 
-            # FileLogger.createErrorLog(request, AccessType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL, str(e))
+        FileLogger.createNormalLog(request, AccessType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL, [target_obj])
 
-            ReqformDataModel.objects.filter(pk=reqform.pk).first().delete()
-            WarrantDataModel.objects.filter(pk=warrant.pk).first().delete()
+        return redirect("dashboard:dashboard")
+
 
     if not request.session.get("step2"):
         return redirect(reverse("forms:step2"))

@@ -32,7 +32,7 @@ def perm_req_log(perm_list : list[PermissionType], system : PermissionList, acce
                 raise PermissionDenied
             
             except Exception as e:
-                error_reason = "Error Occured while accessing: "
+                error_reason = f"<{type(e).__name__}>: "
                 error_reason = error_reason + str(e)
                 
                 FileLogger.createErrorLog(request, access, system, error_reason)
