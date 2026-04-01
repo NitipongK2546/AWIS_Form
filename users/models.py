@@ -26,6 +26,8 @@ class UserDataModel(AbstractUser):
         return all_logs
     
     def getGroupString(self):
+        if self.is_superuser:
+            return ["Superuser"]
         group_list = list(self.groups.all())
         return [group.name for group in group_list]
         
