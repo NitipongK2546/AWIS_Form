@@ -8,6 +8,8 @@ from django.http import HttpRequest, JsonResponse
 from django.utils import timezone 
 from datetime import timedelta
 
+from users.models import UserDataModel
+
 load_dotenv()
 
 JWT_SECRET = os.getenv("JWT_SECRET")
@@ -16,14 +18,12 @@ JWT_EXP_DELTA_SECONDS = 3600
 
 # CURRENT_TIMEZONE = timezone.get_current_timezone()
 
-def create_jwt(user_id):
+def create_jwt(user_obj : UserDataModel):
     payload = {
-        "user_id": user_id,
+        "user_id": user_obj.api_uid,
         "exp": (timezone.now() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)),
         "iat": (timezone.now()),
     }
-
-    # print(timezone.now().isoformat())
 
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
@@ -81,8 +81,6 @@ def extract_jwt(request : HttpRequest):
 
 ##################################################################
 
-from users.models import UserDataModel
-
 def get_user(request : HttpRequest):
     payload = extract_jwt(request)
     if isinstance(payload, JsonResponse):
@@ -91,7 +89,7 @@ def get_user(request : HttpRequest):
     user_id = payload.get("user_id")
 
     user = UserDataModel.objects.filter(
-        pk=user_id
+        api_uid=user_id
     ).first()
 
     return user

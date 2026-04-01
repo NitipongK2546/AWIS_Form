@@ -7,6 +7,8 @@ from users.permissions import PermissionList
 
 from django.http import HttpRequest
 
+from django.contrib.auth.models import AnonymousUser
+
 LOG_DIR = "_log_output/"
 ALL_LOG_NAME = "all_access_log.txt"
 
@@ -49,7 +51,7 @@ def getUserLog(user_id : int):
 
 #############################################################################
 
-def _createLog(request : HttpRequest, action : AccessType, system : PermissionList, type : str, relevant_info = None, remark : str = None, filename : str = ERROR_LOG,) -> LogSystem:
+def _createLog(request : HttpRequest, action : AccessType, system : PermissionList, type : str, relevant_info = None, remark : str = None, filename : str = ERROR_LOG, user_bypass : UserDataModel = None) -> LogSystem:
     if relevant_info:
         if not isinstance(relevant_info, list):
             if isinstance(relevant_info, str):
@@ -61,7 +63,13 @@ def _createLog(request : HttpRequest, action : AccessType, system : PermissionLi
     else:
         relevant_info_str = []
     
-    user : UserDataModel = request.user
+    if isinstance(request.user, AnonymousUser):
+        if user_bypass:
+            user : UserDataModel = user_bypass
+        else:
+            user = None
+    else:
+        user : UserDataModel = request.user
 
     user_id = user.api_uid
 
@@ -75,9 +83,9 @@ def _createLog(request : HttpRequest, action : AccessType, system : PermissionLi
 
 ########################################################################
 
-def createNormalLog(request : HttpRequest, action : AccessType, system : PermissionList, access_info : list = None, remark : str = None,):
+def createNormalLog(request : HttpRequest, action : AccessType, system : PermissionList, access_info : list = None, remark : str = None, user_bypass : UserDataModel = None):
     
-    log_obj = _createLog(request, action, system, "normal", access_info, remark, NORMAL_LOG,)
+    log_obj = _createLog(request, action, system, "normal", access_info, remark, NORMAL_LOG, user_bypass)
 
     with open(LOG_DIR + NORMAL_LOG, mode="a", encoding="utf-8") as file:
         prepared_text = log_obj.toStrExtra()
@@ -88,9 +96,9 @@ def createNormalLog(request : HttpRequest, action : AccessType, system : Permiss
 
     return log_obj 
 
-def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : PermissionList, denied_reason : list = None, remark : str = None,):
+def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : PermissionList, denied_reason : list = None, remark : str = None, user_bypass : UserDataModel = None):
 
-    log_obj = _createLog(request, action, system, "denied", denied_reason, remark, NORMAL_LOG,)
+    log_obj = _createLog(request, action, system, "denied", denied_reason, remark, NORMAL_LOG, user_bypass)
 
     with open(LOG_DIR + ACCESS_DENIED_LOG, mode="a", encoding="utf-8") as file:
         prepared_text = log_obj.toStrFailed("ACCESS DENIED",)
@@ -102,9 +110,9 @@ def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : P
     return log_obj  
     
 
-def createErrorLog(request : HttpRequest, action : AccessType, system : PermissionList, error_reason : list = None, remark : str = None,):
+def createErrorLog(request : HttpRequest, action : AccessType, system : PermissionList, error_reason : list = None, remark : str = None, user_bypass : UserDataModel = None):
 
-    log_obj = _createLog(request, action, system, "errors", error_reason, remark, NORMAL_LOG,)
+    log_obj = _createLog(request, action, system, "errors", error_reason, remark, NORMAL_LOG, user_bypass)
 
     with open(LOG_DIR + ERROR_LOG, mode="a", encoding="utf-8") as file:
         prepared_text = log_obj.toStrFailed("ERROR",)

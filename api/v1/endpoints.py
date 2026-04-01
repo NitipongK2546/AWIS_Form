@@ -12,7 +12,15 @@ from dashboard.warrant_wrapper import VisualWarrantData, WarrantDataModel
 
 from django.utils import timezone
 
+
+
+import _log_utils.file_logger as FileLogger
+from _log_utils.file_logger import AccessType
+from api.decorators import api_perm_log
+from users.permissions.decorators import perm_req_log, perm_str_list
 from users import PermissionList, PermissionType, perm_str
+
+from django.core.exceptions import PermissionDenied
 
 # V1 ENDPOINTS
 
@@ -39,7 +47,7 @@ def auth_api(request : HttpRequest) -> JsonResponse:
         username = data.get("username")
         password = data.get("password")
         
-        user = authenticate(username=username, password=password)
+        user : UserDataModel = authenticate(username=username, password=password)
 
         if not user:
             return JsonResponse({
@@ -47,20 +55,19 @@ def auth_api(request : HttpRequest) -> JsonResponse:
                 "message": "Wrong Username or Password"
             }, status=401)
         
-        token = JWTHandle.create_jwt(user.pk)
+        token = JWTHandle.create_jwt(user)
 
         return JsonResponse({
             "status": 200,
             "token": token,
         })
     except Exception as e:
-        print(e)
-
         return JsonResponse({
             "status": 400,
             "message": "Authentication failed."
         }, status=400)
 
+@api_perm_log([PermissionType.EDIT], PermissionList.REQFORM_SUBMITTED, AccessType.EDIT)
 @csrf_exempt
 def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     if request.method != "PUT":
@@ -73,13 +80,13 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     payload = JWTHandle.extract_jwt(request)
     if isinstance(payload, JsonResponse):
         return payload
-    
+
     user = UserDataModel.objects.filter(
-        pk=payload.get("user_id")
+        api_uid=payload.get("user_id")
     ).first()
 
-    if not user.has_perm(perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED)):
-        return HttpResponseForbidden()
+    # if not user.has_perm(perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED)):
+    #     raise PermissionDenied
 
     data = UtilsHandle.json_retrieval(request)
 
@@ -98,7 +105,6 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     # }
 
     try:
-
         form_obj = ReqformDataModel.objects.get(
             req_no_plaintiff = data.get("req_no_plaintiff"),
             reqno = data.get("reqno"),
@@ -132,22 +138,25 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
             **update_dict,
         )
 
+        FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_SUBMITTED, [target_object], user_bypass=user, remark="VIA JSON WEB TOKEN")
+
         return JsonResponse({
             "status": 200,
             "message": "Update Success"
         }, status=200)
-
-    except Exception as e:
-        print(e)
-        print(data)
-
-        return JsonResponse({
-            "status": 400,
-            "message": "Update Failed",
-        }, status=400)
-
     
-@csrf_exempt
+    except PermissionDenied:
+        return JsonResponse({
+            "status": 403,
+            "message": "Current User Lack Permission" 
+        }, status=403)
+    except Exception:
+        return JsonResponse({
+            "status": 500,
+            "message": "Updating Failed." 
+        }, status=500)
+
+@api_perm_log([PermissionType.EDIT], PermissionList.REQFORM_SUBMITTED, AccessType.EDIT)
 def update_status_warrant(request : HttpRequest) -> JsonResponse:
     if request.method != "PUT":
         # Wrong request method.
@@ -159,13 +168,13 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
     payload = JWTHandle.extract_jwt(request)
     if isinstance(payload, JsonResponse):
         return payload
-    
+
     user = UserDataModel.objects.filter(
-        pk=payload.get("user_id")
+        api_uid=payload.get("user_id")
     ).first()
 
-    if not user.has_perm(perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED)):
-        return HttpResponseForbidden()
+    # if not user.has_perm(perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED)):
+    #     raise PermissionDenied
 
     data = UtilsHandle.json_retrieval(request)
 
@@ -210,18 +219,23 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
         warrants_matched.save()
         # warrants_matched.
 
+        FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_SUBMITTED, [warrants_matched], user_bypass=user, remark="VIA JSON WEB TOKEN")
+
         return JsonResponse({
             "status": 200,
             "message": "Update Success"
         }, status=200)
 
-    except Exception as e:
-        print(e)
-
+    except PermissionDenied:
         return JsonResponse({
-            "status": 400,
-            "message": "Update Failed",
-        }, status=400)
+            "status": 403,
+            "message": "Current User Lack Permission" 
+        }, status=403)
+    except Exception:
+        return JsonResponse({
+            "status": 500,
+            "message": "Updating Failed." 
+        }, status=500)
 
 
         
