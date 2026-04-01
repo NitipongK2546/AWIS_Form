@@ -24,11 +24,6 @@ from django.utils import timezone
 
 from users.permissions.perms import PermissionList, PermissionType, perm_str
 
-import _log_utils.file_logger as FileLogger
-from _log_utils.file_logger import AccessType
-from users import PermissionList, PermissionType
-from users.permissions.decorators import perm_req_log, perm_str_list
-
 def getFormAwaitViaReqno(reqno : str):
     return FormData.objects.filter(form__reqno=reqno).first()
 
@@ -106,7 +101,7 @@ def dashboard(request : HttpRequest):
 # Form Edit and View Section 
 #
 
-@perm_req_log([PermissionType.VIEW], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.VIEW)
+@permission_required(perm_str(PermissionType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL))
 def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
@@ -155,7 +150,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
-@perm_req_log([PermissionType.EDIT], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.EDIT)
+@permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def edit_form(request : HttpRequest, form_id : int):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
@@ -224,7 +219,8 @@ def edit_form(request : HttpRequest, form_id : int):
 #
 # FORM APPROVE SECTION
 #
-@perm_req_log([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.VIEW)
+
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def approve_form_page(request : HttpRequest):
 
     all_forms = FormData.objects.all()
@@ -234,7 +230,7 @@ def approve_form_page(request : HttpRequest):
         "forms": all_forms,
     })
 
-@perm_req_log([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.APPROVE)
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def confirm_approve(request : HttpRequest, form_id : int):
 
     selected_form = getFormAwaitViaReqno(form_id)
@@ -278,7 +274,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
     })
     
 
-@perm_req_log([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.REJECT)
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def confirm_reject(request : HttpRequest, form_id : int):
     selected_form = getFormAwaitViaReqno(form_id)
 
@@ -297,7 +293,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
     })
 
 
-@perm_req_log([PermissionType.DELETE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.DELETE)
+@permission_required(perm_str(PermissionType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def delete_form(request : HttpRequest, form_id : int):
 
     selected_form = getFormAwaitViaReqno(form_id)
