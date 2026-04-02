@@ -11,8 +11,10 @@
     <div>
         <h1>Filter</h1>
         <form method="get">
-            <span>start date:</span> {{ query.start_date }}
-            <span>end date:</span> {{ query.end_date }}
+            <span>start date:</span> 
+                {{ query.start_day }}{{ query.start_month }}{{ query.start_year }}
+            <span>end date:</span> 
+                {{ query.end_day }}{{ query.end_month }}{{ query.end_year }}
             <span>user_id:</span> {{ query.user_id }}
             <span>action type:</span> {{ query.action }}
             
@@ -22,6 +24,7 @@
             </p>
             
         <button type="submit">ค้นหา</button>
+        <a href="{% url 'admin_panel:view_logs' %}">เริ่มใหม่</a>
         </form>
     </div>
     <section>

@@ -209,11 +209,10 @@ from .forms import LogQuery
 
 @perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
 def view_all_logs(request : HttpRequest):
-
     filter = request.GET
-    logs = FileLogger.getOrFilterLogs(filter)
-
     query_form = LogQuery(data=filter)
+
+    logs = FileLogger.getOrFilterLogs(filter)
 
     return render(request, "admin_panel/log_list.html", {
         "normal_logs": logs.get("normal"),

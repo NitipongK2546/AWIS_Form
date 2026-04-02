@@ -1,6 +1,7 @@
 import os
 from enum import Enum
 from django.db.models import TextChoices
+from django.core.exceptions import ValidationError
 
 from users.models import LogSystem, UserDataModel, getAffectedData
 from django.utils import timezone
@@ -45,7 +46,7 @@ def exportLogAsFile(filename : str = ALL_LOG_NAME):
 
             file.write(f"{prepared_text}\n")
 
-def getOrFilterLogs(query : QueryDict):
+def getOrFilterLogs(query : QueryDict = {}):
     allowed_keys = ["user_id", "action", ]
 
     def cleanQuery():
@@ -64,11 +65,34 @@ def getOrFilterLogs(query : QueryDict):
                 }
             )
 
+    def cleanDate():
+        try:
+            start_obj = timezone.datetime(
+                int(query.get("start_year")), int(query.get("start_month")), int(query.get("start_day")), tzinfo=timezone.get_current_timezone()
+            )
+            end_obj = timezone.datetime(
+                int(query.get("end_year")),  int(query.get("end_month")), int(query.get("end_day")),
+                tzinfo=timezone.get_current_timezone()
+            )
+            if start_obj > end_obj:
+                raise ValidationError("Start Date is after the End Date")
+            
+            filter.update({
+                "time_logged__range": (start_obj, end_obj),
+            })
+
+        except Exception as e:
+            print(e)
+
+ 
     filter = {}
 
     print()
     
     cleanQuery()
+    cleanDate()
+
+    print(filter)
 
     queried_log = LogSystem.objects.filter(
         **filter
