@@ -1,0 +1,42 @@
+{% load static %}
+{% load thai_locale %}
+
+<div id="body-table">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th colspan="9">Log การใช้งาน</th>
+            </tr>
+            <tr>
+                <th>time_logged</th>
+                <th>user_id</th>
+                <th>username</th>
+                <th>fullname</th>
+                <th>action</th>
+                <th>system</th>
+                <th>relevant_info</th>
+                <th>url_path</th>
+                <th>remark</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.time_logged | buddhist_date }}</td>
+                <td>{{ log.user_id }}</td>
+                <td>{{ log.username }}</td>
+                <td>{{ log.fullname }}</td>
+                <td>{{ log.action }}</td>
+                <td>{{ log.system }}</td>
+                <td>{{ log.relevant_info }}</td>
+                <td>{{ log.url_path }}</td>
+                <td>{{ log.remark }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9">No Log.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

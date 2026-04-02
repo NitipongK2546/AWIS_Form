@@ -45,7 +45,30 @@ def getOrFilterLogs(search_filter : dict = None):
 
     queried_log = LogSystem.objects.all()
 
-    return queried_log
+    log_types : dict[str, list] = {
+        "normal": [],
+        "errors": [],
+        "denied": [],
+    }
+
+    for log in queried_log:
+        user_obj = UserDataModel.objects.filter(api_uid=log.user_id).first()
+
+        data_dict = {
+            "time_logged": log.time_logged,
+            "user_id": log.user_id,
+            "username": user_obj.username,
+            "fullname": f"{user_obj.first_name} {user_obj.last_name}",
+            "action": log.action,
+            "system": log.system,
+            "relevant_info": str(log.relevant_info),
+            "url_path": log.url_path,
+            "remark": log.remark,
+        }
+
+        log_types[log.type].append(data_dict)
+
+    return log_types
 
 
 def getUserLog(user_id : int):
