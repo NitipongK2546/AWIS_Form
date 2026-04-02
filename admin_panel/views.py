@@ -205,32 +205,15 @@ def delete_access(request, user_id):
 
 ####################################################################
 
-# from users.models import PathPermission
-# from .forms import PermissionAddForm
+@perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
+def view_all_logs(request : HttpRequest):
 
-# def display_all_views_permissions(request : HttpRequest):
-#     if request.method == "POST":
-#         form = PermissionAddForm(request.POST)
-#         if form.is_valid():
-#             data = form.cleaned_data
-#             perm = data.pop("perm")
-#             view_name = data.pop("selected_type")
+    logs = list(FileLogger.getOrFilterLogs())
 
-#             perm_list = []
-#             for key, item in data.items():
-#                 if item:
-#                     perm_list.append(f"users.{key}_{perm}")
+    # added_logs = [log.getUserAndGroupData() for log in logs]
 
-#             PathPermission.add_perms(view_name, perm_list)
+    # print(added_logs)
 
-#     views_perms = PathPermission.get_all_perms()        
-#     form = PermissionAddForm()
-#     return render(request, "admin_panel/views_perms.html", {
-#         "dict_item": views_perms,
-#         "form": form,
-#     })
-
-# def delete_perm_from_view(request : HttpRequest, view_name : str, perm_name : str):
-#     PathPermission.delete_perms(view_name, perm_name)
-
-#     return redirect("admin_panel:views_perms")
+    return render(request, "admin_panel/log_list.html", {
+        "logs": logs,
+    })

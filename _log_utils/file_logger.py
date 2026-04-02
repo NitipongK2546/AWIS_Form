@@ -34,15 +34,19 @@ def exportLogAsFile(filename : str = ALL_LOG_NAME):
         for log in all_logs:
             # user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
 
-            if log.type == "errors":
-                prepared_text = log.toStrFailed("ERROR")
-            if log.type == "denied":
-                prepared_text = log.toStrFailed("ACCESS DENIED")
+            prepared_text = str(log)
 
             if log.remark:
                 prepared_text = prepared_text + f" ({log.remark})"
 
             file.write(f"{prepared_text}\n")
+
+def getOrFilterLogs(search_filter : dict = None):
+
+    queried_log = LogSystem.objects.all()
+
+    return queried_log
+
 
 def getUserLog(user_id : int):
     all_logs = LogSystem.objects.filter(user_id=user_id)
@@ -90,7 +94,7 @@ def createNormalLog(request : HttpRequest, action : AccessType, system : Permiss
     log_obj = _createLog(request, action, system, "normal", access_info, remark, NORMAL_LOG, user_bypass)
 
     with open(LOG_DIR + NORMAL_LOG, mode="a", encoding="utf-8") as file:
-        prepared_text = log_obj.toStrExtra()
+        prepared_text = str(log_obj)
         if remark:
             prepared_text = prepared_text + f" ({remark})"
 
@@ -103,7 +107,7 @@ def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : P
     log_obj = _createLog(request, action, system, "denied", denied_reason, remark, NORMAL_LOG, user_bypass)
 
     with open(LOG_DIR + ACCESS_DENIED_LOG, mode="a", encoding="utf-8") as file:
-        prepared_text = log_obj.toStrFailed("ACCESS DENIED",)
+        prepared_text = str(log_obj)
         if remark:
             prepared_text = prepared_text + f" ({remark})"
 

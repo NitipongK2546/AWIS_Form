@@ -95,6 +95,23 @@ class LogSystem(models.Model):
     remark : str = models.CharField(max_length=255, null=True)
 
     def __str__(self):
+        if self.type == "errors":
+            return self.toStrFailed("ERROR")
+        elif self.type == "denied":
+            return self.toStrFailed("ERROR")
+        else:
+            return self.toStrExtra()
+        
+    def getUserAndGroupData(self) -> dict:
+        user_obj = UserDataModel.objects.get(api_uid=self.user_id)
+        user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
+
+        return {
+            "user": user_obj,
+            "groups": user_obj.getGroupString()
+        }
+        
+    def toBaseStr(self):
         datetime_info = self.time_logged.astimezone(timezone.get_current_timezone())
 
         user_obj = UserDataModel.objects.get(api_uid=self.user_id)
@@ -109,7 +126,7 @@ class LogSystem(models.Model):
         return basic_info
     
     def toStrFailed(self, reason : str):
-        current_string = f"{self}"
+        current_string = f"{self.toBaseStr()}"
         if self.url_path:
             current_string = f"{current_string} (Path: {self.url_path})"
 
@@ -128,11 +145,11 @@ class LogSystem(models.Model):
 
         failed_info : str = f"{reason}: [ {affected_obj} ]"
 
-        return f"{self} | {failed_info}"
+        return f"{current_string} | {failed_info}"
         # return f"{failed_info} | {self}"
 
     def toStrExtra(self,):
-        current_string = f"{self}"
+        current_string = f"{self.toBaseStr()}"
         if self.url_path:
             current_string = f"{current_string} (Path: {self.url_path})"
 
