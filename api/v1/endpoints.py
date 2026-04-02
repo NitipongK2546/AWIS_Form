@@ -138,7 +138,9 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
             **update_dict,
         )
 
-        FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_SUBMITTED, [target_object], user_bypass=user, remark="VIA JSON WEB TOKEN")
+        affected_objs = [obj.getLogInfoDict() for obj in target_object]
+
+        FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_SUBMITTED, affected_objs, user_bypass=user, remark="VIA JSON WEB TOKEN")
 
         return JsonResponse({
             "status": 200,
@@ -219,7 +221,7 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
         warrants_matched.save()
         # warrants_matched.
 
-        FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_SUBMITTED, [warrants_matched], user_bypass=user, remark="VIA JSON WEB TOKEN")
+        FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_SUBMITTED, warrants_matched.getLogInfoDict(), user_bypass=user, remark="VIA JSON WEB TOKEN")
 
         return JsonResponse({
             "status": 200,

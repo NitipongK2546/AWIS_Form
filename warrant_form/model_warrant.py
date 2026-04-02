@@ -5,6 +5,8 @@ from django.forms.models import model_to_dict
 
 import warrant_form.forms_central as CentralForm
 
+import json
+
 def toAPICompatibleDictGeneral(incoming_model : models.Model) -> dict[str, object]:
         """
         Convert the model object into a dictionary that fits what the API required.
@@ -106,7 +108,19 @@ class WarrantDataModel(models.Model):
     court_name = models.CharField(max_length=250, blank=True)
 
     def __str__(self):
+        # return json.dumps({
+        #     "type": ["warrant_form", "WarrantDataModel"],
+        #     "id": self.pk,
+        #     "woa_no": self.woa_no
+        # }, ensure_ascii=False)
         return f"(pk: {self.pk}, woa_no: {self.woa_no})"
+    
+    def getLogInfoDict(self):
+        return {
+            "type": ["warrant_form", "WarrantDataModel"],
+            "id": self.pk,
+            "woa_no": self.woa_no
+        }
 
     def get_woa_type_text(self) -> str:
         woa_type_dict = dict(WOA_TYPE_CHOICES)

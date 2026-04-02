@@ -81,17 +81,37 @@ log_type = (
     ("denied", "denied"),
 )
 
+import json
+from django.apps import apps
+
 class LogSystem(models.Model):
     user_id : int = models.IntegerField()
     action : str = models.CharField(max_length=100)
     system : str = models.CharField(max_length=100)
     time_logged : timezone.datetime = models.DateTimeField()
-    relevant_info : list = models.JSONField(blank=True, null=True,)
+    relevant_info : dict | list[dict] = models.JSONField(blank=True, null=True,)
     type : int = models.CharField(max_length=6, choices=log_type)
     url_path : str = models.CharField(max_length=255)
     remark : str = models.CharField(max_length=255, null=True)
 
     def __str__(self):
+        if self.type == "errors":
+            return self.toStrFailed("ERROR")
+        elif self.type == "denied":
+            return self.toStrFailed("ERROR")
+        else:
+            return self.toStrExtra()
+        
+    def getUserAndGroupData(self) -> dict:
+        user_obj = UserDataModel.objects.get(api_uid=self.user_id)
+        user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
+
+        return {
+            "user": user_obj,
+            "groups": user_obj.getGroupString()
+        }
+        
+    def toBaseStr(self):
         datetime_info = self.time_logged.astimezone(timezone.get_current_timezone())
 
         user_obj = UserDataModel.objects.get(api_uid=self.user_id)
@@ -106,46 +126,82 @@ class LogSystem(models.Model):
         return basic_info
     
     def toStrFailed(self, reason : str):
-        current_string = f"{self}"
+        current_string = f"{self.toBaseStr()}"
         if self.url_path:
             current_string = f"{current_string} (Path: {self.url_path})"
 
         if not self.relevant_info:
             return current_string
         
-        info_list : list[str] = self.relevant_info
+        if isinstance(self.relevant_info, dict):
+            info_list : list[dict] = [self.relevant_info]
+        else:
+            info_list : list[dict] = self.relevant_info
 
         affected_obj = ""
 
         for info in info_list:
-            affected_obj = affected_obj + f"{info}, "
+            affected_obj = affected_obj + f"{info.get("message")}, "
 
         failed_info : str = f"{reason}: [ {affected_obj} ]"
 
-        return f"{self} | {failed_info}"
+        return f"{current_string} | {failed_info}"
         # return f"{failed_info} | {self}"
 
     def toStrExtra(self,):
-        current_string = f"{self}"
+        current_string = f"{self.toBaseStr()}"
         if self.url_path:
             current_string = f"{current_string} (Path: {self.url_path})"
 
         if not self.relevant_info:
             return current_string
         
-        info_list : list[str] = self.relevant_info
+        if isinstance(self.relevant_info, dict):
+            info_list : list[dict] = [self.relevant_info]
+        else:
+            info_list : list[dict] = self.relevant_info
 
         affected_obj = ""
 
         for info in info_list:
-            affected_obj = affected_obj + f"{info}, "
+            affected_obj = affected_obj + f"{getAffectedDataString(info)}, "
 
         extra_info : str = f"Affected: [ {affected_obj} ]"
 
         return f"{current_string} | {extra_info}"
+    
+def getFailedData(info : dict):
+    return f"{info.get("message")}"
 
-    # def createLog(self, filename):
-    #     createLog(self.user_id, self.action, self.system, filename)
+    
+def getAffectedData(info : dict):
+    ObjModel = apps.get_model(*info.get("type"))
+    
+    obj = ObjModel.objects.filter(pk=info.get("id")).first()
+
+    if obj:
+        return obj
+    
+def getAffectedDataString(info : dict):
+    obj = getAffectedData(info)
+
+    return str(obj)
+
+# def getLogStringFormat(info_list : list) -> list:
+#     output_list = []
+#     for info in info_list:
+#         try:
+#             info_dict = json.loads(info)
+#             model = apps.get_model()
+
+#         except:
+#             output_list.append(info)
+
+#     return output_list
+
+# def toJsonString(data):
+#     return json.dumps(data, ensure_ascii=False, default=str)
+
 
 ###############################################################################
 

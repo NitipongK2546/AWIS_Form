@@ -134,7 +134,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
     #     )
     # )
 
-    FileLogger.createNormalLog(request, AccessType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL, [selected_form])
+    FileLogger.createNormalLog(request, AccessType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
 
     return render(request, f"dashboard/{selected_html}", {
         "user": request.user,
@@ -204,7 +204,7 @@ def edit_form(request : HttpRequest, form_id : int):
 
             form_await.save()
 
-            FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL, [form_await])
+            FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL, form_await.getLogInfoDict())
 
             return redirect(reverse("dashboard:dashboard"))
 
@@ -260,7 +260,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
                   
             # print(f"Result: {json.dumps(dict)}")
 
-            FileLogger.createNormalLog(request, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL, [selected_form],)
+            FileLogger.createNormalLog(request, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict(),)
 
             return redirect(reverse("dashboard:success_page"))
         except Exception as e:
@@ -282,7 +282,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
         selected_form.approve_status = FormData.ApprovalStatus.REJECTED
         selected_form.save()
 
-        FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, [selected_form])
+        FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
   
         return redirect(reverse("dashboard:success_page"))
     
@@ -302,7 +302,7 @@ def delete_form(request : HttpRequest, form_id : int):
         return HttpResponseForbidden()
 
     if request.method == "POST":
-        FileLogger.createNormalLog(request, AccessType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL, [selected_form])
+        FileLogger.createNormalLog(request, AccessType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
 
         selected_form.delete()
   

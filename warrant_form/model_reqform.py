@@ -4,6 +4,8 @@ from django.forms.models import model_to_dict
 import datetime
 from warrant_form import forms_central as CentralForm
 
+import json
+
 from warrant_form.model_warrant import WarrantDataModel
 
 # THAI_MONTHS = {
@@ -153,7 +155,19 @@ class ReqformDataModel(models.Model):
     warrants = models.ManyToManyField(WarrantDataModel, related_name="reqforms")
 
     def __str__(self):
+        # return json.dumps({
+        #     "type": ["warrant_form", "ReqformDataModel"],
+        #     "id": self.pk,
+        #     "reqno": self.reqno
+        # }, ensure_ascii=False)
         return f"(pk: {self.pk}, reqno: {self.reqno})"
+    
+    def getLogInfoDict(self):
+        return {
+            "type": ["warrant_form", "ReqformDataModel"],
+            "id": self.pk,
+            "reqno": self.reqno
+        }
 
 
     def toDocumentCompatibleDict(self) -> dict[str, object]:

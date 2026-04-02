@@ -212,7 +212,7 @@ def step3_confirm_form(request : HttpRequest):
         request.session.pop("form_owner", None)
         request.session.pop("form_creator", None)
 
-        FileLogger.createNormalLog(request, AccessType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL, [target_obj])
+        FileLogger.createNormalLog(request, AccessType.CREATE, PermissionList.REQFORM_AWAIT_APPROVAL, target_obj.getLogInfoDict())
 
         return redirect("dashboard:dashboard")
 

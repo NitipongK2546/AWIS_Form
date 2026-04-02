@@ -34,15 +34,19 @@ def exportLogAsFile(filename : str = ALL_LOG_NAME):
         for log in all_logs:
             # user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
 
-            if log.type == "errors":
-                prepared_text = log.toStrFailed("ERROR")
-            if log.type == "denied":
-                prepared_text = log.toStrFailed("ACCESS DENIED")
+            prepared_text = str(log)
 
             if log.remark:
                 prepared_text = prepared_text + f" ({log.remark})"
 
             file.write(f"{prepared_text}\n")
+
+def getOrFilterLogs(search_filter : dict = None):
+
+    queried_log = LogSystem.objects.all()
+
+    return queried_log
+
 
 def getUserLog(user_id : int):
     all_logs = LogSystem.objects.filter(user_id=user_id)
@@ -51,17 +55,19 @@ def getUserLog(user_id : int):
 
 #############################################################################
 
-def _createLog(request : HttpRequest, action : AccessType, system : PermissionList, type : str, relevant_info = None, remark : str = None, filename : str = ERROR_LOG, user_bypass : UserDataModel = None) -> LogSystem:
-    if relevant_info:
-        if not isinstance(relevant_info, list):
-            if isinstance(relevant_info, str):
-                relevant_info = [relevant_info]
-            else:
-                relevant_info = list(relevant_info)
+def _createLog(request : HttpRequest, action : AccessType, system : PermissionList, type : str, relevant_info : dict = None, remark : str = None, filename : str = ERROR_LOG, user_bypass : UserDataModel = None) -> LogSystem:
+    # if relevant_info:
+    #     if not isinstance(relevant_info, list):
+    #         if isinstance(relevant_info, str):
+    #             relevant_info = [relevant_info]
+    #         else:
+    #             relevant_info = list(relevant_info)
 
-        relevant_info_str : list[str] = [str(info) for info in relevant_info]
-    else:
-        relevant_info_str = []
+    #     relevant_info_str : list[str] = [info for info in relevant_info]
+    # else:
+    #     relevant_info_str = []
+    if not relevant_info:
+        relevant_info = {}
     
     if isinstance(request.user, AnonymousUser):
         if user_bypass:
@@ -75,7 +81,7 @@ def _createLog(request : HttpRequest, action : AccessType, system : PermissionLi
 
     time_logged : timezone.datetime = timezone.now()
     log_obj = LogSystem.objects.create(
-        user_id=user_id, action=action.value, system=system.value, time_logged=time_logged, relevant_info=relevant_info_str, 
+        user_id=user_id, action=action.value, system=system.value, time_logged=time_logged, relevant_info=relevant_info, 
         type=type, url_path=request.get_full_path(), remark=remark
     )
 
@@ -83,12 +89,12 @@ def _createLog(request : HttpRequest, action : AccessType, system : PermissionLi
 
 ########################################################################
 
-def createNormalLog(request : HttpRequest, action : AccessType, system : PermissionList, access_info : list = None, remark : str = None, user_bypass : UserDataModel = None):
+def createNormalLog(request : HttpRequest, action : AccessType, system : PermissionList, access_info : dict = None, remark : str = None, user_bypass : UserDataModel = None):
     
     log_obj = _createLog(request, action, system, "normal", access_info, remark, NORMAL_LOG, user_bypass)
 
     with open(LOG_DIR + NORMAL_LOG, mode="a", encoding="utf-8") as file:
-        prepared_text = log_obj.toStrExtra()
+        prepared_text = str(log_obj)
         if remark:
             prepared_text = prepared_text + f" ({remark})"
 
@@ -96,12 +102,12 @@ def createNormalLog(request : HttpRequest, action : AccessType, system : Permiss
 
     return log_obj 
 
-def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : PermissionList, denied_reason : list = None, remark : str = None, user_bypass : UserDataModel = None):
+def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : PermissionList, denied_reason : dict = None, remark : str = None, user_bypass : UserDataModel = None):
 
     log_obj = _createLog(request, action, system, "denied", denied_reason, remark, NORMAL_LOG, user_bypass)
 
     with open(LOG_DIR + ACCESS_DENIED_LOG, mode="a", encoding="utf-8") as file:
-        prepared_text = log_obj.toStrFailed("ACCESS DENIED",)
+        prepared_text = str(log_obj)
         if remark:
             prepared_text = prepared_text + f" ({remark})"
 
@@ -110,7 +116,7 @@ def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : P
     return log_obj  
     
 
-def createErrorLog(request : HttpRequest, action : AccessType, system : PermissionList, error_reason : list = None, remark : str = None, user_bypass : UserDataModel = None):
+def createErrorLog(request : HttpRequest, action : AccessType, system : PermissionList, error_reason : dict = None, remark : str = None, user_bypass : UserDataModel = None):
 
     log_obj = _createLog(request, action, system, "errors", error_reason, remark, NORMAL_LOG, user_bypass)
 

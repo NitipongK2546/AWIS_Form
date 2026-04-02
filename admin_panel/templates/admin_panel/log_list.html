@@ -1,0 +1,18 @@
+{% load static %}
+{% load thai_locale %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs</title>
+</head>
+<body>
+    {% for log in logs %}
+    <p>{{ log }}</p>
+    <!-- <p>{{ log.time_logged | buddhist_date }}: {{log.user_id}}</p> -->
+    {% empty %}
+    <p>No Log</p>
+    {% endfor %}
+</body>
+</html>
