@@ -8,11 +8,23 @@
     <title>Logs</title>
 </head>
 <body>
-    {% for log in logs %}
-    <p>{{ log }}</p>
-    <!-- <p>{{ log.time_logged | buddhist_date }}: {{log.user_id}}</p> -->
-    {% empty %}
-    <p>No Log</p>
-    {% endfor %}
+    <section>
+        <h1>Normal Log</h1>
+        <div>
+            {% include 'module/log_table.html' with logs=normal_logs %}
+        </div>
+    </section>
+    <section>
+        <h1>Errors Log</h1>
+        <div>
+            {% include 'module/log_table.html' with logs=errors_logs %}
+        </div>
+    </section>
+    <section>
+        <h1>Denied Log</h1>
+        <div>
+            {% include 'module/log_table.html' with logs=denied_logs %}
+        </div>
+    </section>
 </body>
 </html>

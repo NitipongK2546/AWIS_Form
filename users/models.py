@@ -90,7 +90,7 @@ class LogSystem(models.Model):
     system : str = models.CharField(max_length=100)
     time_logged : timezone.datetime = models.DateTimeField()
     relevant_info : dict | list[dict] = models.JSONField(blank=True, null=True,)
-    type : int = models.CharField(max_length=6, choices=log_type)
+    type : str = models.CharField(max_length=6, choices=log_type)
     url_path : str = models.CharField(max_length=255)
     remark : str = models.CharField(max_length=255, null=True)
 
@@ -100,7 +100,7 @@ class LogSystem(models.Model):
         elif self.type == "denied":
             return self.toStrFailed("ERROR")
         else:
-            return self.toStrExtra()
+            return self.toStrExtra()    
         
     def getUserAndGroupData(self) -> dict:
         user_obj = UserDataModel.objects.get(api_uid=self.user_id)

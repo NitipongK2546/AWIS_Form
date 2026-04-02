@@ -208,12 +208,14 @@ def delete_access(request, user_id):
 @perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
 def view_all_logs(request : HttpRequest):
 
-    logs = list(FileLogger.getOrFilterLogs())
+    logs = FileLogger.getOrFilterLogs()
 
     # added_logs = [log.getUserAndGroupData() for log in logs]
 
     # print(added_logs)
 
     return render(request, "admin_panel/log_list.html", {
-        "logs": logs,
+        "normal_logs": logs.get("normal"),
+        "errors_logs": logs.get("errors"),
+        "denied_logs": logs.get("denied"),
     })
