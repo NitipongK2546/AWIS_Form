@@ -51,17 +51,19 @@ def getUserLog(user_id : int):
 
 #############################################################################
 
-def _createLog(request : HttpRequest, action : AccessType, system : PermissionList, type : str, relevant_info = None, remark : str = None, filename : str = ERROR_LOG, user_bypass : UserDataModel = None) -> LogSystem:
-    if relevant_info:
-        if not isinstance(relevant_info, list):
-            if isinstance(relevant_info, str):
-                relevant_info = [relevant_info]
-            else:
-                relevant_info = list(relevant_info)
+def _createLog(request : HttpRequest, action : AccessType, system : PermissionList, type : str, relevant_info : dict = None, remark : str = None, filename : str = ERROR_LOG, user_bypass : UserDataModel = None) -> LogSystem:
+    # if relevant_info:
+    #     if not isinstance(relevant_info, list):
+    #         if isinstance(relevant_info, str):
+    #             relevant_info = [relevant_info]
+    #         else:
+    #             relevant_info = list(relevant_info)
 
-        relevant_info_str : list[str] = [str(info) for info in relevant_info]
-    else:
-        relevant_info_str = []
+    #     relevant_info_str : list[str] = [info for info in relevant_info]
+    # else:
+    #     relevant_info_str = []
+    if not relevant_info:
+        relevant_info = {}
     
     if isinstance(request.user, AnonymousUser):
         if user_bypass:
@@ -75,7 +77,7 @@ def _createLog(request : HttpRequest, action : AccessType, system : PermissionLi
 
     time_logged : timezone.datetime = timezone.now()
     log_obj = LogSystem.objects.create(
-        user_id=user_id, action=action.value, system=system.value, time_logged=time_logged, relevant_info=relevant_info_str, 
+        user_id=user_id, action=action.value, system=system.value, time_logged=time_logged, relevant_info=relevant_info, 
         type=type, url_path=request.get_full_path(), remark=remark
     )
 
@@ -83,7 +85,7 @@ def _createLog(request : HttpRequest, action : AccessType, system : PermissionLi
 
 ########################################################################
 
-def createNormalLog(request : HttpRequest, action : AccessType, system : PermissionList, access_info : list = None, remark : str = None, user_bypass : UserDataModel = None):
+def createNormalLog(request : HttpRequest, action : AccessType, system : PermissionList, access_info : dict = None, remark : str = None, user_bypass : UserDataModel = None):
     
     log_obj = _createLog(request, action, system, "normal", access_info, remark, NORMAL_LOG, user_bypass)
 
@@ -96,7 +98,7 @@ def createNormalLog(request : HttpRequest, action : AccessType, system : Permiss
 
     return log_obj 
 
-def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : PermissionList, denied_reason : list = None, remark : str = None, user_bypass : UserDataModel = None):
+def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : PermissionList, denied_reason : dict = None, remark : str = None, user_bypass : UserDataModel = None):
 
     log_obj = _createLog(request, action, system, "denied", denied_reason, remark, NORMAL_LOG, user_bypass)
 
@@ -110,7 +112,7 @@ def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : P
     return log_obj  
     
 
-def createErrorLog(request : HttpRequest, action : AccessType, system : PermissionList, error_reason : list = None, remark : str = None, user_bypass : UserDataModel = None):
+def createErrorLog(request : HttpRequest, action : AccessType, system : PermissionList, error_reason : dict = None, remark : str = None, user_bypass : UserDataModel = None):
 
     log_obj = _createLog(request, action, system, "errors", error_reason, remark, NORMAL_LOG, user_bypass)
 

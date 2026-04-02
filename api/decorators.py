@@ -32,8 +32,10 @@ def api_perm_log(perm_list : list[PermissionType], system : PermissionList, acce
 
                 return result
             except PermissionDenied:
-                deny_reason = ["Lack Required Permission of: ",]
-                deny_reason.extend(perm_list)
+                deny_reason = {
+                    "message": "Lack required Permission",
+                    "perms": [perm.name for perm in perm_list]
+                }
 
                 FileLogger.createAccessDeniedLog(request, AccessType.VIEW, system, deny_reason, user_bypass=user, remark="VIA JSON WEB TOKEN")
 
@@ -45,8 +47,10 @@ def api_perm_log(perm_list : list[PermissionType], system : PermissionList, acce
                 # }, status=403)
             
             except Exception as e:
-                error_reason = f"<{type(e).__name__}>: "
-                error_reason = error_reason + str(e)
+                error_reason = {
+                    "message": str(e),
+                    "errors": f"{type(e).__name__}"
+                }
                 
                 FileLogger.createErrorLog(request, access, system, error_reason, user_bypass=user, remark="VIA JSON WEB TOKEN")
 

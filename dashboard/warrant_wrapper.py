@@ -6,6 +6,8 @@ from warrant_form.model_warrant import WarrantDataModel
 from users.models import UserDataModel
 from zoneinfo import ZoneInfo
 
+import json
+
 class VisualWarrantData(models.Model):
     """
     เก็บข้อมูลฟอร์มที่ได้ทำการส่งไปแล้ว และสามารถให้บุคคลภายนอกเชื่อม API เข้ามาแก้ไขข้อมูลสถานะได้
@@ -33,4 +35,17 @@ class VisualWarrantData(models.Model):
     because = models.CharField(max_length=300, blank=True,)
 
     def __str__(self):
+        # return json.dumps({
+        #     "type": ["warrant_form", "VisualWarrantData"],
+        #     "id": self.pk,
+        #     "form": self.warrant
+        # }, ensure_ascii=False)
+
         return f"<Warrant Data (pk: {self.pk}, {self.warrant})>"
+    
+    def getLogInfoDict(self):
+        return {
+            "type": ["warrant_form", "VisualWarrantData"],
+            "id": self.pk,
+            "form": self.warrant
+        }

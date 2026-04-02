@@ -114,7 +114,9 @@ def admin_select_users(request : HttpRequest):
 
         return render(request, "admin_panel/select_users.html", {"users": users})
     except Exception as e:
-        FileLogger.createErrorLog(request, AccessType.CREATE, PermissionList.USER_ACCESS, [str(e)])
+        FileLogger.createErrorLog(request, AccessType.CREATE, PermissionList.USER_ACCESS, {
+            "message": str(e)
+        })
 
 ################################################################################
 

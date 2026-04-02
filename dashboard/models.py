@@ -4,6 +4,7 @@ from warrant_form.model_reqform import ReqformDataModel
 
 from users.models import UserDataModel
 from zoneinfo import ZoneInfo
+import json
 
 # Create your models here.
 
@@ -34,10 +35,19 @@ class FormAwaitingApproval(models.Model):
     approve_status = models.IntegerField(choices=ApprovalStatus)
 
     def __str__(self):
-        # converted_date = self.date_created.astimezone(ZoneInfo("Asia/Bangkok")).strftime("%d %B %Y, %H:%M")
-        # finalized_date = f"{converted_date} น."
-        
+        # return json.dumps({
+        #     "type": ["dashboard", "FormAwaitingApproval"],
+        #     "id": self.pk,
+        #     "form": self.form
+        # }, ensure_ascii=False, default=str)
         return f"<FormAwaitApproval (pk: {self.pk}, reqform: {self.form})>"
+    
+    def getLogInfoDict(self):
+        return {
+            "type": ["dashboard", "FormAwaitingApproval"],
+            "id": self.pk,
+            "form": self.form.getLogInfoDict()
+        }
     
     # def getDataAsTable(self):
 
@@ -69,8 +79,11 @@ class VisualReqformData(models.Model):
     accept = models.IntegerField(choices=AcceptStatus, blank=True, null=True)
 
     def __str__(self):
-        # converted_date = self.date_created.astimezone(ZoneInfo("Asia/Bangkok")).strftime("%d %B %Y, %H:%M")
-        # finalized_date = f"{converted_date} น."
+        # return json.dumps({
+        #     "type": ["warrant_form", "VisualReqformData"],
+        #     "id": self.pk,
+        #     "form": self.form
+        # }, ensure_ascii=False)
         
         return f"<Approved Form (pk: {self.pk}, reqform: {self.form})>"
     
@@ -87,25 +100,10 @@ class VisualReqformData(models.Model):
 
         return form.reqno
     
-    # def getTableDataDisplay(self) -> list[dict]:
-    #     list_objs = self.objects.all()
-        
-    #     output_list = []
-    #     for obj in list_objs:
-    #         data_dict = {
-    #             "recive_date": self.recive_date,
-    #             "accept": self.accept,
-    #             "accept_date": self.accept_date,
-    #             "req_no_plaintiff": self.getReqNoPlaintiff(obj),
-    #             "reqno": self.getReqNoPlaintiff(obj),
-    #         }
-
-    #         output_list.append(obj)
-
-        
-    #     return output_list
+    def getLogInfoDict(self):
+        return {
+            "type": ["warrant_form", "VisualReqformData"],
+            "id": self.pk,
+            "form": self.form.getLogInfoDict()
+        }
     
-    # def getReqNo(self):
-    #     form : MainAWISDataModel = self.form
-
-    #     return form.req_no_plaintiff
