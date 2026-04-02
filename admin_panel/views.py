@@ -205,17 +205,19 @@ def delete_access(request, user_id):
 
 ####################################################################
 
+from .forms import LogQuery
+
 @perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
 def view_all_logs(request : HttpRequest):
 
-    logs = FileLogger.getOrFilterLogs()
+    filter = request.GET
+    logs = FileLogger.getOrFilterLogs(filter)
 
-    # added_logs = [log.getUserAndGroupData() for log in logs]
-
-    # print(added_logs)
+    query_form = LogQuery(data=filter)
 
     return render(request, "admin_panel/log_list.html", {
         "normal_logs": logs.get("normal"),
         "errors_logs": logs.get("errors"),
         "denied_logs": logs.get("denied"),
+        "query": query_form,
     })
