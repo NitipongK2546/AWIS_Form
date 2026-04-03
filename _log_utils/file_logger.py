@@ -1,13 +1,18 @@
 import os
 from enum import Enum
+from django.db.models import TextChoices
+from django.core.exceptions import ValidationError
 
-from users.models import LogSystem, UserDataModel
+from users.models import LogSystem, UserDataModel, getAffectedData
 from django.utils import timezone
 from users.permissions import PermissionList
 
 from django.http import HttpRequest
-
 from django.contrib.auth.models import AnonymousUser
+
+from django.http import QueryDict
+
+from urllib import parse
 
 LOG_DIR = "_log_output/"
 ALL_LOG_NAME = "all_access_log.txt"
@@ -16,7 +21,7 @@ NORMAL_LOG = "access_log.txt"
 ERROR_LOG = "error_log.txt"
 ACCESS_DENIED_LOG = "access_denied_log.txt"
 
-class AccessType(Enum):
+class AccessType(TextChoices):
     VIEW = "View"
     CREATE = "Create"
     EDIT = "Edit"
@@ -41,11 +46,57 @@ def exportLogAsFile(filename : str = ALL_LOG_NAME):
 
             file.write(f"{prepared_text}\n")
 
-def getOrFilterLogs(search_filter : dict = None):
+def getOrFilterLogs(query : QueryDict = {}):
+    allowed_keys = ["user_id", "action", ]
 
-    queried_log = LogSystem.objects.all()
+    def cleanQuery():
+        for key, item in query.items():
+            if item and (key in allowed_keys):
+                filter.update({key: item})
+            else:
+                cleanSpecial(key, item)
 
-    log_types : dict[str, list] = {
+    def cleanSpecial(key : str, item : str):
+        if key == "reqno" and item:
+            filter.update(
+                {
+                    # "system__in": ["reqformAwaitApproval", "reqformSubmitted"],
+                    "relevant_info__form__reqno": item,
+                }
+            )
+
+    def cleanDate():
+        try:
+            start_obj = timezone.datetime(
+                int(query.get("start_year")), int(query.get("start_month")), int(query.get("start_day")), tzinfo=timezone.get_current_timezone()
+            )
+            end_obj = timezone.datetime(
+                int(query.get("end_year")),  int(query.get("end_month")), int(query.get("end_day")),
+                tzinfo=timezone.get_current_timezone()
+            )
+            if start_obj > end_obj:
+                raise ValidationError("Start Date is after the End Date")
+            
+            filter.update({
+                "time_logged__range": (start_obj, end_obj),
+            })
+
+        except Exception as e:
+            print(e)
+
+ 
+    filter = {}
+    
+    cleanQuery()
+    cleanDate()
+
+    print(filter)
+
+    queried_log = LogSystem.objects.filter(
+        **filter
+    )
+
+    log_collections : dict[str, list] = {
         "normal": [],
         "errors": [],
         "denied": [],
@@ -61,14 +112,14 @@ def getOrFilterLogs(search_filter : dict = None):
             "fullname": f"{user_obj.first_name} {user_obj.last_name}",
             "action": log.action,
             "system": log.system,
-            "relevant_info": str(log.relevant_info),
-            "url_path": log.url_path,
+            "relevant_info": log.getRelevantDataObj(log.type),
+            "url_path": parse.unquote(log.url_path),
             "remark": log.remark,
         }
 
-        log_types[log.type].append(data_dict)
+        log_collections[log.type].append(data_dict)
 
-    return log_types
+    return log_collections
 
 
 def getUserLog(user_id : int):
