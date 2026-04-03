@@ -110,8 +110,25 @@ class LogSystem(models.Model):
             "user": user_obj,
             "groups": user_obj.getGroupString()
         }
+    
+    def getRelevantDataObj(self, type : str):
+        if type == "normal":
+            if self.relevant_info:
+                return self.toStrExtra(False)
+            else:
+                return ""
+        elif type == "errors":
+            return self.relevant_info.get("message")
+        elif type == "denied":
+            return self.relevant_info.get("message")
+        else:
+            raise Exception
+
+    def getStuff():
+        pass
+
         
-    def toBaseStr(self):
+    def toBaseStr(self, is_txt_log : bool = True,):
         datetime_info = self.time_logged.astimezone(timezone.get_current_timezone())
 
         user_obj = UserDataModel.objects.get(api_uid=self.user_id)
@@ -120,15 +137,31 @@ class LogSystem(models.Model):
         action_info = f"{self.action} -> {self.system}"
 
         ####
-
-        basic_info : str = f"[{datetime_info}]: {user_info} {action_info}"
+        if is_txt_log:
+            basic_info : str = f"[{datetime_info}]: {user_info} {action_info}"
+        else:
+            basic_info : str = f"{user_info} {action_info}"
 
         return basic_info
     
-    def toStrFailed(self, reason : str):
-        current_string = f"{self.toBaseStr()}"
+    def toStrType(self, type : str, is_txt_log : bool = False):
+        """
+        normal, errors, denied
+        """
+        if type == "normal":
+            return self.toStrExtra(is_txt_log)
+        elif type == "errors":
+            return self.toStrFailed("errors", is_txt_log)
+        elif type == "denied":
+            return self.toStrFailed("denied", is_txt_log)
+        else:
+            raise Exception
+    
+    def toStrFailed(self, reason : str, is_txt_log : bool = True):
+        current_string = f"{self.toBaseStr(is_txt_log)}"
         if self.url_path:
-            current_string = f"{current_string} (Path: {self.url_path})"
+            if is_txt_log:
+                current_string = f"{current_string} (Path: {self.url_path})"
 
         if not self.relevant_info:
             return current_string
@@ -145,11 +178,13 @@ class LogSystem(models.Model):
 
         failed_info : str = f"{reason}: [ {affected_obj} ]"
 
-        return f"{current_string} | {failed_info}"
-        # return f"{failed_info} | {self}"
+        if is_txt_log:
+            return f"{current_string} | {failed_info}"
+        else:
+            return f"{failed_info}"
 
-    def toStrExtra(self,):
-        current_string = f"{self.toBaseStr()}"
+    def toStrExtra(self, is_txt_log : bool = True):
+        current_string = f"{self.toBaseStr(is_txt_log)}"
         if self.url_path:
             current_string = f"{current_string} (Path: {self.url_path})"
 
@@ -166,9 +201,12 @@ class LogSystem(models.Model):
         for info in info_list:
             affected_obj = affected_obj + f"{getAffectedDataString(info)}, "
 
-        extra_info : str = f"Affected: [ {affected_obj} ]"
+        extra_info : str = f"[ {affected_obj} ]"
 
-        return f"{current_string} | {extra_info}"
+        if is_txt_log:
+            return f"{current_string} | Affected:  {extra_info}"
+        else:
+            return f"{extra_info}"
     
 def getFailedData(info : dict):
     return f"{info.get("message")}"

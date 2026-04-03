@@ -86,8 +86,6 @@ def getOrFilterLogs(query : QueryDict = {}):
 
  
     filter = {}
-
-    print()
     
     cleanQuery()
     cleanDate()
@@ -114,7 +112,7 @@ def getOrFilterLogs(query : QueryDict = {}):
             "fullname": f"{user_obj.first_name} {user_obj.last_name}",
             "action": log.action,
             "system": log.system,
-            "relevant_info": log.relevant_info,
+            "relevant_info": log.getRelevantDataObj(log.type),
             "url_path": parse.unquote(log.url_path),
             "remark": log.remark,
         }
