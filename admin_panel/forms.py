@@ -29,16 +29,16 @@ class LogQuery(forms.Form):
     def getReqnoChoices():
         all_forms = ReqformDataModel.objects.all()
 
-        return [("", "-"*6)] + [(form.reqno, form.reqno) for form in all_forms]
+        return [("", "ไม่เลือก")] + [(form.reqno, form.reqno) for form in all_forms]
     
     def getUserChocies():
         all_users = UserDataModel.objects.all()
 
-        return [("", "-"*6)] + [(user.api_uid, f"({user.username}, id:{user.api_uid})") for user in all_users]
+        return [("", "ไม่เลือก")] + [(user.api_uid, f"({user.username}, id:{user.api_uid})") for user in all_users]
 
-    action_choices = [("", "-"*6)] + AccessType.choices
+    action_choices = AccessType.choices
     
-
+    timelogged_trigger = forms.BooleanField(required=False)
     start_day = forms.IntegerField(widget=forms.Select(choices=CentralForm.day_choices))
     start_month = forms.IntegerField(widget=forms.Select(choices=CentralForm.month_choices, attrs={
         'onchange': 'changeDate(req_day, req_month, req_year)'
@@ -56,11 +56,14 @@ class LogQuery(forms.Form):
     }))
 
 
-    # user_id = forms.IntegerField(required=False)
-    # reqno = forms.CharField(max_length=20, required=False,)
-
+    user_trigger = forms.BooleanField(required=False)
     user_id = forms.ChoiceField(choices=getUserChocies(), required=False)
-    action = forms.ChoiceField(choices=action_choices, required=False)
+    
+    action_trigger = forms.BooleanField(required=False)
+    action = forms.MultipleChoiceField(choices=action_choices, required=False,
+                                       widget=forms.CheckboxSelectMultiple())
+
+    reqno_trigger = forms.BooleanField(required=False)
     reqno = forms.ChoiceField(choices=getReqnoChoices(), required=False)
 
     # def clean(self):

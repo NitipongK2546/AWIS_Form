@@ -6,27 +6,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logs</title>
+    <link rel="stylesheet" href="{% static 'admin_panel/css/view_logs.css' %}">
 </head>
 <body>
-    <div>
-        <h1>Filter</h1>
+    <div class="query" id="id_query">
+        <h1>Query</h1>
         <form method="get">
-            <span>start date:</span> 
-                {{ query.start_day }}{{ query.start_month }}{{ query.start_year }}
-            <span>end date:</span> 
-                {{ query.end_day }}{{ query.end_month }}{{ query.end_year }}
-            <span>user_id:</span> {{ query.user_id }}
-            <span>action type:</span> {{ query.action }}
+            <div>
+                <span>timelogged</span>
+                {{ query.timelogged_trigger }}
+                <div class="hidden-container hidden" id="timelogged-container">
+                    <span>start date:</span> 
+                    {{ query.start_day }}
+                    {{ query.start_month }}
+                    {{ query.start_year }}
+                    <span>end date:</span> 
+                    {{ query.end_day }}
+                    {{ query.end_month }}
+                    {{ query.end_year }}
+                </div>
+            </div>
             
-            <p>
+            <div>
+                <span>user_id:</span>
+                {{ query.user_trigger }}
+                <div class="hidden-container hidden" id="user-container">
+                    {{ query.user_id }}
+                </div>
+            </div>
+            
+            <div>
+                <span>action type:</span> 
+                {{ query.action_trigger }}
+                <div class="hidden-container hidden" id="action-container">
+                    {{ query.action }}
+                </div>
+            </div>
+            
+            <div>
                 <span>ค้นหาหมายเลขคำขอ:</span>
-                {{ query.reqno }}
-            </p>
+                {{ query.reqno_trigger }}
+                <div class="hidden-container hidden" id="reqno-container">
+                    {{ query.reqno }}
+                </div>
+            </div>
             
-        <button type="submit">ค้นหา</button>
-        <a href="{% url 'admin_panel:view_logs' %}">เริ่มใหม่</a>
+            <div>
+                <!-- <input type="checkbox"> -->
+                <button type="submit">ค้นหา</button>
+                <a href="{% url 'admin_panel:view_logs' %}">เริ่มใหม่</a>
+            </div>
         </form>
     </div>
+
     <section>
         <h1>Normal Log</h1>
         <div>
@@ -49,5 +81,6 @@
     </section>
 
     <script src="{% static 'admin_panel/js/adjustDate.js' %}"></script>
+    <script src="{% static 'admin_panel/js/queryHandler.js' %}"></script>
 </body>
 </html>
