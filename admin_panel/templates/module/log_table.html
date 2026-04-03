@@ -20,9 +20,9 @@
             </tr>
         </thead>
         <tbody>
-            {% for log in logs %}
+            {% for log in page_obj %}
             <tr>
-                <td>{{ log.time_logged | buddhist_date }}</td>
+                <td>{{ log.time_logged|buddhist_date }}</td>
                 <td>{{ log.user_id }}</td>
                 <td>{{ log.username }}</td>
                 <td>{{ log.fullname }}</td>
@@ -33,10 +33,18 @@
                 <td>{{ log.remark }}</td>
             </tr>
             {% empty %}
-            <tr>
-                <td colspan="9">No Log.</td>
-            </tr>
+            <tr><td colspan="9">No Log.</td></tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?{{ page_param }}={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        {% if page_obj.has_next %}
+            <a href="?{{ page_param }}={{ page_obj.next_page_number }}">next</a>
+        {% endif %}
+    </div>
 </div>

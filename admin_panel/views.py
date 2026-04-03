@@ -206,17 +206,54 @@ def delete_access(request, user_id):
 ####################################################################
 
 from .forms import LogQuery
+from django.core.paginator import Paginator
+
+
+# @perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
+# def view_all_logs(request : HttpRequest):
+#     filter = request.GET
+#     query_form = LogQuery(data=filter)
+
+#     logs = FileLogger.getOrFilterLogs(filter)
+
+#     return render(request, "admin_panel/log_list.html", {
+#         "normal_logs": logs.get("normal"),
+#         "errors_logs": logs.get("errors"),
+#         "denied_logs": logs.get("denied"),
+#         "query": query_form,
+#     })
+
+from django.core.paginator import Paginator
 
 @perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
-def view_all_logs(request : HttpRequest):
+def view_all_logs(request: HttpRequest):
     filter = request.GET
     query_form = LogQuery(data=filter)
 
     logs = FileLogger.getOrFilterLogs(filter)
 
+    # Paginate each category separately
+    normal_logs = logs.get("normal", [])
+    errors_logs = logs.get("errors", [])
+    denied_logs = logs.get("denied", [])
+
+    # Get page numbers for each category (different query params)
+    normal_page_number = request.GET.get("normal_page")
+    errors_page_number = request.GET.get("errors_page")
+    denied_page_number = request.GET.get("denied_page")
+
+    normal_paginator = Paginator(normal_logs, 5)
+    errors_paginator = Paginator(errors_logs, 5)
+    denied_paginator = Paginator(denied_logs, 5)
+
+    normal_page_obj = normal_paginator.get_page(normal_page_number)
+    errors_page_obj = errors_paginator.get_page(errors_page_number)
+    denied_page_obj = denied_paginator.get_page(denied_page_number)
+
     return render(request, "admin_panel/log_list.html", {
-        "normal_logs": logs.get("normal"),
-        "errors_logs": logs.get("errors"),
-        "denied_logs": logs.get("denied"),
+        "normal_page_obj": normal_page_obj,
+        "errors_page_obj": errors_page_obj,
+        "denied_page_obj": denied_page_obj,
         "query": query_form,
     })
+

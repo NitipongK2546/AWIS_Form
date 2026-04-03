@@ -30,19 +30,21 @@
     <section>
         <h1>Normal Log</h1>
         <div>
-            {% include 'module/log_table.html' with logs=normal_logs %}
+            {% include 'module/log_table.html' with page_obj=normal_page_obj page_param="normal_page" %}
         </div>
     </section>
+
     <section>
         <h1>Errors Log</h1>
         <div>
-            {% include 'module/log_table.html' with logs=errors_logs %}
+            {% include 'module/log_table.html' with page_obj=errors_page_obj page_param="errors_page" %}
         </div>
     </section>
+
     <section>
         <h1>Denied Log</h1>
         <div>
-            {% include 'module/log_table.html' with logs=denied_logs %}
+            {% include 'module/log_table.html' with page_obj=denied_page_obj page_param="denied_page" %}
         </div>
     </section>
 
