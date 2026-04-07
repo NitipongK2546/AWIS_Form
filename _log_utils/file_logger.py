@@ -47,23 +47,16 @@ def exportLogAsFile(filename : str = ALL_LOG_NAME):
             file.write(f"{prepared_text}\n")
 
 def getOrFilterLogs(query : QueryDict = {}):
-    allowed_keys = ["user_id", "action", ]
-
     def cleanQuery():
-        for key, item in query.items():
-            if item and (key in allowed_keys):
-                filter.update({key: item})
-            else:
-                cleanSpecial(key, item)
-
-    def cleanSpecial(key : str, item : str):
-        if key == "reqno" and item:
-            filter.update(
-                {
-                    # "system__in": ["reqformAwaitApproval", "reqformSubmitted"],
-                    "relevant_info__form__reqno": item,
-                }
-            )
+        allowed_keys = ["action", "user_id"]
+        for key in query:
+            if not any(query.get(key)):
+                continue
+            
+            if key == "reqno":
+                filter.update({f"relevant_info__form__reqno": query.getlist(key),})
+            elif key in allowed_keys:
+                filter.update({f"{key}__in": query.getlist(key)})
 
     def cleanDate():
         try:
@@ -84,9 +77,8 @@ def getOrFilterLogs(query : QueryDict = {}):
         except Exception as e:
             print(e)
 
- 
     filter = {}
-    
+
     cleanQuery()
     cleanDate()
 

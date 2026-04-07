@@ -1,0 +1,11 @@
+/* input:checked + div.hidden-container { 
+    display: block; 
+}
+
+input + div.hidden-container { 
+    display: none; 
+} */
+
+.hidden {
+    display: none;
+}
