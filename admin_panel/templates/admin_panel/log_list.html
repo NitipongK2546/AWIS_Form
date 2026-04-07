@@ -9,6 +9,7 @@
 </head>
 <body>
     <div class="filter-section">
+        <a href="{% url 'admin_panel:collections' %}" class="btn-red">กลับ</a>
         <h2>Filter Logs</h2>
         <form method="get">
             <div class="form-row">
@@ -31,7 +32,7 @@
                     <label>Action Type:</label>
                     {{ query.action }}
                 </div>
-                <div >
+                <div>
                     <label>ค้นหาหมายเลขคำขอ:</label>
                     {{ query.reqno }}
                 </div>

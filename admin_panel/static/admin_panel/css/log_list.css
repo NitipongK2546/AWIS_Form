@@ -60,6 +60,20 @@ button.btn-primary:hover {
     background-color: #0056b3;
 }
 
+a.btn-red {
+    background-color: #c61d1d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 15px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+a.btn-red:hover {
+    background-color: #f02424;
+}
+
 a.btn-secondary {
     margin-left: 15px;
     color: #6c757d;
@@ -79,4 +93,63 @@ a.btn-secondary:hover {
     border: 1px solid #dee2e6;
     border-radius: 8px;
     margin-bottom: 20px;
+}
+
+/* --- This is for the the log table --- */
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 14px;
+    font-family: 'Noto Sans Thai', sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.styled-table thead tr {
+    background-color: #007bff;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.styled-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #e9ecef;
+    cursor: pointer;
+}
+
+.styled-table th[colspan="9"] {
+    text-align: center;
+    font-size: 16px;
+    background-color: #343a40;
+    color: #fff;
+}
+
+.pagination {
+    margin-top: 15px;
+    text-align: center;
+    font-family: 'Noto Sans Thai', sans-serif;
+}
+
+.pagination a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.pagination a:hover {
+    text-decoration: underline;
 }

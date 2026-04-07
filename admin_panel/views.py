@@ -242,9 +242,9 @@ def view_all_logs(request: HttpRequest):
     errors_page_number = request.GET.get("errors_page")
     denied_page_number = request.GET.get("denied_page")
 
-    normal_paginator = Paginator(normal_logs, 5)
-    errors_paginator = Paginator(errors_logs, 5)
-    denied_paginator = Paginator(denied_logs, 5)
+    normal_paginator = Paginator(normal_logs, 10)
+    errors_paginator = Paginator(errors_logs, 10)
+    denied_paginator = Paginator(denied_logs, 10)
 
     normal_page_obj = normal_paginator.get_page(normal_page_number)
     errors_page_obj = errors_paginator.get_page(errors_page_number)
