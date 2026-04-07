@@ -1,49 +1,67 @@
 {% load static %}
-{% load thai_locale %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logs</title>
+    <link rel="stylesheet" href="{% static 'admin_panel/css/log_list.css' %}">
 </head>
 <body>
-    <div>
-        <h1>Filter</h1>
+    <div class="filter-section">
+        <h2>Filter Logs</h2>
         <form method="get">
-            <span>start date:</span> 
-                {{ query.start_day }}{{ query.start_month }}{{ query.start_year }}
-            <span>end date:</span> 
-                {{ query.end_day }}{{ query.end_month }}{{ query.end_year }}
-            <span>user_id:</span> {{ query.user_id }}
-            <span>action type:</span> {{ query.action }}
-            
-            <p>
-                <span>ค้นหาหมายเลขคำขอ:</span>
-                {{ query.reqno }}
-            </p>
-            
-        <button type="submit">ค้นหา</button>
-        <a href="{% url 'admin_panel:view_logs' %}">เริ่มใหม่</a>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Start date:</label>
+                    {{ query.start_day }}{{ query.start_month }}{{ query.start_year }}
+                </div>
+                <div class="form-group">
+                    <label>End date:</label>
+                    {{ query.end_day }}{{ query.end_month }}{{ query.end_year }}
+                </div>
+                <div class="form-group">
+                    <label>User ID:</label>
+                    {{ query.user_id }}
+                </div>
+            </div>
+        
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Action Type:</label>
+                    {{ query.action }}
+                </div>
+                <div class="form-group">
+                    <label>ค้นหาหมายเลขคำขอ:</label>
+                    {{ query.reqno }}
+                </div>
+            </div>
+        
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">ค้นหา</button>
+                <a href="{% url 'admin_panel:view_logs' %}" class="btn-secondary">รีเซ็ต</a>
+            </div>
         </form>
     </div>
+    
+
     <section>
         <h1>Normal Log</h1>
-        <div>
+        <div class="log-table">
             {% include 'module/log_table.html' with page_obj=normal_page_obj page_param="normal_page" %}
         </div>
     </section>
 
     <section>
         <h1>Errors Log</h1>
-        <div>
+        <div class="log-table">
             {% include 'module/log_table.html' with page_obj=errors_page_obj page_param="errors_page" %}
         </div>
     </section>
 
     <section>
         <h1>Denied Log</h1>
-        <div>
+        <div class="log-table">
             {% include 'module/log_table.html' with page_obj=denied_page_obj page_param="denied_page" %}
         </div>
     </section>
