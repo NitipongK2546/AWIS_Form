@@ -35,7 +35,9 @@
 </form>
 
     {% block print %}
-    <div style="text-align:center;"><button id="print-doc" class="button" type="button">Print Document</button><div>
+    <div style="text-align:center;">
+        <button id="print-doc" class="button no-print" type="button">Print Document</button>
+    <div>
     <script src="{% static 'js/printFile.js' %}"></script>
     {% endblock %}
 {% endblock %}

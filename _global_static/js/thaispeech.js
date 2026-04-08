@@ -20,6 +20,10 @@ let is_speaking = false
 
 const speak_button = document.getElementById("speak-button")
 
+function changeThaiText(text) {
+    thai_text = text
+}
+
 async function startSpeaking() {
     is_speaking = true
 
@@ -31,6 +35,8 @@ async function startSpeaking() {
 
     is_speaking = false
 }
+
+changeThaiText(text_override)
 
 speak_button.addEventListener("click", async () => {
     if (!is_speaking) {
