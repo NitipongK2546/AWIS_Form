@@ -223,8 +223,6 @@ from django.core.paginator import Paginator
 #         "query": query_form,
 #     })
 
-from django.core.paginator import Paginator
-
 @perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
 def view_all_logs(request: HttpRequest):
     filter = request.GET
