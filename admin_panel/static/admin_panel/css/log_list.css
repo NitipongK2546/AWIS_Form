@@ -26,6 +26,8 @@ h1 {
     font-weight: 600;
     margin-right: 10px;
     color: #333;
+    align-items: center;
+    display: flex;
 }
 
 .filter-section input,

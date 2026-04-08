@@ -59,20 +59,25 @@ def getOrFilterLogs(query : QueryDict = {}):
                 filter.update({f"{key}__in": query.getlist(key)})
 
     def cleanDate():
+        start_obj = None
+        end_obj = None
         try:
-            start_obj = timezone.datetime(
-                int(query.get("start_year")), int(query.get("start_month")), int(query.get("start_day")), tzinfo=timezone.get_current_timezone()
+            if query.get("start_year") and query.get("start_month") and query.get("start_day"):
+                start_obj = timezone.datetime(
+                    int(query.get("start_year")), int(query.get("start_month")), int(query.get("start_day")), tzinfo=timezone.get_current_timezone()
+                )
+            if query.get("end_year") and query.get("end_month") and query.get("end_day"):
+                end_obj = timezone.datetime(
+                    int(query.get("end_year")),  int(query.get("end_month")), int(query.get("end_day")),
+                    tzinfo=timezone.get_current_timezone()
             )
-            end_obj = timezone.datetime(
-                int(query.get("end_year")),  int(query.get("end_month")), int(query.get("end_day")),
-                tzinfo=timezone.get_current_timezone()
-            )
-            if start_obj > end_obj:
-                raise ValidationError("Start Date is after the End Date")
-            
-            filter.update({
-                "time_logged__range": (start_obj, end_obj),
-            })
+            if start_obj and end_obj:
+                if start_obj > end_obj:
+                    raise ValidationError("Start Date is after the End Date")
+                
+                filter.update({
+                    "time_logged__range": (start_obj, end_obj),
+                })
 
         except Exception as e:
             print(e)
@@ -82,7 +87,7 @@ def getOrFilterLogs(query : QueryDict = {}):
     cleanQuery()
     cleanDate()
 
-    print(filter)
+    # print(filter)
 
     queried_log = LogSystem.objects.filter(
         **filter
