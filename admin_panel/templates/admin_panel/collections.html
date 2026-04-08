@@ -8,18 +8,55 @@
 {% endblock %}
 
 {% block content %}
-<div class="admin-tools">
-    <h1>Admin Tools Collections</h1>
 
-    <h3><a href="/admin/">Django Built-in Admin Site</a></h3>
+<div class="header">
+    <h1>Admin Tools Collections</h1>
+</div>
+<div class="admin-tools">
+    <div class="tool-card">
+        <a href="/admin/">
+            <img src="{% static 'admin_panel/images/admin-built-in.png' %}" alt="Admin-Build-in">
+            <h3>Django Built-in Admin Site</h3>
+        </a>
+    </div>
+
     {% comment %}
     <h3><a href="{% url 'admin_panel:signup' %}">Easy User Signup</a></h3>
     {% endcomment %}
 
-    <h3><a href="{% url 'admin_panel:user_list' %}">ตรวจสอบผู้ใช้และสิทธิ์ของผู้ใช้</a></h3>
-    <h3><a href="{% url 'admin_panel:select_users' %}">เลือกผู้ใช้งานใน ERP เพื่อให้สิทธิ์การใช้ในเว็ปนี้</a></h3>
-    <h3><a href="{% url 'admin_panel:access_list' %}">ตรวจสอบสอบรายชื่อผู้มีสิทธิ์และจัดการสิทธิ์</a></h3>
-    <h3><a href="{% url 'admin_panel:view_logs' %}" >View Logs</a></h3>
-    <h3><a href="{% url 'dashboard:dashboard' %}">ไปหน้า dashboard</a></h3>
+    <div class="tool-card">
+        <a href="{% url 'admin_panel:user_list' %}">
+            <img src="{% static 'admin_panel/images/permission.png' %}" alt="Permission-Check">
+            <h3>ตรวจสอบผู้ใช้และสิทธิ์ของผู้ใช้</h3>
+        </a>
+    </div>
+
+    <div class="tool-card">
+        <a href="{% url 'admin_panel:user_list' %}">
+            <img src="{% static 'admin_panel/images/ERP.png' %}" alt="Select-User">
+            <h3>เลือกผู้ใช้งาน ERP</h3>
+        </a>
+    </div>
+
+    <div class="tool-card">
+        <a href="{% url 'admin_panel:access_list' %}">
+            <img src="{% static 'admin_panel/images/user-permission.png' %}" alt="Access-List">
+            <h3>ตรวจสอบรายชื่อผู้มีสิทธิ์</h3>
+        </a>
+    </div>
+
+    <div class="tool-card">
+        <a href="{% url 'admin_panel:view_logs' %}">
+            <img src="{% static 'admin_panel/images/Log.png' %}" alt="Logs">
+            <h3>View Logs</h3>
+        </a>
+    </div>
+
+    <div class="tool-card">
+        <a href="{% url 'dashboard:dashboard' %}">
+            <img src="{% static 'admin_panel/images/dashboard.png' %}" alt="Dashboard">
+            <h3>ไปหน้า Dashboard</h3>
+        </a>
+    </div>
 </div>
 {% endblock %}
