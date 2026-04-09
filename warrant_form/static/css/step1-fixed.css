@@ -1,0 +1,433 @@
+form {
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    font-size: 18px;
+    line-height: 1.2;
+    color: #000;
+
+}
+
+form input {
+    border: 1px solid #6f6767;
+    border-radius: 3px;
+    font-size: 17px;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    background-color: #efefef;
+}
+
+form input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    vertical-align: middle;
+    border-color: black;
+}
+
+form select {
+    border: 1px solid #6f6767;
+    border-radius: 3px;
+    font-size: 17px;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    background-color: #efefef;
+}
+
+
+form textarea {
+    border: 1px solid #6f6767;
+    border-radius: 3px;
+    font-size: 17px;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    background-color: #f9f9f9;
+    resize: vertical;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    outline: none;
+    box-shadow: 0 0 4px 2px #3399ff;
+    border: 1px solid #3399ff;
+}
+
+.button {
+    display: inline-block;
+    padding: 2px 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    color: #ffffff;
+    background: #30568f;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-left: 30px;
+}
+
+.button:hover {
+    background: #5673a2;
+}
+
+.button:active {
+    background: #193a6f;
+}
+
+.confirm-button {
+    display: inline-block;
+    padding: 2px 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
+    color: #ffffff;
+    background: #308f33;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-left: 30px;
+}
+
+.confirm-button:hover {
+    background: #4aba4e;
+}
+
+.confirm-button:active {
+    background: #2a7a2c;
+}
+
+.judge-paragraph {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.judge-input {
+    width: 15rem;
+    margin-right: 1rem;
+}
+
+.judge-input input {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.take-flex-half element {
+    flex: 0.5;
+}
+
+.take-flex-1 element {
+    flex: 1;
+}
+
+.take-flex-2 element {
+    flex: 2;
+}
+
+.special-multi-flex p {
+    display: flex;
+    justify-content: space-between;
+}
+
+.special-multi-flex p span.double-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.special-multi-flex p span.double-input-insides {
+    min-width: unset;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.req-info p {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.req-info p span {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.req-info p span.req-info-label-left {
+    min-width: 48px;
+    flex: none;
+}
+
+.acc-info p {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.acc-info p span {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.acc-info p span.double-input {
+    max-width: 16rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.acc-info p span.double-input-insides {
+    display: flex;
+    min-width: unset;
+    justify-content: space-between;
+    align-items: center;
+}
+
+p.cause-id-paragraph {
+    margin-left: 12rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.accused-input {
+    flex: 1;
+    margin-left: 1rem;
+    text-align: left;
+}
+
+.accused-input input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.25rem;
+}
+
+.form-header-row h3 {
+    font-size: 1.25rem;
+    margin-top: 1.25rem;
+}
+
+.form-header-row .emblem {
+    height: 3cm;
+    width: auto;
+    margin: 1.25rem 1.25rem;
+}
+
+.type_and_court p {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0px;
+}
+
+.lawsuit-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 1.25rem;
+}
+
+/* .form-header-row p {
+    margin-top: 1.25rem;
+    min-width: 11rem;
+}
+
+.header_page_2 {
+    width: 800px;
+    text-align: center;
+} */
+
+
+/*
+.first_plaintiff {
+    align-items: center;
+}
+
+.first_plaintiff input {
+    width: 500px;
+}
+
+#id_req_year {
+    width: 80px;
+    text-align: center;
+}
+
+.form-header-row input {
+    width: 150px;
+}
+
+
+
+.lawsuit-between .left {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.lawsuit-between .right {
+    text-align: right;
+}
+
+.lawsuit-between .right p {
+    margin: 5px 0;
+}
+
+.lawsuit-between .right input {
+    width: 450px;
+    font-size: 18px;
+}
+
+#id_main_form-req_case_type_id {
+    width: 10rem;
+    font-size: 18px;
+}
+
+#id_main_form-req_name {
+    width: 300px;
+    font-size: 18px;
+}
+
+#id_main_form-req_pos {
+    width: 250px;
+    font-size: 18px;
+}
+
+#id_main_form-req_age {
+    width: 50px;
+
+}
+
+#id_main_form-req_office {
+    width: 440px;
+}
+
+#id_main_form-req_province {
+    width: 11.5rem;
+}
+
+#id_main_form-req_district {
+    width: 11rem;
+}
+
+#id_main_form-req_sub_district {
+    width: 11rem;
+}
+
+#id_main_form-req_tel {
+    width: 11rem;
+}
+
+#id_main_form-cause_text_1 {
+    width: 500px;
+}
+
+#id_main_form-cause_text_2 {
+    width: 500px;
+}
+
+#id_main_form-acc_full_name {
+    width: 400px;
+}
+
+#id_main_form-acc_card_id {
+    width: 225px;
+}
+
+#id_main_form-acc_age {
+    width: 32px;
+}
+
+#id_main_form-acc_origin {
+    width: 80px;
+}
+
+#id_main_form-acc_nation {
+    width: 11em;
+}
+
+#id_main_form-acc_occupation {
+    width: 11em;
+}
+
+#id_main_form-acc_addno {
+    width: 11em;
+}
+
+#id_main_form-acc_vilno {
+    width: 11em;
+}
+
+#id_main_form-acc_road {
+    width: 11em;
+}
+
+#id_main_form-acc_soi {
+    width: 11em;
+}
+
+#id_main_form-acc_near {
+    width: 11em;
+}
+
+#id_main_form-acc_province {
+    width: 11em;
+}
+
+#id_main_form-acc_district {
+    width: 11em;
+}
+
+#id_main_form-acc_sub_district {
+    width: 11em;
+}
+
+#id_main_form-acc_tel {
+    width: 11em;
+}
+
+#id_main_form-law {
+    width: 690px;
+}
+
+#id_main_form-court_name {
+    width: 380px;
+}
+
+#id_main_form-have_act {
+    width: 100%;
+}
+
+#id_main_form-composer_name {
+    width: 300px;
+}
+
+#id_main_form-writer_name {
+    width: 300px;
+}
+
+#id_main_form-have_injunc {
+    width: 707px;
+}
+
+form textarea {
+    width: 800px;
+    height: 120px;
+}
+
+.plaintiff_2 input {
+    width: 15rem;
+    max-width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+} */

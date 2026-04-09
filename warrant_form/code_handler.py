@@ -88,6 +88,10 @@ class CountryNationalityCode:
     def getCodeDict(self):
         output_dict = {code:nation for code, nation in self.nationality_choices}
         return output_dict
+    
+    def getValueOf(self, code : int):
+        str_code = str(code)
+        return self.code_dict.get(str_code, "")
 
 if __name__ == "__main__":
     test = ThaiCountryAreaCode()

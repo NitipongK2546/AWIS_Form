@@ -6,6 +6,7 @@
 {% block style %}
     <link rel="stylesheet" href="{% static 'css/step1.css' %}">
     <link rel="stylesheet" href="{% static 'css/step2.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/view_form.css' %}">
 {% endblock %}
 
 {% block form %}
@@ -43,16 +44,6 @@
 {% endblock %}
 
 {% block script %}
-<script>
-    const req_province = "{{ req_province|escapejs }}"
-    const req_district = "{{ req_district|escapejs }}"
-    const req_sub_district = "{{ req_sub_district|escapejs }}"
-    const acc_province = "{{ acc_province|escapejs }}"
-    const acc_district = "{{ acc_district|escapejs }}"
-    const acc_sub_district = "{{ acc_sub_district|escapejs }}"
-</script>
-<script src="{% static 'js/reqform/handleDistrict.js' %}"></script>
-<script src="{% static 'js/warrantform/handleDistrict.js' %}"></script>
-
+{% include 'module/view_form_script.html' %}
 {% include 'module/thaispeech.html' %}
 {% endblock %}

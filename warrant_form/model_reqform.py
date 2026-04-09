@@ -301,7 +301,9 @@ class ReqformDataModel(models.Model):
             dict_main_awis.update({f"cause_text_{self.cause_type_id}": self.cause_text})
 
         if self.have_req:
-            dict_main_awis.update({f"have_req_{self.have_req + 1}": 1})
+            dict_main_awis.update({f"have_req_1": 1})
+        else:
+            dict_main_awis.update({f"have_req_2": 1})
 
         return dict_main_awis
     
@@ -332,8 +334,8 @@ f"""
 เลขบัตรประชาชน {self.acc_card_id},
 
 อายุ {self.acc_age},
-เชื้อชาติ {self.acc_origin},
-สัญชาติ {self.acc_nation},
+เชื้อชาติ {CentralForm.nation_codes.getValueOf(self.acc_origin)},
+สัญชาติ {CentralForm.nation_codes.getValueOf(self.acc_nation)},
 อาชีพ {self.acc_occupation},
 
 อยู่บ้านเลขที่ {self.acc_addno},
