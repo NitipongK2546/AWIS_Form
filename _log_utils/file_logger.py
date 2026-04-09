@@ -33,7 +33,7 @@ class AccessType(TextChoices):
 os.makedirs(LOG_DIR, exist_ok=True)
 
 def exportLogAsFile(filename : str = ALL_LOG_NAME):
-    all_logs = list(LogSystem.objects.all())
+    all_logs = getOrFilterLogs()
 
     with open(LOG_DIR + filename, mode="w", encoding="utf-8") as file:
         for log in all_logs:
@@ -46,7 +46,7 @@ def exportLogAsFile(filename : str = ALL_LOG_NAME):
 
             file.write(f"{prepared_text}\n")
 
-def getOrFilterLogs(query : QueryDict = {}):
+def getOrFilterLogs(query : QueryDict = {}, full_obj : bool = False):
     def cleanQuery():
         allowed_keys = ["action", "user_id"]
         for key in query:
@@ -100,21 +100,24 @@ def getOrFilterLogs(query : QueryDict = {}):
     }
 
     for log in queried_log:
-        user_obj = UserDataModel.objects.filter(api_uid=log.user_id).first()
+        if not full_obj:
+            user_obj = UserDataModel.objects.filter(api_uid=log.user_id).first()
 
-        data_dict = {
-            "time_logged": log.time_logged,
-            "user_id": log.user_id,
-            "username": user_obj.username,
-            "fullname": f"{user_obj.first_name} {user_obj.last_name}",
-            "action": log.action,
-            "system": log.system,
-            "relevant_info": log.getRelevantDataObj(log.type),
-            "url_path": parse.unquote(log.url_path),
-            "remark": log.remark,
-        }
+            data_dict = {
+                "time_logged": log.time_logged,
+                "user_id": log.user_id,
+                "username": user_obj.username,
+                "fullname": f"{user_obj.first_name} {user_obj.last_name}",
+                "action": log.action,
+                "system": log.system,
+                "relevant_info": log.getRelevantDataObj(log.type),
+                "url_path": parse.unquote(log.url_path),
+                "remark": log.remark,
+            }
 
-        log_collections[log.type].append(data_dict)
+            log_collections[log.type].append(data_dict)
+        else:
+            log_collections[log.type].append((log.toStrType(log.type, True)))
 
     return log_collections
 

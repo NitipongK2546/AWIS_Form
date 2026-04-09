@@ -1,4 +1,4 @@
-from django.http import HttpRequest, JsonResponse, HttpResponseForbidden
+from django.http import HttpRequest, JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 # from django.contrib.auth.decorators import permission_required
@@ -126,6 +126,8 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
             recive_date = timezone.make_aware(recive_date, timezone.UTC,)
 
             update_dict.update({"recive_date": recive_date})
+        else:
+            raise HttpResponseBadRequest("No receive date")
 
         if data_accept_date:
             accept_date = timezone.datetime.strptime(data_accept_date, iso8601_str_format) 
@@ -133,6 +135,8 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
 
             update_dict.update({"accept_date": accept_date})
             update_dict.update({"accept": data.get("accept")})
+        else:
+            raise HttpResponseBadRequest("No accept date")
 
         target_object.update(
             **update_dict,
@@ -154,9 +158,9 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
         }, status=403)
     except Exception:
         return JsonResponse({
-            "status": 500,
+            "status": 400,
             "message": "Updating Failed." 
-        }, status=500)
+        }, status=400)
 
 @api_perm_log([PermissionType.EDIT], PermissionList.REQFORM_SUBMITTED, AccessType.EDIT)
 def update_status_warrant(request : HttpRequest) -> JsonResponse:
@@ -203,7 +207,7 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
         )
 
         if len(woa_wrapper_matched) == 0:
-            raise Exception("No Match Found.")
+            raise HttpResponseBadRequest("No Match Found.")
 
         iso8601_str_format = "%Y-%m-%dT%H:%M:%S"    
 
@@ -214,8 +218,8 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
             judge_name = data.get("judge_name"),
             court_injunction = data.get("court_injunction"),
             injunction_date = injunction_date,
-            file_path = "https://www.example.com",
-            because = "",
+            file_path = data.get("file_path", ""),
+            because = data.get("because", ""),
         )
         warrants_matched.woa_refno = data.get("woa_refno")
         warrants_matched.save()
@@ -233,11 +237,11 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
             "status": 403,
             "message": "Current User Lack Permission" 
         }, status=403)
-    except Exception:
+    except HttpResponseBadRequest:
         return JsonResponse({
-            "status": 500,
+            "status": 400,
             "message": "Updating Failed." 
-        }, status=500)
+        }, status=400)
 
 
         

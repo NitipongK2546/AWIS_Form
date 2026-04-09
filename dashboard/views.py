@@ -148,6 +148,8 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         "acc_province": form_data.get("acc_province"),
         "acc_district": form_data.get("acc_district"),
         "acc_sub_district": form_data.get("acc_sub_district"),
+
+        "speech": reqform.prepareTextToSpeech(),
     })
 
 @permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)

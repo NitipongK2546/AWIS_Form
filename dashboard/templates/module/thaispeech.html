@@ -1,5 +1,8 @@
 {% load static %}
 <div style="text-align: center; margin-top: 5px;">
-    <button id="speak-button" class="confirm-button">SPEAK</button>
+    <button id="speak-button" class="confirm-button no-print">SPEAK</button>
     <script type="module" src="{% static 'js/thaispeech.js' %}"></script>
+    <script>
+        const text_override = `{{ speech }}`
+    </script>
 </div>
