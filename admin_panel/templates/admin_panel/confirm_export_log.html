@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>confirmation page</title>
+    <link rel="stylesheet" href="{% static 'dashboard/css/approve_page.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="confirm-container">
+        <h1 style="text-align: center;">{{ action }}</h1>
+        <p style="margin: 40px 0px">
+            โปรดกดปุ่มยืนยัน หากคุณต้องการจะ
+            {% if action == "Export Log" %}
+                <span style="color: green; font-weight: bold;">บันทึก Log</span>
+            {% elif action == "Delete Log" %} 
+                <span style="color: red; font-weight: bold;">ลบ Log</span>
+            {% endif %}
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <p><button type="submit" class="confirm-button">ยืนยัน</button></p>
+            <p><a href="{% url 'dashboard:approve_form_page' %}" class="back-button">กลับ</a></p>
+        </form>
+    </div>
+</body>
+</html>
