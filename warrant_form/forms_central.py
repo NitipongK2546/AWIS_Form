@@ -1,4 +1,4 @@
-from warrant_form.code_handler import ThaiCountryAreaCode
+from warrant_form.code_handler import ThaiCountryAreaCode, CountryNationalityCode
 import datetime
 from django import forms
 from django.utils import timezone
@@ -23,6 +23,8 @@ month_choices = [
     (12, "ธันวาคม"),
 ]
 thai_codes = ThaiCountryAreaCode()
+
+nation_codes = CountryNationalityCode()
 
 def reattachDateTime(current_dict : dict, field : str):
         

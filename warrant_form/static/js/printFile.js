@@ -8,16 +8,13 @@ function printPage() {
     window.print();
 }
 
+print_button.addEventListener("click", () => {
+    printPage()
+})
+
 ///////////////////////////////////////////////////////////////
 
 time_inputs.forEach(element => {
     element.removeAttribute("type")
 });
 
-// checkbox_inputs.forEach(element => {
-//     element.style.accentColor = "white";
-// });
-
-print_button.addEventListener("click", () => {
-    printPage()
-})

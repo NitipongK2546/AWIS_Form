@@ -19,10 +19,12 @@
         </thead>
         <tbody>
             {% for form in forms %}
-            {% if form.approve_status != 2 %}
-            <tr>
-            {% else %}
+            {% if form.approve_status == 0 %}
             <tr style="filter: brightness(0.8); color: red;">
+            {% elif form.approve_status == 2 %}
+            <tr style="filter: brightness(0.8); color: green;">
+            {% else %}
+            <tr>
             {% endif %}
                 <td>{{ form.form.reqno }}</td>
                 <td>{{ form.get_approve_status_display }}</td>

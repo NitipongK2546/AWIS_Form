@@ -146,8 +146,10 @@ class AWISFormStep1(forms.Form):
     acc_card_type = forms.IntegerField(required=False, )
     acc_card_id = forms.CharField(max_length=20)
     acc_age = forms.IntegerField(required=False, )
-    acc_origin = forms.IntegerField(required=False, )
-    acc_nation = forms.IntegerField(required=False, )
+
+    acc_origin = forms.ChoiceField(required=False, choices=CentralForm.nation_codes.getChoices())
+    acc_nation = forms.ChoiceField(required=False, choices=CentralForm.nation_codes.getChoices())
+
     acc_occupation = forms.CharField(max_length=100, required=False)
     acc_addno = forms.CharField(max_length=50, required=False)
     acc_vilno = forms.CharField(max_length=50, required=False)

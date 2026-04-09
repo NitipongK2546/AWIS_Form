@@ -59,6 +59,36 @@ class ThaiCountryAreaCode:
     def getValueOfCode(self, code : str):
         return self.code_dict.get(code)
     
+##############################################
+def set_up_nationality_codes() -> list:
+    CSV_PATH = "warrant_form/resources/country.csv"
+    nationality_choices = []
+
+    with open(CSV_PATH, mode='r', newline='', encoding='utf-8') as csv_file:
+        code_table = csv.reader(csv_file, delimiter=",")
+
+        for line in code_table:
+            nationality_choices.append(
+                (line[0], line[1])
+            )
+
+    return nationality_choices
+
+class CountryNationalityCode:
+    nationality_choices = []
+    code_dict = {}
+
+    def __init__(self):
+        self.nationality_choices = set_up_nationality_codes()
+        self.code_dict = self.getCodeDict()
+
+    def getChoices(self):
+        return self.nationality_choices
+    
+    def getCodeDict(self):
+        output_dict = {code:nation for code, nation in self.nationality_choices}
+        return output_dict
+
 if __name__ == "__main__":
     test = ThaiCountryAreaCode()
     # print(test.getSubDistrictChoices())
