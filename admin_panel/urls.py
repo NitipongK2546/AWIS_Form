@@ -16,6 +16,9 @@ urlpatterns = [
 
     path("logs/", views.view_all_logs, name="view_logs"),
 
+    path("logs/export/", views.export_logs, name="export_logs"),
+    path("logs/delete/", views.delete_logs, name="delete_logs")
+
     # path("views_perms/", views.display_all_views_permissions, name="views_perms"),
     # path("views_perms/remove/<str:view_name>/<str:perm_name>/", views.delete_perm_from_view, name="delete_perms"),
 ]

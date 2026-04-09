@@ -25,6 +25,8 @@ class PermissionList(Enum):
 
     USER_ACCESS = "userAccess"
     USER_ROLE = "userRole"
+
+    LOG_ACCESS = "logAccess"
     
     REQFORM_AWAIT_APPROVAL = "reqformAwaitApproval"
     REQFORM_SUBMITTED = "reqformSubmitted"

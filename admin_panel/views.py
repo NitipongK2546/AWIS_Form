@@ -223,7 +223,7 @@ from django.core.paginator import Paginator
 #         "query": query_form,
 #     })
 
-@perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
+@perm_req_log([PermissionType.VIEW], PermissionList.LOG_ACCESS, AccessType.VIEW)
 def view_all_logs(request: HttpRequest):
     filter = request.GET
     query_form = LogQuery(data=filter)
@@ -255,3 +255,25 @@ def view_all_logs(request: HttpRequest):
         "query": query_form,
     })
 
+@perm_req_log([PermissionType.CREATE], PermissionList.LOG_ACCESS, AccessType.CREATE)
+def export_logs(request : HttpRequest):
+    if request.method == "POST":
+        FileLogger.exportLogAsFile()
+
+        return redirect("admin_panel:view_logs")
+    
+    return render(request, "admin_panel/confirm_log_action.html", {
+        "action": "Export Log"
+    })
+
+def delete_logs(request : HttpRequest):
+    filter = request.GET
+
+    if request.method == "POST":
+        FileLogger.deleteLogViaFilter(filter)
+
+        return redirect("admin_panel:view_logs")
+
+    return render(request, "admin_panel/confirm_export_log.html", {
+        "action": "Delete Log"
+    })

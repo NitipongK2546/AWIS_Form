@@ -15,7 +15,8 @@ from django.http import QueryDict
 from urllib import parse
 
 LOG_DIR = "_log_output/"
-ALL_LOG_NAME = "all_access_log.txt"
+
+EXPORT_LOG_DIR = "exported/"
 
 NORMAL_LOG = "access_log.txt"
 ERROR_LOG = "error_log.txt"
@@ -32,21 +33,26 @@ class AccessType(TextChoices):
 
 os.makedirs(LOG_DIR, exist_ok=True)
 
-def exportLogAsFile(filename : str = ALL_LOG_NAME):
-    all_logs = getOrFilterLogs()
+def exportLogAsFile(export_dir : str = EXPORT_LOG_DIR):
+    all_logs = getOrFilterLogs(as_text=True)
+    os.makedirs(LOG_DIR + export_dir, exist_ok=True)
 
-    with open(LOG_DIR + filename, mode="w", encoding="utf-8") as file:
-        for log in all_logs:
-            # user_obj : UserDataModel = UserDataModel.objects.get(api_uid=log.user_id)
+    with open(LOG_DIR + export_dir + NORMAL_LOG, mode="w", encoding="utf-8") as file:
+        prepared_text = all_logs.get("normal")
+        for line in prepared_text:
+            file.write(f"{line}\n")
 
-            prepared_text = str(log)
+    with open(LOG_DIR + export_dir + ACCESS_DENIED_LOG, mode="w", encoding="utf-8") as file:
+        prepared_text = all_logs.get("denied")
+        for line in prepared_text:
+            file.write(f"{line}\n")
 
-            if log.remark:
-                prepared_text = prepared_text + f" ({log.remark})"
+    with open(LOG_DIR + export_dir + ERROR_LOG, mode="w", encoding="utf-8") as file:
+        prepared_text = all_logs.get("errors")
+        for line in prepared_text:
+            file.write(f"{line}\n")
 
-            file.write(f"{prepared_text}\n")
-
-def getOrFilterLogs(query : QueryDict = {}, full_obj : bool = False):
+def getCleanedFilter(query : QueryDict):
     def cleanQuery():
         allowed_keys = ["action", "user_id"]
         for key in query:
@@ -68,7 +74,7 @@ def getOrFilterLogs(query : QueryDict = {}, full_obj : bool = False):
                 )
             if query.get("end_year") and query.get("end_month") and query.get("end_day"):
                 end_obj = timezone.datetime(
-                    int(query.get("end_year")),  int(query.get("end_month")), int(query.get("end_day")),
+                    int(query.get("end_year")),  int(query.get("end_month")), (int(query.get("end_day")) + 1),
                     tzinfo=timezone.get_current_timezone()
             )
             if start_obj and end_obj:
@@ -87,6 +93,20 @@ def getOrFilterLogs(query : QueryDict = {}, full_obj : bool = False):
     cleanQuery()
     cleanDate()
 
+    return filter
+
+def deleteLogViaFilter(query : QueryDict = {}):
+    filter = getCleanedFilter(query)
+
+    queried_log = LogSystem.objects.filter(
+        **filter
+    )
+
+    queried_log.delete()
+
+def getOrFilterLogs(query : QueryDict = {}, as_text : bool = False):
+    filter = getCleanedFilter(query)
+
     # print(filter)
 
     queried_log = LogSystem.objects.filter(
@@ -100,7 +120,7 @@ def getOrFilterLogs(query : QueryDict = {}, full_obj : bool = False):
     }
 
     for log in queried_log:
-        if not full_obj:
+        if not as_text:
             user_obj = UserDataModel.objects.filter(api_uid=log.user_id).first()
 
             data_dict = {
