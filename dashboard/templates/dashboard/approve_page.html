@@ -5,14 +5,15 @@
 
 {% block body %}
   <div id="header-container">
+    <p>
+      <a class="button-logout" href="{% url 'dashboard:dashboard' %}" style="font-size: 1.2rem;">กลับ</a>
+    </p>
+
     <h1 style="margin: 0px 20px;">แบบฟอร์มที่รอการอนุมัติ</h1>
     {% include 'module/approve_table.html' %}
 
     <h1 style="margin: 0px 20px;">แบบฟอร์มทั้งหมด</h1>
     {% include 'module/all_form_approve_table.html' %}
 
-    <p>
-      <a class="button-logout" href="{% url 'dashboard:dashboard' %}">GO BACK</a>
-    </p>
   </div>
 {% endblock %}
