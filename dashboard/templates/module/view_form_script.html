@@ -1,0 +1,16 @@
+{% load static %}
+
+<script>
+    const req_province = "{{ req_province|escapejs }}"
+    const req_district = "{{ req_district|escapejs }}"
+    const req_sub_district = "{{ req_sub_district|escapejs }}"
+    const acc_province = "{{ acc_province|escapejs }}"
+    const acc_district = "{{ acc_district|escapejs }}"
+    const acc_sub_district = "{{ acc_sub_district|escapejs }}"
+</script>
+<script src="{% static 'js/reqform/handleDistrict.js' %}"></script>
+<script src="{% static 'js/warrantform/handleDistrict.js' %}"></script>
+<script src="{% static 'js/reqform/autoFillField.js' %}"></script>
+<script src="{% static 'js/warrantform/autoFillField.js' %}"></script>
+<script src="{% static 'js/reqform/idFormat.js' %}" type="module"></script>
+<script src="{% static 'js/warrantform/idFormat.js' %}" type="module"></script>

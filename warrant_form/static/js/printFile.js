@@ -8,16 +8,40 @@ function printPage() {
     window.print();
 }
 
+print_button.addEventListener("click", () => {
+    printPage()
+})
+
 ///////////////////////////////////////////////////////////////
 
 time_inputs.forEach(element => {
     element.removeAttribute("type")
 });
 
-// checkbox_inputs.forEach(element => {
-//     element.style.accentColor = "white";
-// });
+function newCheckbox(isChecked = false) {
+    const elem = document.createElement("span");
+    elem.className = "checkbox-display";
 
-print_button.addEventListener("click", () => {
-    printPage()
-})
+    if (isChecked) {
+        elem.textContent = "✓"
+        elem.classList.add("checked");
+    }
+    else {
+        elem.classList.add("unchecked");
+    }
+
+    return elem
+}
+
+checkbox_inputs.forEach(element => {
+    if (element.checked) {
+        element.replaceWith(
+            newCheckbox(true)
+        )
+    }
+    else {
+        element.replaceWith(
+            newCheckbox()
+        )
+    }
+});
