@@ -41,6 +41,35 @@ class UserAccess(models.Model):
         default=DEFAULT_ROLE
     )
 
+def create_court_user(
+    username : str, email : str, password : str, 
+    fname : str, lname : str, 
+    uid : int = 9_999_998
+):
+    User : UserDataModel = get_user_model()
+
+    user = User.objects.filter(
+        username=username,
+    ).first()
+
+    if user:
+        return
+
+    user = User.objects.create_user(
+        username=username,
+        email=email,
+        password=password,
+    )
+
+    user.first_name = fname
+    user.last_name = lname
+
+    user.api_uid = uid
+
+    user.save()
+
+    return user
+
 def create_superuser():
     User : UserDataModel = get_user_model()
 

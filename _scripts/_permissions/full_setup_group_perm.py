@@ -6,6 +6,8 @@ from awis_custom_settings import settings, default_perms
 from users import PermissionList, PermissionType, perm_str
 from users.permissions import AWISPermissions, PermissionList, PermissionType, creation, perm_str_list
 
+from users.models import UserDataModel
+
 for name in PermissionList:
     ct = creation.createContentType(name)
 
@@ -20,6 +22,14 @@ for role in settings.RoleList:
 
     for item in default_permissions:
         role_group.permissions.add(item)
+
+user = UserDataModel.objects.get(username="testcourtuser7")
+
+permission = Permission.objects.get(codename=
+    perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED).split(".")[1]
+)
+
+user.user_permissions.add(permission)
 
 
 # instance, created = PathPermission.objects.get_or_create(pk=1)

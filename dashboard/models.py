@@ -102,7 +102,7 @@ class VisualReqformData(models.Model):
     
     def getLogInfoDict(self):
         return {
-            "type": ["warrant_form", "VisualReqformData"],
+            "type": ["dashboard", "VisualReqformData"],
             "id": self.pk,
             "form": self.form.getLogInfoDict()
         }

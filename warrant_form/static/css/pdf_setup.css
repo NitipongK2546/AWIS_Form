@@ -1,9 +1,22 @@
-@page {
-    size: A4;       
-    margin: 15mm;
-}
-
 @media print {
+    @page {
+        size: A4;       
+        margin-top: 2.5cm;
+        margin-bottom: 2.5cm;
+        margin-left: 3cm;
+        margin-right: 2cm;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    * {
+        font-size: 16px !important;
+        box-sizing: border-box;
+    }
+
+    
     .no-print {
         display: none !important;
     }
@@ -12,26 +25,36 @@
         break-after: page !important;
     }
     form input, form select {
-        font-size: 18px !important;
-        border: none !important;
-        border-bottom: 1.5px black !important;
-        border-bottom-style: dotted !important;
         text-align: center !important;
-        border-radius: 0px !important;
         color: black;
+
+        border: none !important;
+        
+        border-radius: 0px !important;
+        border-bottom: 1px dashed black !important;
     }
     select {
         background: none;
-        min-width: 2rem;
         appearance: none; 
         -webkit-appearance: none;
         -moz-appearance: none;
     }
 
-    /* form input[type="checkbox"] {
-        border: 1.5px black !important;
-        accent-color: white;
+    /* input, select {
+        min-height: 24px !important; 
+        max-height: 24px !important;           
+        box-sizing: border-box;     
+        font-size: 16px;           
+        line-height: 1;             
     } */
+
+    #id_main_form-acc_origin {
+        max-width: 6.5rem;
+    }
+
+    #id_main_form-acc_age {
+        max-width: 2rem;
+    }
 
     input:disabled,
     select:disabled,
@@ -40,24 +63,5 @@
         -webkit-text-fill-color: black; /* fixes Chrome grey text */
         opacity: 1;
     }
-
-    /* .item {
-        padding: 12px 16px;
-        border-bottom: 2px solid #ccc;
-        position: relative;
-        cursor: pointer;
-        }
-
-    .item::after {
-        content: "✔";
-        position: absolute;
-        right: 16px;
-        color: green;
-        opacity: 0;
-        transition: 0.2s;
-    }
-
-    .item.checked::after {
-        opacity: 1;
-    }*/
+    
 }

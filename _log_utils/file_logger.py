@@ -3,7 +3,7 @@ from enum import Enum
 from django.db.models import TextChoices
 from django.core.exceptions import ValidationError
 
-from users.models import LogSystem, UserDataModel, getAffectedData
+from users.models import LogSystem, UserDataModel
 from django.utils import timezone
 from users.permissions import PermissionList
 

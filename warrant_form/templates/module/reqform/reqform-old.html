@@ -41,32 +41,30 @@
         <span>ตำแหน่ง {{ form.req_pos }}</span>
     </p>
 
-    <div class="req-info">
+    <div class="special-multi-flex">
         <p>
-            <span>
-                <span class="req-info-label-left">อายุ</span>
-                <span>{{ form.req_age }}</span> ปี
+            <span class="double-input">
+                <span>
+                    อายุ 
+                </span>
+                <span class="double-input-insides" style="min-width: 11rem;">
+                    <span>{{ form.req_age }} ปี</span> <span>อาชีพ พนักงานของรัฐ</span>
+                </span>
             </span>
             <span>
-                <span>อาชีพ</span> พนักงานของรัฐ
-            </span>
-            <span>
-                <span class="req-info-label-left">สถานที่ทำงาน</span> {{ form.req_office }}
+                สถานที่ทำงาน {{ form.req_office }}
             </span>
         </p>
+    </div>
+    <div class="acc-info">
         <p>
-            <span>
-                <span class="req-info-label-left">จังหวัด</span> 
-                <span>{{ form.req_province }}</span>
-            </span>
+            <span>จังหวัด {{ form.req_province }}</span>
             <span>อำเภอ/เขต {{ form.req_district }}</span>
             <span>ตำบล/แขวง {{ form.req_sub_district }}</span>
         </p>
      
         <p> 
-            <span>
-                <span class="req-info-label-left">โทรศัพท์</span> 
-                <span class="take-flex-1"> {{ form.req_tel }} </span>
+            <span>โทรศัพท์ {{ form.req_tel }} </span>
             <span style="text-align: left;">
                 ขอยื่นคำร้องขอออกหมายจับยื่นต่อศาลดังมีข้อความที่จะกล่าวดังต่อไปนี้
             </span>

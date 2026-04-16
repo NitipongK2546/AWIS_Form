@@ -1,26 +1,130 @@
 <div class="acc-info">
-    <p><span>ว่า {{ form.acc_full_name }}</span> <span>เลขบัตรประชาชน {{ form.acc_card_id }}</span></p>
     <p>
-        <span class="double-input">
-            <span class="double-input-insides">อายุ {{ form.acc_age }}</span>
-            <span class="double-input-insides">เชื้อชาติ {{ form.acc_origin }}</span>
+        <span style="min-width: 20px; flex: none;">
+            ว่า
+        </span>
+        <span>
+            {{ form.acc_full_name }}
         </span> 
-        <span>สัญชาติ {{ form.acc_nation }}</span> 
-        <span>อาชีพ {{ form.acc_occupation }}</span>
+        <span style="margin-left: 8px; margin-right: 8px; flex: none;">
+            เลขบัตรประชาชน 
+        </span>
+        <span>
+            {{ form.acc_card_id }}
+        </span>
     </p>
     <p>
-        <span>อยู่บ้านเลขที่ {{ form.acc_addno }}</span> 
-        <span>หมู่ที่ {{ form.acc_vilno }}</span> 
-        <span>ถนน {{ form.acc_road }}</span>
+        <span class="special-top">
+            <span style="flex: none;">
+                <span style="min-width: 20px">
+                    อายุ
+                </span>
+                <span>
+                    {{ form.acc_age }}
+                </span>
+            </span>
+            <span>
+                <span style="white-space: nowrap;">
+                    เชื้อชาติ
+                </span>
+                <span>
+                    {{ form.acc_origin }}
+                </span>
+            </span>
+        </span> 
+        <span>
+            <span class="acc-info-label-mid">
+                สัญชาติ
+            </span>
+            <span>
+                {{ form.acc_nation }}
+            </span>
+        </span>
+        <span>
+            <span class="acc-info-label-right">
+                อาชีพ
+            </span>
+            <span>
+                {{ form.acc_occupation }}
+            </span>
+        </span>
     </p>
     <p>
-        <span>ตรอก/ซอย {{ form.acc_soi }}</span> 
-        <span>ใกล้เคียง {{ form.acc_near }}</span> 
-        <span>จังหวัด {{ form.acc_province }}</span>
+        <span>
+            <span class="acc-info-label-left">
+                อยู่บ้านเลขที่
+            </span>
+            <span>
+                {{ form.acc_addno }}
+            </span>
+        </span> 
+        <span>
+            <span class="acc-info-label-mid">
+                หมู่ที่
+            </span>
+            <span>
+                {{ form.acc_vilno }}
+            </span>
+        </span> 
+        <span>
+            <span class="acc-info-label-right">
+                ถนน
+            </span>
+            <span>
+                {{ form.acc_road }}
+            </span>
+        </span>
     </p>
     <p>
-        <span>อำเภอ/เขต {{ form.acc_district }}</span> 
-        <span>ตำบล/แขวง {{ form.acc_sub_district }}</span> 
-        <span>โทรศัพท์ {{ form.acc_tel }}</span>
+        <span>
+            <span class="acc-info-label-left">
+                ตรอก/ซอย
+            </span>
+            <span>
+                {{ form.acc_soi }}
+            </span>
+        </span> 
+        <span>
+            <span class="acc-info-label-mid">
+                ใกล้เคียง
+            </span> 
+            <span>
+                {{ form.acc_near }}
+            </span>
+        </span> 
+        <span>
+            <span class="acc-info-label-right">
+                จังหวัด
+            </span> 
+            <span>
+                {{ form.acc_province }}
+            </span>
+        </span>
+    </p>
+    <p>
+        <span>
+            <span class="acc-info-label-left">
+                อำเภอ/เขต
+            </span>
+            <span>
+                {{ form.acc_district }}
+            </span>
+        </span> 
+        <span>
+            <span class="acc-info-label-mid">
+                ตำบล/แขวง
+            </span> 
+            <span>
+                {{ form.acc_sub_district }}
+            </span>
+        </span> 
+        <span>
+            <span class="acc-info-label-right">
+                โทรศัพท์
+            </span> 
+            <span>
+                {{ form.acc_tel }}
+            </span>
+        </span>
     </p>
 </div>
