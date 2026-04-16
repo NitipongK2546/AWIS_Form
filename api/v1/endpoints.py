@@ -53,6 +53,14 @@ def auth_api(request : HttpRequest) -> JsonResponse:
                 "message": "Wrong Username or Password"
             }, status=401)
         
+        if user.is_superuser or (not user.has_perms(
+            perm_str_list([PermissionType.EDIT], PermissionList.REQFORM_SUBMITTED)
+        )):
+            return JsonResponse({
+                "status": 403,
+                "message": "JWT cannot be created for with user."
+            }, status=403)
+        
         token = JWTHandle.create_jwt(user)
 
         return JsonResponse({

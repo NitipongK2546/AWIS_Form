@@ -52,12 +52,12 @@ Step 3: ตรวจสอบความถูกต้อง
 
 ```
 VisualReqformData
-{{ HOST }}/api/v1/update-status/reqwarrant
+{{ HOST }}/api/v1/update-status/reqwarrant/
 ```
 
 ```
 VisualWarrantData
-{{ HOST }}/api/v1/update-status/warrant
+{{ HOST }}/api/v1/update-status/warrant/
 ```
 
 ศาลจะไม่สามารถเข้าถึง API ได้ หากไม่มีการเพิ่ม JWT (JSON Web Token) ไว้ที่ Header
@@ -65,6 +65,8 @@ VisualWarrantData
 โดยสามารถขอ JWT ได้จาก Directory ดังกล่าว ด้วยการส่ง POST Request
 
 ```
+AUTHORIZATION: Bearer {{ JWT_TOKEN }}
+
 {{ HOST }}/api/v1/authenticate/
 
 {
@@ -72,5 +74,5 @@ VisualWarrantData
     password: YYY,   
 }
 ```
-JWT ดังกล่าวควรที่ออกได้ก็ต่อเมื่อเป็น User สำหรับการใช้ API เท่านั้น todo: แก้ algorithm ด้วย
+JWT ดังกล่าวควรที่ออกได้ก็ต่อเมื่อเป็น User สำหรับการใช้ API เท่านั้น โดยในขณะนี้ได้ตั้งไว้ให้ User ที่มี Permission Edit ReqformSubmitted เท่านั้น
 
