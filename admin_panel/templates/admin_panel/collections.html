@@ -24,12 +24,12 @@
     <h3><a href="{% url 'admin_panel:signup' %}">Easy User Signup</a></h3>
     {% endcomment %}
 
-    <div class="tool-card">
+    {% comment %} <div class="tool-card">
         <a href="{% url 'admin_panel:user_list' %}">
             <img src="{% static 'admin_panel/images/permission.png' %}" alt="Permission-Check">
             <h3>ตรวจสอบผู้ใช้และสิทธิ์ของผู้ใช้</h3>
         </a>
-    </div>
+    </div> {% endcomment %}
 
     <div class="tool-card">
         <a href="{% url 'admin_panel:select_users' %}">
