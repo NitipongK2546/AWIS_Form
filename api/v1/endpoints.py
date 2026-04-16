@@ -12,8 +12,6 @@ from dashboard.warrant_wrapper import VisualWarrantData, WarrantDataModel
 
 from django.utils import timezone
 
-
-
 import _log_utils.file_logger as FileLogger
 from _log_utils.file_logger import AccessType
 from api.decorators import api_perm_log
@@ -68,7 +66,6 @@ def auth_api(request : HttpRequest) -> JsonResponse:
         }, status=400)
 
 @api_perm_log([PermissionType.EDIT], PermissionList.REQFORM_SUBMITTED, AccessType.EDIT)
-@csrf_exempt
 def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     if request.method != "PUT":
         # Wrong request method.
@@ -105,6 +102,7 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     # }
 
     try:
+        print(data)
         form_obj = ReqformDataModel.objects.get(
             req_no_plaintiff = data.get("req_no_plaintiff"),
             reqno = data.get("reqno"),
@@ -156,7 +154,8 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
             "status": 403,
             "message": "Current User Lack Permission" 
         }, status=403)
-    except Exception:
+    except Exception as e:
+        print(e)
         return JsonResponse({
             "status": 400,
             "message": "Updating Failed." 

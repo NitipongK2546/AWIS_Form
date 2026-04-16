@@ -8,9 +8,14 @@ form {
 
 }
 
+form p {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 form input {
+    flex: 1;
     border: 1px solid #6f6767;
-    /* width: 11em; */
     border-radius: 3px;
     font-size: 17px;
     font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
@@ -25,13 +30,15 @@ form input[type="checkbox"] {
 }
 
 form select {
+    flex: 1;
+}
+
+form select {
     border: 1px solid #6f6767;
-    /* width: 11em; */
     border-radius: 3px;
     font-size: 17px;
     font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
     background-color: #efefef;
-    /* box-sizing: border-box; */
 }
 
 
@@ -117,25 +124,63 @@ form textarea:focus {
     text-align: center;
 }
 
-
-.special-multi-flex p {
+.req-info-1 p {
     display: flex;
     justify-content: space-between;
 }
 
-.special-multi-flex p span.double-input {
-    min-width: 16rem;
-    max-width: 16rem;
+.req-info-1 p span {
+    flex: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.special-multi-flex p span.double-input-insides {
-    min-width: unset;
+.req-info-1 p span.double-spans {
+    flex: 0.5;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.req-info-1 p span.double-spans span {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.req-info-1 p span.req-info-label-left {
+    min-width: 48px;
+    flex: none;
+}
+
+.req-info-2 p {
+    display: flex;
+    justify-content: space-between;
+}
+
+.req-info-2 p span {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.req-info-2 p span.req-info-label-left {
+    min-width: 48px;
+    flex: none;
+}
+
+.req-info-2 p span.req-info-label-mid {
+    margin-left: 4px;
+    min-width: 68px;
+    flex: none;
+}
+
+.req-info-2 p span.req-info-label-right {
+    margin-left: 4px;
+    min-width: 60px;
+    flex: none;
 }
 
 .acc-info p {
@@ -146,24 +191,37 @@ form textarea:focus {
 }
 
 .acc-info p span {
-    min-width: 16rem;
+    flex: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.acc-info p span.double-input {
-    max-width: 16rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.acc-info p span.acc-info-label-left {
+    min-width: 64px;
+    flex: none;
 }
 
-.acc-info p span.double-input-insides {
-    display: flex;
-    min-width: unset;
-    justify-content: space-between;
-    align-items: center;
+.acc-info p span.acc-info-label-mid {
+    min-width: 64px;
+    margin-left: 6px;
+    flex: none;
+}
+
+.acc-info p span.acc-info-label-right {
+    margin-left: 6px;
+    min-width: 64px;
+    flex: none;
+}
+
+/* .acc-info p span.special-top {
+    flex: 1;
+    display: inline-flex;
+
+} */
+
+.acc-info p span.special-top input {
+    min-width: none;
 }
 
 p.cause-id-paragraph {
@@ -200,40 +258,12 @@ p.cause-id-paragraph {
     height: 3cm;
     width: auto;
     margin: 1.25rem 1.25rem;
-    /* spacing around emblem */
-}
-
-.form-header-row p {
-    margin-top: 1.25rem;
-    min-width: 11rem;
-}
-
-.header_page_2 {
-    width: 800px;
-    text-align: center;
 }
 
 .type_and_court p {
     display: flex;
     justify-content: space-between;
     margin-top: 0px;
-}
-
-.first_plaintiff {
-    align-items: center;
-}
-
-.first_plaintiff input {
-    width: 500px;
-}
-
-#id_req_year {
-    width: 80px;
-    text-align: center;
-}
-
-.form-header-row input {
-    width: 150px;
 }
 
 .lawsuit-between {
@@ -243,176 +273,51 @@ p.cause-id-paragraph {
     margin-top: 1.25rem;
 }
 
-.lawsuit-between .left {
-    font-weight: bold;
-    font-size: 18px;
+.form-header-row p {
+    margin-top: 1.25rem;
+    min-width: 11rem;
 }
 
-.lawsuit-between .right {
-    text-align: right;
+.text-area-para {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.lawsuit-between .right p {
-    margin: 5px 0;
+form p.text-area-para textarea {
+    flex: 1;
+    max-height: 120px;
 }
 
-.lawsuit-between .right input {
-    width: 450px;
-    font-size: 18px;
+.header_page_2 {
+    width: 800px;
+    text-align: center;
 }
 
-#id_main_form-req_case_type_id {
-    width: 10rem;
-    font-size: 18px;
+#id_main_form-req_age {
+    max-width: 5rem;
+}
+
+#id_main_form-acc_age {
+    max-width: 2rem;
+}
+
+#id_main_form-acc_origin {
+    max-width: 9rem;
+}
+
+#id_main_form-plaintiff_1 {
+    width: 500px;
+}
+
+#id_main_form-plaintiff_2 {
+    width: 220px;
 }
 
 #id_main_form-req_name {
     width: 300px;
-    font-size: 18px;
 }
 
 #id_main_form-req_pos {
     width: 250px;
-    font-size: 18px;
 }
-
-#id_main_form-req_age {
-    width: 50px;
-
-}
-
-#id_main_form-req_office {
-    width: 440px;
-}
-
-#id_main_form-req_province {
-    width: 11.5rem;
-}
-
-#id_main_form-req_district {
-    width: 11rem;
-}
-
-#id_main_form-req_sub_district {
-    width: 11rem;
-}
-
-#id_main_form-req_tel {
-    width: 11rem;
-}
-
-#id_main_form-cause_text_1 {
-    width: 500px;
-}
-
-#id_main_form-cause_text_2 {
-    width: 500px;
-}
-
-#id_main_form-acc_full_name {
-    width: 400px;
-}
-
-#id_main_form-acc_card_id {
-    width: 225px;
-}
-
-#id_main_form-acc_age {
-    width: 32px;
-}
-
-#id_main_form-acc_origin {
-    width: 80px;
-}
-
-#id_main_form-acc_nation {
-    width: 11em;
-}
-
-#id_main_form-acc_occupation {
-    width: 11em;
-}
-
-#id_main_form-acc_addno {
-    width: 11em;
-}
-
-#id_main_form-acc_vilno {
-    width: 11em;
-}
-
-#id_main_form-acc_road {
-    width: 11em;
-}
-
-#id_main_form-acc_soi {
-    width: 11em;
-}
-
-#id_main_form-acc_near {
-    width: 11em;
-}
-
-#id_main_form-acc_province {
-    width: 11em;
-}
-
-#id_main_form-acc_district {
-    width: 11em;
-}
-
-#id_main_form-acc_sub_district {
-    width: 11em;
-}
-
-#id_main_form-acc_tel {
-    width: 11em;
-}
-
-#id_main_form-law {
-    width: 690px;
-}
-
-#id_main_form-court_name {
-    width: 380px;
-}
-
-#id_main_form-have_act {
-    width: 100%;
-}
-
-#id_main_form-composer_name {
-    width: 300px;
-}
-
-#id_main_form-writer_name {
-    width: 300px;
-}
-
-#id_main_form-have_injunc {
-    width: 707px;
-}
-
-form textarea {
-    width: 800px;
-    height: 120px;
-}
-
-.plaintiff_2 input {
-    width: 15rem;
-    max-width: 100%;
-    text-align: center;
-    box-sizing: border-box;
-}
-
-/* #id_main_form-scene textarea {
-    width: 500px;
-}
-
-#id_main_form-act textarea {
-    width: 500px;
-}
-
-#id_main_form-charge textarea {
-    width: 500px;
-} */

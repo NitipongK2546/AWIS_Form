@@ -10,6 +10,7 @@ form {
 
 form input {
     border: 1px solid #6f6767;
+    /* width: 11em; */
     border-radius: 3px;
     font-size: 17px;
     font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
@@ -25,10 +26,12 @@ form input[type="checkbox"] {
 
 form select {
     border: 1px solid #6f6767;
+    /* width: 11em; */
     border-radius: 3px;
     font-size: 17px;
     font-family: "TH SarabunPSK", "TH Sarabun New", "TH Sarabun IT๙", sans-serif;
     background-color: #efefef;
+    /* box-sizing: border-box; */
 }
 
 
@@ -114,17 +117,6 @@ form textarea:focus {
     text-align: center;
 }
 
-.take-flex-half element {
-    flex: 0.5;
-}
-
-.take-flex-1 element {
-    flex: 1;
-}
-
-.take-flex-2 element {
-    flex: 2;
-}
 
 .special-multi-flex p {
     display: flex;
@@ -132,6 +124,8 @@ form textarea:focus {
 }
 
 .special-multi-flex p span.double-input {
+    min-width: 16rem;
+    max-width: 16rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -144,25 +138,6 @@ form textarea:focus {
     align-items: center;
 }
 
-.req-info p {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.req-info p span {
-    flex: 1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.req-info p span.req-info-label-left {
-    min-width: 48px;
-    flex: none;
-}
-
 .acc-info p {
     display: flex;
     justify-content: space-between;
@@ -171,6 +146,7 @@ form textarea:focus {
 }
 
 .acc-info p span {
+    min-width: 16rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -224,6 +200,17 @@ p.cause-id-paragraph {
     height: 3cm;
     width: auto;
     margin: 1.25rem 1.25rem;
+    /* spacing around emblem */
+}
+
+.form-header-row p {
+    margin-top: 1.25rem;
+    min-width: 11rem;
+}
+
+.header_page_2 {
+    width: 800px;
+    text-align: center;
 }
 
 .type_and_court p {
@@ -232,25 +219,6 @@ p.cause-id-paragraph {
     margin-top: 0px;
 }
 
-.lawsuit-between {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-top: 1.25rem;
-}
-
-/* .form-header-row p {
-    margin-top: 1.25rem;
-    min-width: 11rem;
-}
-
-.header_page_2 {
-    width: 800px;
-    text-align: center;
-} */
-
-
-/*
 .first_plaintiff {
     align-items: center;
 }
@@ -268,7 +236,12 @@ p.cause-id-paragraph {
     width: 150px;
 }
 
-
+.lawsuit-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 1.25rem;
+}
 
 .lawsuit-between .left {
     font-weight: bold;
@@ -430,4 +403,16 @@ form textarea {
     max-width: 100%;
     text-align: center;
     box-sizing: border-box;
+}
+
+/* #id_main_form-scene textarea {
+    width: 500px;
+}
+
+#id_main_form-act textarea {
+    width: 500px;
+}
+
+#id_main_form-charge textarea {
+    width: 500px;
 } */

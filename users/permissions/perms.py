@@ -19,6 +19,8 @@ def perm_str(type : PermissionType, name : PermissionList):
     """
     Example:\n
     perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL)
+    Result:
+    users.(type)_(list)
     """
     return _returnPermissionString(type, name)
 

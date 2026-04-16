@@ -27,14 +27,20 @@ from warrant_form.model_reqform import ReqformDataModel
 
 class LogQuery(forms.Form):
     def getReqnoChoices():
-        all_forms = ReqformDataModel.objects.all()
+        try:
+            all_forms = ReqformDataModel.objects.all()
 
-        return [("", "ไม่เลือก")] + [(form.reqno, form.reqno) for form in all_forms]
-    
+            return [("", "ไม่เลือก")] + [(form.reqno, form.reqno) for form in all_forms]
+        except:
+            return [("", "ไม่เลือก")]
+        
     def getUserChocies():
-        all_users = UserDataModel.objects.all()
+        try:
+            all_users = UserDataModel.objects.all()
 
-        return [("", "ไม่เลือก")] + [(user.api_uid, f"({user.username}, id:{user.api_uid})") for user in all_users]
+            return [("", "ไม่เลือก")] + [(user.api_uid, f"({user.username}, id:{user.api_uid})") for user in all_users]
+        except:
+            return [("", "ไม่เลือก")]
 
     action_choices = AccessType.choices
     
