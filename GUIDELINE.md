@@ -60,9 +60,13 @@ VisualWarrantData
 {{ HOST }}/api/v1/update-status/warrant/
 ```
 
+โดยจะใช้ข้อมูลบางส่วนที่ถูกส่งมาเป็น Key ในการหา Reqform ที่ต้องการ ซึ่งจะทำให้เจอ Warrant ที่ต้องการด้วย
+
+ข้อมูลส่วนที่เหลือจะถูกนำไปใส่และ Update ข้อมูลในฐานข้อมูล
+
 ศาลจะไม่สามารถเข้าถึง API ได้ หากไม่มีการเพิ่ม JWT (JSON Web Token) ไว้ที่ Header
 
-`AUTHORIZATION: Bearer {{ JWT_TOKEN }}
+`Authorization: Bearer {{ JWT_TOKEN }}
 `
 
 โดยสามารถขอ JWT ได้จาก Directory ดังกล่าว ด้วยการส่ง POST Request
