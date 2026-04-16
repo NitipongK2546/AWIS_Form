@@ -62,11 +62,12 @@ VisualWarrantData
 
 ศาลจะไม่สามารถเข้าถึง API ได้ หากไม่มีการเพิ่ม JWT (JSON Web Token) ไว้ที่ Header
 
+`AUTHORIZATION: Bearer {{ JWT_TOKEN }}
+`
+
 โดยสามารถขอ JWT ได้จาก Directory ดังกล่าว ด้วยการส่ง POST Request
 
 ```
-AUTHORIZATION: Bearer {{ JWT_TOKEN }}
-
 {{ HOST }}/api/v1/authenticate/
 
 {
@@ -74,5 +75,5 @@ AUTHORIZATION: Bearer {{ JWT_TOKEN }}
     password: YYY,   
 }
 ```
-JWT ดังกล่าวควรที่ออกได้ก็ต่อเมื่อเป็น User สำหรับการใช้ API เท่านั้น โดยในขณะนี้ได้ตั้งไว้ให้ User ที่มี Permission Edit ReqformSubmitted เท่านั้น
+JWT ดังกล่าวควรที่ออกได้ก็ต่อเมื่อเป็น User สำหรับการใช้ API เท่านั้น โดยในขณะนี้ได้ตั้งไว้ให้ User ที่มี Permission Edit ReqformSubmitted เท่านั้น และต้องไม่ใช่ Superuser
 
