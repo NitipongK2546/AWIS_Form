@@ -262,7 +262,7 @@ def export_logs(request : HttpRequest):
 
         return redirect("admin_panel:view_logs")
     
-    return render(request, "admin_panel/confirm_log_action.html", {
+    return render(request, "admin_panel/confirm_export_log.html", {
         "action": "Export Log"
     })
 

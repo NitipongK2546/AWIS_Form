@@ -25,9 +25,9 @@
                 <td>{{ log.fullname }}</td>
                 <td>{{ log.action }}</td>
                 <td>{{ log.system }}</td>
-                <td>{{ log.relevant_info }}</td>
+                <td>{{ log.relevant_info|default_if_none:"---" }}</td>
                 <td>{{ log.url_path }}</td>
-                <td>{{ log.remark }}</td>
+                <td>{{ log.remark|default_if_none:"---" }}</td>
             </tr>
             {% empty %}
             <tr><td colspan="9">No Log.</td></tr>

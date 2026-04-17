@@ -56,12 +56,16 @@ def auth_api(request : HttpRequest) -> JsonResponse:
         if user.is_superuser or (not user.has_perms(
             perm_str_list([PermissionType.EDIT], PermissionList.REQFORM_SUBMITTED)
         )):
+            
+            FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.REQFORM_SUBMITTED, user_bypass=user, remark="JWT not allowed.")
             return JsonResponse({
                 "status": 403,
                 "message": "JWT cannot be created for with user."
             }, status=403)
         
         token = JWTHandle.create_jwt(user)
+
+        FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.REQFORM_SUBMITTED, user_bypass=user, remark="JWT Created")
 
         return JsonResponse({
             "status": 200,

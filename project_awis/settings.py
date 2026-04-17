@@ -110,6 +110,20 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mssql',
+#         'NAME': os.getenv("MS_SQL_NAME", ""),
+#         'USER': os.getenv("MS_SQL_USER", ""),
+#         'PASSWORD': os.getenv("MS_SQL_PASSWORD", ""),
+#         'HOST': os.getenv("MS_SQL_HOST", ""),  
+#         'PORT': '',
+#         # 'OPTIONS': {
+#         #     'driver': 'ODBC Driver 18 for SQL Server', 
+#         #     'extra_params': 'TrustServerCertificate=yes', 
+#         # },
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -138,3 +152,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "_global_static",
 ]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"

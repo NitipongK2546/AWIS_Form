@@ -23,7 +23,7 @@
         <form method="post">
             {% csrf_token %}
             <p><button type="submit" class="confirm-button">ยืนยัน</button></p>
-            <p><a href="{% url 'dashboard:approve_form_page' %}" class="back-button">กลับ</a></p>
+            <p><a href="{% url 'admin_panel:view_logs' %}" class="back-button">กลับ</a></p>
         </form>
     </div>
 </body>
