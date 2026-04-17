@@ -12,7 +12,7 @@ def getAllPermissions(name : PermissionList = None, type : PermissionType = None
     return output_list
 
 def _returnPermissionString(type : PermissionType, name : PermissionList):
-    source = "users"
+    source = "permission"
     return f"{source}.{type.value}_{name.value}"
 
 def perm_str(type : PermissionType, name : PermissionList):

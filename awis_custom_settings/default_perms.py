@@ -61,8 +61,12 @@ def get_perm_objs(role : RoleList) -> list[Permission]:
 
 class DefaultPermission(Enum):
     OUTSIDE = [
-            perm_str(T.EDIT, N.REQFORM_SUBMITTED),
-        ]
+    ]
+    COURT_USER = [
+        perm_str(T.EDIT, N.REQFORM_SUBMITTED),
+    ]
+
+
     EMPLOYEE = perm_str_list(
         [T.VIEW, T.CREATE, T.EDIT, T.DELETE], 
         N.REQFORM_AWAIT_APPROVAL

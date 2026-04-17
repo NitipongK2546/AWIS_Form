@@ -7,7 +7,7 @@ from users import PermissionList, PermissionType, perm_str
 from users.permissions import AWISPermissions
 
 def createContentType(name : PermissionList):
-    permission_ct, created = ContentType.objects.get_or_create(app_label="users", model=name.value)
+    permission_ct, created = ContentType.objects.get_or_create(app_label="permission", model=name.value)
 
     return permission_ct
 
