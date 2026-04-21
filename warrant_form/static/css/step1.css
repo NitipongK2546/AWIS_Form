@@ -314,7 +314,7 @@ form p.text-area-para textarea {
     width: 220px;
 }
 
-#id_main_form-req_name {
+#id_main_form-req_name, #id_main_form-agent_name {
     width: 300px;
 }
 

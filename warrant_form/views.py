@@ -19,7 +19,7 @@ from django.utils import timezone
 import _log_utils.file_logger as FileLogger
 from _log_utils.file_logger import AccessType
 from users import PermissionList, PermissionType
-from users.permissions.decorators import perm_req_log, perm_str_list
+from users.permissions.decorators import perm_req_log
 
 ##############################################################################
 # FORM VIEWS
@@ -57,10 +57,14 @@ def step0_confirm_owner(request : HttpRequest):
     form = OwnershipForm(initial={
         "form_owner": request.user.id,
     })
-    return render(request, "warrant_form/awis_step0.html", {
+
+    context = {
         "creator": request.user.get_full_name(),
         "form": form,
-    })
+    }
+
+
+    return render(request, "warrant_form/awis_step0.html", context)
 
 @perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
 def step1_reqform(request : HttpRequest):

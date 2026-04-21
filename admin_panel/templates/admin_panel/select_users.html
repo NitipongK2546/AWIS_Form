@@ -3,31 +3,48 @@
 {% if success %}
   <p style="color: green;">{{ success }}</p>
 {% endif %}
+
+{% if connect_error %}
+
+<p>Connection to ERP Service Failed.</p>
+
+{% endif %}
+
 <a href="{% url 'admin_panel:collections' %}">Back to Collections</a>
 <form method="post">
   {% csrf_token %}
   <table border="1" style="margin: 10 10px">
-    <tr>
-      <th>Select</th>
-      <th>User ID</th>
-      <th>Name</th>
-      <th>Department</th>
-      <th>Position</th>
-    </tr>
-    {% for user in users %}
-    <tr>
-      <td><input type="checkbox" name="selected_users" value="{{ user.USR_ID }}"></td>
-      <td>{{ user.USR_ID }}</td>
-      <td>{{ user.USR_PREFIX }}{{ user.USR_FNAME }} {{ user.USR_LNAME }}</td>
-      <td>{{ user.Dept }}</td>
-      <td>{{ user.Position }}</td>
-    </tr>
-    {% endfor %}
+    <thead>
+      <tr>
+        <th>Select</th>
+        <th>User ID</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Position</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td><input type="checkbox" name="selected_users" value="{{ user.USR_ID }}"></td>
+        <td>{{ user.USR_ID }}</td>
+        <td>{{ user.USR_PREFIX }}{{ user.USR_FNAME }} {{ user.USR_LNAME }}</td>
+        <td>{{ user.Dept }}</td>
+        <td>{{ user.Position }}</td>
+      </tr> 
+      {% empty %}
+      <tr>
+        <td colspan="5">Cannot get Data</td>
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
   <button type="submit">Grant Access</button>
 </form>
 <form method="post" action="{% url 'admin_panel:add_specific_user' %}">
   {% csrf_token %}
+  {% comment %}
   <button type="submit">Add ชลสิทธิ์</button>
+  {% endcomment %}
 </form>
-<a href="{% url 'admin_panel:access_list' %}">go to access list</a>
+<a href="{% url 'admin_panel:access_list' %}">Go to Access List</a>

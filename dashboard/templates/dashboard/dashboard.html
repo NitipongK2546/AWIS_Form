@@ -21,11 +21,18 @@
         </p>
     </div>
     <div class="header-bar">
+        {% if can_create_form %}
         <a href="{% url 'forms:step0' %}" >เพิ่มคำร้องหมายจับ</a>
+        {% endif %}
+        {% if can_approve_form %}
         <a href="{% url 'dashboard:approve_form_page' %}">อนุมัติแบบฟอร์ม</a>
+        {% endif %}
+
+        {% comment %}
         <a href="{% url 'api:test:login' %}" >ทดสอบเอา token ใส่คุ้กกี้</a>
         <a href="{% url 'api:test:health' %}" >ทดสอบ HEALTH CHECK</a>
         <a href="{% url 'api:test:check_reqform' %}" >ทดสอบ CHECK REQFORM</a>
+        {% endcomment %}
     </div>
     {% include 'module/approve_table.html' %}
 

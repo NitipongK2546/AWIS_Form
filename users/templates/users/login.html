@@ -15,6 +15,10 @@
         <form method="post">
             {% csrf_token %}
 
+            {% if error %}
+            <p>{{ reason }}</p>
+            {% endif %}
+
             <div class="form-group">
                 <label for="id_username">Username</label>
                 {{ form.username }}
