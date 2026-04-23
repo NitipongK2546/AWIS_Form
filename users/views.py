@@ -35,8 +35,8 @@ def user_login(request : HttpRequest):
                 if not (os.getenv("PRODUCTION") == "YES"):
                     login(request, user)
                     FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
-                    if user.is_superuser:
-                        return redirect("admin_panel:collections")
+                    # if user.is_superuser:
+                    #     return redirect("admin_panel:collections")
                     return redirect("dashboard:dashboard")
             else:
                 result_user_id = login_via_api(request)
