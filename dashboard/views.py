@@ -85,6 +85,8 @@ def dashboard(request : HttpRequest):
             "injunction_date": convert_time(warrant_wrap.injunction_date),
             "file_path": warrant_wrap.file_path,
             "because": warrant_wrap.because,
+
+            "woa_type_int": warrant_data.woa_type,
         }
 
         warrants_list.append(data_dict)
@@ -250,7 +252,7 @@ def approve_form_page(request : HttpRequest):
     })
 
 @permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
-def confirm_approve(request : HttpRequest, form_id : int):
+def confirm_approve(request : HttpRequest, form_id : str):
 
     selected_form = getFormAwaitViaReqno(form_id)
     # print(selected_form)
@@ -293,7 +295,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
     
 
 @permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
-def confirm_reject(request : HttpRequest, form_id : int):
+def confirm_reject(request : HttpRequest, form_id : str):
     selected_form = getFormAwaitViaReqno(form_id)
 
     if request.method == "POST":
@@ -312,7 +314,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
 
 
 @permission_required(perm_str(PermissionType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
-def delete_form(request : HttpRequest, form_id : int):
+def delete_form(request : HttpRequest, form_id : str):
 
     selected_form = getFormAwaitViaReqno(form_id)
 
@@ -338,6 +340,85 @@ def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {
         "user": request.user,
     })
+
+################################################################################
+
+from .forms_report_warrant import ReportWarrantForm
+
+@permission_required(perm_str_list([PermissionType.EDIT, PermissionType.CREATE, PermissionType.APPROVE], PermissionList.REPORT_WARRANT_ARREST), raise_exception=True)
+def report_update_warrant_arrest_yet(request : HttpRequest, form_reqno_id : str, woa_year : int, woa_type : int, woa_no : int):
+    selected_form = getFormAwaitViaReqno(form_reqno_id)
+
+    target_warrant : WarrantDataModel = selected_form.form.warrants.filter(woa_no=woa_no, woa_date__year=(woa_year-543), woa_type=woa_type).first()
+
+    current_user : UserDataModel = request.user
+
+    report_form = ReportWarrantForm()
+
+    if not target_warrant:
+        return JsonResponse({
+            "Error": "No warrant with this specification found"
+        })
+    
+    context = {
+        "court_code": selected_form.form.court_code,
+        "woa_no": woa_no,
+        "woa_type": woa_type,
+        "woa_year": woa_year,
+        "req_num_case_type_id": selected_form.form.req_case_type_id,
+        "arrest_report_date": timezone.now().astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%d %H:%M:%S"),
+        "arrest_report_uid": current_user.api_uid
+    }
+    
+    if request.method == "POST":
+        report_form = ReportWarrantForm(data=request.POST)
+
+        if report_form.is_valid():
+            put_data = report_form.cleaned_data
+            
+            put_data = combine_date(put_data)
+
+            put_data.update(context)
+
+            try:
+                if settings.ENABLE_API:
+                    AWISConnectAPI.put_report_warrant_result("v1.1", request, put_data)
+
+                print(put_data)
+
+                return JsonResponse({
+                    "status": "success"
+                })
+
+            except:
+                return JsonResponse({
+                    "status": "error"
+                }, status=400)
+
+    context.update({
+        "report_form": report_form,
+    })
+    
+    return render(request, "dashboard/report_warrant.html", context)
+        
+
+
+###############################################################################
+
+def combine_date(put_data : dict):
+    day = put_data.get("arrest_date_day")
+    month = put_data.get("arrest_date_month")
+    year = put_data.get("arrest_date_year")
+
+    put_data.update({
+        "arrest_date": f"{year}-{month}-{day}"
+    })
+    
+    put_data.pop("arrest_date_day")
+    put_data.pop("arrest_date_month")
+    put_data.pop("arrest_date_year")
+
+    return put_data
 
 def convert_time(datetime_obj : datetime):
     if datetime_obj:

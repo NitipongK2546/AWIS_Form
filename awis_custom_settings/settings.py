@@ -16,6 +16,8 @@ class PermissionList(models.TextChoices):
 
     REQFORM_DRAFT = "reqformDraft"
     REQFORM_AWAIT_APPROVAL = "reqformAwaitApproval"
+
+    REPORT_WARRANT_ARREST = "reportWarrantArrest"
     
     LOGIN_PAGE = "loginPage"
 

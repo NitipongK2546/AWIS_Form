@@ -18,6 +18,7 @@
                 <th>สันที่ศาลมีคำสั่ง</th>
                 <th>ที่อยู่ไฟล์หมายจับ</th>
                 <th>หมายเหตุ</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -64,6 +65,9 @@
                 </td>
                 <td>
                     {{ form.because }}
+                </td>
+                <td>
+                    <a href="{% url 'dashboard:report_warrant' form.reqno form.woa_year form.woa_type_int form.woa_no %}">รายงานผลหมาย</a>
                 </td>
             </tr>
             {% empty %}

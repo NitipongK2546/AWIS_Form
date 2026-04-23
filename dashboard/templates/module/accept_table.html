@@ -37,7 +37,8 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:get_form' form.reqno %}">View</a>
+                    <a href="{% url 'dashboard:get_form' form.reqno %}">ดูคำร้อง</a>
+                    <a href="{% url 'dashboard:delete_sent_reqform' form.reqno %}">ยกเลิกการส่งคำร้อง</a>
                 </td>
             </tr>
             {% empty %}
