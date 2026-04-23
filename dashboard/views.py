@@ -22,7 +22,7 @@ import json
 from datetime import datetime
 from django.utils import timezone
 
-from users.permissions.perms import PermissionList, PermissionType, perm_str
+from users.permissions.perms import PermissionList, PermissionType, perm_str, perm_str_list
 
 def getFormAwaitViaReqno(reqno : str):
     return FormData.objects.filter(form__reqno=reqno).first()
@@ -89,12 +89,29 @@ def dashboard(request : HttpRequest):
 
         warrants_list.append(data_dict)
 
-    return render(request, "dashboard/dashboard.html", {
+    context = {
         "user": request.user,
         "forms": waiting_approval_forms,
         "forms_sent": output_list,
         "warrants": warrants_list,
-    })
+    }
+
+    if request.user.has_perms(
+        perm_str_list([PermissionType.VIEW, PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL)
+    ):
+        context.update({
+            "can_create_form": True,
+        })
+    
+    if request.user.has_perms(
+        perm_str_list([PermissionType.VIEW, PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL)
+    ):
+        context.update({
+            "can_approve_form": True,
+        })
+
+
+    return render(request, "dashboard/dashboard.html", context)
 
 #######################################################
 #
@@ -240,7 +257,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
     if request.method == "POST":
         try:
             if settings.ENABLE_API:
-                dict = AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
+                AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
 
             # print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False))
 
@@ -266,7 +283,6 @@ def confirm_approve(request : HttpRequest, form_id : int):
 
             return redirect(reverse("dashboard:success_page"))
         except Exception as e:
-
             return redirect(reverse("dashboard:dashboard"))
 
     return render(request, "dashboard/confirmation_page.html", {

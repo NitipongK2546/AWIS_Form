@@ -2,6 +2,8 @@
 File สำหรับการรวม Function ที่ส่ง request ไปให้ API Server ในรูปแบบต่าง ๆ โดยใช้ Library "requests" เป็นตัวส่ง
 """
 import requests
+
+from requests.exceptions import ConnectionError
 from requests import RequestException
 
 from django.http import HttpRequest, JsonResponse, HttpResponse
@@ -80,19 +82,20 @@ def _send_request_receive_response(packed_data : tuple, request_type : str) -> H
     final_url, dict_data, dict_header = packed_data
     try:
         if request_type in ["GET", "DELETE"]:
-            response : JsonResponse = REQUEST_DICT.get(request_type)(final_url, headers=dict_header, params=dict_data, )
+            response : JsonResponse = REQUEST_DICT.get(request_type)(final_url, headers=dict_header, params=dict_data, timeout=5)
         elif request_type in ["POST", "PUT"]:
-            response : JsonResponse = REQUEST_DICT.get(request_type)(final_url, headers=dict_header, json=dict_data,)
+            response : JsonResponse = REQUEST_DICT.get(request_type)(final_url, headers=dict_header, json=dict_data, timeout=8)
         else:
-            raise RequestException("Unsupported Method.")
+            raise Exception("Unsupported Method.")
 
         # Get response data either way.
         # Return it as Dictionary.
         # data : dict = response.json()
         return response
-
+    except ConnectionError:
+        raise ConnectionError
     except Exception as e:
-        raise RequestException("The API request has failed.")
+        raise Exception("The API request has failed.")
     
 def _send_request(request_type : str, target_url : str, query_data : dict, parameter_data : list, header_data : dict, auth_token : str):
 

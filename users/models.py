@@ -160,6 +160,8 @@ class LogSystem(models.Model):
     def toBaseStr(self, is_txt_log : bool = True,):
         datetime_info = self.time_logged.astimezone(timezone.get_current_timezone())
 
+        human_datetime_info = datetime_info.strftime("%Y-%m-%d %H:%M:%S (UTC%:z)")
+
         user_obj = UserDataModel.objects.get(api_uid=self.user_id)
         user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
 
@@ -167,7 +169,7 @@ class LogSystem(models.Model):
 
         ####
         if is_txt_log:
-            basic_info : str = f"[{datetime_info}]: {user_info} {action_info}"
+            basic_info : str = f"[{human_datetime_info}]: {user_info} {action_info}"
         else:
             basic_info : str = f"{user_info} {action_info}"
 
@@ -228,7 +230,7 @@ class LogSystem(models.Model):
         affected_obj = ""
 
         for info in info_list:
-            affected_obj = affected_obj + f"{getAffectedDataString(info)}, "
+            affected_obj = affected_obj + f"{_getAffectedDataString(info)}, "
 
         extra_info : str = f"[ {affected_obj} ]"
 
@@ -237,11 +239,11 @@ class LogSystem(models.Model):
         else:
             return f"{extra_info}"
     
-def getFailedData(info : dict):
-    return f"{info.get("message")}"
+# def getFailedData(info : dict):
+#     return f"{info.get("message")}"
 
     
-def getAffectedData(info : dict):
+def _getAffectedData(info : dict):
     ObjModel = apps.get_model(*info.get("type"))
     
     obj = ObjModel.objects.filter(pk=info.get("id")).first()
@@ -249,8 +251,8 @@ def getAffectedData(info : dict):
     if obj:
         return obj
     
-def getAffectedDataString(info : dict):
-    obj = getAffectedData(info)
+def _getAffectedDataString(info : dict):
+    obj = _getAffectedData(info)
 
     return str(obj)
 

@@ -14,6 +14,13 @@ for name in PermissionList:
     for perm in PermissionType:
         creation.createPermissionObj(ct, perm, name)
 
+user = UserDataModel.objects.get(username="testcourtuser7")
+permission = Permission.objects.get(codename=
+    perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED).split(".")[1]
+)
+user.user_permissions.add(permission)
+
+
 for role in settings.RoleList:
     role_group, created = Group.objects.get_or_create(
         name=role.value
@@ -23,29 +30,4 @@ for role in settings.RoleList:
     for item in default_permissions:
         role_group.permissions.add(item)
 
-user = UserDataModel.objects.get(username="testcourtuser7")
 
-permission = Permission.objects.get(codename=
-    perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED).split(".")[1]
-)
-
-user.user_permissions.add(permission)
-
-
-# instance, created = PathPermission.objects.get_or_create(pk=1)
-
-# instance.set_perms(
-#     "view_reqformawaitapproval", perm_str_list([PermissionType.VIEW,], PermissionList.REQFORM_AWAIT_APPROVAL)
-# )
-# instance.set_perms(
-#     "edit_reqformawaitapproval", perm_str_list([PermissionType.VIEW, PermissionType.EDIT], PermissionList.REQFORM_AWAIT_APPROVAL)
-# )
-# instance.set_perms(
-#     "create_reqformawaitapproval", perm_str_list([PermissionType.VIEW, PermissionType.CREATE,], PermissionList.REQFORM_AWAIT_APPROVAL)
-# )
-# instance.set_perms(
-#     "approve_reqformawaitapproval", perm_str_list([PermissionType.VIEW, PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL)
-# )
-
-# print(PathPermission.of_view("create_reqformawaitapproval"))
-# print(PathPermission.of_view("approve_reqformawaitapproval"))

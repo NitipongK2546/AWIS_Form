@@ -39,14 +39,25 @@ def user_login(request : HttpRequest):
                     #     return redirect("admin_panel:collections")
                     return redirect("dashboard:dashboard")
             else:
-                result_user_id = login_via_api(request)
-                if result_user_id:
-                    user = UserDataModel.objects.get(api_uid=result_user_id)
-                    login(request, user)
-                    return redirect("dashboard:dashboard")
+                try:
+                    result_user_id = login_via_api(request)
+                    if result_user_id:
+                        user = UserDataModel.objects.get(api_uid=result_user_id)
+                        login(request, user)
+                        return redirect("dashboard:dashboard")
 
-                return render(request, "users/login.html", {"form": form})
-                    
+                    return render(request, "users/login.html", {
+                        "form": form,
+                        "error": True,
+                        "reason": "Wrong username or password?"
+                    })
+                except:
+                    return render(request, "users/login.html", {
+                        "form": form,
+                        "error": True,
+                        "reason": "Cannot connect to ERP Service"
+                    })
+
                 # PRODUCTION
                 send_email_otp(user)
 

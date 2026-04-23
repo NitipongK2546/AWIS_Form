@@ -1,4 +1,10 @@
-# AWIS Form
+# AWIS Form v0.2.1
+
+## Markdown Directory
+
+1. [Guideline อธิบาย](/_documentation/GUIDELINE.md)
+1. [Permission อธิบาย](/_documentation/PERMISSIONS.md)
+
 
 ## 0. ติดตั้ง
 

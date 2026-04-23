@@ -149,7 +149,14 @@ def getUserLog(user_id : int):
 
 #############################################################################
 
-def _createLog(request : HttpRequest, action : AccessType, system : PermissionList, type : str, relevant_info : dict = None, remark : str = None, filename : str = ERROR_LOG, user_bypass : UserDataModel = None) -> LogSystem:
+def _createLog(
+        request : HttpRequest, action : AccessType, 
+        system : PermissionList, type : str, 
+        relevant_info : dict = None, 
+        remark : str = None, 
+        filename : str = ERROR_LOG, 
+        user_bypass : UserDataModel = None
+               ) -> LogSystem:
     # if relevant_info:
     #     if not isinstance(relevant_info, list):
     #         if isinstance(relevant_info, str):

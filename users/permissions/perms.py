@@ -12,14 +12,14 @@ def getAllPermissions(name : PermissionList = None, type : PermissionType = None
     return output_list
 
 def _returnPermissionString(type : PermissionType, name : PermissionList):
-    source = "users"
+    source = "permission"
     return f"{source}.{type.value}_{name.value}"
 
 def perm_str(type : PermissionType, name : PermissionList):
     """
     Example:\n
-    perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL)
-    Result:
+    perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL)\n
+    Result:\n
     users.(type)_(list)
     """
     return _returnPermissionString(type, name)
@@ -27,7 +27,9 @@ def perm_str(type : PermissionType, name : PermissionList):
 def perm_str_list(type_list : list[PermissionType], name : PermissionList):
     """
     Example:\n
-    perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL)
+    perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL)\n
+    Result:\n
+    [users.(type1)_(list), users.(type2)_(list), ...]
     """
 
     output_list : list[str] = []

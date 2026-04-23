@@ -16,6 +16,8 @@ from users.permissions.perms import PermissionList, PermissionType, perm_str, pe
 from users.permissions.decorators import perm_req_log
 
 import requests
+from requests.exceptions import ConnectionError
+
 from users.models import UserAccess
 import os
 
@@ -36,43 +38,6 @@ def collections(request : HttpRequest):
 
     return render(request, "admin_panel/collections.html")
 
-# @permission_required(perm_str(PermissionType.CREATE, PermissionList.ADMIN_PANEL), raise_exception=True)
-# def signup(request : HttpRequest):
-#     if not request.user.is_staff:
-#         return FORBIDDEN_MSG
-
-#     if request.method == "POST":
-#         form = CustomizedUserCreationForm(request.POST)
-#         if form.is_valid():
-#             try:
-#                 user_obj : User = form.save(commit=False)
-
-#                 data = form.cleaned_data
-#                 selected_role = data.get("role")
-
-#                 choices = dict(RoleChoices.choices)
-#                 selected_role_string = choices.get(int(selected_role))
-
-#                 # print(choices)
-#                 # print(selected_role)
-#                 # print(selected_role_string)
-
-#                 selected_group = Group.objects.get(name=selected_role_string)
-
-#                 # print(selected_group)
-
-#                 user_obj.is_active = False
-#                 user_obj.save()
-
-#                 user_obj.groups.add(selected_group)
-#                 UserDataModel.objects.create(user=user_obj, role=selected_role,)
-
-#                 return redirect("admin_panel:collections")
-#             except Exception as e:
-#                 raise Exception(e)
-#     else:
-#         form = CustomizedUserCreationForm()
-#     return render(request, "admin_panel/signup.html", {"form": form})
 
 def check_all_users(request : HttpRequest):
     all_users = UserDataModel.objects.all()
@@ -96,7 +61,7 @@ ORG_API_FETCH_USERS = os.getenv("ORG_API_FETCH_USERS")
 @perm_req_log([PermissionType.CREATE], PermissionList.ADMIN_PANEL, AccessType.CREATE)
 def admin_select_users(request : HttpRequest):
     try:
-        response = requests.get(ORG_API_FETCH_USERS)
+        response = requests.get(ORG_API_FETCH_USERS, timeout=5)
         users = response.json()
 
         if request.method == "POST":
@@ -104,15 +69,16 @@ def admin_select_users(request : HttpRequest):
             for uid in selected_ids:
                 user_data = next((u for u in users if str(u["USR_ID"]) == uid), None)
                 if user_data and not UserAccess.objects.filter(user_id=uid).exists():
-                    UserAccess.objects.create(
-                        user_id=user_data["USR_ID"],
-                        username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
-                        fullname=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']} {user_data['USR_LNAME']}",
-                        department=user_data["Dept"]
-                    )
+                    add_user_to_access(user_data)
             return redirect("admin_panel:access_list")
 
         return render(request, "admin_panel/select_users.html", {"users": users})
+    except ConnectionError:
+        return render(request, "admin_panel/select_users.html", {
+            "users": {},
+            "connect_error": True,
+        })
+
     except Exception as e:
         FileLogger.createErrorLog(request, AccessType.CREATE, PermissionList.USER_ACCESS, {
             "message": str(e)
@@ -262,7 +228,7 @@ def export_logs(request : HttpRequest):
 
         return redirect("admin_panel:view_logs")
     
-    return render(request, "admin_panel/confirm_log_action.html", {
+    return render(request, "admin_panel/confirm_export_log.html", {
         "action": "Export Log"
     })
 
