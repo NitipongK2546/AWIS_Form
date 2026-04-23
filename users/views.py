@@ -35,8 +35,7 @@ def user_login(request : HttpRequest):
                 if not (os.getenv("PRODUCTION") == "YES"):
                     login(request, user)
                     FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
-                    if user.is_superuser:
-                        return redirect("admin_panel:collections")
+
                     return redirect("dashboard:dashboard")
             else:
                 try:
@@ -44,6 +43,9 @@ def user_login(request : HttpRequest):
                     if result_user_id:
                         user = UserDataModel.objects.get(api_uid=result_user_id)
                         login(request, user)
+
+                        FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
+
                         return redirect("dashboard:dashboard")
 
                     return render(request, "users/login.html", {
