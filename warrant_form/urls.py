@@ -1,13 +1,15 @@
 from django.urls import path
-from warrant_form import views
+from warrant_form import views, views_draft
 
 app_name = "forms"
 
 urlpatterns = [
     path("", views.plain_form, name="to-new-form"),
-    # path("create-reqform/", views.plain_form, name="to-step1"),
 
-    path("create-reqform-draft/", views.create_form_draft, name="draft-step1"),
+    path("reqform-draft/create/", views_draft.create_reqform_draft, name="create-draft-step1"),
+    path("reqform-draft/edit/<int:draft_id>/", views_draft.edit_reqform_draft, name="edit-draft-step1"),
+    path("reqform-draft/delete/<int:draft_id>/", views_draft.delete_reqform_draft, name="delete-draft-step1"),
+
 
     path("create-reqform/", views.step0_confirm_owner, name="step0"),
 

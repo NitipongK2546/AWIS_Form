@@ -19,7 +19,8 @@
                 <td>ยังไม่ได้ทำ</td>
                 <td>ยังไม่ได้ทำ</td>
                 <td>
-                    <a href="">แก้ไขคำร้อง</a>
+                    <a href="{% url 'forms:edit-draft-step1' draft.pk %}">แก้ไขร่างคำร้อง</a>
+                    <a href="{% url 'forms:delete-draft-step1' draft.pk %}">ลบร่างคำร้อง</a>
                 </td>
             </tr>
             {% empty %}

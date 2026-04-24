@@ -231,7 +231,7 @@ def get_court_order_and_warrant(version : str, request : HttpRequest, plaintiff_
 
 ##############################################################################
 # 8.
-def delete_req_form(version : str, request : HttpRequest, req_no_plaintiff : str):
+def unsend_reqform_from_court(version : str, request : HttpRequest, req_no_plaintiff : str):
     # This one need PUT request
     # if not get_health_check("v1"):
     #     return False
@@ -247,7 +247,7 @@ def delete_req_form(version : str, request : HttpRequest, req_no_plaintiff : str
     )
     data : dict = response.json()
 
-    message = data.get("message")
+    message : str = data.get("message")
 
     if message:
         return message

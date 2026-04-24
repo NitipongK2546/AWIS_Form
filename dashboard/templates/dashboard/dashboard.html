@@ -22,7 +22,7 @@
     </div>
     <div class="header-bar">
         {% if can_create_form %}
-        <a href="{% url 'forms:draft-step1' %}" >สร้างร่าง คำร้องหมายจับ (beta)</a>
+        <a href="{% url 'forms:create-draft-step1' %}" >สร้างร่าง คำร้องหมายจับ (beta)</a>
         <a href="{% url 'forms:step0' %}" >เพิ่มคำร้องหมายจับ</a>
         {% endif %}
         {% if can_approve_form %}

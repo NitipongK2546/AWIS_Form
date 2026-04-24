@@ -349,10 +349,10 @@ def success_page(request : HttpRequest):
 from .forms_report_warrant import ReportWarrantForm
 
 @permission_required(perm_str_list([PermissionType.EDIT, PermissionType.CREATE, PermissionType.APPROVE], PermissionList.REPORT_WARRANT_ARREST), raise_exception=True)
-def report_update_warrant_arrest_yet(request : HttpRequest, form_reqno_id : str, woa_year : int, woa_type : int, woa_no : int):
+def report_update_warrant_arrest_yet(request : HttpRequest, form_reqno_id : str, woa_refno : str, woa_year : int, woa_type : int, woa_no : int):
     selected_form = getFormAwaitViaReqno(form_reqno_id)
 
-    target_warrant : WarrantDataModel = selected_form.form.warrants.filter(woa_no=woa_no, woa_date__year=(woa_year-543), woa_type=woa_type).first()
+    target_warrant : WarrantDataModel = selected_form.form.warrants.filter(woa_no=woa_no, woa_date__year=(woa_year-543), woa_type=woa_type, woa_refno=woa_refno).first()
 
     current_user : UserDataModel = request.user
 
@@ -403,7 +403,32 @@ def report_update_warrant_arrest_yet(request : HttpRequest, form_reqno_id : str,
     })
     
     return render(request, "dashboard/report_warrant.html", context)
+
+###############################################################################
+
+def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
+    sent_form = FormSent.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
+
+    if request.method == "POST":
+        try:
+            if settings.ENABLE_API:
+                AWISConnectAPI.unsend_reqform_from_court("v1.1", request, req_no_plaintiff)
+
+                sent_form.delete()
+
+            return JsonResponse({
+                "status": "Success",
+                "affected": str(sent_form),
+            })
+
+        except:
+            return JsonResponse({
+                "status": "Error",
+            })
         
+    return render(request, "dashboard/confirmation_page.html", {
+        "action": "Unsend Reqform"
+    })
 
 
 ###############################################################################

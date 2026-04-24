@@ -17,13 +17,17 @@
                 <span style="color: green; font-weight: bold;">อนุญาต</span>
             {% elif action == "Reject" %} 
                 <span style="color: red; font-weight: bold;">ปฏิเสธ</span>
+            {% elif action == "Unsend Reqform" %} 
+                <span style="color: red; font-weight: bold;">ยกเลิกการส่งคำร้อง</span>
+            {% elif action == "Delete Draft" %} 
+                <span style="color: red; font-weight: bold;">ลบร่างคำร้อง</span>
             {% endif %}
         </p>
 
         <form method="post">
             {% csrf_token %}
             <p><button type="submit" class="confirm-button">ยืนยัน</button></p>
-            <p><a href="{% url 'dashboard:approve_form_page' %}" class="back-button">กลับ</a></p>
+            <p><a href="{% url 'dashboard:dashboard' %}" class="back-button">กลับ</a></p>
         </form>
     </div>
 </body>

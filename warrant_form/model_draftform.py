@@ -49,7 +49,7 @@ class ReqformDraftDataModel(models.Model):
     req_case_type_id = models.IntegerField(blank=True, null=True, choices=ReqCaseTypeIDChoices) 
 
     court_name = models.CharField(blank=True, null=True, max_length=250, )
-    court_code = models.CharField(blank=True, null=True, max_length=7, verbose_name="รหัส")
+    court_code = models.CharField(blank=True, null=True, max_length=7, verbose_name="รหัสศาล")
 
     judge_name = models.CharField(blank=True, null=True, max_length=250, )
 

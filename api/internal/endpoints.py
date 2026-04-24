@@ -6,6 +6,9 @@ import json
 
 from _request_utils.authenticate_user import post_login_authorize
 
+# import requests
+# import os
+
 sub_district_select = thai_codes.getSubDistrictChoices()
 district_select =thai_codes.getDistrictChoices()
 province_select = thai_codes.getProvinceChoices()
@@ -35,4 +38,8 @@ def login_via_api(request : HttpRequest):
     
     return data.get("id")
 
+# ORG_API_FETCH_USERS = os.getenv("ORG_API_FETCH_USERS")
+# def get_erp_users(request : HttpRequest):
+#     response = requests.get(ORG_API_FETCH_USERS, timeout=5)
+#     return response
     
