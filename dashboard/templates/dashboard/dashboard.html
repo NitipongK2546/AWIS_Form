@@ -22,6 +22,7 @@
     </div>
     <div class="header-bar">
         {% if can_create_form %}
+        <a href="{% url 'forms:draft-step1' %}" >สร้างร่าง คำร้องหมายจับ (beta)</a>
         <a href="{% url 'forms:step0' %}" >เพิ่มคำร้องหมายจับ</a>
         {% endif %}
         {% if can_approve_form %}
@@ -34,6 +35,8 @@
         <a href="{% url 'api:test:check_reqform' %}" >ทดสอบ CHECK REQFORM</a>
         {% endcomment %}
     </div>
+    {% include 'module/drafts_form_table.html' %}
+
     {% include 'module/approve_table.html' %}
 
     {% include 'module/accept_table.html' %}

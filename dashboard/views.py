@@ -11,6 +11,8 @@ from dashboard.models import VisualReqformData as FormSent
 from dashboard.warrant_wrapper import VisualWarrantData
 
 from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
+from warrant_form.model_draftform import ReqformDraftDataModel
+
 from users.models import UserDataModel
 
 import _log_utils.file_logger as FileLogger
@@ -48,10 +50,10 @@ def dashboard(request : HttpRequest):
 
     # exportLogAsFile()
 
+    all_drafts = ReqformDraftDataModel.objects.all()
+
     waiting_approval_forms = FormData.objects.all()
-
     form_sent = FormSent.objects.all()
-
     warrants : list[VisualWarrantData] = VisualWarrantData.objects.all()
 
     # print(form_sent)
@@ -93,6 +95,7 @@ def dashboard(request : HttpRequest):
 
     context = {
         "user": request.user,
+        "drafts": all_drafts,
         "forms": waiting_approval_forms,
         "forms_sent": output_list,
         "warrants": warrants_list,

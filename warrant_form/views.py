@@ -3,12 +3,12 @@ from django.urls import reverse
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.decorators import login_required, permission_required
 
-from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledWarrantForm, DisabledFormStep1
+from warrant_form.forms import WarrantForm, AWISFormStep1, ReqformDraftModelForm, DisabledWarrantForm, DisabledFormStep1
 from warrant_form.doc_create import doc_create_with_context
 from warrant_form.model_warrant import WarrantDataModel
 from warrant_form.model_reqform import ReqformDataModel
 from warrant_form.form_ownership import OwnershipForm
-
+from .model_draftform import ReqformDraftDataModel
 
 from dashboard.models import FormAwaitingApproval as VisualFormApprovalData
 from dashboard.warrant_wrapper import VisualWarrantData
@@ -26,7 +26,6 @@ from users.permissions.decorators import perm_req_log
 
 @login_required
 def plain_form(request : HttpRequest):    
-   
     return redirect(reverse("forms:step1"))
         
 
@@ -36,6 +35,21 @@ def success_page(request : HttpRequest):
         "status_code": "200",
         "message": "success"
     })
+    
+#############################################################################
+# Form DRAFT
+
+def create_form_draft(request : HttpRequest):
+    if request.method == "POST":
+        draft_form = ReqformDraftModelForm(request.POST)
+        draft_form.save()
+
+    draft_form = ReqformDraftModelForm()
+
+    return render(request, "warrant_form/awis_draft_step1.html", {
+        "draft_form": draft_form,
+    })
+
 
 ##############################################################################
 

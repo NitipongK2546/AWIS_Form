@@ -1,0 +1,32 @@
+{% load static %}
+{% load thai_locale %}
+
+<div id="body-table">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th colspan="7">คำร้องที่กำลังเขียนอยู่</th>
+            </tr>
+            <tr>
+                <th>ผู้ร่าง</th>
+                <th>เจ้าของร่าง</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for draft in drafts %}
+            <tr>
+                <td>ยังไม่ได้ทำ</td>
+                <td>ยังไม่ได้ทำ</td>
+                <td>
+                    <a href="">แก้ไขคำร้อง</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No forms available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
