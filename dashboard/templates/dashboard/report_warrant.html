@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Warrant</title>
+</head>
+<body>
+    <div>
+        <p>Court code: {{ court_code }}</p>
+        <p>Woa type: {{ woa_type }}</p>
+        <p>Woa year: {{ woa_year }}</p>
+        <p>Woa no: {{ woa_no }}</p>
+        <p>Req num case type id: {{ req_num_case_type_id }}.</p>
+        <p>Arrest report date: {{ arrest_report_date }}</p>
+        <p>Arrest report uid: {{ arrest_report_uid }}</p>
+    </div>
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <p>Arrest result: {{ report_form.arrest_result }}</p>
+            <p>Arrest Date : {{ report_form.arrest_date_day }}{{ report_form.arrest_date_month }}{{ report_form.arrest_date_year }}</p>
+            <p>arrest_result_other_text : {{ report_form.arrest_result_other_text }}</p>
+            <p>arrest_officer_name : {{ report_form.arrest_officer_name }}</p>
+
+            <button type="submit" onclick="return confirm('Are you sure?');">
+                Send Data to Court
+            </button>
+        </form>
+    </div>
+</body>
+</html>

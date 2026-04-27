@@ -17,8 +17,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 LOGIN_URL = "/users/login/"
-ENABLE_API = True
+ENABLE_API = False
 DEBUG = True
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/

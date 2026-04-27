@@ -2,7 +2,7 @@ from .settings import RoleList
 from enum import Enum
 import csv
 
-from users.permissions import perm_str, perm_str_list
+from users.permissions import perm_str, perm_str_list, perm_str_list_of_all
 from users.permissions import PermissionList as N
 from users.permissions import PermissionType as T
 
@@ -43,25 +43,7 @@ def get_perm_objs(role : RoleList) -> list[Permission]:
     return perm_obj_list
 
 
-# PERMISSION_PATH = "awis_custom_settings/permission.csv"
-
-# try:
-#     with open(PERMISSION_PATH, mode='r', newline='', encoding='utf-8') as file: 
-#         csv_reader = csv.reader(file, delimiter=',')
-
-#         for row in csv_reader:
-#             if row[0] == "STOP":
-#                 break
-
-#             print(row)
-
-# except Exception as e:
-#     print(e)
-
-
 class DefaultPermission(Enum):
-    OUTSIDE = [
-    ]
     COURT_USER = [
         perm_str(T.EDIT, N.REQFORM_SUBMITTED),
     ]
@@ -70,18 +52,35 @@ class DefaultPermission(Enum):
     EMPLOYEE = perm_str_list(
         [T.VIEW, T.CREATE, T.EDIT, T.DELETE], 
         N.REQFORM_AWAIT_APPROVAL
-    )
-    
-    MANAGER = []
-
-    DIRECTOR = perm_str_list(
+    ) + perm_str_list(
         [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
         N.REQFORM_AWAIT_APPROVAL
     )
 
-    SYSTEM_ADMIN = perm_str_list(
+    APPROVER = perm_str_list_of_all(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE],
+        [N.REQFORM_SUBMITTED, N.REQFORM_DRAFT, N.REQFORM_AWAIT_APPROVAL,]
+    )
+
+    BRANCH_ADMIN = perm_str_list_of_all(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE],
+        [N.USER_ROLE, N.USER_ACCESS, N.ADMIN_PANEL, N.LOG_ACCESS,
+         N.REQFORM_SUBMITTED, N.REQFORM_DRAFT, N.REQFORM_AWAIT_APPROVAL,]
+    )
+
+
+    SYSTEM_SUPERADMIN = perm_str_list(
         [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
         N.ADMIN_PANEL
+    ) + perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
+        N.USER_ROLE
+    ) + perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
+        N.ADMIN_ROLE
+    ) + perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
+        N.LOG_ACCESS
     )
 
 # for perm in DefaultPermission:

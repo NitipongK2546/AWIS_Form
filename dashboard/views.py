@@ -11,6 +11,8 @@ from dashboard.models import VisualReqformData as FormSent
 from dashboard.warrant_wrapper import VisualWarrantData
 
 from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
+from warrant_form.model_draftform import ReqformDraftDataModel, FormDraftContainer, WarrantDraftDataModel
+
 from users.models import UserDataModel
 
 import _log_utils.file_logger as FileLogger
@@ -23,6 +25,7 @@ from datetime import datetime
 from django.utils import timezone
 
 from users.permissions.perms import PermissionList, PermissionType, perm_str, perm_str_list
+from users.permissions.decorators import perm_req_log
 
 def getFormAwaitViaReqno(reqno : str):
     return FormData.objects.filter(form__reqno=reqno).first()
@@ -48,10 +51,10 @@ def dashboard(request : HttpRequest):
 
     # exportLogAsFile()
 
+    all_drafts = FormDraftContainer.objects.all()
+
     waiting_approval_forms = FormData.objects.all()
-
     form_sent = FormSent.objects.all()
-
     warrants : list[VisualWarrantData] = VisualWarrantData.objects.all()
 
     # print(form_sent)
@@ -85,12 +88,16 @@ def dashboard(request : HttpRequest):
             "injunction_date": convert_time(warrant_wrap.injunction_date),
             "file_path": warrant_wrap.file_path,
             "because": warrant_wrap.because,
+
+            "woa_type_int": warrant_data.woa_type,
+            "court_injunction_int": warrant_wrap.court_injunction, 
         }
 
         warrants_list.append(data_dict)
 
     context = {
         "user": request.user,
+        "drafts": all_drafts,
         "forms": waiting_approval_forms,
         "forms_sent": output_list,
         "warrants": warrants_list,
@@ -126,7 +133,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
     selected_form = getFormAwaitViaReqno(form_id)
 
     if isNotUserAndNotHaveApprovePerm(selected_form, user_data):
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("ท่านไม่ใช่เจ้าของหรือผู้ร่างแบบฟอร์มดังกล่าว")
 
     reqform = selected_form.form
     # print(selected_form.prepareTextToSpeech())
@@ -181,7 +188,7 @@ def edit_form(request : HttpRequest, form_id : int):
         return Http404()
 
     if isNotUserAndNotHaveApprovePerm(form_await, user_data):
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("ท่านไม่ใช่เจ้าของหรือผู้ร่างแบบฟอร์มดังกล่าว")
     
     if form_await.approve_status == 2:
         return JsonResponse({
@@ -250,7 +257,7 @@ def approve_form_page(request : HttpRequest):
     })
 
 @permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
-def confirm_approve(request : HttpRequest, form_id : int):
+def confirm_approve(request : HttpRequest, form_id : str):
 
     selected_form = getFormAwaitViaReqno(form_id)
     # print(selected_form)
@@ -265,19 +272,16 @@ def confirm_approve(request : HttpRequest, form_id : int):
             selected_form.date_approved = timezone.now()
             selected_form.save()
 
-            warrant = selected_form.form.warrants.all().first()
+            for warrant in selected_form.form.warrants.all():
+                VisualWarrantData.objects.create(
+                    warrant=warrant,
+                    judge_name=selected_form.form.judge_name,
+                )
             
             FormSent.objects.create(
                 form=selected_form.form,
                 accept=FormSent.AcceptStatus.WAITING,
             )
-
-            VisualWarrantData.objects.create(
-                warrant=warrant,
-                judge_name=selected_form.form.judge_name,
-            )
-                  
-            # print(f"Result: {json.dumps(dict)}")
 
             FileLogger.createNormalLog(request, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict(),)
 
@@ -293,7 +297,7 @@ def confirm_approve(request : HttpRequest, form_id : int):
     
 
 @permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
-def confirm_reject(request : HttpRequest, form_id : int):
+def confirm_reject(request : HttpRequest, form_id : str):
     selected_form = getFormAwaitViaReqno(form_id)
 
     if request.method == "POST":
@@ -312,7 +316,7 @@ def confirm_reject(request : HttpRequest, form_id : int):
 
 
 @permission_required(perm_str(PermissionType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
-def delete_form(request : HttpRequest, form_id : int):
+def delete_form(request : HttpRequest, form_id : str):
 
     selected_form = getFormAwaitViaReqno(form_id)
 
@@ -341,6 +345,121 @@ def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {
         "user": request.user,
     })
+
+################################################################################
+
+from .forms_report_warrant import ReportWarrantForm
+
+@permission_required(perm_str_list([PermissionType.EDIT, PermissionType.CREATE, PermissionType.APPROVE], PermissionList.REPORT_WARRANT_ARREST), raise_exception=True)
+def report_update_warrant_arrest_yet(request : HttpRequest, form_reqno_id : str, woa_refno : str, woa_year : int, woa_type : int, woa_no : int):
+    selected_form = getFormAwaitViaReqno(form_reqno_id)
+
+    target_warrant : WarrantDataModel = selected_form.form.warrants.filter(woa_no=woa_no, woa_date__year=(woa_year-543), woa_type=woa_type, woa_refno=woa_refno).first()
+
+    current_user : UserDataModel = request.user
+
+    report_form = ReportWarrantForm()
+
+    if not target_warrant:
+        return JsonResponse({
+            "Error": "No warrant with this specification found"
+        })
+    
+    context = {
+        "court_code": selected_form.form.court_code,
+        "woa_no": woa_no,
+        "woa_type": woa_type,
+        "woa_year": woa_year,
+        "req_num_case_type_id": selected_form.form.req_case_type_id,
+        "arrest_report_date": timezone.now().astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%d %H:%M:%S"),
+        "arrest_report_uid": current_user.api_uid
+    }
+    
+    if request.method == "POST":
+        report_form = ReportWarrantForm(data=request.POST)
+
+        if report_form.is_valid():
+            put_data = report_form.cleaned_data
+            
+            put_data = combine_date(put_data)
+
+            put_data.update(context)
+
+            try:
+                if settings.ENABLE_API:
+                    AWISConnectAPI.put_report_warrant_result("v1.1", request, put_data)
+
+                print(put_data)
+
+                return JsonResponse({
+                    "status": "success"
+                })
+
+            except:
+                return JsonResponse({
+                    "status": "error"
+                }, status=400)
+
+    context.update({
+        "report_form": report_form,
+    })
+    
+    return render(request, "dashboard/report_warrant.html", context)
+
+@perm_req_log([PermissionType.DELETE], PermissionList.REQFORM_SUBMITTED, AccessType.DELETE)
+def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
+    sent_form = FormSent.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
+
+    unneeded_warrants = sent_form.form.warrants.all()
+
+    warrant_results = VisualWarrantData.objects.filter(warrant__in=unneeded_warrants)
+
+    print(warrant_results)
+
+    if sent_form.accept == 1:
+        return HttpResponseForbidden("Reqform has already been accepted by Court.")
+
+    if request.method == "POST":
+        try:
+            if settings.ENABLE_API:
+                AWISConnectAPI.unsend_reqform_from_court("v1.1", request, req_no_plaintiff)
+
+
+            sent_form.form.delete()
+            for warrant in warrant_results.all():
+                warrant.warrant.delete()
+                
+            return JsonResponse({
+                "status": "Success",
+                "affected": str(sent_form),
+            })
+
+        except:
+            return JsonResponse({
+                "status": "Error",
+            })
+        
+    return render(request, "dashboard/confirmation_page.html", {
+        "action": "Unsend Reqform"
+    })
+
+
+###############################################################################
+
+def combine_date(put_data : dict):
+    day = put_data.get("arrest_date_day")
+    month = put_data.get("arrest_date_month")
+    year = put_data.get("arrest_date_year")
+
+    put_data.update({
+        "arrest_date": f"{year}-{month}-{day}"
+    })
+    
+    put_data.pop("arrest_date_day")
+    put_data.pop("arrest_date_month")
+    put_data.pop("arrest_date_year")
+
+    return put_data
 
 def convert_time(datetime_obj : datetime):
     if datetime_obj:

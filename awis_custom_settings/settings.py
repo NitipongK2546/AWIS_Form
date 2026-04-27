@@ -6,27 +6,28 @@ from django.db import models
 class PermissionList(models.TextChoices):
 
     ADMIN_PANEL = "adminPanel"
-
     USER_ACCESS = "userAccess"
+    LOG_ACCESS = "logAccess"
+
+    ADMIN_ROLE = "adminRole"
     USER_ROLE = "userRole"
 
-    LOG_ACCESS = "logAccess"
-    
-    REQFORM_AWAIT_APPROVAL = "reqformAwaitApproval"
     REQFORM_SUBMITTED = "reqformSubmitted"
 
+    REQFORM_DRAFT = "reqformDraft"
+    REQFORM_AWAIT_APPROVAL = "reqformAwaitApproval"
+
+    REPORT_WARRANT_ARREST = "reportWarrantArrest"
+    
     LOGIN_PAGE = "loginPage"
 
 class RoleList(Enum):
-    OUTSIDE = "Outside"
-
-    EMPLOYEE = "Employee"
-    MANAGER = "Manager"
-    DIRECTOR = "Director"
-
-    SYSTEM_ADMIN = "System Admin"
-
-    COURT_USER = "Court User"
+    EMPLOYEE = "เจ้าหน้าที่"
+    APPROVER = "ผู้อนุมัติ"
+    BRANCH_ADMIN = "ผู้ดูแลระดับฝ่าย"
+    
+    SYSTEM_SUPERADMIN = "ผู้ดูแลระบบ"
+    COURT_USER = "เจ้าหน้าที่ของศาล"
 
     def getDefaultRole():
         return RoleList.EMPLOYEE
@@ -38,11 +39,10 @@ class RoleList(Enum):
         return RoleChoices.EMPLOYEE
 
 class RoleChoices(models.IntegerChoices):
-    OUTSIDE = (0, RoleList.OUTSIDE.value)
 
     EMPLOYEE = (10, RoleList.EMPLOYEE.value) 
-    MANAGER = (11, RoleList.MANAGER.value)
-    DIRECTOR = (12, RoleList.DIRECTOR.value)
+    APPROVER = (11, RoleList.APPROVER.value) 
+    BRANCH_ADMIN = (12, RoleList.BRANCH_ADMIN.value) 
 
-    SYSTEM_ADMIN = (99, RoleList.SYSTEM_ADMIN.value)
+    SYSTEM_SUPERADMIN = (99, RoleList.SYSTEM_SUPERADMIN.value)
     COURT_USER = (98, RoleList.COURT_USER.value)

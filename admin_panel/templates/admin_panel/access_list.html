@@ -1,33 +1,118 @@
-<h1>Granted Access Users</h1>
-<a href="{% url 'admin_panel:collections' %}">Back to Collections</a>
-<table border="1" style="margin: 10 10px">
-  <tr>
-    <th>User ID</th>
-    <th>Full Name</th>
-    <th>Department</th>
-    <th>Role</th>
-    <th>Actions</th>
-  </tr>
-  {% for user in allowed_users %}
-  <tr>
-    <td>{{ user.user_id }}</td>
-    <td>{{ user.fullname }}</td>
-    <td>{{ user.department }}</td>
-    <td>{{ user.get_role_display }}</td>
-    <td>
-      <a href="{% url 'admin_panel:update_role' user.user_id 10 %}">Set Employee</a> |
-      <a href="{% url 'admin_panel:update_role' user.user_id 12 %}">Set Approver</a> |
-      <a href="{% url 'admin_panel:delete_access' user.user_id %}" 
-         onclick="return confirm('Are you sure you want to remove access for {{ user.fullname }}?');">
-         Delete
-      </a>
-    </td>
-  </tr>
-  {% empty %}
-  <tr>
-    <td colspan="5">No users have been granted access yet.</td>
-  </tr>
-  {% endfor %}
-</table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access List</title>
+  <style>
+.popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+}
 
-<a href="{% url 'admin_panel:select_users' %}">Go to Select Users</a>
+.popup-content {
+  position: relative;
+  width: 80%;
+  height: 80%;
+  margin: 5% auto;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.popup iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.close {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-size: 24px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div style="display: flexbox;">
+  <div>
+    <h1>Granted Access Users</h1>
+    <a href="{% url 'admin_panel:collections' %}">Back to Collections</a>
+    <table border="1" style="margin: 10 10px">
+      <tr>
+        <th>User ID</th>
+        <th>Full Name</th>
+        <th>Department</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
+      {% for user in allowed_users %}
+      <tr>
+        <td>{{ user.user_id }}</td>
+        <td>{{ user.fullname }}</td>
+        <td>{{ user.department }}</td>
+        <td>{{ user.get_role_display }}</td>
+        <td>
+          <a href="{% url 'admin_panel:update_role' user.user_id 10 %}">
+            เจ้าหน้าที่
+          </a> |
+          <a href="{% url 'admin_panel:update_role' user.user_id 11 %}">
+            ผู้อนุมัติ
+          </a> |
+          <a href="{% url 'admin_panel:update_role' user.user_id 12 %}">
+            ผู้ดูแลระดับฝ่าย
+          </a> |
+          <a href="{% url 'admin_panel:update_role' user.user_id 99 %}">
+            ผู้ดูแลระบบ
+          </a> |
+          <a href="{% url 'admin_panel:delete_access' user.user_id %}" 
+            onclick="return confirm('Are you sure you want to remove access for {{ user.fullname }}?');">
+            Delete
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No users have been granted access yet.</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div id="popup" class="popup" style="display: none;">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup()">&times;</span>
+      <div id="loading" style="display: none; text-align: center; align-content: center;">
+      </div>
+      <iframe id="popup-frame" src="" frameborder="0">
+        Waiting...
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<!-- <a href="">Go to Select Users</a> -->
+<button onclick="openPopup()">Add Access List</button>
+
+<script>
+function openPopup() {
+  document.getElementById("popup").style.display = "block";
+  document.getElementById("popup-frame").src = "{% url 'admin_panel:select_users' %}";
+  document.getElementById("loading").style.display = "block";
+}
+
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+  document.getElementById("popup-frame").src = "";
+  document.getElementById("loading").style.display = "none";
+}
+</script>
+
+</body>
+</html>

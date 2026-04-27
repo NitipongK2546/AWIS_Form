@@ -27,7 +27,7 @@ def perm_str(type : PermissionType, name : PermissionList):
 def perm_str_list(type_list : list[PermissionType], name : PermissionList):
     """
     Example:\n
-    perm_str(PermissionType.VIEW, PermissionList.ADMIN_PANEL)\n
+    perm_str_list([PermissionType.VIEW, PermissionType.EDIT], PermissionList.ADMIN_PANEL)\n
     Result:\n
     [users.(type1)_(list), users.(type2)_(list), ...]
     """
@@ -38,5 +38,21 @@ def perm_str_list(type_list : list[PermissionType], name : PermissionList):
         output_list.append(
             _returnPermissionString(type, name)
         )
+
+    return output_list
+
+def perm_str_list_of_all(type_list : list[PermissionType], name_list : list[PermissionList] = None):
+    """
+    Example:\n
+    The PermissionList is now a list and will give everything in said list.\n
+    """
+
+    output_list : list[str] = []
+
+    for name in name_list:
+        for type in type_list:
+            output_list.append(
+                _returnPermissionString(type, name)
+            )
 
     return output_list

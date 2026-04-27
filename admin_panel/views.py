@@ -180,6 +180,9 @@ def update_role(request, user_id, role_value):
         
         user.save()
         django_user.save()
+
+        FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.USER_ROLE, django_user.getLogInfoDict())
+
     return redirect("admin_panel:access_list")
 
 @perm_req_log([PermissionType.DELETE], PermissionList.USER_ACCESS, AccessType.DELETE)

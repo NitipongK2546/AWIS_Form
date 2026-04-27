@@ -25,6 +25,12 @@ class UserDataModel(AbstractUser):
 
         return all_logs
     
+    def getLogInfoDict(self): 
+        return {
+            "type": ["users", "UserDataModel"],
+            "id": self.pk,
+        }
+    
     def getGroupString(self):
         if self.is_superuser:
             return ["Superuser"]
@@ -244,7 +250,12 @@ class LogSystem(models.Model):
 
     
 def _getAffectedData(info : dict):
-    ObjModel = apps.get_model(*info.get("type"))
+    app_model : tuple[str] = info.get("type")
+
+    if not app_model:
+        return "Wrong Relevant Info format"
+
+    ObjModel = apps.get_model(*app_model)
     
     obj = ObjModel.objects.filter(pk=info.get("id")).first()
 

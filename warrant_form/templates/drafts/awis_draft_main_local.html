@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Draft Main Page</title>
+</head>
+<body>
+    <h3>
+        <a href="{% url 'dashboard:dashboard' %}">กลับ</a>
+    </h3>   
+
+    <h2>แก้ครั้งล่าสุด: {{ draft_container.last_edit }}</h2>   
+    
+    <div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <p>เจ้าของคำร้อง: 
+                {{ draft_container.form_owner }} 
+                | {{ ownership_form.form_owner }}
+                <button type="submit">เปลี่ยนเจ้าของ</button>
+            </p>
+        </form>
+        <p>ผู้เขียน: {{ draft_container.form_creator }}</p>
+    </div>
+    <div>
+        <p>คำร้อง: {{ draft_container.reqform_draft }} 
+            <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}">
+            แก้ไข
+            </a>
+        </p> 
+    </div>
+    <hr>
+    <div>
+        <p>
+            <span>หมายจับทั้งหมด: </span>
+            <span>
+                <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}">เพิ่มหมายจับ</a>
+            </span>
+        </p>
+        {% for warrant in draft_container.warrant_drafts.all %} 
+        <p>
+            {{ warrant }}
+            <span><a href="{% url 'forms:edit-draft-container-warrant' draft_container.pk warrant.pk %}">แก้ไข</a></span>
+            <span><a href="{% url 'forms:delete-draft-container-warrant' draft_container.pk warrant.pk %}" onclick="return confirm('ต้องการลบจริงหรือไม่')">ลบ</a></span>
+        </p>
+        {% empty %}
+        <p>ไม่มีหมายจับ</p>
+        {% endfor %}
+    </div>
+    <hr>
+
+    <p><a href="{% url 'forms:create-reqform' draft_container.pk %}">สร้างคำร้องจากร่างคำร้องขอ</a></p>
+
+<script>
+function confirmWithUser() {
+    return confirm('ต้องการลบจริงหรือไม่')
+}
+</script>
+</body>
+</html>
