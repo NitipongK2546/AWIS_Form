@@ -333,6 +333,9 @@ def delete_form(request : HttpRequest, form_id : int):
     })
 
 
+def approve_table_page(request):
+    return render(request, "dashboard/approve_table_page.html")
+
 @login_required
 def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {

@@ -17,4 +17,5 @@ urlpatterns = [
     path("view/<path:form_id>/", views.view_form, name="get_form"),
     path("edit/<path:form_id>/", views.edit_form, name="edit_form"),
     path("delete/<path:form_id>/", views.delete_form, name="delete_form"),
+    path("approve_table/", views.approve_table_page, name="approve_table_page"),
 ]   

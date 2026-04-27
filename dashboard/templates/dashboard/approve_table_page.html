@@ -1,0 +1,15 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Approve_table_page{% endblock %}
+
+{% block body %}
+<div id="header-container">
+    <div class="logo-row">
+        <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
+        <br>
+        <div class="separate-line"></div>
+    </div>
+    {% include 'module/approve_table.html' %}
+</div>
+{% endblock %}
