@@ -3,7 +3,12 @@ from django.urls import reverse
 
 from django.http import HttpRequest, JsonResponse, Http404
 from .model_draftform import ReqformDraftDataModel
-from warrant_form.forms import ReqformDraftModelForm
+
+from warrant_form.forms import WarrantForm, AWISFormStep1, ReqformDraftModelForm
+
+from warrant_form.model_reqform import ReqformDataModel
+from warrant_form.model_warrant import WarrantDataModel
+
 
 def create_reqform_draft(request : HttpRequest):
     if request.method == "POST":
@@ -59,22 +64,26 @@ def delete_reqform_draft(request : HttpRequest, draft_id : int):
     
     raise Http404()
 
-# def create_reqform_from_draft(request : HttpRequest, draft_id : int):
-#     selected_draft = ReqformDraftDataModel.objects.filter(pk=draft_id).first()
+def create_reqform_from_draft(request : HttpRequest, draft_id : int):
+    selected_draft = ReqformDraftDataModel.objects.filter(pk=draft_id).first()
 
-#     if selected_draft:
-#         if request.method == "POST":
-#             try:
+    if selected_draft:
+        if request.method == "POST":
+            try:
+                reqform = AWISFormStep1(selected_draft.convertBacktoFormView())
+                if reqform.is_valid():
+                    cleaned_data = reqform.cleaned_data
+                    reqform_obj = ReqformDataModel.objects.create(**cleaned_data)
 
+                return redirect("forms:success")
+            except:
+                return JsonResponse(reqform.errors, json_dumps_params={"ensure_ascii": False})
 
-
-#             return redirect("dashboard:dashboard")
-
-#         return render(request, "dashboard/confirmation_page.html", {
-#             "action": "Create Reqform from Draft",
-#         })
+        return render(request, "dashboard/confirmation_page.html", {
+            "action": "Create Reqform from Draft",
+        })
     
-#     raise Http404()
+    raise Http404()
 
 
     

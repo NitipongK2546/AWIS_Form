@@ -10,6 +10,8 @@ urlpatterns = [
     path("reqform-draft/edit/<int:draft_id>/", views_draft.edit_reqform_draft, name="edit-draft-step1"),
     path("reqform-draft/delete/<int:draft_id>/", views_draft.delete_reqform_draft, name="delete-draft-step1"),
 
+    path("reqform-draft/create-reqform/<int:draft_id>/", views_draft.create_reqform_from_draft, name="create-reqform"),
+
 
     path("create-reqform/", views.step0_confirm_owner, name="step0"),
 

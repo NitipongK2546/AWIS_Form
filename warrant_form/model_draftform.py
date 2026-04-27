@@ -1,6 +1,9 @@
 from django.db import models
 
 from warrant_form.model_warrant import WarrantDataModel
+from django.forms.models import model_to_dict
+import warrant_form.forms_central as CentralForm
+from users.models import UserDataModel
 
 # THAI_MONTHS = {
 #     1: ("ม.ค.", "มกราคม"),
@@ -33,6 +36,10 @@ THAI_MONTHS = {
 }
 
 class ReqformDraftDataModel(models.Model):
+
+    form_owner = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="owned_reqform")
+    form_creator = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="created_reqform")
+
     class ReqCaseTypeIDChoices(models.IntegerChoices):
         GENERAL = (1, "ทั่วไป") # จ.
         DRUGS = (2, "ยาเสพติด") # ยจ.
@@ -151,4 +158,24 @@ class ReqformDraftDataModel(models.Model):
     def __str__(self):
 
         return f"(pk: {self.pk}, reqno: {self.reqno})"
+    
+    def convertBacktoFormView(self) -> dict[str,]:
+        dict_main_awis = model_to_dict(self)
+
+        duped_list = ["accused", "plaintiff", "court_name"]
+        time_split_list = ["woa_start_date", "woa_end_date", "scene_date"]
+
+        dict_main_awis = CentralForm.createDupe(duped_list, dict_main_awis)
+        dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis)
+
+        if self.cause_type_id:
+            dict_main_awis.update({f"cause_type_id_{self.cause_type_id}": 1})
+            dict_main_awis.update({f"cause_text_{self.cause_type_id}": self.cause_text})
+
+        if self.have_req:
+            dict_main_awis.update({f"have_req_1": 1})
+        else:
+            dict_main_awis.update({f"have_req_2": 1})
+
+        return dict_main_awis
     

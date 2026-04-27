@@ -89,6 +89,7 @@ def dashboard(request : HttpRequest):
             "because": warrant_wrap.because,
 
             "woa_type_int": warrant_data.woa_type,
+            "court_injunction_int": warrant_wrap.court_injunction, 
         }
 
         warrants_list.append(data_dict)
@@ -404,10 +405,12 @@ def report_update_warrant_arrest_yet(request : HttpRequest, form_reqno_id : str,
     
     return render(request, "dashboard/report_warrant.html", context)
 
-###############################################################################
 
 def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
     sent_form = FormSent.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
+
+    if sent_form.accept == 1:
+        return HttpResponseForbidden("Reqform has already been accepted by Court.")
 
     if request.method == "POST":
         try:
