@@ -23,14 +23,25 @@
         </form>
         <p>ผู้เขียน: {{ draft_container.form_creator }}</p>
     </div>
-    <div>
-        <p>คำร้อง: {{ draft_container.reqform_draft }} 
-            <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}">
-            แก้ไข
-            </a>
-        </p> 
-    </div>
+
     <hr>
+
+    <div>
+        <p>
+            <span>คำร้อง:</span>
+            <span>
+                <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}">
+                แก้ไข
+                </a>
+            </span> 
+        </p> 
+        <p>
+            {{ draft_container.reqform_draft }}
+        </p>
+    </div>
+    
+    <hr>
+
     <div>
         <p>
             <span>หมายจับทั้งหมด: </span>
@@ -40,7 +51,7 @@
         </p>
         {% for warrant in draft_container.warrant_drafts.all %} 
         <p>
-            {{ warrant }}
+            {{ forloop.counter }}. {{ warrant }}
             <span><a href="{% url 'forms:edit-draft-container-warrant' draft_container.pk warrant.pk %}">แก้ไข</a></span>
             <span><a href="{% url 'forms:delete-draft-container-warrant' draft_container.pk warrant.pk %}" onclick="return confirm('ต้องการลบจริงหรือไม่')">ลบ</a></span>
         </p>
@@ -48,6 +59,7 @@
         <p>ไม่มีหมายจับ</p>
         {% endfor %}
     </div>
+
     <hr>
 
     <p><a href="{% url 'forms:create-reqform' draft_container.pk %}">สร้างคำร้องจากร่างคำร้องขอ</a></p>

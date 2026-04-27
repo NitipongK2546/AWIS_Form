@@ -25,11 +25,12 @@ def create_draft_main_local_page(request : HttpRequest):
         form_creator=request.user,
     )
 
-    reqform_obj = ReqformDraftDataModel.objects.create(
-        draft_container=draft_container
+    ReqformDraftDataModel.objects.create(
+        draft_container=draft_container,
+        create_uid=request.user.api_uid
     )
 
-    return redirect("forms:view-draft-container", container_id=draft_container.pk)
+    return redirect("dashboard:dashboard")
 
 @perm_req_log([PermissionType.VIEW], PermissionList.REQFORM_DRAFT, AccessType.VIEW)
 def view_draft_main_local_page(request : HttpRequest, container_id : int):
@@ -89,7 +90,7 @@ def edit_reqform_draft(request : HttpRequest, container_id : int):
 
             return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
-        return render(request, "drafts/awis_draft_step1.html", {
+        return render(request, "drafts/awis_draft_reqform.html", {
             "draft_form": reqform_form,
         })
     
@@ -127,7 +128,7 @@ def edit_warrant_draft(request : HttpRequest, container_id : int, warrant_id : i
 
             return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
-        return render(request, "drafts/awis_draft_step1.html", {
+        return render(request, "drafts/awis_draft_warrant.html", {
             "draft_form": warrant_form,
         })
     
