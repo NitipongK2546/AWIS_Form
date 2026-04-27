@@ -33,14 +33,6 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
     if draft_container:
-        if request.method == "POST":
-            pass
-        #     draft_container = ReqformDraftModelForm(request.POST, instance=old_draft_container)
-        #     draft_container.save()
-
-        #     return redirect("dashboard:dashboard")
-
-        # draft_container = FormDraftContainerModelForm(instance=old_draft_container)
 
         return render(request, "drafts/awis_draft_main_local.html", {
             "draft_container": draft_container,
@@ -51,41 +43,42 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
 
 #####################################################################
 
-def create_reqform_draft(request : HttpRequest):
-    if request.method == "POST":
-        draft_form = ReqformDraftModelForm(request.POST)
-        draft_form.save()
+# def create_reqform_draft(request : HttpRequest):
+#     if request.method == "POST":
+#         draft_form = ReqformDraftModelForm(request.POST)
+#         draft_form.save()
 
-        return redirect("dashboard:dashboard")
+#         return redirect("dashboard:dashboard")
     
-    preadded_field = {
-        "court_code": "0000011",
-        "police_station_id": "TCCT0001",
-        "req_no_plaintiff": "tcctd20260304002",
-        "create_uid": request.user.api_uid
-    }
+#     preadded_field = {
+#         "court_code": "0000011",
+#         "police_station_id": "TCCT0001",
+#         "req_no_plaintiff": "tcctd20260304002",
+#         "create_uid": request.user.api_uid
+#     }
 
-    draft_form = ReqformDraftModelForm(initial=preadded_field)
+#     draft_form = ReqformDraftModelForm(initial=preadded_field)
 
-    return render(request, "warrant_form/awis_draft_step1.html", {
-        "draft_form": draft_form,
-    })
+#     return render(request, "warrant_form/awis_draft_step1.html", {
+#         "draft_form": draft_form,
+#     })
 
 
-def edit_reqform_draft(request : HttpRequest, draft_id : int):
-    old_draft = ReqformDraftDataModel.objects.filter(pk=draft_id).first()
+def edit_reqform_draft(request : HttpRequest, container_id : int):
+    draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
-    if old_draft:
+    if draft_container:
+
+        reqform_form = ReqformDraftModelForm(instance=draft_container.reqform)
+
         if request.method == "POST":
-            draft_form = ReqformDraftModelForm(request.POST, instance=old_draft)
-            draft_form.save()
+            reqform_form = ReqformDraftModelForm(request.POST, instance=draft_container.reqform)
+            reqform_form.save()
 
-            return redirect("dashboard:dashboard")
+            return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
-        draft_form = ReqformDraftModelForm(instance=old_draft)
-
-        return render(request, "warrant_form/awis_draft_step1.html", {
-            "draft_form": draft_form,
+        return render(request, "drafts/awis_draft_step1.html", {
+            "draft_form": reqform_form,
         })
     
     raise Http404()

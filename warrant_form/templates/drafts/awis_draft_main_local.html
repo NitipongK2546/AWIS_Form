@@ -8,7 +8,18 @@
 <body>
     <p>เจ้าของคำร้อง: {{ draft_container.form_owner }}</p>
     <p>ผู้เขียน: {{ draft_container.form_creator }}</p>
-    <p>คำร้อง: {{ draft_container.reqform }}</p> 
-    <p>หมายจับทั้งหมด: {{ draft_container.warrants }}</p>
+    <p>คำร้อง: <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}">{{ draft_container.reqform }}</a></p> 
+    <div>
+        หมายจับทั้งหมด:
+        {% for warrant in draft_container.warrants %} 
+        <p>
+            {{ warrant }}
+            <span><a href="#">ลบหมายจับ</a></span>
+        </p>
+        {% empty %}
+        <p>ไม่มีหมายจับ</p>
+        {% endfor %}
+    </div>
+    <p><a href="#">เพิ่มหมายจับ</a></p>
 </body>
 </html>

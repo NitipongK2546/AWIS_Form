@@ -9,6 +9,8 @@ urlpatterns = [
     path("reqform-draft/create/", views_draft.create_draft_main_local_page, name="create-draft-container"),
     path("reqform-draft/view/<int:container_id>/", views_draft.view_draft_main_local_page, name="view-draft-container"),
 
+    path("reqform-draft/edit/<int:container_id>/reqform/", views_draft.edit_reqform_draft, name="edit-draft-container-reqform"),
+
     # path("reqform-draft/delete/<int:draft_id>/", views_draft.delete_reqform_draft, name="delete-draft-step1"),
 
     path("reqform-draft/create-reqform/<int:draft_id>/", views_draft.create_reqform_from_draft, name="create-reqform"),
