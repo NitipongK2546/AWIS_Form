@@ -11,6 +11,23 @@
 {% endif %}
 
 <a href="{% url 'admin_panel:collections' %}">Back to Collections</a>
+
+<form method="get">
+  <label for="dept">Filter by ID:</label>
+  <input type="text" name="id" placeholder="Filter by ID" value="{{ request.GET.id }}">
+  
+  <label for="dept">Filter by Name:</label>
+  <input type="text" name="name" placeholder="Filter by Name" value="{{ request.GET.name }}">
+  
+  <label for="dept">Filter by Department:</label>
+  <input type="text" name="dept" id="dept" placeholder="Filter by Department" value="{{ request.GET.dept }}">
+  
+  <label for="position">Filter by Position:</label>
+  <input type="text" name="position" id="position" placeholder="Filter by Position" value="{{ request.GET.position }}">
+  
+  <button type="submit">Apply Filter</button>
+</form>
+
 <form method="post">
   {% csrf_token %}
   <table border="1" style="margin: 10 10px">

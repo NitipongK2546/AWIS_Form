@@ -71,7 +71,25 @@ def admin_select_users(request : HttpRequest):
                 if user_data and not UserAccess.objects.filter(user_id=uid).exists():
                     add_user_to_access(user_data)
             return redirect("admin_panel:access_list")
+        
+        dept_filter = request.GET.get("dept")
+        position_filter = request.GET.get("position")
+        id_filter = request.GET.get("id")
+        name_filter = request.GET.get("name")
+        
+        if dept_filter:
+            users = [u for u in users if dept_filter.lower() in u["Dept"].lower()]
+        
+        if position_filter:
+            users = [u for u in users if position_filter.lower() in u["Position"].lower()]
+        
+        if id_filter:
+            users = [u for u in users if str(u.get("USR_ID", "")).startswith(id_filter)]
 
+        if name_filter:
+            full_name = lambda u: f"{u.get('USR_PREFIX','')}{u.get('USR_FNAME','')} {u.get('USR_LNAME','')}"
+            users = [u for u in users if name_filter.lower() in full_name(u).lower()]
+            
         return render(request, "admin_panel/select_users.html", {"users": users})
     except ConnectionError:
         return render(request, "admin_panel/select_users.html", {
@@ -82,6 +100,10 @@ def admin_select_users(request : HttpRequest):
     except Exception as e:
         FileLogger.createErrorLog(request, AccessType.CREATE, PermissionList.USER_ACCESS, {
             "message": str(e)
+        })
+        return render(request, "admin_panel/select_users.html", {
+            "users": {},
+            "error": str(e),
         })
 
 ################################################################################
