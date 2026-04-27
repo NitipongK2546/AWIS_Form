@@ -11,7 +11,7 @@ from dashboard.models import VisualReqformData as FormSent
 from dashboard.warrant_wrapper import VisualWarrantData
 
 from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
-from warrant_form.model_draftform import ReqformDraftDataModel
+from warrant_form.model_draftform import ReqformDraftDataModel, FormDraftContainer, WarrantDraftDataModel
 
 from users.models import UserDataModel
 
@@ -50,7 +50,7 @@ def dashboard(request : HttpRequest):
 
     # exportLogAsFile()
 
-    all_drafts = ReqformDraftDataModel.objects.all()
+    all_drafts = FormDraftContainer.objects.all()
 
     waiting_approval_forms = FormData.objects.all()
     form_sent = FormSent.objects.all()

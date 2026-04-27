@@ -2,13 +2,54 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from django.http import HttpRequest, JsonResponse, Http404
-from .model_draftform import ReqformDraftDataModel
+from .model_draftform import ReqformDraftDataModel, WarrantDraftDataModel, FormDraftContainer
+from warrant_form.forms import ReqformDraftModelForm, FormDraftContainerModelForm, WarrantDraftDataModelForm
 
-from warrant_form.forms import WarrantForm, AWISFormStep1, ReqformDraftModelForm
+from dashboard.models import FormAwaitingApproval
 
 from warrant_form.model_reqform import ReqformDataModel
 from warrant_form.model_warrant import WarrantDataModel
 
+from django.forms.models import model_to_dict
+
+
+def create_draft_main_local_page(request : HttpRequest):
+    
+    reqform_obj = ReqformDraftDataModel.objects.create()
+    draft_container = FormDraftContainer.objects.create(
+        reqform=reqform_obj,
+        form_owner=request.user,
+        form_creator=request.user,
+    )
+
+    # return render(request, "drafts/awis_draft_main_local.html", {
+    #     "draft_container": draft_container,
+    # })
+
+    return redirect("forms:view-draft-container", container_id=draft_container.pk)
+
+
+def view_draft_main_local_page(request : HttpRequest, container_id : int):
+    draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
+
+    if draft_container:
+        if request.method == "POST":
+            pass
+        #     draft_container = ReqformDraftModelForm(request.POST, instance=old_draft_container)
+        #     draft_container.save()
+
+        #     return redirect("dashboard:dashboard")
+
+        # draft_container = FormDraftContainerModelForm(instance=old_draft_container)
+
+        return render(request, "drafts/awis_draft_main_local.html", {
+            "draft_container": draft_container,
+        })
+    
+    raise Http404()
+
+
+#####################################################################
 
 def create_reqform_draft(request : HttpRequest):
     if request.method == "POST":
@@ -70,14 +111,14 @@ def create_reqform_from_draft(request : HttpRequest, draft_id : int):
     if selected_draft:
         if request.method == "POST":
             try:
-                reqform = AWISFormStep1(selected_draft.convertBacktoFormView())
-                if reqform.is_valid():
-                    cleaned_data = reqform.cleaned_data
-                    reqform_obj = ReqformDataModel.objects.create(**cleaned_data)
+                # reqform = AWISFormStep1(selected_draft.convertBacktoFormView())
+                reqform_obj = ReqformDataModel.objects.create(**model_to_dict(selected_draft, exclude=["id"]))
+                FormAwaitingApproval.objects.create(form=reqform_obj, form_owner=request.user, form_creator=request.user, approve_status=1)
+
 
                 return redirect("forms:success")
-            except:
-                return JsonResponse(reqform.errors, json_dumps_params={"ensure_ascii": False})
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, json_dumps_params={"ensure_ascii": False})
 
         return render(request, "dashboard/confirmation_page.html", {
             "action": "Create Reqform from Draft",

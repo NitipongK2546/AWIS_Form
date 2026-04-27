@@ -81,8 +81,8 @@ class WarrantDataModel(models.Model):
     acc_full_name = models.CharField(max_length=250)
     acc_card_type = models.IntegerField(choices=AccountCardTypeChoices, blank=True, null=True)
     acc_card_id = models.CharField(max_length=20)
-    acc_origin = models.IntegerField(blank=True, null=True) # This gotta be choices, again.
-    acc_nation = models.IntegerField(blank=True, null=True) # Except no choices in descriptions.
+    acc_origin = models.IntegerField(blank=True, null=True) 
+    acc_nation = models.IntegerField(blank=True, null=True) 
     acc_occupation = models.CharField(max_length=100, blank=True)
     acc_addno = models.CharField(max_length=50, blank=True)
     acc_vilno = models.CharField(max_length=50, blank=True)

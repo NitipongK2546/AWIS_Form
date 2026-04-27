@@ -5,21 +5,6 @@ from django.forms.models import model_to_dict
 import warrant_form.forms_central as CentralForm
 from users.models import UserDataModel
 
-# THAI_MONTHS = {
-#     1: ("ม.ค.", "มกราคม"),
-#     2: ("ก.พ.", "กุมภาพันธ์"),
-#     3: ("มี.ค.", "มีนาคม"),
-#     4: ("เม.ย.", "เมษายน"),
-#     5: ("พ.ค.", "พฤษภาคม"),
-#     6: ("มิ.ย.", "มิถุนายน"),
-#     7: ("ก.ค.", "กรกฎาคม"),
-#     8: ("ส.ค.", "สิงหาคม"),
-#     9: ("ก.ย.", "กันยายน"),
-#     10:("ต.ค.", "ตุลาคม"),
-#     11:("พ.ย.", "พฤศจิกายน"),
-#     12:("ธ.ค.", "มกราคม"),
-# }
-
 THAI_MONTHS = {
     1: "มกราคม",
     2: "กุมภาพันธ์",
@@ -36,9 +21,6 @@ THAI_MONTHS = {
 }
 
 class ReqformDraftDataModel(models.Model):
-
-    form_owner = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="owned_reqform")
-    form_creator = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="created_reqform")
 
     class ReqCaseTypeIDChoices(models.IntegerChoices):
         GENERAL = (1, "ทั่วไป") # จ.
@@ -60,7 +42,7 @@ class ReqformDraftDataModel(models.Model):
 
     judge_name = models.CharField(blank=True, null=True, max_length=250, )
 
-    police_station_id = models.CharField(blank=True, null=True, max_length=8) #REFER id -> tb_police_station
+    police_station_id = models.CharField(blank=True, null=True, max_length=8)
     req_no_plaintiff = models.CharField(blank=True, null=True, max_length=50)
 
     plaintiff = models.CharField(blank=True, null=True, max_length=400)
@@ -83,8 +65,8 @@ class ReqformDraftDataModel(models.Model):
     cause_text = models.CharField(blank=True, null=True, max_length=500, )
 
     charge = models.CharField(blank=True, null=True, max_length=50, )
-    charge_type_1 = models.BooleanField(blank=True, null=True, ) 
-    charge_type_2 = models.BooleanField(blank=True, null=True, )
+    charge_type_1 = models.BooleanField(default=False) 
+    charge_type_2 = models.BooleanField(default=False)
 
     scene = models.CharField(blank=True, null=True, max_length=300, )
     # scene_date_datehalf = models.DateField(blank=True, null=True,  ) 
@@ -179,3 +161,71 @@ class ReqformDraftDataModel(models.Model):
 
         return dict_main_awis
     
+
+class FormDraftContainer(models.Model):
+    form_owner = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="owned_draft")
+    form_creator = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="created_draft")
+
+    reqform = models.OneToOneField(ReqformDraftDataModel, on_delete=models.CASCADE)
+
+    warrants = list["WarrantDraftDataModel"]
+
+WOA_TYPE_CHOICES = [
+    (1, "47"),
+    (2, "47 ทวิ"),
+]
+
+# หมายเรียกที่ติดไปด้วย
+class WarrantDraftDataModel(models.Model):
+    class AppointmentTypeChoices(models.IntegerChoices):
+        PRESCRIPTION = (1, "กำหนดอายุความ")
+        APPOINTMENT = (2, "กำหนดนัด")
+
+    class AccountCardTypeChoices(models.IntegerChoices):
+        THAI_ID = (1, "เลขประจำตัวประชาชน")
+        PASSPORT = (2, "เลขหนังสือเดินทาง")
+        NON_THAI_ID = (3, "เลขคนซึ่งไม่มีสัญชาติไทย")
+
+    # reqforms
+
+    woa_date = models.DateTimeField(blank=True, null=True)
+
+    fault_type_id = models.IntegerField(blank=True, null=True) #(อาญา.แพ่ง)
+    send_to_name = models.CharField(max_length=250, blank=True) # ส่งหมายถึงใคร
+    cause_text = models.CharField(max_length=400, blank=True) # ด้วย
+
+    charge = models.CharField(max_length=250, blank=True)
+    charge_type_1 = models.BooleanField() 
+    charge_type_2 = models.BooleanField()
+    charge_type_2_1 = models.BooleanField()
+    charge_type_2_2 = models.BooleanField()
+    charge_type_2_3 = models.BooleanField()
+    charge_type_3 = models.BooleanField()
+    charge_other_text = models.CharField(max_length=250, blank=True)
+
+    acc_full_name = models.CharField(max_length=250, blank=True)
+    acc_card_type = models.IntegerField(choices=AccountCardTypeChoices, blank=True, null=True)
+    acc_card_id = models.CharField(max_length=20, blank=True)
+    acc_origin = models.IntegerField(blank=True, null=True) 
+    acc_nation = models.IntegerField(blank=True, null=True) 
+    acc_occupation = models.CharField(max_length=100, blank=True)
+    acc_addno = models.CharField(max_length=50, blank=True)
+    acc_vilno = models.CharField(max_length=50, blank=True)
+    acc_road = models.CharField(max_length=100, blank=True)
+    acc_soi = models.CharField(max_length=100, blank=True)
+    acc_near = models.CharField(max_length=200, blank=True)
+    acc_sub_district = models.CharField(max_length=6, blank=True)
+    acc_district = models.CharField(max_length=4, blank=True)
+    acc_province = models.CharField(max_length=2, blank=True)
+    acc_tel = models.CharField(max_length=20, blank=True)
+
+    appointment_type = models.IntegerField(choices=AppointmentTypeChoices, blank=True, null=True)
+    appointment_date = models.DateTimeField(blank=True, null=True)
+
+    woa_no = models.IntegerField(blank=True, null=True)
+    woa_refno = models.CharField(max_length=16, blank=True)
+
+    woa_type = models.IntegerField()
+
+    plaintiff = models.CharField(max_length=400, blank=True)
+    court_name = models.CharField(max_length=250, blank=True)
