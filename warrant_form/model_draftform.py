@@ -5,6 +5,8 @@ from django.forms.models import model_to_dict
 import warrant_form.forms_central as CentralForm
 from users.models import UserDataModel
 
+from django.db.models import QuerySet
+
 THAI_MONTHS = {
     1: "มกราคม",
     2: "กุมภาพันธ์",
@@ -20,7 +22,19 @@ THAI_MONTHS = {
     12:"มกราคม",
 }
 
+class FormDraftContainer(models.Model):
+    last_edit = models.DateTimeField(auto_now=True)
+
+    form_owner = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="owned_draft")
+    form_creator = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="created_draft")
+
+    reqform_draft = "ReqformDraftDataModel"
+
+    warrant_drafts = QuerySet["WarrantDraftDataModel"]
+
 class ReqformDraftDataModel(models.Model):
+
+    draft_container = models.OneToOneField(FormDraftContainer, on_delete=models.CASCADE, related_name="reqform_draft")
 
     class ReqCaseTypeIDChoices(models.IntegerChoices):
         GENERAL = (1, "ทั่วไป") # จ.
@@ -135,8 +149,6 @@ class ReqformDraftDataModel(models.Model):
     acc_province = models.CharField(blank=True, null=True, max_length=2, )
     acc_tel = models.CharField(blank=True, null=True, max_length=20, )
 
-    # warrants = models.ManyToManyField(WarrantDataModel, blank=True, null=True,related_name="reqforms")
-
     def __str__(self):
 
         return f"(pk: {self.pk}, reqno: {self.reqno})"
@@ -160,15 +172,6 @@ class ReqformDraftDataModel(models.Model):
             dict_main_awis.update({f"have_req_2": 1})
 
         return dict_main_awis
-    
-
-class FormDraftContainer(models.Model):
-    form_owner = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="owned_draft")
-    form_creator = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="created_draft")
-
-    reqform = models.OneToOneField(ReqformDraftDataModel, on_delete=models.CASCADE)
-
-    warrants = list["WarrantDraftDataModel"]
 
 WOA_TYPE_CHOICES = [
     (1, "47"),
@@ -186,7 +189,7 @@ class WarrantDraftDataModel(models.Model):
         PASSPORT = (2, "เลขหนังสือเดินทาง")
         NON_THAI_ID = (3, "เลขคนซึ่งไม่มีสัญชาติไทย")
 
-    # reqforms
+    draft_container = models.ForeignKey(FormDraftContainer, on_delete=models.CASCADE, related_name="warrant_drafts")
 
     woa_date = models.DateTimeField(blank=True, null=True)
 
@@ -195,12 +198,12 @@ class WarrantDraftDataModel(models.Model):
     cause_text = models.CharField(max_length=400, blank=True) # ด้วย
 
     charge = models.CharField(max_length=250, blank=True)
-    charge_type_1 = models.BooleanField() 
-    charge_type_2 = models.BooleanField()
-    charge_type_2_1 = models.BooleanField()
-    charge_type_2_2 = models.BooleanField()
-    charge_type_2_3 = models.BooleanField()
-    charge_type_3 = models.BooleanField()
+    charge_type_1 = models.BooleanField(default=False) 
+    charge_type_2 = models.BooleanField(default=False)
+    charge_type_2_1 = models.BooleanField(default=False)
+    charge_type_2_2 = models.BooleanField(default=False)
+    charge_type_2_3 = models.BooleanField(default=False)
+    charge_type_3 = models.BooleanField(default=False)
     charge_other_text = models.CharField(max_length=250, blank=True)
 
     acc_full_name = models.CharField(max_length=250, blank=True)
@@ -225,7 +228,10 @@ class WarrantDraftDataModel(models.Model):
     woa_no = models.IntegerField(blank=True, null=True)
     woa_refno = models.CharField(max_length=16, blank=True)
 
-    woa_type = models.IntegerField()
+    woa_type = models.IntegerField(blank=True, null=True)
 
     plaintiff = models.CharField(max_length=400, blank=True)
     court_name = models.CharField(max_length=250, blank=True)
+
+    def __str__(self):
+        return f"(woa_no: {self.woa_no}, woa_type: {self.woa_type}, woa_refno: {self.woa_refno})"

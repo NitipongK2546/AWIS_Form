@@ -8,6 +8,7 @@
                 <th colspan="7">คำร้องที่กำลังเขียนอยู่</th>
             </tr>
             <tr>
+                <th>แก้ไขครั้งล่าสุด</th>
                 <th>ผู้ร่าง</th>
                 <th>เจ้าของร่าง</th>
                 <th>Actions</th>
@@ -16,12 +17,13 @@
         <tbody>
             {% for draft in drafts %}
             <tr>
+                <td>{{  draft.last_edit  }}</td>
                 <td>{{  draft.form_creator  }}</td>
                 <td>{{  draft.form_owner  }}</td>
                 <td>
                     <a href="{% url 'forms:view-draft-container' draft.pk %}">แก้ไขร่างคำร้อง</a>
+                    <a href="{% url 'forms:delete-draft-container' draft.pk %}">ลบร่างคำร้อง</a>
                     {% comment %}
-                    <a href="{% url 'forms:delete-draft-step1' draft.pk %}">ลบร่างคำร้อง</a>
                     <a href="{% url 'forms:create-draft-container' draft.pk %}">สร้างฟอร์ม</a>
                     {% endcomment %}
                 </td>

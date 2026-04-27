@@ -63,12 +63,14 @@ def createDupe(duped_list : list[str], target_dict : dict) -> dict[str,]:
 def splitTime(time_split_list : list[str], target_dict : dict) -> dict[str,]:
     for item in time_split_list:
         datetime_obj : datetime.datetime = target_dict.get(item)
-        datetime_obj = datetime_obj.astimezone(CURRENT_TIMEZONE)
 
-        target_dict.update({f"{item}_day" : datetime_obj.day})
-        target_dict.update({f"{item}_month" : datetime_obj.month})
-        target_dict.update({f"{item}_year" : datetime_obj.year})
+        if datetime_obj:
+            datetime_obj = datetime_obj.astimezone(CURRENT_TIMEZONE)
 
-        target_dict.update({f"{item}_timehalf" : datetime_obj.time().isoformat()})
+            target_dict.update({f"{item}_day" : datetime_obj.day})
+            target_dict.update({f"{item}_month" : datetime_obj.month})
+            target_dict.update({f"{item}_year" : datetime_obj.year})
+
+            target_dict.update({f"{item}_timehalf" : datetime_obj.time().isoformat()})
 
     return target_dict

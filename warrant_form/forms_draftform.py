@@ -14,17 +14,17 @@ req_case_type_id_choices = [
     (2, "ยาเสพติด"),
 ]
 
-class ReqformDraftModelForm(forms.ModelForm):
-    class Meta:
-        model = ReqformDraftDataModel
-        fields = "__all__"
-
 class FormDraftContainerModelForm(forms.ModelForm):
     class Meta:
         model = FormDraftContainer
-        exclude = ["reqform",]
+        fields = "__all__"
+
+class ReqformDraftModelForm(forms.ModelForm):
+    class Meta:
+        model = ReqformDraftDataModel
+        exclude = ["draft_container",]
 
 class WarrantDraftDataModelForm(forms.ModelForm):
     class Meta:
         model = WarrantDraftDataModel
-        fields = "__all__"
+        exclude = ["draft_container",]

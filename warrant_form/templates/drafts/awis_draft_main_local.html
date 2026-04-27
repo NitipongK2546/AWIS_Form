@@ -6,20 +6,28 @@
     <title>Test Draft Main Page</title>
 </head>
 <body>
+    <p>แก้ครั้งล่าสุด: {{ draft_container.last_edit }}</p>
     <p>เจ้าของคำร้อง: {{ draft_container.form_owner }}</p>
     <p>ผู้เขียน: {{ draft_container.form_creator }}</p>
-    <p>คำร้อง: <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}">{{ draft_container.reqform }}</a></p> 
+    <p>คำร้อง: {{ draft_container.reqform_draft }} 
+        <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}">
+            แก้ไข
+        </a>
+    </p> 
     <div>
         หมายจับทั้งหมด:
-        {% for warrant in draft_container.warrants %} 
+        {% for warrant in draft_container.warrant_drafts.all %} 
         <p>
             {{ warrant }}
-            <span><a href="#">ลบหมายจับ</a></span>
+            <span><a href="{% url 'forms:edit-draft-container-warrant' draft_container.pk warrant.pk %}">แก้ไข</a></span>
+            <span><a href="{% url 'forms:delete-draft-container-warrant' draft_container.pk warrant.pk %}" onclick="return confirm('ต้องการลบจริงหรือไม่')">ลบ</a></span>
         </p>
         {% empty %}
         <p>ไม่มีหมายจับ</p>
         {% endfor %}
     </div>
-    <p><a href="#">เพิ่มหมายจับ</a></p>
+    <p><a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}">เพิ่มหมายจับ</a></p>
+
+    <p><a href="{% url 'forms:create-reqform' draft_container.pk %}">สร้างคำร้องจากร่างคำร้องขอ</a></p>
 </body>
 </html>
