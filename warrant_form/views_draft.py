@@ -9,12 +9,17 @@ from dashboard.models import FormAwaitingApproval
 
 from warrant_form.model_reqform import ReqformDataModel
 from warrant_form.model_warrant import WarrantDataModel
+from warrant_form.form_ownership import OwnershipForm
 
 from django.forms.models import model_to_dict
 
+import _log_utils.file_logger as FileLogger
+from _log_utils.file_logger import AccessType
+from users import PermissionList, PermissionType
+from users.permissions.decorators import perm_req_log
 
+@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_DRAFT, AccessType.CREATE)
 def create_draft_main_local_page(request : HttpRequest):
-    
     draft_container = FormDraftContainer.objects.create(
         form_owner=request.user,
         form_creator=request.user,
@@ -24,23 +29,32 @@ def create_draft_main_local_page(request : HttpRequest):
         draft_container=draft_container
     )
 
-    # return render(request, "drafts/awis_draft_main_local.html", {
-    #     "draft_container": draft_container,
-    # })
-
     return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
-
+@perm_req_log([PermissionType.VIEW], PermissionList.REQFORM_DRAFT, AccessType.VIEW)
 def view_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
     if draft_container:
+        if request.method == "POST":
+            ownership_form = OwnershipForm(request.POST)
+            if ownership_form.is_valid():
+                cleaned_data = ownership_form.cleaned_data
+                draft_container.form_owner = cleaned_data.get("form_owner")
+                draft_container.save()
+
+                return redirect("forms:view-draft-container", container_id=draft_container.pk)
+
+
+        ownership_form = OwnershipForm()
         return render(request, "drafts/awis_draft_main_local.html", {
             "draft_container": draft_container,
+            "ownership_form": ownership_form,
         })
     
     raise Http404()
 
+@perm_req_log([PermissionType.DELETE], PermissionList.REQFORM_DRAFT, AccessType.DELETE)
 def delete_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -59,27 +73,7 @@ def delete_draft_main_local_page(request : HttpRequest, container_id : int):
 
 #####################################################################
 
-# def create_reqform_draft(request : HttpRequest):
-#     if request.method == "POST":
-#         draft_form = ReqformDraftModelForm(request.POST)
-#         draft_form.save()
-
-#         return redirect("dashboard:dashboard")
-    
-#     preadded_field = {
-#         "court_code": "0000011",
-#         "police_station_id": "TCCT0001",
-#         "req_no_plaintiff": "tcctd20260304002",
-#         "create_uid": request.user.api_uid
-#     }
-
-#     draft_form = ReqformDraftModelForm(initial=preadded_field)
-
-#     return render(request, "warrant_form/awis_draft_step1.html", {
-#         "draft_form": draft_form,
-#     })
-
-
+@perm_req_log([PermissionType.EDIT], PermissionList.REQFORM_DRAFT, AccessType.EDIT)
 def edit_reqform_draft(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -103,6 +97,7 @@ def edit_reqform_draft(request : HttpRequest, container_id : int):
 
 ###############################################################################
 
+@perm_req_log([PermissionType.EDIT], PermissionList.REQFORM_DRAFT, AccessType.EDIT)
 def create_warrant_draft(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -116,6 +111,7 @@ def create_warrant_draft(request : HttpRequest, container_id : int):
     
     raise Http404()
 
+@perm_req_log([PermissionType.EDIT], PermissionList.REQFORM_DRAFT, AccessType.EDIT)
 def edit_warrant_draft(request : HttpRequest, container_id : int, warrant_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -137,6 +133,7 @@ def edit_warrant_draft(request : HttpRequest, container_id : int, warrant_id : i
     
     raise Http404()
 
+@perm_req_log([PermissionType.DELETE, PermissionType.EDIT], PermissionList.REQFORM_DRAFT, AccessType.DELETE)
 def delete_warrant_draft(request : HttpRequest, container_id : int, warrant_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -157,6 +154,7 @@ def delete_warrant_draft(request : HttpRequest, container_id : int, warrant_id :
 
 ###############################################################################
 
+@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
 def create_reqform_from_draft(request : HttpRequest, container_id : int):
     selected_draft = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -164,8 +162,9 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
         if request.method == "POST":
             try:
                 # reqform = AWISFormStep1(selected_draft.convertBacktoFormView())
-                reqform_obj = ReqformDataModel.objects.create(\
-                    **model_to_dict(selected_draft.reqform_draft, exclude=["id", "draft_container"]))
+                reqform_obj = ReqformDataModel.objects.create(
+                    **model_to_dict(selected_draft.reqform_draft, exclude=["id", "draft_container"])
+                )
 
                 for draft in selected_draft.warrant_drafts.all():
                     warrant = WarrantDataModel.objects.create(
@@ -173,7 +172,12 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                     )
                     reqform_obj.warrants.add(warrant)
 
-                FormAwaitingApproval.objects.create(form=reqform_obj, form_owner=request.user, form_creator=request.user, approve_status=1)
+                FormAwaitingApproval.objects.create(
+                    form=reqform_obj, 
+                    form_owner=selected_draft.form_owner, 
+                    form_creator=selected_draft.form_creator, 
+                    approve_status=1
+                )
 
 
                 return redirect("dashboard:dashboard")

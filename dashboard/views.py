@@ -25,6 +25,7 @@ from datetime import datetime
 from django.utils import timezone
 
 from users.permissions.perms import PermissionList, PermissionType, perm_str, perm_str_list
+from users.permissions.decorators import perm_req_log
 
 def getFormAwaitViaReqno(reqno : str):
     return FormData.objects.filter(form__reqno=reqno).first()
@@ -132,7 +133,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
     selected_form = getFormAwaitViaReqno(form_id)
 
     if isNotUserAndNotHaveApprovePerm(selected_form, user_data):
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("ท่านไม่ใช่เจ้าของหรือผู้ร่างแบบฟอร์มดังกล่าว")
 
     reqform = selected_form.form
     # print(selected_form.prepareTextToSpeech())
@@ -187,7 +188,7 @@ def edit_form(request : HttpRequest, form_id : int):
         return Http404()
 
     if isNotUserAndNotHaveApprovePerm(form_await, user_data):
-        return HttpResponseForbidden()
+        return HttpResponseForbidden("ท่านไม่ใช่เจ้าของหรือผู้ร่างแบบฟอร์มดังกล่าว")
     
     if form_await.approve_status == 2:
         return JsonResponse({
@@ -271,19 +272,16 @@ def confirm_approve(request : HttpRequest, form_id : str):
             selected_form.date_approved = timezone.now()
             selected_form.save()
 
-            warrant = selected_form.form.warrants.all().first()
+            for warrant in selected_form.form.warrants.all():
+                VisualWarrantData.objects.create(
+                    warrant=warrant,
+                    judge_name=selected_form.form.judge_name,
+                )
             
             FormSent.objects.create(
                 form=selected_form.form,
                 accept=FormSent.AcceptStatus.WAITING,
             )
-
-            VisualWarrantData.objects.create(
-                warrant=warrant,
-                judge_name=selected_form.form.judge_name,
-            )
-                  
-            # print(f"Result: {json.dumps(dict)}")
 
             FileLogger.createNormalLog(request, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict(),)
 
@@ -405,9 +403,15 @@ def report_update_warrant_arrest_yet(request : HttpRequest, form_reqno_id : str,
     
     return render(request, "dashboard/report_warrant.html", context)
 
-
+@perm_req_log([PermissionType.DELETE], PermissionList.REQFORM_SUBMITTED, AccessType.DELETE)
 def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
     sent_form = FormSent.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
+
+    unneeded_warrants = sent_form.form.warrants.all()
+
+    warrant_results = VisualWarrantData.objects.filter(warrant__in=unneeded_warrants)
+
+    print(warrant_results)
 
     if sent_form.accept == 1:
         return HttpResponseForbidden("Reqform has already been accepted by Court.")
@@ -417,8 +421,11 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
             if settings.ENABLE_API:
                 AWISConnectAPI.unsend_reqform_from_court("v1.1", request, req_no_plaintiff)
 
-                sent_form.delete()
 
+            sent_form.form.delete()
+            for warrant in warrant_results.all():
+                warrant.warrant.delete()
+                
             return JsonResponse({
                 "status": "Success",
                 "affected": str(sent_form),
