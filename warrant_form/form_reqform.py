@@ -23,11 +23,15 @@ class AWISFormStep1(forms.Form):
 
     req_form_number = forms.IntegerField()
     
-    req_day = forms.IntegerField(widget=forms.Select(choices=CentralForm.day_choices))
+    req_day = forms.IntegerField(widget=forms.Select(choices=CentralForm.day_choices, attrs={
+        'class': 'datehalf day',
+    }))
     req_month = forms.IntegerField(widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'class': 'datehalf month',
         'onchange': 'changeDate(req_day, req_month, req_year)'
     }))
     req_year = forms.IntegerField(widget=forms.Select(choices=CentralForm.year_choices, attrs={
+        'class': 'datehalf year',
         'onchange': 'changeDate(req_day, req_month, req_year)'
     }))
 
@@ -75,11 +79,15 @@ class AWISFormStep1(forms.Form):
             }), )
     # scene_date_datehalf = forms.DateField(required=False, ) 
 
-    scene_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    scene_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices, attrs={
+        'class': 'datehalf day',
+    }))
     scene_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'class': 'datehalf month',
         'onchange': 'changeDate(scene_date_day, scene_date_month, scene_date_year)'
     }))
     scene_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices, attrs={
+        'class': 'datehalf year',
         'onchange': 'changeDate(scene_date_day, scene_date_month, scene_date_year)'
     }))
 
@@ -115,11 +123,15 @@ class AWISFormStep1(forms.Form):
 
     #######################
 
-    woa_start_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    woa_start_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices, attrs={
+        'class': 'datehalf day',
+    }))
     woa_start_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'class': 'datehalf month',
         'onchange': 'changeDate(woa_start_date_day, woa_start_date_month, woa_start_date_year)'
     }))
     woa_start_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices, attrs={
+        'class': 'datehalf year',
         'onchange': 'changeDate(woa_start_date_day, woa_start_date_month, woa_start_date_year)'
     }))
 
@@ -127,11 +139,15 @@ class AWISFormStep1(forms.Form):
         'type': 'time',
         })) 
 
-    woa_end_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    woa_end_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices, attrs={
+        'class': 'datehalf day',
+    }))
     woa_end_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'class': 'datehalf month',
         'onchange': 'changeDate(woa_end_date_day, woa_end_date_month, woa_end_date_year)'
     }))
     woa_end_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices, attrs={
+        'class': 'datehalf year',
         'onchange': 'changeDate(woa_end_date_day, woa_end_date_month, woa_end_date_year)'
     }))
 
