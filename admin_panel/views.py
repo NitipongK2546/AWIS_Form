@@ -70,7 +70,10 @@ def admin_select_users(request : HttpRequest):
                 user_data = next((u for u in users if str(u["USR_ID"]) == uid), None)
                 if user_data and not UserAccess.objects.filter(user_id=uid).exists():
                     add_user_to_access(user_data)
-            return redirect("admin_panel:access_list")
+            return render(request, "admin_panel/success.html", {
+                "status": "success"
+            })
+
         
         dept_filter = request.GET.get("dept")
         position_filter = request.GET.get("position")

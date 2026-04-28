@@ -28,7 +28,7 @@
   <button type="submit">Apply Filter</button>
 </form>
 
-<form method="post">
+<form method="post" id="select_users_form">
   {% csrf_token %}
   <table border="1" style="margin: 10 10px">
     <thead>
@@ -56,12 +56,5 @@
       {% endfor %}
     </tbody>
   </table>
-  <button type="submit">Grant Access</button>
+  <button>Grant Access</button>
 </form>
-<form method="post" action="{% url 'admin_panel:add_specific_user' %}">
-  {% csrf_token %}
-  {% comment %}
-  <button type="submit">Add ชลสิทธิ์</button>
-  {% endcomment %}
-</form>
-<a href="{% url 'admin_panel:access_list' %}">Go to Access List</a>

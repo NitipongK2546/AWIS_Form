@@ -247,12 +247,16 @@ def unsend_reqform_from_court(version : str, request : HttpRequest, req_no_plain
     )
     data : dict = response.json()
 
-    message : str = data.get("message")
+    if 200 >= data.get("code") >= 299:
+        return {
+            "result": True,
+            "message": data.get("message")
+        }
 
-    if message:
-        return message
-
-    return False
+    return {
+        "result": False,
+        "message": data.get("message")
+    }
 
 ##############################################################################
 # 9.
@@ -285,48 +289,48 @@ def get_court_list(version : str, request : HttpRequest) -> dict:
 
 ##############################################################################
 # 1.
-def put_update_request_status(version : str, request : HttpRequest, put_data : dict) -> dict:
-    # This one need PUT request
-    # if not get_health_check("v1"):
-    #     return False
+# def put_update_request_status(version : str, request : HttpRequest, put_data : dict) -> dict:
+#     # This one need PUT request
+#     # if not get_health_check("v1"):
+#     #     return False
 
-    base_url = RequestUtils.get_full_url_from_env()
-    parameter = [version, "updatestatusreqwarrant"]
+#     base_url = RequestUtils.get_full_url_from_env()
+#     parameter = [version, "updatestatusreqwarrant"]
 
-    auth_token : str = RequestUtils.check_auth_token(request)
-    response : JsonResponse = RequestUtils.put_request_with_auth(
-        base_url, 
-        parameter_data=parameter, 
-        put_data=put_data, 
-        auth_token=auth_token
-    )
-    data : dict = response.json()
+#     auth_token : str = RequestUtils.check_auth_token(request)
+#     response : JsonResponse = RequestUtils.put_request_with_auth(
+#         base_url, 
+#         parameter_data=parameter, 
+#         put_data=put_data, 
+#         auth_token=auth_token
+#     )
+#     data : dict = response.json()
 
-    if data:
-        return data
+#     if data:
+#         return data
 
-    return False
+#     return False
 
-##############################################################################
-# 2.
-def put_udate_warrant_status(version : str, request : HttpRequest, put_data : dict) -> dict:
-    # This one need PUT request
-    # if not get_health_check("v1"):
-    #     return False
+# ##############################################################################
+# # 2.
+# def put_udate_warrant_status(version : str, request : HttpRequest, put_data : dict) -> dict:
+#     # This one need PUT request
+#     # if not get_health_check("v1"):
+#     #     return False
 
-    base_url = RequestUtils.get_full_url_from_env()
-    parameter = [version, "updatestatuswarrant"]
+#     base_url = RequestUtils.get_full_url_from_env()
+#     parameter = [version, "updatestatuswarrant"]
 
-    auth_token : str = RequestUtils.check_auth_token(request)
-    response : JsonResponse = RequestUtils.put_request_with_auth(
-        base_url, 
-        parameter_data=parameter, 
-        put_data=put_data, 
-        auth_token=auth_token
-    )
-    data : dict = response.json()
+#     auth_token : str = RequestUtils.check_auth_token(request)
+#     response : JsonResponse = RequestUtils.put_request_with_auth(
+#         base_url, 
+#         parameter_data=parameter, 
+#         put_data=put_data, 
+#         auth_token=auth_token
+#     )
+#     data : dict = response.json()
 
-    if data:
-        return data
+#     if data:
+#         return data
 
-    return False
+#     return False

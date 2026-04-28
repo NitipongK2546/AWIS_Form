@@ -1,9 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Draft Step1</title>
+    <script src="{% static 'js/get_cookie.js' %}"></script>
+    <script src="{% static 'js/fetchDistrict.js' %}"></script>
 </head>
 <body>
     <form method="post">
@@ -113,5 +116,16 @@
 
         <button type="submit">Create Draft</button>
     </form>
+
+<script>
+    const req_province = "{{ req_province|escapejs|default:10 }}"
+    const req_district = "{{ req_district|escapejs|default:1001 }}"
+    const req_sub_district = "{{ req_sub_district|escapejs|default:100101 }}"
+    const acc_province = "{{ acc_province|escapejs|default:10 }}"
+    const acc_district = "{{ acc_district|escapejs|default:1001 }}"
+    const acc_sub_district = "{{ acc_sub_district|escapejs|default:100101 }}"
+</script>
+<script src="{% static 'js/draft_reqform/handleDistrict.js' %}"></script>
+<script src="{% static 'js/draft_reqform/idFormat.js' %}" type="module"></script>
 </body>
 </html>

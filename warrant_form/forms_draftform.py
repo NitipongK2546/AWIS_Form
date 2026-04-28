@@ -68,7 +68,25 @@ class ReqformDraftModelForm(forms.ModelForm):
         'class': 'datehalf year',
         'onchange': 'changeDate(woa_end_date_day, woa_end_date_month, woa_end_date_year)'
     }),
-        }
+    "req_sub_district": forms.Select(
+        choices=CentralForm.thai_codes.getSubDistrictChoices()[:5]
+    ),
+    "req_district": forms.Select(
+        choices=CentralForm.thai_codes.getDistrictChoices()[:5]
+    ),
+    "req_province": forms.Select(
+        choices=CentralForm.thai_codes.getProvinceChoices()
+    ),
+    "acc_sub_district": forms.Select(
+        choices=CentralForm.thai_codes.getSubDistrictChoices()[:5]
+    ),
+    "acc_district": forms.Select(
+        choices=CentralForm.thai_codes.getDistrictChoices()[:5]
+    ),
+    "acc_province": forms.Select(
+        choices=CentralForm.thai_codes.getProvinceChoices()
+    ),
+}
 
 class WarrantDraftDataModelForm(forms.ModelForm):
     class Meta:
