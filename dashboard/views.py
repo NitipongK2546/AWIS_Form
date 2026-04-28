@@ -144,13 +144,19 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
     warrants : list[WarrantDataModel] = reqform.warrants.all()
 
     warrant_list = []
+    woa_date_list = []
     for item in warrants:
         dict_item = item.convertBacktoFormView()
         form = ObjWarrantForm(initial=dict_item)
         warrant_list.append(
             form
         )
-
+        
+        woa_date_list.append({
+            "start_date": dict_item.get("woa_start_date"),
+            "end_date": dict_item.get("woa_end_date"),
+        })
+        
     form_data = reqform.convertBacktoFormView()
     
     form = ObjStep1Form(initial=form_data, prefix="main_form")
@@ -167,6 +173,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         "user": request.user,
         "form": form,
         "warrant_list": warrant_list,
+        "woa_list": woa_date_list,
         "disabled": True,
 
         "req_province": form_data.get("req_province"),

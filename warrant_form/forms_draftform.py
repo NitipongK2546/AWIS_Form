@@ -112,7 +112,7 @@ APPOINTMENT_TYPE_CHOICES = [
 class WarrantDraftDataModelForm(forms.ModelForm):
     class Meta:
         model = WarrantDraftDataModel
-        exclude = ["draft_container",]
+        exclude = ["draft_container", "court_name"]
         widgets = {
     "acc_sub_district": forms.Select(
         choices=CentralForm.thai_codes.getSubDistrictChoices()[:5]

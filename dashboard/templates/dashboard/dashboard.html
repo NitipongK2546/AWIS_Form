@@ -25,11 +25,11 @@
         <a href="{% url 'forms:create-draft-container' %}" >สร้างร่าง คำร้องหมายจับ (beta)</a>
         <a href="{% url 'forms:step0' %}" >เพิ่มคำร้องหมายจับ</a>
         {% endif %}
+
+        {% comment %}
         {% if can_approve_form %}
         <a href="{% url 'dashboard:approve_form_page' %}">อนุมัติแบบฟอร์ม</a>
         {% endif %}
-
-        {% comment %}
         <a href="{% url 'api:test:login' %}" >ทดสอบเอา token ใส่คุ้กกี้</a>
         <a href="{% url 'api:test:health' %}" >ทดสอบ HEALTH CHECK</a>
         <a href="{% url 'api:test:check_reqform' %}" >ทดสอบ CHECK REQFORM</a>
@@ -37,6 +37,8 @@
     </div>
 
     <div>
+        {% include 'module/drafts_form_table.html' %}
+        {% include 'module/approve_table.html' %}
         <div class="dashboard-tools">
             <div class="tool-card">
                 <a href="{% url 'dashboard:approve_table_page' %}">
@@ -59,8 +61,6 @@
                 </a>
             </div>
         </div>
-        {% include 'module/drafts_form_table.html' %}
-        {% include 'module/approve_table.html' %}
     </div>
 
 

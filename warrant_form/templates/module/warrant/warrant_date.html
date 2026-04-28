@@ -1,0 +1,23 @@
+{% load thai_locale %}
+
+<div class="warrant_info">
+    <p>
+        <span>ภายในอายุความ </span>
+        <span>{{ form.prescription.value }} ปี</span>
+        <span>นับตั้งแต่วันที่ </span>
+        <span>{{ form.woa_start_date.value| buddhist_date:"j" }} </span>
+        <span>เดือน </span>
+        <span>{{ form.woa_start_date.value| buddhist_date:"F" }} </span>
+        <span>พ.ศ. </span>
+        <span>{{ form.woa_start_date.value| buddhist_date:"Y" }} </span>
+        <span>เพื่อจะได้ </span>
+    </p>
+    <p>
+        <span>ดำเนินการตามกฎหมาย แต่ไม่เกินวันที่</span>
+        <span>{{ form.woa_end_date.value| buddhist_date:"j" }} </span>
+        <span>เดือน </span>
+        <span>{{ form.woa_end_date.value| buddhist_date:"F" }} </span>
+        <span>พ.ศ. </span>
+        <span>{{ form.woa_end_date.value| buddhist_date:"Y" }} </span>
+    </p>
+</div>

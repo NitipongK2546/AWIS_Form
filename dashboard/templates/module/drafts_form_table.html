@@ -17,7 +17,7 @@
         <tbody>
             {% for draft in drafts %}
             <tr>
-                <td>{{  draft.last_edit  }}</td>
+                <td>{{  draft.last_edit|buddhist_date  }}</td>
                 <td>{{  draft.form_creator  }}</td>
                 <td>{{  draft.form_owner  }}</td>
                 <td>

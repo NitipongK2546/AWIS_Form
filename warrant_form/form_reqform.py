@@ -13,7 +13,7 @@ req_case_type_id_choices = [
 
 class AWISFormStep1(forms.Form):
 
-    court_code = forms.CharField(max_length=7, widget=forms.HiddenInput())
+    court_code = forms.CharField(max_length=8, widget=forms.HiddenInput())
     police_station_id = forms.CharField(max_length=8, widget=forms.HiddenInput())
     req_no_plaintiff = forms.CharField(max_length=50, widget=forms.HiddenInput())
     create_uid = forms.IntegerField(widget=forms.HiddenInput())
@@ -99,7 +99,9 @@ class AWISFormStep1(forms.Form):
             }), )
     law = forms.CharField(max_length=200, required=False)
 
-    court_owner_code = forms.CharField(max_length=7, required=False)
+    court_owner_code = forms.ChoiceField(
+        choices=CentralForm.court_codes.getChoices()
+    ),
 
     prescription = forms.IntegerField(required=False, ) # อายุความ ปี
 
@@ -109,7 +111,9 @@ class AWISFormStep1(forms.Form):
     have_req_1 = forms.BooleanField(required=False) 
     have_req_2 = forms.BooleanField(required=False) 
 
-    have_court_code = forms.CharField(max_length=7, required=False) # tb_office court_code
+    have_court_code = forms.ChoiceField(
+        choices=CentralForm.court_codes.getChoices()
+    ),
     have_act = forms.CharField(max_length=400, required=False)
     have_injunc = forms.CharField(max_length=50, required=False)
 
