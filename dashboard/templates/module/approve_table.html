@@ -21,7 +21,7 @@
             {% for form in forms %}
             {% if form.approve_status != 2 %}
             <tr>
-                <td>{{ form.form.reqno }}</td>
+                <td>{{ form.form.getReqno }}</td>
                 <td>{{ form.get_approve_status_display }}</td>
                 <td>{{ form.form_creator }}</td>
                 <td>{{ form.form_owner }}</td>
@@ -34,13 +34,13 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:get_form' form.form.reqno %}">ดูคำร้อง</a> |
-                    <a href="{% url 'dashboard:edit_form' form.form.reqno %}">แก้ไขคำร้อง</a> |
-                    <a href="{% url 'dashboard:delete_form' form.form.reqno %}">ลบคำร้อง</a> 
+                    <a href="{% url 'dashboard:get_form' form.form.getReqno %}">ดูคำร้อง</a> |
+                    <a href="{% url 'dashboard:edit_form' form.form.getReqno %}">แก้ไขคำร้อง</a> |
+                    <a href="{% url 'dashboard:delete_form' form.form.getReqno %}">ลบคำร้อง</a> 
                     {% if can_approve_form %}
                     |
-                    <a href="{% url 'dashboard:confirm_approve' form.form.reqno %}">Approve</a> |
-                    <a href="{% url 'dashboard:confirm_reject' form.form.reqno %}">Reject</a>
+                    <a href="{% url 'dashboard:confirm_approve' form.form.getReqno %}">Approve</a> |
+                    <a href="{% url 'dashboard:confirm_reject' form.form.getReqno %}">Reject</a>
                     {% endif %}
                 </td>
             </tr>

@@ -1,9 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draft Step1</title>
+    <title>Draft Warrant</title>
+    <script src="{% static 'js/get_cookie.js' %}"></script>
+    <script src="{% static 'js/fetchDistrict.js' %}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script type="module">
+    import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 </head>
 <body>
     <form method="post">
@@ -12,5 +20,24 @@
 
         <button type="submit">Create Draft</button>
     </form>
+
+<script>
+    const acc_province = "{{ acc_province|escapejs|default:10 }}"
+    const acc_district = "{{ acc_district|escapejs|default:1001 }}"
+    const acc_sub_district = "{{ acc_sub_district|escapejs|default:100101 }}"
+</script>
+<script src="{% static 'js/draft_warrant/handleDistrict.js' %}"></script>
+<script type="module">
+    import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
+
+    const datetime_elements = document.querySelectorAll(".datetimepicker");
+    flatpickr(datetime_elements, {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i:ss",
+        altInput: true,
+        altFormat: "j F Y H:i น.",
+        locale: Thai,
+    });
+</script>
 </body>
 </html>

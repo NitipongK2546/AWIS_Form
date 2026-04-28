@@ -161,6 +161,10 @@ class WarrantDataModel(models.Model):
         duped_list = ["acc_full_name", ]
         time_split_list = ["woa_date", "appointment_date"]
 
+        dict_main_awis.update({
+            "court_name": self.reqforms.first().getCourtName()
+        })
+
         dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis)
 
         for item in duped_list:

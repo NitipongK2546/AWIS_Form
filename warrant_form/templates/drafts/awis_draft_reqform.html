@@ -4,9 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draft Step1</title>
+    <title>Draft Reqform</title>
     <script src="{% static 'js/get_cookie.js' %}"></script>
     <script src="{% static 'js/fetchDistrict.js' %}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 </head>
 <body>
     <form method="post">
@@ -20,20 +23,16 @@
 
         <div>
             <h2>หมายเลข Reqform ต่าง ๆ</h2>
-            <p>reqno:              {{ draft_form.reqno }}</p>
+            <!-- <p>reqno:              {{ draft_form.reqno }}</p> -->
             <p>req_form_number:    {{ draft_form.req_form_number }}</p>
-            <p>req_day:            {{ draft_form.req_day  }}</p>
-            <p>req_month:          {{ draft_form.req_month }}</p>
-            <p>req_year:           {{ draft_form.req_year }}</p>
+            <p>วันที่แบบคำร้อง: {{ draft_form.req_day  }}{{ draft_form.req_month }}{{ draft_form.req_year }}</p>
             <p>req_case_type_id:   {{ draft_form.req_case_type_id }}</p>
             <p>req_no_plaintiff:   {{ draft_form.req_no_plaintiff }}</p>
         </div>
 
         <div>
             <h2>ศาล และ ตำรวจ</h2>
-            <p>court_name:         {{ draft_form.court_name }}</p>
             <p>court_code:         {{ draft_form.court_code }}</p>
-            <p>judge_name:         {{ draft_form.judge_name }}</p>
             <p>police_station_id:  {{ draft_form.police_station_id }}</p>
         </div>
 
@@ -126,6 +125,17 @@
     const acc_sub_district = "{{ acc_sub_district|escapejs|default:100101 }}"
 </script>
 <script src="{% static 'js/draft_reqform/handleDistrict.js' %}"></script>
-<script src="{% static 'js/draft_reqform/idFormat.js' %}" type="module"></script>
+<script type="module">
+    import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
+
+    const datetime_elements = document.querySelectorAll(".datetimepicker");
+    flatpickr(datetime_elements, {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i:ss",
+        altInput: true,
+        altFormat: "j F Y H:i น.",
+        locale: Thai,
+    });
+</script>
 </body>
 </html>

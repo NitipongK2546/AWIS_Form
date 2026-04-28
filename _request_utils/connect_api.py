@@ -8,6 +8,7 @@ import _request_utils.prepared_requests as RequestUtils
 import os
 
 from requests import Response
+from requests import exceptions as RequestsException
 # import base64
 
 # Some special case for status code.
@@ -33,7 +34,7 @@ def toDjangoJsonResponse(response : Response) -> JsonResponse:
 def get_health_check(version : str) -> bool:
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "healthcheck"]
-
+    
     response : Response = RequestUtils.get_request(
         base_url, 
         parameter_data=parameter
@@ -50,9 +51,9 @@ def get_health_check(version : str) -> bool:
 
 ##############################################################################
 # 2. 
-def post_login_authorize(version : str, request : HttpRequest, storage : str = "cookies"):
+def post_login_authorize(version : str, request : HttpRequest, storage : str = None):
     """
-    Token จะถูกใส่ลงไปใน Session/Cookie
+    Token จะถุก Return กลับมาทันที เว้นว่าใส่ Storage ซึ่ง Token จะถูกใส่ลงไปใน Session/Cookie
     """
 
     # if not get_health_check("v1"):
@@ -89,13 +90,15 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
 
     response : JsonResponse = JsonResponse({
         "status": 200,
-        "token": data.get("token")
+        "message": "Success"
     }, status=200)    
     
     if storage == "session":
         request.session["bearer_token"] = data.get("token")
-    else:
+    elif storage == "cookies":
         response.set_cookie("bearer_token", data.get("token"), max_age=1800, httponly=True)
+    else:
+        return str(data.get("token", ""))
     
     return response
 
@@ -103,13 +106,10 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = "
 # 3. 
 def post_send_req_form(version : str, request : HttpRequest, post_data : dict):
 
-    # if not get_health_check("v1"):
-    #     return False
-
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "reqforms"]
 
-    auth_token : str = RequestUtils.check_auth_token(request)
+    auth_token : str = post_login_authorize("v1.1", request, None)
     response : Response = RequestUtils.post_request_with_auth(
         base_url, 
         parameter_data=parameter, 
@@ -138,7 +138,7 @@ def get_req_form_status(version : str, request : HttpRequest, req_no_plaintiff :
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "reqforms", req_no_plaintiff]
 
-    auth_token : str = RequestUtils.check_auth_token(request)
+    auth_token : str = post_login_authorize("v1.1", request, None)
     response : Response = RequestUtils.get_request_with_auth(
         base_url, 
         parameter_data=parameter, 
@@ -162,7 +162,7 @@ def get_search_warrants(version : str, request : HttpRequest, query_data : dict)
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "warrants", "search"]
 
-    auth_token : str = RequestUtils.check_auth_token(request)
+    auth_token : str = post_login_authorize("v1.1", request, None)
     response : HttpResponse = RequestUtils.get_request_with_auth(
         base_url, 
         parameter_data=parameter, 
@@ -189,7 +189,7 @@ def put_report_warrant_result(version : str, request : HttpRequest, put_data : d
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "arrests"]
 
-    auth_token : str = RequestUtils.check_auth_token(request)
+    auth_token : str = post_login_authorize("v1.1", request, None)
     response : JsonResponse = RequestUtils.put_request_with_auth(
         base_url, 
         parameter_data=parameter, 
@@ -216,7 +216,7 @@ def get_court_order_and_warrant(version : str, request : HttpRequest, plaintiff_
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "warrants", "search_file", plaintiff_code]
 
-    auth_token : str = RequestUtils.check_auth_token(request)
+    auth_token : str = post_login_authorize("v1.1", request, None)
     response : JsonResponse = RequestUtils.get_request_with_auth(
         base_url, 
         parameter_data=parameter,
@@ -239,7 +239,7 @@ def unsend_reqform_from_court(version : str, request : HttpRequest, req_no_plain
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "court", req_no_plaintiff]
 
-    auth_token : str = RequestUtils.check_auth_token(request)
+    auth_token : str = post_login_authorize("v1.1", request, None)
     response : JsonResponse = RequestUtils.delete_request_with_auth(
         base_url, 
         parameter_data=parameter,
@@ -268,7 +268,7 @@ def get_court_list(version : str, request : HttpRequest) -> dict:
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "court"]
 
-    auth_token : str = RequestUtils.check_auth_token(request)
+    auth_token : str = post_login_authorize("v1.1", request, None)
     response : JsonResponse = RequestUtils.get_request_with_auth(
         base_url, 
         parameter_data=parameter,
@@ -279,7 +279,7 @@ def get_court_list(version : str, request : HttpRequest) -> dict:
     if data:
         return data
     
-    return False
+    return {}
 
 #######################################################################
 #

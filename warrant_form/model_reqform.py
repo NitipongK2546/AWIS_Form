@@ -23,6 +23,11 @@ from warrant_form.model_warrant import WarrantDataModel
 #     12:("ธ.ค.", "มกราคม"),
 # }
 
+case_type_text = {
+    1: "จ",
+    2: "ยจ",
+}
+
 THAI_MONTHS = {
     1: "มกราคม",
     2: "กุมภาพันธ์",
@@ -54,8 +59,7 @@ class ReqformDataModel(models.Model):
 
     req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) 
 
-    court_name = models.CharField(max_length=250, blank=True)
-    court_code = models.CharField(max_length=7, verbose_name="รหัส")
+    court_code = models.CharField(max_length=8, choices=CentralForm.court_codes.getChoices())
 
     judge_name = models.CharField(max_length=250, blank=True)
 
@@ -166,8 +170,21 @@ class ReqformDataModel(models.Model):
         return {
             "type": ["warrant_form", "ReqformDataModel"],
             "id": self.pk,
-            "reqno": self.reqno
+            "reqno": self.getReqno()
         }
+    
+    def getCourtName(self) -> str:
+        return CentralForm.court_codes.getValueOf(self.court_code)
+    
+    def getReqno(self):
+        if self.reqno:
+            return self.reqno
+        
+        self.reqno = f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year}"
+        
+        self.save()
+        
+        return self.reqno
     
     # def getReqno(self):
     #     if self.reqno:
@@ -310,6 +327,12 @@ class ReqformDataModel(models.Model):
 
         dict_main_awis = CentralForm.createDupe(duped_list, dict_main_awis)
         dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis)
+
+
+        dict_main_awis.update({
+            "court_name_1": CentralForm.court_codes.getValueOf(self.court_code),
+            "court_name_2": CentralForm.court_codes.getValueOf(self.court_code)
+        })
 
         if self.cause_type_id:
             dict_main_awis.update({f"cause_type_id_{self.cause_type_id}": 1})

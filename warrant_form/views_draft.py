@@ -164,7 +164,7 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             try:
                 # reqform = AWISFormStep1(selected_draft.convertBacktoFormView())
                 reqform_obj = ReqformDataModel.objects.create(
-                    **model_to_dict(selected_draft.reqform_draft, exclude=["id", "draft_container"])
+                    **selected_draft.reqform_draft.toRealReqform()
                 )
 
                 for draft in selected_draft.warrant_drafts.all():
