@@ -39,20 +39,20 @@
     <div class="dashboard-tools">
         <div class="tool-card">
             <a href="{% url 'dashboard:approve_table_page' %}">
-                <img src="{% static 'admin_panel/images/admin-built-in.png' %}" alt="Admin-Build-in">
+                <img src="{% static 'admin_panel/images/admin-built-in.png' %}" alt="Approve">
                 <h3>สถานะคำร้องที่รอการอนุมัติเพื่อส่งให้กับศาล</h3>
             </a>
         </div>
 
         <div class="tool-card">
-        <a href="{% url 'admin_panel:access_list' %}">
-                <img src="{% static 'admin_panel/images/user-permission.png' %}" alt="Access-List">
+        <a href="{% url 'dashboard:accept_table_page' %}">
+                <img src="{% static 'admin_panel/images/user-permission.png' %}" alt="Accept">
                 <h3>ตารางสถานะคำร้องที่ส่งให้ศาลสำเร็จแล้ว</h3>
             </a>
         </div>
 
         <div class="tool-card">
-            <a href="{% url 'admin_panel:access_list' %}">
+            <a href="{% url 'dashboard:warrant_status_page' %}">
                 <img src="{% static 'admin_panel/images/user-permission.png' %}" alt="Access-List">
                 <h3>ตารางสถานะของหมายศาล</h3>
             </a>
@@ -60,7 +60,7 @@
         
     </div>
     {% comment %} {% include 'module/approve_table.html' %}
-
+ 
     {% include 'module/accept_table.html' %}
 
     {% include 'module/warrant_status_table.html' %} {% endcomment %}

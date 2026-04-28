@@ -340,6 +340,12 @@ def delete_form(request : HttpRequest, form_id : str):
 def approve_table_page(request):
     return render(request, "dashboard/approve_table_page.html")
 
+def accept_table_page(request):
+    return render(request, "dashboard/accept_table_page.html")
+
+def warrant_status_page(request):
+    return render(request, "dashboard/warrant_status_page.html")
+
 @login_required
 def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {
