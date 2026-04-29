@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from django.http import HttpRequest, JsonResponse, Http404
+from django.http import HttpRequest, JsonResponse, Http404, HttpResponseBadRequest
 from .model_draftform import ReqformDraftDataModel, WarrantDraftDataModel, FormDraftContainer
 from warrant_form.forms import ReqformDraftModelForm, FormDraftContainerModelForm, WarrantDraftDataModelForm
 
@@ -27,6 +27,7 @@ def create_draft_main_local_page(request : HttpRequest):
 
     ReqformDraftDataModel.objects.create(
         draft_container=draft_container,
+        req_form_number=ReqformDataModel.objects.count(),
         create_uid=request.user.api_uid
     )
 
@@ -168,7 +169,17 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
     if selected_draft:
         if request.method == "POST":
             try:
-                # reqform = AWISFormStep1(selected_draft.convertBacktoFormView())
+                existing_reqform = ReqformDataModel.objects.filter(
+                    reqno=selected_draft.reqform_draft.getReqno()
+                ).union(
+                    ReqformDataModel.objects.filter(
+                        reqno=selected_draft.reqform_draft.req_no_plaintiff
+                    )
+                ).first()
+
+                if existing_reqform:
+                    return HttpResponseBadRequest("รหัสของฟอร์มคำร้องซ้ำกับคำร้องที่เคยมีอยู่")
+
                 reqform_obj = ReqformDataModel.objects.create(
                     **selected_draft.reqform_draft.toRealReqform()
                 )
@@ -188,6 +199,7 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
 
 
                 return redirect("dashboard:dashboard")
+            
             except Exception as e:
                 if reqform_obj:
                     reqform_obj.delete()

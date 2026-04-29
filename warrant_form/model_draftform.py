@@ -59,7 +59,7 @@ class ReqformDraftDataModel(models.Model):
     req_month = models.PositiveIntegerField(blank=True, null=True, )
     req_year = models.PositiveIntegerField(blank=True, null=True, )
 
-    req_case_type_id = models.IntegerField(blank=True, null=True, choices=ReqCaseTypeIDChoices) 
+    req_case_type_id = models.IntegerField(blank=True, null=True,) 
 
     court_code = models.CharField(blank=True, max_length=8)
 
@@ -157,14 +157,16 @@ class ReqformDraftDataModel(models.Model):
     acc_tel = models.CharField(blank=True, max_length=20, )
 
     def __str__(self):
-
-        return f"(pk: {self.pk}, reqno: {self.reqno})"
+        return f"(แบบคำร้อง #{self.req_form_number}, ผู้ต้องสงสัย: {self.accused or '---'}, req_no_plaintiff: {self.req_no_plaintiff or '---'}, )"
+    
+    def getReqno(self): 
+        return f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year + 543}"
     
     def toRealReqform(self) -> dict[str,]:
         
         dict_main_awis = model_to_dict(self, exclude=["id", "draft_container"])
         dict_main_awis.update({
-            "reqno": f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year + 543}"
+            "reqno": self.getReqno()
         })
 
         return dict_main_awis
@@ -215,6 +217,11 @@ WOA_TYPE_CHOICES = [
     (2, "47 ทวิ"),
 ]
 
+woa_type_dict = {
+    1: "47",
+    2: "47 ทวิ"
+}
+
 # หมายเรียกที่ติดไปด้วย
 class WarrantDraftDataModel(models.Model):
     class AppointmentTypeChoices(models.IntegerChoices):
@@ -264,4 +271,4 @@ class WarrantDraftDataModel(models.Model):
     court_name = models.CharField(max_length=250, blank=True)
 
     def __str__(self):
-        return f"(woa_no: {self.woa_no}, woa_type: {self.woa_type})"
+        return f"(หมายจับ: {woa_type_dict.get(self.woa_type)}, นัดหมาย: {self.get_appointment_type_display()})"

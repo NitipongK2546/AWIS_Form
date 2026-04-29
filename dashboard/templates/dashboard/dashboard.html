@@ -21,8 +21,20 @@
         </p>
     </div>
     <div class="header-bar">
+        <div class="tool-card">
+            <a href="{% url 'dashboard:approve_table_page' %}">
+                <img src="{% static 'dashboard/images/pending-approval.svg' %}" alt="Approve">
+                <h3>สถานะคำร้องที่รอการอนุมัติเพื่อส่งให้กับศาล</h3>
+            </a>
+        </div>
+    
+        <div class="tool-card">
+        <a href="{% url 'dashboard:accept_table_page' %}">
+                <img src="{% static 'dashboard/images/approved-form.png' %}" alt="Accept">
+                <h3>ตารางสถานะคำร้องที่ส่งให้ศาลสำเร็จแล้ว</h3>
+            </a>
+        </div>
         {% if can_create_form %}
-        <a href="{% url 'forms:create-draft-container' %}" >สร้างร่าง คำร้องหมายจับ (beta)</a>
         <a href="{% url 'forms:step0' %}" >เพิ่มคำร้องหมายจับ</a>
         {% endif %}
 
@@ -36,20 +48,9 @@
         {% endcomment %}
     </div>
     <div>
+        {% include 'module/drafts_form_table.html' %}
         <div class="dashboard-tools">
-            <div class="tool-card">
-                <a href="{% url 'dashboard:approve_table_page' %}">
-                    <img src="{% static 'dashboard/images/pending-approval.svg' %}" alt="Approve">
-                    <h3>สถานะคำร้องที่รอการอนุมัติเพื่อส่งให้กับศาล</h3>
-                </a>
-            </div>
-        
-            <div class="tool-card">
-            <a href="{% url 'dashboard:accept_table_page' %}">
-                    <img src="{% static 'dashboard/images/approved-form.png' %}" alt="Accept">
-                    <h3>ตารางสถานะคำร้องที่ส่งให้ศาลสำเร็จแล้ว</h3>
-                </a>
-            </div>
+            
             
             {% comment %}
             <div class="tool-card">
@@ -60,7 +61,7 @@
             </div>
             {% endcomment %}
         </div>
-        {% include 'module/drafts_form_table.html' %}
+        
     </div>
 
     {% comment %} 
