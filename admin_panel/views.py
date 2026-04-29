@@ -80,7 +80,7 @@ def admin_select_users(request : HttpRequest):
         id_filter = request.GET.get("id")
         name_filter = request.GET.get("name")
         
-        if dept_filter:
+        if dept_filter: 
             users = [u for u in users if dept_filter.lower() in u["Dept"].lower()]
         
         if position_filter:

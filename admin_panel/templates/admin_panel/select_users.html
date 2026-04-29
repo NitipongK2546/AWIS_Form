@@ -1,3 +1,6 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'admin_panel/css/select_users.css' %}">
+
 <h1>Select ERP Users</h1>
 
 {% if success %}
@@ -10,9 +13,7 @@
 
 {% endif %}
 
-<a href="{% url 'admin_panel:collections' %}">Back to Collections</a>
-
-<form method="get">
+<form method="get" >
   <label for="dept">Filter by ID:</label>
   <input type="text" name="id" placeholder="Filter by ID" value="{{ request.GET.id }}">
   
@@ -25,7 +26,7 @@
   <label for="position">Filter by Position:</label>
   <input type="text" name="position" id="position" placeholder="Filter by Position" value="{{ request.GET.position }}">
   
-  <button type="submit">Apply Filter</button>
+  <button type="submit" style="margin-top: 5px;">Apply Filter</button>
 </form>
 
 <form method="post" id="select_users_form">

@@ -1,3 +1,5 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'admin_panel/css/select_users.css' %}">
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,7 +45,7 @@
 <div style="display: flexbox;">
   <div>
     <h1>Granted Access Users</h1>
-    <a href="{% url 'admin_panel:collections' %}">Back to Collections</a>
+    <a class="btn_red" href="{% url 'admin_panel:collections' %}">Back</a>
     <table border="1" style="margin: 10 10px">
       <tr>
         <th>User ID</th>
@@ -59,19 +61,19 @@
         <td>{{ user.department }}</td>
         <td>{{ user.get_role_display }}</td>
         <td>
-          <a href="{% url 'admin_panel:update_role' user.user_id 10 %}">
+          <a class="btn" style="background-color: #3498db;" href="{% url 'admin_panel:update_role' user.user_id 10 %}">
             เจ้าหน้าที่
           </a> |
-          <a href="{% url 'admin_panel:update_role' user.user_id 11 %}">
+          <a class="btn" style="background-color: #21cc0a;" href="{% url 'admin_panel:update_role' user.user_id 11 %}">
             ผู้อนุมัติ
           </a> |
-          <a href="{% url 'admin_panel:update_role' user.user_id 12 %}">
+          <a class="btn" style="background-color: #dbb732;" href="{% url 'admin_panel:update_role' user.user_id 12 %}">
             ผู้ดูแลระดับฝ่าย
           </a> |
-          <a href="{% url 'admin_panel:update_role' user.user_id 99 %}">
+          <a class="btn" style="background-color: #32cddb;" href="{% url 'admin_panel:update_role' user.user_id 99 %}">
             ผู้ดูแลระบบ
           </a> |
-          <a href="{% url 'admin_panel:delete_access' user.user_id %}" 
+          <a class="btn" style="background-color: #e01717;" href="{% url 'admin_panel:delete_access' user.user_id %}" 
             onclick="return confirm('Are you sure you want to remove access for {{ user.fullname }}?');">
             Delete
           </a>
@@ -86,8 +88,38 @@
   </div>
 </div>
 
+<div id="popup" class="popup" style="display: none;">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup()">&times;</span>
+      <div id="loading" style="display: none; text-align: center; align-content: center;">
+      </div>
+      <iframe id="popup-frame" src="" frameborder="0">
+        Waiting...
+      </iframe>
+    </div>
+  </div>
+</div>
+
 <!-- <a href="">Go to Select Users</a> -->
 <button onclick="openPopup()">Add Access List</button>
+
+<script>
+function openPopup() {
+  document.getElementById("popup").style.display = "block";
+  document.getElementById("popup-frame").src = "{% url 'admin_panel:select_users' %}";
+  document.getElementById("loading").style.display = "block";
+}
+
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+  document.getElementById("popup-frame").src = "";
+  document.getElementById("loading").style.display = "none";
+  window.location.reload();
+}
+</script>
+
+<!-- <a href="">Go to Select Users</a> -->
+<!-- <button onclick="openPopup()">Add Access List</button>
 
 <script>
 function openPopup() {
@@ -100,6 +132,6 @@ function openPopup() {
       }
   }, 500);
 }
-</script>
+</script> -->
 </body>
 </html>
