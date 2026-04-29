@@ -6,8 +6,8 @@ from django.conf import settings
 
 from warrant_form.forms import WarrantForm, AWISFormStep1, DisabledFormStep1, DisabledWarrantForm
 
-from dashboard.models import FormAwaitingApproval as FormData
-from dashboard.models import VisualReqformData as FormSent
+from dashboard.models import FormAwaitingApproval 
+from dashboard.models import VisualReqformData
 from dashboard.warrant_wrapper import VisualWarrantData
 
 from warrant_form.model_reqform import ReqformDataModel, WarrantDataModel
@@ -28,9 +28,9 @@ from users.permissions.perms import PermissionList, PermissionType, perm_str, pe
 from users.permissions.decorators import perm_req_log
 
 def getFormAwaitViaReqno(reqno : str):
-    return FormData.objects.filter(form__reqno=reqno).first()
+    return FormAwaitingApproval.objects.filter(form__reqno=reqno).first()
 
-def isNotUserAndNotHaveApprovePerm(form : FormData, user_data : UserDataModel):
+def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : UserDataModel):
 
     is_not_user = not (user_data in (form.form_creator, form.form_owner))
 
@@ -49,58 +49,61 @@ def index(request : HttpRequest):
 @login_required
 def dashboard(request : HttpRequest):
 
-    # exportLogAsFile()
+    written_draft = FormDraftContainer.objects.filter(form_creator=request.user)
+    owned_draft = FormDraftContainer.objects.filter(form_owner=request.user)
+    all_drafts = written_draft.union(owned_draft)
 
-    all_drafts = FormDraftContainer.objects.all()
+    written_form = FormAwaitingApproval.objects.filter(form_creator=request.user)
+    owned_form = FormAwaitingApproval.objects.filter(form_owner=request.user)
+    form_awaiting_approval = written_form.union(owned_form)
+    
+    # form_sent = VisualReqformData.objects.all()
+    # warrants : list[VisualWarrantData] = VisualWarrantData.objects.all()
 
-    waiting_approval_forms = FormData.objects.all()
-    form_sent = FormSent.objects.all()
-    warrants : list[VisualWarrantData] = VisualWarrantData.objects.all()
 
-    # print(form_sent)
+    # output_list = []
+    # for obj in form_sent:
+    #     obj.form.getReqno()
+    #     data_dict = {
+    #         "id": obj.form.req_form_number,
+    #         "recive_date": convert_time(obj.recive_date),
+    #         "accept": obj.get_accept_display,
+    #         "accept_date": convert_time(obj.accept_date),
+    #         "req_no_plaintiff": obj.getReqNoPlaintiff(),
+    #         "reqno": obj.getReqNo(),
+    #     }
 
-    output_list = []
-    for obj in form_sent:
-        data_dict = {
-            "id": obj.form.req_form_number,
-            "recive_date": convert_time(obj.recive_date),
-            "accept": obj.get_accept_display,
-            "accept_date": convert_time(obj.accept_date),
-            "req_no_plaintiff": obj.getReqNoPlaintiff(),
-            "reqno": obj.getReqNo(),
-        }
+    #     output_list.append(data_dict)
 
-        output_list.append(data_dict)
+    # warrants_list = []
+    # for warrant_wrap in warrants:
+    #     warrant_data = warrant_wrap.warrant
 
-    warrants_list = []
-    for warrant_wrap in warrants:
-        warrant_data = warrant_wrap.warrant
+    #     data_dict = {
+    #         "court_injunction": warrant_wrap.get_court_injunction_display, 
+    #         "reqno": warrant_data.reqforms.all().first().reqno,
+    #         #"woa_no": f"{warrant_data.woa_no}/{warrant_data.woa_date.year + 543}",
+    #         "woa_no": f"{warrant_data.woa_no}",
+    #         "woa_year": warrant_data.woa_date.year + 543,
+    #         "woa_type": f"หมายจับ {warrant_data.get_woa_type_text()}",
+    #         "woa_refno": warrant_data.woa_refno,
+    #         "judge_name": warrant_wrap.judge_name,
+    #         "injunction_date": convert_time(warrant_wrap.injunction_date),
+    #         "file_path": warrant_wrap.file_path,
+    #         "because": warrant_wrap.because,
 
-        data_dict = {
-            "court_injunction": warrant_wrap.get_court_injunction_display, 
-            "reqno": warrant_data.reqforms.all().first().reqno,
-            #"woa_no": f"{warrant_data.woa_no}/{warrant_data.woa_date.year + 543}",
-            "woa_no": f"{warrant_data.woa_no}",
-            "woa_year": warrant_data.woa_date.year + 543,
-            "woa_type": f"หมายจับ {warrant_data.get_woa_type_text()}",
-            "woa_refno": warrant_data.woa_refno,
-            "judge_name": warrant_wrap.judge_name,
-            "injunction_date": convert_time(warrant_wrap.injunction_date),
-            "file_path": warrant_wrap.file_path,
-            "because": warrant_wrap.because,
+    #         "woa_type_int": warrant_data.woa_type,
+    #         "court_injunction_int": warrant_wrap.court_injunction, 
+    #     }
 
-            "woa_type_int": warrant_data.woa_type,
-            "court_injunction_int": warrant_wrap.court_injunction, 
-        }
-
-        warrants_list.append(data_dict)
+    #     warrants_list.append(data_dict)
 
     context = {
         "user": request.user,
         "drafts": all_drafts,
-        "forms": waiting_approval_forms,
-        "forms_sent": output_list,
-        "warrants": warrants_list,
+        "forms": form_awaiting_approval,
+        # "forms_sent": output_list,
+        # "warrants": warrants_list,
     }
 
     if request.user.has_perms(
@@ -141,13 +144,19 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
     warrants : list[WarrantDataModel] = reqform.warrants.all()
 
     warrant_list = []
+    woa_date_list = []
     for item in warrants:
         dict_item = item.convertBacktoFormView()
         form = ObjWarrantForm(initial=dict_item)
         warrant_list.append(
             form
         )
-
+        
+        woa_date_list.append({
+            "start_date": dict_item.get("woa_start_date"),
+            "end_date": dict_item.get("woa_end_date"),
+        })
+        
     form_data = reqform.convertBacktoFormView()
     
     form = ObjStep1Form(initial=form_data, prefix="main_form")
@@ -164,6 +173,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         "user": request.user,
         "form": form,
         "warrant_list": warrant_list,
+        "woa_list": woa_date_list,
         "disabled": True,
 
         "req_province": form_data.get("req_province"),
@@ -249,7 +259,7 @@ def edit_form(request : HttpRequest, form_id : int):
 @permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def approve_form_page(request : HttpRequest):
 
-    all_forms = FormData.objects.all()
+    all_forms = FormAwaitingApproval.objects.all()
 
     return render(request, "dashboard/approve_page.html", {
         "user": request.user,
@@ -268,7 +278,7 @@ def confirm_approve(request : HttpRequest, form_id : str):
 
             # print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False))
 
-            selected_form.approve_status = FormData.ApprovalStatus.APPROVED
+            selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.APPROVED
             selected_form.date_approved = timezone.now()
             selected_form.save()
 
@@ -278,9 +288,9 @@ def confirm_approve(request : HttpRequest, form_id : str):
                     judge_name=selected_form.form.judge_name,
                 )
             
-            FormSent.objects.create(
+            VisualReqformData.objects.create(
                 form=selected_form.form,
-                accept=FormSent.AcceptStatus.WAITING,
+                accept=VisualReqformData.AcceptStatus.WAITING,
             )
 
             FileLogger.createNormalLog(request, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict(),)
@@ -301,7 +311,7 @@ def confirm_reject(request : HttpRequest, form_id : str):
     selected_form = getFormAwaitViaReqno(form_id)
 
     if request.method == "POST":
-        selected_form.approve_status = FormData.ApprovalStatus.REJECTED
+        selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.REJECTED
         selected_form.save()
 
         FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
@@ -414,7 +424,7 @@ def report_update_warrant_arrest_yet(request : HttpRequest, form_reqno_id : str,
 
 @perm_req_log([PermissionType.DELETE], PermissionList.REQFORM_SUBMITTED, AccessType.DELETE)
 def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
-    sent_form = FormSent.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
+    sent_form = VisualReqformData.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
 
     unneeded_warrants = sent_form.form.warrants.all()
 
@@ -429,7 +439,6 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
         try:
             if settings.ENABLE_API:
                 AWISConnectAPI.unsend_reqform_from_court("v1.1", request, req_no_plaintiff)
-
 
             sent_form.form.delete()
             for warrant in warrant_results.all():

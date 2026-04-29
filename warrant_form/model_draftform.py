@@ -22,6 +22,16 @@ THAI_MONTHS = {
     12:"มกราคม",
 }
 
+case_type_text = {
+    1: "จ",
+    2: "ยจ",
+}
+
+class AccountCardTypeChoices(models.IntegerChoices):
+    THAI_ID = (1, "เลขประจำตัวประชาชน")
+    PASSPORT = (2, "เลขหนังสือเดินทาง")
+    NON_THAI_ID = (3, "เลขคนซึ่งไม่มีสัญชาติไทย")
+
 class FormDraftContainer(models.Model):
     last_edit = models.DateTimeField(auto_now=True)
 
@@ -40,7 +50,7 @@ class ReqformDraftDataModel(models.Model):
         GENERAL = (1, "ทั่วไป") # จ.
         DRUGS = (2, "ยาเสพติด") # ยจ.
     
-    reqno = models.CharField(blank=True, null=True, max_length=50,  unique=True)
+    reqno = models.CharField(blank=True, max_length=50,)
     # เป็นการผสมกันระหว่าง case_type_id, req_form_number, และ req_year
 
     req_form_number = models.IntegerField(blank=True, null=True, )
@@ -51,38 +61,35 @@ class ReqformDraftDataModel(models.Model):
 
     req_case_type_id = models.IntegerField(blank=True, null=True, choices=ReqCaseTypeIDChoices) 
 
-    court_name = models.CharField(blank=True, null=True, max_length=250, )
-    court_code = models.CharField(blank=True, null=True, max_length=7, verbose_name="รหัสศาล")
+    court_code = models.CharField(blank=True, max_length=8)
 
-    judge_name = models.CharField(blank=True, null=True, max_length=250, )
+    police_station_id = models.CharField(blank=True, max_length=8)
+    req_no_plaintiff = models.CharField(blank=True, max_length=50)
 
-    police_station_id = models.CharField(blank=True, null=True, max_length=8)
-    req_no_plaintiff = models.CharField(blank=True, null=True, max_length=50)
-
-    plaintiff = models.CharField(blank=True, null=True, max_length=400)
-    accused = models.CharField(blank=True, null=True, max_length=400)
+    plaintiff = models.CharField(blank=True, max_length=400)
+    accused = models.CharField(blank=True, max_length=400)
     
-    req_name = models.CharField(blank=True, null=True, max_length=300)
-    req_pos = models.CharField(blank=True, null=True, max_length=400)
+    req_name = models.CharField(blank=True, max_length=300)
+    req_pos = models.CharField(blank=True, max_length=400)
     req_age = models.PositiveIntegerField(blank=True, null=True, )
 
-    req_office = models.CharField(blank=True, null=True, max_length=300)
-    req_sub_district = models.CharField(blank=True, null=True, max_length=6) # tb_sub_district / sub_district_code
-    req_district = models.CharField(blank=True, null=True, max_length=4)
-    req_province = models.CharField(blank=True, null=True, max_length=2)
+    req_office = models.CharField(blank=True, max_length=300)
+    req_sub_district = models.CharField(blank=True, max_length=6) # tb_sub_district / sub_district_code
+    req_district = models.CharField(blank=True, max_length=4)
+    req_province = models.CharField(blank=True, max_length=2)
 
-    req_tel = models.CharField(blank=True, null=True, max_length=50)
+    req_tel = models.CharField(blank=True, max_length=50)
 
     # Start of a few unrequired field.
     # cause_type_id 
     cause_type_id = models.IntegerField(blank=True, null=True,  )
-    cause_text = models.CharField(blank=True, null=True, max_length=500, )
+    cause_text = models.CharField(blank=True, max_length=500, )
 
-    charge = models.CharField(blank=True, null=True, max_length=50, )
+    charge = models.CharField(blank=True, max_length=50, )
     charge_type_1 = models.BooleanField(default=False) 
     charge_type_2 = models.BooleanField(default=False)
 
-    scene = models.CharField(blank=True, null=True, max_length=300, )
+    scene = models.CharField(blank=True, max_length=300, )
     # scene_date_datehalf = models.DateField(blank=True, null=True,  ) 
 
     class SceneDateMonthChoices(models.IntegerChoices):
@@ -102,56 +109,65 @@ class ReqformDraftDataModel(models.Model):
     scene_date = models.DateTimeField(blank=True, null=True,  ) 
     # scene_date = models.CharField(blank=True, null=True, max_length=19, ) 
 
-    act = models.CharField(blank=True, null=True, max_length=500, verbose_name="มีพฤติการกระทำความผิด", )
-    law = models.CharField(blank=True, null=True, max_length=200, verbose_name="ตามกฎหมาย", )
+    act = models.CharField(blank=True, max_length=500, verbose_name="มีพฤติการกระทำความผิด", )
+    law = models.CharField(blank=True, max_length=200, verbose_name="ตามกฎหมาย", )
 
-    court_owner_code = models.CharField(blank=True, null=True, max_length=7, verbose_name="ซึ่งเป็นคดีที่อยู่ในอำนาจศาล", )
+    court_owner_code = models.CharField(blank=True, max_length=7, verbose_name="ซึ่งเป็นคดีที่อยู่ในอำนาจศาล", )
 
     prescription = models.IntegerField(blank=True, null=True,  ) # อายุความ ปี
 
-    agent_name = models.CharField(blank=True, null=True, max_length=400, )
-    agent_pos = models.CharField(blank=True, null=True, max_length=400, )
+    agent_name = models.CharField(blank=True, max_length=400, )
+    agent_pos = models.CharField(blank=True, max_length=400, )
 
     have_req = models.IntegerField(blank=True, null=True,  )
 
-    have_court_code = models.CharField(blank=True, null=True, max_length=7, ) # tb_office court_code
-    have_act = models.CharField(blank=True, null=True, max_length=400, )
-    have_injunc = models.CharField(blank=True, null=True, max_length=50, )
+    have_court_code = models.CharField(blank=True, max_length=7, ) # tb_office court_code
+    have_act = models.CharField(blank=True, max_length=400, )
+    have_injunc = models.CharField(blank=True, max_length=50, )
 
-    composer_name = models.CharField(blank=True, null=True, max_length=200, )
-    composer_position = models.CharField(blank=True, null=True, max_length=200, )
-    writer_name = models.CharField(blank=True, null=True, max_length=200, )
-    write_position = models.CharField(blank=True, null=True, max_length=200, )
+    composer_name = models.CharField(blank=True, max_length=200, )
+    composer_position = models.CharField(blank=True, max_length=200, )
+    writer_name = models.CharField(blank=True, max_length=200, )
+    write_position = models.CharField(blank=True, max_length=200, )
 
     create_uid = models.IntegerField(blank=True, null=True, )
 
-    ref_no = models.CharField(blank=True, null=True, max_length=50, )
+    ref_no = models.CharField(blank=True, max_length=50, )
 
     woa_start_date = models.DateTimeField(blank=True, null=True,  )
     woa_end_date = models.DateTimeField(blank=True, null=True,  )
 
     #####################################################################3
     # WARRANTS AUTO-FILL SECTION
-    acc_full_name = models.CharField(blank=True, null=True, max_length=250)
-    acc_card_type = models.IntegerField(blank=True, null=True,  )
-    acc_card_id = models.CharField(blank=True, null=True, max_length=20)
+    acc_full_name = models.CharField(blank=True, max_length=250)
+    acc_card_type = models.IntegerField(blank=True, null=True, choices=AccountCardTypeChoices)
+    acc_card_id = models.CharField(blank=True, max_length=20)
     acc_age = models.IntegerField(blank=True, null=True,  )
     acc_origin = models.IntegerField(blank=True, null=True,  )
     acc_nation = models.IntegerField(blank=True, null=True,  )
-    acc_occupation = models.CharField(blank=True, null=True, max_length=100, )
-    acc_addno = models.CharField(blank=True, null=True, max_length=50, )
-    acc_vilno = models.CharField(blank=True, null=True, max_length=50, )
-    acc_road = models.CharField(blank=True, null=True, max_length=100, )
-    acc_soi = models.CharField(blank=True, null=True, max_length=100, )
-    acc_near = models.CharField(blank=True, null=True, max_length=200, )
-    acc_sub_district = models.CharField(blank=True, null=True, max_length=6, )
-    acc_district = models.CharField(blank=True, null=True, max_length=4, )
-    acc_province = models.CharField(blank=True, null=True, max_length=2, )
-    acc_tel = models.CharField(blank=True, null=True, max_length=20, )
+    acc_occupation = models.CharField(blank=True, max_length=100, )
+    acc_addno = models.CharField(blank=True, max_length=50, )
+    acc_vilno = models.CharField(blank=True, max_length=50, )
+    acc_road = models.CharField(blank=True, max_length=100, )
+    acc_soi = models.CharField(blank=True, max_length=100, )
+    acc_near = models.CharField(blank=True, max_length=200, )
+    acc_sub_district = models.CharField(blank=True, max_length=6, )
+    acc_district = models.CharField(blank=True, max_length=4, )
+    acc_province = models.CharField(blank=True, max_length=2, )
+    acc_tel = models.CharField(blank=True, max_length=20, )
 
     def __str__(self):
 
         return f"(pk: {self.pk}, reqno: {self.reqno})"
+    
+    def toRealReqform(self) -> dict[str,]:
+        
+        dict_main_awis = model_to_dict(self, exclude=["id", "draft_container"])
+        dict_main_awis.update({
+            "reqno": f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year}"
+        })
+
+        return dict_main_awis
     
     def convertBacktoFormView(self) -> dict[str,]:
         dict_main_awis = model_to_dict(self)
@@ -184,11 +200,6 @@ class WarrantDraftDataModel(models.Model):
         PRESCRIPTION = (1, "กำหนดอายุความ")
         APPOINTMENT = (2, "กำหนดนัด")
 
-    class AccountCardTypeChoices(models.IntegerChoices):
-        THAI_ID = (1, "เลขประจำตัวประชาชน")
-        PASSPORT = (2, "เลขหนังสือเดินทาง")
-        NON_THAI_ID = (3, "เลขคนซึ่งไม่มีสัญชาติไทย")
-
     draft_container = models.ForeignKey(FormDraftContainer, on_delete=models.CASCADE, related_name="warrant_drafts")
 
     woa_date = models.DateTimeField(blank=True, null=True)
@@ -208,7 +219,7 @@ class WarrantDraftDataModel(models.Model):
 
     acc_full_name = models.CharField(max_length=250, blank=True)
     acc_card_type = models.IntegerField(choices=AccountCardTypeChoices, blank=True, null=True)
-    acc_card_id = models.CharField(max_length=20, blank=True)
+    acc_card_id = models.CharField(max_length=20, blank=True,)
     acc_origin = models.IntegerField(blank=True, null=True) 
     acc_nation = models.IntegerField(blank=True, null=True) 
     acc_occupation = models.CharField(max_length=100, blank=True)

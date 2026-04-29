@@ -22,7 +22,7 @@
             <tr>
                 <!-- <td>{{ form.id }}</td> -->
                 <td>{{ form.req_no_plaintiff }}</td>
-                <td>{{ form.reqno }}</td>
+                <td>{{ form.getReqno }}</td>
                 <td>{% if form.recive_date %}
                         {{ form.recive_date | buddhist_date}}
                     {% else %}
@@ -37,7 +37,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:get_form' form.reqno %}">ดูคำร้อง</a>
+                    <a href="{% url 'dashboard:get_form' form.getReqno %}">ดูคำร้อง</a>
                     <a href="{% url 'dashboard:delete_sent_reqform' form.req_no_plaintiff %}">ยกเลิกการส่งคำร้อง</a>
                 </td>
             </tr>

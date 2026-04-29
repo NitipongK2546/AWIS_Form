@@ -1,4 +1,4 @@
-from warrant_form.code_handler import ThaiCountryAreaCode, CountryNationalityCode
+from warrant_form.code_handler import ThaiCountryAreaCode, CountryNationalityCode, CourtCodeList
 import datetime
 from django import forms
 from django.utils import timezone
@@ -7,6 +7,9 @@ CURRENT_TIMEZONE = timezone.get_current_timezone()
 
 today_year = datetime.date.today().year
 year_choices = [(year, year + 543) for year in range(1970, today_year + 1)]
+
+year_choices_extended = [(year, year + 543) for year in range(1970, today_year + 50)]
+
 day_choices = [(day, day) for day in range(1, 31 + 1)]
 month_choices = [
     (1, "มกราคม"),
@@ -25,6 +28,8 @@ month_choices = [
 thai_codes = ThaiCountryAreaCode()
 
 nation_codes = CountryNationalityCode()
+
+court_codes = CourtCodeList()
 
 def reattachDateTime(current_dict : dict, field : str):
         

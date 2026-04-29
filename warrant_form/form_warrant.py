@@ -125,6 +125,10 @@ class WarrantForm(forms.Form):
     woa_refno = forms.CharField(max_length=16, required=False)
     woa_type = forms.IntegerField(widget=forms.Select(choices=WOA_TYPE_CHOICES))
 
+    woa_start_date = forms.DateTimeField(required=False)
+    woa_end_date = forms.DateTimeField(required=False)
+    prescription = forms.IntegerField(required=False)
+
     def cleanDateTimeFields(self, current_dict : dict):
 
         included_fields = ["woa_date", "appointment_date"]

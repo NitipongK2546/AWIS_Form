@@ -86,8 +86,9 @@
       {% endfor %}
     </table>
   </div>
+</div>
 
-  <div id="popup" class="popup" style="display: none;">
+<div id="popup" class="popup" style="display: none;">
     <div class="popup-content">
       <span class="close" onclick="closePopup()">&times;</span>
       <div id="loading" style="display: none; text-align: center; align-content: center;">
@@ -113,8 +114,24 @@ function closePopup() {
   document.getElementById("popup").style.display = "none";
   document.getElementById("popup-frame").src = "";
   document.getElementById("loading").style.display = "none";
+  window.location.reload();
 }
 </script>
 
+<!-- <a href="">Go to Select Users</a> -->
+<!-- <button onclick="openPopup()">Add Access List</button>
+
+<script>
+function openPopup() {
+  let popup = window.open("{% url 'admin_panel:select_users' %}", 'Popup', 'width=600, height=400');
+
+  const timer = setInterval(() => {
+      if (popup.closed) {
+          clearInterval(timer);
+          window.location.reload();
+      }
+  }, 500);
+}
+</script> -->
 </body>
 </html>

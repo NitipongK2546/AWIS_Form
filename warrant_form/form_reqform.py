@@ -13,7 +13,7 @@ req_case_type_id_choices = [
 
 class AWISFormStep1(forms.Form):
 
-    court_code = forms.CharField(max_length=7, widget=forms.HiddenInput())
+    court_code = forms.CharField(max_length=8, widget=forms.HiddenInput())
     police_station_id = forms.CharField(max_length=8, widget=forms.HiddenInput())
     req_no_plaintiff = forms.CharField(max_length=50, widget=forms.HiddenInput())
     create_uid = forms.IntegerField(widget=forms.HiddenInput())
@@ -23,11 +23,15 @@ class AWISFormStep1(forms.Form):
 
     req_form_number = forms.IntegerField()
     
-    req_day = forms.IntegerField(widget=forms.Select(choices=CentralForm.day_choices))
+    req_day = forms.IntegerField(widget=forms.Select(choices=CentralForm.day_choices, attrs={
+        'class': 'datehalf day',
+    }))
     req_month = forms.IntegerField(widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'class': 'datehalf month',
         'onchange': 'changeDate(req_day, req_month, req_year)'
     }))
     req_year = forms.IntegerField(widget=forms.Select(choices=CentralForm.year_choices, attrs={
+        'class': 'datehalf year',
         'onchange': 'changeDate(req_day, req_month, req_year)'
     }))
 
@@ -75,11 +79,15 @@ class AWISFormStep1(forms.Form):
             }), )
     # scene_date_datehalf = forms.DateField(required=False, ) 
 
-    scene_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    scene_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices, attrs={
+        'class': 'datehalf day',
+    }))
     scene_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'class': 'datehalf month',
         'onchange': 'changeDate(scene_date_day, scene_date_month, scene_date_year)'
     }))
     scene_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices, attrs={
+        'class': 'datehalf year',
         'onchange': 'changeDate(scene_date_day, scene_date_month, scene_date_year)'
     }))
 
@@ -91,7 +99,9 @@ class AWISFormStep1(forms.Form):
             }), )
     law = forms.CharField(max_length=200, required=False)
 
-    court_owner_code = forms.CharField(max_length=7, required=False)
+    court_owner_code = forms.ChoiceField(
+        choices=CentralForm.court_codes.getChoices()
+    ),
 
     prescription = forms.IntegerField(required=False, ) # อายุความ ปี
 
@@ -101,7 +111,9 @@ class AWISFormStep1(forms.Form):
     have_req_1 = forms.BooleanField(required=False) 
     have_req_2 = forms.BooleanField(required=False) 
 
-    have_court_code = forms.CharField(max_length=7, required=False) # tb_office court_code
+    have_court_code = forms.ChoiceField(
+        choices=CentralForm.court_codes.getChoices()
+    ),
     have_act = forms.CharField(max_length=400, required=False)
     have_injunc = forms.CharField(max_length=50, required=False)
 
@@ -115,11 +127,15 @@ class AWISFormStep1(forms.Form):
 
     #######################
 
-    woa_start_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    woa_start_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices, attrs={
+        'class': 'datehalf day',
+    }))
     woa_start_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'class': 'datehalf month',
         'onchange': 'changeDate(woa_start_date_day, woa_start_date_month, woa_start_date_year)'
     }))
-    woa_start_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices, attrs={
+    woa_start_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices_extended, attrs={
+        'class': 'datehalf year',
         'onchange': 'changeDate(woa_start_date_day, woa_start_date_month, woa_start_date_year)'
     }))
 
@@ -127,11 +143,15 @@ class AWISFormStep1(forms.Form):
         'type': 'time',
         })) 
 
-    woa_end_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices))
+    woa_end_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices, attrs={
+        'class': 'datehalf day',
+    }))
     woa_end_date_month = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.month_choices, attrs={
+        'class': 'datehalf month',
         'onchange': 'changeDate(woa_end_date_day, woa_end_date_month, woa_end_date_year)'
     }))
-    woa_end_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices, attrs={
+    woa_end_date_year = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.year_choices_extended, attrs={
+        'class': 'datehalf year',
         'onchange': 'changeDate(woa_end_date_day, woa_end_date_month, woa_end_date_year)'
     }))
 

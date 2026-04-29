@@ -92,6 +92,49 @@ class CountryNationalityCode:
     def getValueOf(self, code : int):
         str_code = str(code)
         return self.code_dict.get(str_code, "")
+    
+
+#############################################################################
+
+import json
+
+def setUpCode() -> list:
+    JSON_PATH = "warrant_form/resources/court_code.json"
+
+    with open(JSON_PATH, mode='r', newline='', encoding='utf-8') as json_file:
+        court_codes : dict = json.load(json_file)
+
+    court_data_list = []
+
+    courts : list[dict] = court_codes.get("courts")
+
+    for court in courts:
+        court_data_list.append(
+            (court.get("court_code"), court.get("name"))  
+        )
+
+    return court_data_list
+
+class CourtCodeList:
+    courts = []
+    code_dict = {}
+
+    def __init__(self):
+        self.courts = setUpCode()
+        self.code_dict = self.getCodeDict()
+
+    def getChoices(self):
+        return self.courts
+    
+    def getCodeDict(self):
+        output_dict = {code:name for code, name in self.courts}
+        return output_dict
+    
+    def getValueOf(self, code : int):
+        str_code = str(code)
+        return self.code_dict.get(str_code, "")
+
+    
 
 if __name__ == "__main__":
     test = ThaiCountryAreaCode()

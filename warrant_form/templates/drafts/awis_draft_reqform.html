@@ -1,0 +1,143 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draft Reqform</title>
+    <script src="{% static 'js/get_cookie.js' %}"></script>
+    <script src="{% static 'js/fetchDistrict.js' %}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script type="module">
+    import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+
+        <div>
+            <h2>หมายเลขสำคัญ?</h2>
+            <p>create_uid:     {{ draft_form.create_uid }}</p>
+            <p>ref_no:         {{ draft_form.ref_no }}</p>
+        </div>
+
+        <div>
+            <h2>หมายเลข Reqform ต่าง ๆ</h2>
+            <!-- <p>reqno:              {{ draft_form.reqno }}</p> -->
+            <p>req_form_number:    {{ draft_form.req_form_number }}</p>
+            <p>วันที่แบบคำร้อง: {{ draft_form.req_day  }}{{ draft_form.req_month }}{{ draft_form.req_year }}</p>
+            <p>req_case_type_id:   {{ draft_form.req_case_type_id }}</p>
+            <p>req_no_plaintiff:   {{ draft_form.req_no_plaintiff }}</p>
+        </div>
+
+        <div>
+            <h2>ศาล และ ตำรวจ</h2>
+            <p>court_code:         {{ draft_form.court_code }}</p>
+            <p>police_station_id:  {{ draft_form.police_station_id }}</p>
+        </div>
+
+        <div>
+            <h2>plaintiff และ accused</h2>
+            <p>plaintiff:    {{ draft_form.plaintiff }}</p>
+            <p>accused:            {{ draft_form.accused }}</p>
+        </div>
+
+        <div>
+            <h2>req info</h2>
+            <p>req_name:           {{ draft_form.req_name }}</p>
+            <p>req_pos:            {{ draft_form.req_pos }}</p>
+            <p>req_office:         {{ draft_form.req_office }}</p>
+            <p>req_age:            {{ draft_form.req_age }}</p>
+            <p>req_sub_district:   {{ draft_form.req_sub_district }}</p>
+            <p>req_district:       {{ draft_form.req_district }}</p>
+            <p>req_province:       {{ draft_form.req_province }}</p>
+            <p>req_tel:            {{ draft_form.req_tel }}</p>
+        </div>
+
+        <div>
+            <h2>acc info</h2>
+            <p>acc_full_name:      {{ draft_form.acc_full_name }}</p>
+            <p>acc_card_type:      {{ draft_form.acc_card_type }}</p>
+            <p>acc_card_id:        {{ draft_form.acc_card_id }}</p>
+            <p>acc_age:            {{ draft_form.acc_age }}</p>
+            <p>acc_origin:         {{ draft_form.acc_origin }}</p>
+            <p>acc_nation:         {{ draft_form.acc_nation }}</p>
+            <p>acc_occupation:     {{ draft_form.acc_occupation }}</p>
+            <p>acc_addno:          {{ draft_form.acc_addno }}</p>
+            <p>acc_vilno:          {{ draft_form.acc_vilno }}</p>
+            <p>acc_road:           {{ draft_form.acc_road }}</p>
+            <p>acc_soi:            {{ draft_form.acc_soi }}</p>
+            <p>acc_near:           {{ draft_form.acc_near }}</p>
+            <p>acc_sub_district:   {{ draft_form.acc_sub_district }}</p>
+            <p>acc_district:       {{ draft_form.acc_district }}</p>
+            <p>acc_province:       {{ draft_form.acc_province }}</p>
+            <p>acc_tel:            {{ draft_form.acc_tel }}</p>
+        </div>
+
+        <div>
+            <h2>สื่งที่เกิดขึ้น</h2>
+            <p>cause_type_id:      {{ draft_form.cause_type_id }}</p>
+            <p>cause_text:         {{ draft_form.cause_text }}</p>
+            <p>charge:             {{ draft_form.charge }}</p>
+            <p>charge_type_1:      {{ draft_form.charge_type_1 }}</p>
+            <p>charge_type_2:      {{ draft_form.charge_type_2 }}</p>
+            <p>scene:              {{ draft_form.scene }}</p>
+            <p>scene_date:         {{ draft_form.scene_date }}</p>
+        </div>
+
+        <div>
+            <h2>ความผิด</h2>
+            <p>act:               {{ draft_form.act }}</p>
+            <p>law:               {{ draft_form.law }}</p>
+            <p>court_owner_code:  {{ draft_form.court_owner_code }}</p>
+            <p>prescription:      {{ draft_form.prescription }}</p>
+            <p>woa_start_date:    {{ draft_form.woa_start_date }}</p>
+            <p>woa_end_date:      {{ draft_form.woa_end_date }}</p>
+        </div>
+
+        <div>
+            <h2>ผู้เขียนต่าง ๆ </h2>
+            <p>agent_name:         {{ draft_form.agent_name }} </p>
+            <p>agent_pos:          {{ draft_form.agent_pos }}</p>
+            <p>writer_name:        {{ draft_form.writer_name }}  </p>
+            <p>write_position:     {{ draft_form.write_position }}     </p>
+            <p>composer_name:      {{ draft_form.composer_name }}    </p>
+            <p>composer_position:  {{ draft_form.composer_position }}        </p>
+        </div>
+
+        <div>
+            <h2>เพิ่มเติม</h2>
+            <p>have_act:          {{ draft_form.have_act }}</p>
+            <p>have_req:          {{ draft_form.have_req }}</p>
+            <p>have_court_code:   {{ draft_form.have_court_code }}</p>
+            <p>have_injunc:       {{ draft_form.have_injunc }}</p>
+        </div>
+
+        <button type="submit">Create Draft</button>
+    </form>
+
+<script>
+    const req_province = "{{ req_province|escapejs|default:10 }}"
+    const req_district = "{{ req_district|escapejs|default:1001 }}"
+    const req_sub_district = "{{ req_sub_district|escapejs|default:100101 }}"
+    const acc_province = "{{ acc_province|escapejs|default:10 }}"
+    const acc_district = "{{ acc_district|escapejs|default:1001 }}"
+    const acc_sub_district = "{{ acc_sub_district|escapejs|default:100101 }}"
+</script>
+<script src="{% static 'js/draft_reqform/handleDistrict.js' %}"></script>
+<script type="module">
+    import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
+
+    const datetime_elements = document.querySelectorAll(".datetimepicker");
+    flatpickr(datetime_elements, {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i:ss",
+        altInput: true,
+        altFormat: "j F Y H:i น.",
+        locale: Thai,
+    });
+</script>
+</body>
+</html>

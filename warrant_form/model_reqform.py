@@ -23,6 +23,11 @@ from warrant_form.model_warrant import WarrantDataModel
 #     12:("ธ.ค.", "มกราคม"),
 # }
 
+case_type_text = {
+    1: "จ",
+    2: "ยจ",
+}
+
 THAI_MONTHS = {
     1: "มกราคม",
     2: "กุมภาพันธ์",
@@ -54,8 +59,7 @@ class ReqformDataModel(models.Model):
 
     req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) 
 
-    court_name = models.CharField(max_length=250, blank=True)
-    court_code = models.CharField(max_length=7, verbose_name="รหัส")
+    court_code = models.CharField(max_length=8, choices=CentralForm.court_codes.getChoices())
 
     judge_name = models.CharField(max_length=250, blank=True)
 
@@ -166,8 +170,36 @@ class ReqformDataModel(models.Model):
         return {
             "type": ["warrant_form", "ReqformDataModel"],
             "id": self.pk,
-            "reqno": self.reqno
+            "reqno": self.getReqno()
         }
+    
+    def getCourtName(self) -> str:
+        return CentralForm.court_codes.getValueOf(self.court_code)
+    
+    def getReqno(self):
+        if self.reqno:
+            return self.reqno
+        
+        self.reqno = f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year}"
+        
+        self.save()
+        
+        return self.reqno
+    
+    # def getReqno(self):
+    #     if self.reqno:
+    #         return self.reqno
+        
+    #     case_type_text = {
+    #         1: "จ.",
+    #         2: "ยจ.",
+    #     }
+    #     buddhist_year = self.req_year + 543
+    #     reqno = f"{case_type_text.get(self.req_case_type_id)}{self.req_form_number}/{buddhist_year}"
+
+    #     self.reqno = reqno
+
+    #     return reqno
 
 
     def toDocumentCompatibleDict(self) -> dict[str, object]:
@@ -296,6 +328,12 @@ class ReqformDataModel(models.Model):
         dict_main_awis = CentralForm.createDupe(duped_list, dict_main_awis)
         dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis)
 
+
+        dict_main_awis.update({
+            "court_name_1": CentralForm.court_codes.getValueOf(self.court_code),
+            "court_name_2": CentralForm.court_codes.getValueOf(self.court_code)
+        })
+
         if self.cause_type_id:
             dict_main_awis.update({f"cause_type_id_{self.cause_type_id}": 1})
             dict_main_awis.update({f"cause_text_{self.cause_type_id}": self.cause_text})
@@ -309,99 +347,100 @@ class ReqformDataModel(models.Model):
     
     def prepareTextToSpeech(self):
         prepared_text = \
-f"""
-คำร้องขอออกหมายจับที่ {self.req_form_number}\n
-วันที่ {self.req_day} เดือน {THAI_MONTHS.get(self.req_month)} ปี พ.ศ. {self.req_year + 543}\n
-ผู้ร้อง: {self.plaintiff},
+        "ทดสอบ"
+# f"""
+# คำร้องขอออกหมายจับที่ {self.req_form_number}\n
+# วันที่ {self.req_day} เดือน {THAI_MONTHS.get(self.req_month)} ปี พ.ศ. {self.req_year + 543}\n
+# ผู้ร้อง: {self.plaintiff},
 
-ข้าพเจ้า {self.req_name},
-ตำแหน่ง {self.req_pos},
-อายุ {self.req_age} ปี,
-อาชีพ พนักงานของรัฐ,
-สถานที่ทำงาน {self.req_office},
-จังหวัด {CentralForm.thai_codes.getValueOfCode(self.req_province)},
-{"อำเภอ" if int(self.req_province) != 10 else "เขต"} {CentralForm.thai_codes.getValueOfCode(self.req_district)},
-{"ตำบล" if int(self.req_province) != 10 else "แขวง"} {CentralForm.thai_codes.getValueOfCode(self.req_sub_district)},
-โทรศัพท์ {self.req_tel},
+# ข้าพเจ้า {self.req_name},
+# ตำแหน่ง {self.req_pos},
+# อายุ {self.req_age} ปี,
+# อาชีพ พนักงานของรัฐ,
+# สถานที่ทำงาน {self.req_office},
+# จังหวัด {CentralForm.thai_codes.getValueOfCode(self.req_province)},
+# {"อำเภอ" if int(self.req_province) != 10 else "เขต"} {CentralForm.thai_codes.getValueOfCode(self.req_district)},
+# {"ตำบล" if int(self.req_province) != 10 else "แขวง"} {CentralForm.thai_codes.getValueOfCode(self.req_sub_district)},
+# โทรศัพท์ {self.req_tel},
 
-ขอยื่นคำร้องขอออกหมายจับยื่นต่อศาล,
-ดังมีข้อความที่จะกล่าวดังต่อไปนี้,
+# ขอยื่นคำร้องขอออกหมายจับยื่นต่อศาล,
+# ดังมีข้อความที่จะกล่าวดังต่อไปนี้,
 
-ข้อ 1. 
-ด้วย {assemble_cause(self.cause_type_id, self.cause_text)}
+# ข้อ 1. 
+# ด้วย {assemble_cause(self.cause_type_id, self.cause_text)}
 
-ว่า {self.acc_full_name},
-เลขบัตรประชาชน {self.acc_card_id},
+# ว่า {self.acc_full_name},
+# เลขบัตรประชาชน {self.acc_card_id},
 
-อายุ {self.acc_age},
-เชื้อชาติ {CentralForm.nation_codes.getValueOf(self.acc_origin)},
-สัญชาติ {CentralForm.nation_codes.getValueOf(self.acc_nation)},
-อาชีพ {self.acc_occupation},
+# อายุ {self.acc_age},
+# เชื้อชาติ {CentralForm.nation_codes.getValueOf(self.acc_origin)},
+# สัญชาติ {CentralForm.nation_codes.getValueOf(self.acc_nation)},
+# อาชีพ {self.acc_occupation},
 
-อยู่บ้านเลขที่ {self.acc_addno},
-หมู่ที่ {self.acc_vilno},
-ถนน {self.acc_road},
+# อยู่บ้านเลขที่ {self.acc_addno},
+# หมู่ที่ {self.acc_vilno},
+# ถนน {self.acc_road},
 
-ตรอก ซอย {self.acc_soi},
-ใกล้เคียง {self.acc_near},
-จังหวัด {CentralForm.thai_codes.getValueOfCode(self.acc_province)},
-{"อำเภอ" if int(self.acc_province) != 10 else "เขต"} {CentralForm.thai_codes.getValueOfCode(self.acc_district)},
-{"ตำบล" if int(self.acc_province) != 10 else "แขวง"} {CentralForm.thai_codes.getValueOfCode(self.acc_sub_district)},
+# ตรอก ซอย {self.acc_soi},
+# ใกล้เคียง {self.acc_near},
+# จังหวัด {CentralForm.thai_codes.getValueOfCode(self.acc_province)},
+# {"อำเภอ" if self.acc_province and int(self.acc_province) != 10 else "เขต"} {CentralForm.thai_codes.getValueOfCode(self.acc_district)},
+# {"ตำบล" if self.acc_province and int(self.acc_province) != 10 else "แขวง"} {CentralForm.thai_codes.getValueOfCode(self.acc_sub_district)},
 
-โทรศัพท์ {self.acc_tel}
+# โทรศัพท์ {self.acc_tel}
 
-{"ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน3ปี" if self.charge_type_1 else ""}
+# {"ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน3ปี" if self.charge_type_1 else ""}
 
-{"ได้หรือน่าจะได้กระทำความผิดอาญา, และน่าจะหลบหนี, หรือจะไปยุ่งเหยิงกับพยานหลักฐาน, หรือก่ออันตรายประการอื่น" if self.charge_type_2 else ""}
+# {"ได้หรือน่าจะได้กระทำความผิดอาญา, และน่าจะหลบหนี, หรือจะไปยุ่งเหยิงกับพยานหลักฐาน, หรือก่ออันตรายประการอื่น" if self.charge_type_2 else ""}
 
-เหตุเกิดที่ {self.scene}
+# เหตุเกิดที่ {self.scene}
 
-เมื่อวันที่ {self.scene_date.day} เดือน {THAI_MONTHS.get(self.scene_date.month)} พ.ศ. {self.scene_date.year + 543} เวลา {self.scene_date.time()} น.
+# เมื่อวันที่ {self.scene_date.day} เดือน {THAI_MONTHS.get(self.scene_date.month)} พ.ศ. {self.scene_date.year + 543} เวลา {self.scene_date.time()} น.
 
-มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับ คือ {self.act},
-เป็นการกระทำความผิดฐาน {self.charge},
-ตามกฎหมาย {self.law},
-รายละเอียดข้อมูลและพยานหลักฐาน ปรากฎตามที่เอกสารที่แนบมาพร้อมนี้
+# มีพฤติการณ์กระทำความผิดที่เกี่ยวกับเหตุออกหมายจับ คือ {self.act},
+# เป็นการกระทำความผิดฐาน {self.charge},
+# ตามกฎหมาย {self.law},
+# รายละเอียดข้อมูลและพยานหลักฐาน ปรากฎตามที่เอกสารที่แนบมาพร้อมนี้
 
-ข้อ 2.,
-ผู้ร้องประสงค์จะทำการจับกุม{self.accused}
+# ข้อ 2.,
+# ผู้ร้องประสงค์จะทำการจับกุม{self.accused}
 
-จึงขอให้ศาลออกหมายจับ 
-{self.accused} มาดำเนินคดี
+# จึงขอให้ศาลออกหมายจับ 
+# {self.accused} มาดำเนินคดี
 
-นับตั้งแต่วันที่ 
-{self.woa_start_date.day},
-{THAI_MONTHS.get(self.woa_start_date.month)},
-{self.woa_start_date.year + 543},
-{self.woa_start_date.time()} น.,
-แต่ไม่เกิน 
-{self.woa_end_date.day},
-{THAI_MONTHS.get(self.woa_end_date.month)},
-{self.woa_end_date.year + 543},
-{self.woa_end_date.time()} น.,
-ในการยื่นคำร้องนี้ ผู้ร้องได้มอบหมายให้ {self.agent_name},
-ตำแหน่ง {self.agent_pos},
+# นับตั้งแต่วันที่ 
+# {self.woa_start_date.day},
+# {THAI_MONTHS.get(self.woa_start_date.month)},
+# {self.woa_start_date.year + 543},
+# {self.woa_start_date.time()} น.,
+# แต่ไม่เกิน 
+# {self.woa_end_date.day},
+# {THAI_MONTHS.get(self.woa_end_date.month)},
+# {self.woa_end_date.year + 543},
+# {self.woa_end_date.time()} น.,
+# ในการยื่นคำร้องนี้ ผู้ร้องได้มอบหมายให้ {self.agent_name},
+# ตำแหน่ง {self.agent_pos},
 
-ซึ่งเป็นผู้ใต้บังคับบัญชา, เป็นผู้นำคำร้องมายื่นต่อศาล
-และหากศาลเรียกสอบถามเมื่อใด, ผู้ร้องพร้อมจะมาให้ศาลสอบในทันที
+# ซึ่งเป็นผู้ใต้บังคับบัญชา, เป็นผู้นำคำร้องมายื่นต่อศาล
+# และหากศาลเรียกสอบถามเมื่อใด, ผู้ร้องพร้อมจะมาให้ศาลสอบในทันที
 
-ผู้ร้อง {"เคย" if self.have_req else "ไม่เคย"} ร้องขอให้ศาล {self.have_court_code} ออกหมายจับบุคคลดังกล่าว 
+# ผู้ร้อง {"เคย" if self.have_req else "ไม่เคย"} ร้องขอให้ศาล {self.have_court_code} ออกหมายจับบุคคลดังกล่าว 
 
-{
-f"""
-โดยอาศัยเหตุแห่งการร้องขอเดียวกันนี้ หรือเหตุอื่น (ระบุ)
-{self.have_act}
-และศาลสั่ง 
-{self.have_injunc}
-"""
+# {
+# f"""
+# โดยอาศัยเหตุแห่งการร้องขอเดียวกันนี้ หรือเหตุอื่น (ระบุ)
+# {self.have_act}
+# และศาลสั่ง 
+# {self.have_injunc}
+# """
 
-if self.have_req else ""
-}
+# if self.have_req else ""
+# }
 
-ควรมิควรแล้วแต่จะโปรด.
-{self.req_name}.
-ผู้ร้อง
-"""
+# ควรมิควรแล้วแต่จะโปรด.
+# {self.req_name}.
+# ผู้ร้อง
+# """
 
         return prepared_text
         

@@ -87,13 +87,13 @@ def _send_request_receive_response(packed_data : tuple, request_type : str) -> H
             response : JsonResponse = REQUEST_DICT.get(request_type)(final_url, headers=dict_header, json=dict_data, timeout=8)
         else:
             raise Exception("Unsupported Method.")
-
-        # Get response data either way.
-        # Return it as Dictionary.
-        # data : dict = response.json()
+        
         return response
-    except ConnectionError:
-        raise ConnectionError
+    
+    except requests.exceptions.HTTPError as e: 
+        raise requests.exceptions.HTTPError(str(e))
+    except ConnectionError as e:
+        raise ConnectionError(str(e))
     except Exception as e:
         raise Exception("The API request has failed.")
     
