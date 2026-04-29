@@ -112,7 +112,7 @@ APPOINTMENT_TYPE_CHOICES = [
 class WarrantDraftDataModelForm(forms.ModelForm):
     class Meta:
         model = WarrantDraftDataModel
-        exclude = ["draft_container", "court_name"]
+        exclude = ["draft_container", "court_name", "woa_refno", "plaintiff"]
         widgets = {
     "acc_sub_district": forms.Select(
         choices=CentralForm.thai_codes.getSubDistrictChoices()[:5]
@@ -122,6 +122,12 @@ class WarrantDraftDataModelForm(forms.ModelForm):
     ),
     "acc_province": forms.Select(
         choices=CentralForm.thai_codes.getProvinceChoices()
+    ),
+    "acc_origin": forms.Select(
+        choices=CentralForm.nation_codes.getChoices()
+    ),
+    "acc_nation": forms.Select(
+        choices=CentralForm.nation_codes.getChoices()
     ),
     "woa_date": forms.DateTimeInput(attrs={
         'class': 'datetimepicker',

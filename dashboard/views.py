@@ -53,57 +53,9 @@ def dashboard(request : HttpRequest):
     owned_draft = FormDraftContainer.objects.filter(form_owner=request.user)
     all_drafts = written_draft.union(owned_draft)
 
-    written_form = FormAwaitingApproval.objects.filter(form_creator=request.user)
-    owned_form = FormAwaitingApproval.objects.filter(form_owner=request.user)
-    form_awaiting_approval = written_form.union(owned_form)
-    
-    # form_sent = VisualReqformData.objects.all()
-    # warrants : list[VisualWarrantData] = VisualWarrantData.objects.all()
-
-
-    # output_list = []
-    # for obj in form_sent:
-    #     obj.form.getReqno()
-    #     data_dict = {
-    #         "id": obj.form.req_form_number,
-    #         "recive_date": convert_time(obj.recive_date),
-    #         "accept": obj.get_accept_display,
-    #         "accept_date": convert_time(obj.accept_date),
-    #         "req_no_plaintiff": obj.getReqNoPlaintiff(),
-    #         "reqno": obj.getReqNo(),
-    #     }
-
-    #     output_list.append(data_dict)
-
-    # warrants_list = []
-    # for warrant_wrap in warrants:
-    #     warrant_data = warrant_wrap.warrant
-
-    #     data_dict = {
-    #         "court_injunction": warrant_wrap.get_court_injunction_display, 
-    #         "reqno": warrant_data.reqforms.all().first().reqno,
-    #         #"woa_no": f"{warrant_data.woa_no}/{warrant_data.woa_date.year + 543}",
-    #         "woa_no": f"{warrant_data.woa_no}",
-    #         "woa_year": warrant_data.woa_date.year + 543,
-    #         "woa_type": f"หมายจับ {warrant_data.get_woa_type_text()}",
-    #         "woa_refno": warrant_data.woa_refno,
-    #         "judge_name": warrant_wrap.judge_name,
-    #         "injunction_date": convert_time(warrant_wrap.injunction_date),
-    #         "file_path": warrant_wrap.file_path,
-    #         "because": warrant_wrap.because,
-
-    #         "woa_type_int": warrant_data.woa_type,
-    #         "court_injunction_int": warrant_wrap.court_injunction, 
-    #     }
-
-    #     warrants_list.append(data_dict)
-
     context = {
         "user": request.user,
         "drafts": all_drafts,
-        "forms": form_awaiting_approval,
-        # "forms_sent": output_list,
-        # "warrants": warrants_list,
     }
 
     if request.user.has_perms(
@@ -122,6 +74,74 @@ def dashboard(request : HttpRequest):
 
 
     return render(request, "dashboard/dashboard.html", context)
+
+@permission_required(perm_str_list([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL))
+def approve_table_page(request):
+    written_form = FormAwaitingApproval.objects.filter(form_creator=request.user)
+    owned_form = FormAwaitingApproval.objects.filter(form_owner=request.user)
+    form_awaiting_approval = written_form.union(owned_form)
+
+    return render(request, "dashboard/approve_table_page.html", {
+        "forms": form_awaiting_approval,
+    })
+
+@permission_required(perm_str_list([PermissionType.VIEW], PermissionList.REQFORM_SUBMITTED))
+def accept_table_page(request):
+    form_sent = VisualReqformData.objects.all()
+
+    output_list = []
+    for obj in form_sent:
+        obj.form.getReqno()
+        data_dict = {
+            "id": obj.form.req_form_number,
+            "recive_date": convert_time(obj.recive_date),
+            "accept": obj.get_accept_display,
+            "accept_date": convert_time(obj.accept_date),
+            "req_no_plaintiff": obj.getReqNoPlaintiff(),
+            "reqno": obj.getReqNo(),
+        }
+
+        output_list.append(data_dict)
+
+    return render(request, "dashboard/accept_table_page.html", {
+        "forms_sent": output_list,
+    })
+
+@permission_required(perm_str_list([PermissionType.VIEW], PermissionList.REQFORM_SUBMITTED))
+def warrant_status_page(request, reqno : str):
+
+    reqform = VisualReqformData.objects.filter(form__reqno=reqno).first()
+
+    # warrants : list[VisualWarrantData] = VisualWarrantData.objects.filter(warrant_data.reqforms.first().reqno)
+
+    warrants = reqform.form.warrants
+
+    warrants_list = []
+    for warrant_data in warrants.all():
+        warrant_wrap = VisualWarrantData.objects.filter(warrant=warrant_data).first()
+
+        data_dict = {
+            "court_injunction": warrant_wrap.get_court_injunction_display, 
+            "woa_no": f"{warrant_data.woa_no}",
+            "woa_year": warrant_data.woa_date.year + 543,
+            "woa_type": f"หมายจับ {warrant_data.get_woa_type_text()}",
+            "woa_refno": warrant_data.woa_refno,
+            "judge_name": warrant_wrap.judge_name,
+            "injunction_date": convert_time(warrant_wrap.injunction_date),
+            "file_path": warrant_wrap.file_path,
+            "because": warrant_wrap.because,
+
+            "woa_type_int": warrant_data.woa_type,
+            "court_injunction_int": warrant_wrap.court_injunction, 
+
+            "reqno": reqno,
+        }
+
+        warrants_list.append(data_dict)
+
+    return render(request, "dashboard/warrant_status_page.html", {
+        "warrants": warrants_list
+    })
 
 #######################################################
 #
@@ -346,16 +366,6 @@ def delete_form(request : HttpRequest, form_id : str):
         "form": selected_form,
     })
 
-
-def approve_table_page(request):
-    return render(request, "dashboard/approve_table_page.html")
-
-def accept_table_page(request):
-    return render(request, "dashboard/accept_table_page.html")
-
-def warrant_status_page(request):
-    return render(request, "dashboard/warrant_status_page.html")
-
 @login_required
 def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {
@@ -440,9 +450,9 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
             if settings.ENABLE_API:
                 AWISConnectAPI.unsend_reqform_from_court("v1.1", request, req_no_plaintiff)
 
-            sent_form.form.delete()
             for warrant in warrant_results.all():
                 warrant.warrant.delete()
+            sent_form.form.delete()
                 
             return JsonResponse({
                 "status": "Success",

@@ -218,7 +218,10 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
         )
 
         if len(woa_wrapper_matched) == 0:
-            raise HttpResponseBadRequest("No Match Found.")
+            raise JsonResponse({
+                "status": 400,
+                "message": "No warrant found."
+            }, status=400)
 
         iso8601_str_format = "%Y-%m-%dT%H:%M:%S"    
 

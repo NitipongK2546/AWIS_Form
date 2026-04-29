@@ -112,7 +112,7 @@ class ReqformDraftDataModel(models.Model):
     act = models.CharField(blank=True, max_length=500, verbose_name="มีพฤติการกระทำความผิด", )
     law = models.CharField(blank=True, max_length=200, verbose_name="ตามกฎหมาย", )
 
-    court_owner_code = models.CharField(blank=True, max_length=7, verbose_name="ซึ่งเป็นคดีที่อยู่ในอำนาจศาล", )
+    court_owner_code = models.CharField(blank=True, max_length=8, verbose_name="ซึ่งเป็นคดีที่อยู่ในอำนาจศาล", )
 
     prescription = models.IntegerField(blank=True, null=True,  ) # อายุความ ปี
 
@@ -121,7 +121,7 @@ class ReqformDraftDataModel(models.Model):
 
     have_req = models.IntegerField(blank=True, null=True,  )
 
-    have_court_code = models.CharField(blank=True, max_length=7, ) # tb_office court_code
+    have_court_code = models.CharField(blank=True, max_length=8, ) # tb_office court_code
     have_act = models.CharField(blank=True, max_length=400, )
     have_injunc = models.CharField(blank=True, max_length=50, )
 
@@ -164,10 +164,31 @@ class ReqformDraftDataModel(models.Model):
         
         dict_main_awis = model_to_dict(self, exclude=["id", "draft_container"])
         dict_main_awis.update({
-            "reqno": f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year}"
+            "reqno": f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year + 543}"
         })
 
         return dict_main_awis
+    
+    def getAccusedInfo(self) -> dict[str]:
+        return {
+            "charge_type_1": self.charge_type_1,
+            "charge_type_2": self.charge_type_2,
+            "acc_full_name": self.acc_full_name,
+            "acc_card_type": self.acc_card_type,
+            "acc_card_id": self.acc_card_id,
+            "acc_origin": self.acc_origin,
+            "acc_nation": self.acc_nation,
+            "acc_occupation": self.acc_occupation,
+            "acc_addno": self.acc_addno,
+            "acc_vilno": self.acc_vilno,
+            "acc_road": self.acc_road,
+            "acc_soi": self.acc_soi,
+            "acc_near": self.acc_near,
+            "acc_sub_district": self.acc_sub_district,
+            "acc_district": self.acc_district,
+            "acc_province": self.acc_province,
+            "acc_tel": self.acc_tel,
+        }
     
     def convertBacktoFormView(self) -> dict[str,]:
         dict_main_awis = model_to_dict(self)
@@ -202,6 +223,8 @@ class WarrantDraftDataModel(models.Model):
 
     draft_container = models.ForeignKey(FormDraftContainer, on_delete=models.CASCADE, related_name="warrant_drafts")
 
+    woa_no = models.IntegerField(blank=True, null=True)
+    woa_type = models.IntegerField(blank=True, null=True)
     woa_date = models.DateTimeField(blank=True, null=True)
 
     fault_type_id = models.IntegerField(blank=True, null=True) #(อาญา.แพ่ง)
@@ -236,13 +259,9 @@ class WarrantDraftDataModel(models.Model):
     appointment_type = models.IntegerField(choices=AppointmentTypeChoices, blank=True, null=True)
     appointment_date = models.DateTimeField(blank=True, null=True)
 
-    woa_no = models.IntegerField(blank=True, null=True)
     woa_refno = models.CharField(max_length=16, blank=True)
-
-    woa_type = models.IntegerField(blank=True, null=True)
-
     plaintiff = models.CharField(max_length=400, blank=True)
     court_name = models.CharField(max_length=250, blank=True)
 
     def __str__(self):
-        return f"(woa_no: {self.woa_no}, woa_type: {self.woa_type}, woa_refno: {self.woa_refno})"
+        return f"(woa_no: {self.woa_no}, woa_type: {self.woa_type})"

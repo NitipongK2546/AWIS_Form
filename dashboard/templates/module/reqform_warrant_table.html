@@ -5,11 +5,10 @@
     <table class="styled-table">
         <thead>
             <tr>
-                <th colspan="11">สถานะของหมายศาล</th>
+                <th colspan="10">สถานะของหมายศาล</th>
             </tr>
             <tr>
                 <th>คำสั่งศาล</th>
-                <th>เลขที่ร้อง</th>
                 <th>เลขที่หมายจับ</th>
                 <th>ปีหมายจับ</th>
                 <th>ประเภทหมายจับ</th>
@@ -30,9 +29,6 @@
                     {% else %}
                         รอการพิจารณา
                     {% endif %}
-                </td>
-                <td>
-                    {{ form.reqno }}
                 </td>
                 <td>
                     {{ form.woa_no }}

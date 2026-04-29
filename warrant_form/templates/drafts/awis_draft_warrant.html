@@ -18,6 +18,44 @@
         {% csrf_token %}
         {{ draft_form.as_p }}
 
+{% comment %}
+<div>
+    <h2>หมายเลขหมายจับ</h2>
+    woa_no: {{ draft_form.woa_no }}
+    woa_type: {{ draft_form.woa_type }}
+    woa_date: {{ draft_form.woa_date }}
+</div>
+
+{{ draft_form.fault_type_id }}
+{{ draft_form.send_to_name }}
+{{ draft_form.cause_text }}
+{{ draft_form.charge }}
+{{ draft_form.charge_type_1 }}
+{{ draft_form.charge_type_2 }}
+{{ draft_form.charge_type_2_1 }}
+{{ draft_form.charge_type_2_2 }}
+{{ draft_form.charge_type_2_3 }}
+{{ draft_form.charge_type_3 }}
+{{ draft_form.charge_other_text }}
+{{ draft_form.acc_full_name }}
+{{ draft_form.acc_card_type }}
+{{ draft_form.acc_card_id }}
+{{ draft_form.acc_origin }}
+{{ draft_form.acc_nation }}
+{{ draft_form.acc_occupation }}
+{{ draft_form.acc_addno }}
+{{ draft_form.acc_vilno }}
+{{ draft_form.acc_road }}
+{{ draft_form.acc_soi }}
+{{ draft_form.acc_near }}
+{{ draft_form.acc_sub_district }}
+{{ draft_form.acc_district }}
+{{ draft_form.acc_province }}
+{{ draft_form.acc_tel }}
+{{ draft_form.appointment_type }}
+{{ draft_form.appointment_date }}
+{% endcomment %}
+
         <button type="submit">Create Draft</button>
     </form>
 

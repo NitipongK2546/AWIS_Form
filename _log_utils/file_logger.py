@@ -111,7 +111,7 @@ def getOrFilterLogs(query : QueryDict = {}, as_text : bool = False):
 
     queried_log = LogSystem.objects.filter(
         **filter
-    )
+    ).order_by("-time_logged")
 
     log_collections : dict[str, list] = {
         "normal": [],

@@ -50,13 +50,15 @@
                     <h3>ตารางสถานะคำร้องที่ส่งให้ศาลสำเร็จแล้ว</h3>
                 </a>
             </div>
-        
+            
+            {% comment %}
             <div class="tool-card">
                 <a href="{% url 'dashboard:warrant_status_page' %}">
                     <img src="{% static 'dashboard/images/checking-status.png' %}" alt="Access-List">
                     <h3>ตารางสถานะของหมายศาล</h3>
                 </a>
             </div>
+            {% endcomment %}
         </div>
         {% include 'module/drafts_form_table.html' %}
     </div>

@@ -5,7 +5,7 @@
     <table class="styled-table">
         <thead>
             <tr>
-                <th colspan="7">สถานะคำร้องที่ส่งให้ศาลสำเร็จแล้ว</th>
+                <th colspan="8">สถานะคำร้องที่ส่งให้ศาลสำเร็จแล้ว</th>
             </tr>
             <tr>
                 <!-- <th>ID</th> -->
@@ -14,6 +14,7 @@
                 <th>วันที่รับคำร้อง</th>
                 <th>สถานะการรับคำร้อง</th>
                 <th>วันที่อนุมัติคำร้อง</th>
+                <th>ดูหมายจับ</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -22,7 +23,7 @@
             <tr>
                 <!-- <td>{{ form.id }}</td> -->
                 <td>{{ form.req_no_plaintiff }}</td>
-                <td>{{ form.getReqno }}</td>
+                <td>{{ form.reqno }}</td>
                 <td>{% if form.recive_date %}
                         {{ form.recive_date | buddhist_date}}
                     {% else %}
@@ -37,13 +38,16 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:get_form' form.getReqno %}">ดูคำร้อง</a>
+                    <a href="{% url 'dashboard:view_reqform_warrants' form.reqno %}">ดูหมายจับ</a>
+                </td>
+                <td>
+                    <a href="{% url 'dashboard:get_form' form.reqno %}">ดูคำร้อง</a>
                     <a href="{% url 'dashboard:delete_sent_reqform' form.req_no_plaintiff %}">ยกเลิกการส่งคำร้อง</a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7">No forms available.</td>
+                <td colspan="8">No forms available.</td>
             </tr>
             {% endfor %}
         </tbody>

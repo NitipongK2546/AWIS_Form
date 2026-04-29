@@ -64,7 +64,7 @@ class ReqformDataModel(models.Model):
     judge_name = models.CharField(max_length=250, blank=True)
 
     police_station_id = models.CharField(max_length=8) #REFER id -> tb_police_station
-    req_no_plaintiff = models.CharField(max_length=50)
+    req_no_plaintiff = models.CharField(max_length=50, unique=True)
 
     plaintiff = models.CharField(max_length=400)
     accused = models.CharField(max_length=400)
@@ -112,7 +112,7 @@ class ReqformDataModel(models.Model):
     act = models.CharField(max_length=500, verbose_name="มีพฤติการกระทำความผิด", blank=True)
     law = models.CharField(max_length=200, verbose_name="ตามกฎหมาย", blank=True)
 
-    court_owner_code = models.CharField(max_length=7, verbose_name="ซึ่งเป็นคดีที่อยู่ในอำนาจศาล", blank=True)
+    court_owner_code = models.CharField(max_length=8, verbose_name="ซึ่งเป็นคดีที่อยู่ในอำนาจศาล", blank=True)
 
     prescription = models.IntegerField(blank=True, null=True) # อายุความ ปี
 
@@ -121,7 +121,7 @@ class ReqformDataModel(models.Model):
 
     have_req = models.IntegerField(blank=True, null=True)
 
-    have_court_code = models.CharField(max_length=7, blank=True) # tb_office court_code
+    have_court_code = models.CharField(max_length=8, blank=True) # tb_office court_code
     have_act = models.CharField(max_length=400, blank=True)
     have_injunc = models.CharField(max_length=50, blank=True)
 
@@ -180,7 +180,7 @@ class ReqformDataModel(models.Model):
         if self.reqno:
             return self.reqno
         
-        self.reqno = f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year}"
+        self.reqno = f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year + 543}"
         
         self.save()
         

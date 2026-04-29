@@ -30,7 +30,8 @@ def create_draft_main_local_page(request : HttpRequest):
         create_uid=request.user.api_uid
     )
 
-    return redirect("dashboard:dashboard")
+    # return redirect("dashboard:dashboard")
+    return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
 @perm_req_log([PermissionType.VIEW], PermissionList.REQFORM_DRAFT, AccessType.VIEW)
 def view_draft_main_local_page(request : HttpRequest, container_id : int):
@@ -81,14 +82,17 @@ def edit_reqform_draft(request : HttpRequest, container_id : int):
     if draft_container:
 
         reqform_form = ReqformDraftModelForm(instance=draft_container.reqform_draft)
+        try:
+            if request.method == "POST":
+                reqform_form = ReqformDraftModelForm(request.POST, instance=draft_container.reqform_draft)
+                reqform_form.save()
 
-        if request.method == "POST":
-            reqform_form = ReqformDraftModelForm(request.POST, instance=draft_container.reqform_draft)
-            reqform_form.save()
+                draft_container.save()
 
-            draft_container.save()
-
-            return redirect("forms:view-draft-container", container_id=draft_container.pk)
+                return redirect("forms:view-draft-container", container_id=draft_container.pk)
+            
+        except Exception as e:
+            print(reqform_form.errors)
 
         return render(request, "drafts/awis_draft_reqform.html", {
             "draft_form": reqform_form,
@@ -104,7 +108,9 @@ def create_warrant_draft(request : HttpRequest, container_id : int):
 
     if draft_container:
         WarrantDraftDataModel.objects.create(
-            draft_container=draft_container
+            draft_container=draft_container,
+            woa_no=(draft_container.warrant_drafts.count() + 1),
+            **draft_container.reqform_draft.getAccusedInfo(),
         )
         draft_container.save()
 

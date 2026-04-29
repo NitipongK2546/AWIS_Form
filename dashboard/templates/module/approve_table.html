@@ -5,7 +5,7 @@
     <table class="styled-table">
         <thead>
             <tr>
-                <th colspan="7">สถานะคำร้องที่รอการอนุมัติเพื่อส่งให้กับศาล</th>
+                <th colspan="8">สถานะคำร้องที่รอการอนุมัติเพื่อส่งให้กับศาล</th>
             </tr>
             <tr>
                 <th>เลขที่คำร้อง</th>
@@ -14,6 +14,7 @@
                 <th>เจ้าของร่าง</th>
                 <th>วันที่สร้าง</th>
                 <th>วันที่อนุมัติ</th>
+                <th>อนุมัติแบบฟอร์ม</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -34,14 +35,12 @@
                     {% endif %}
                 </td>
                 <td>
+                    <a href="{% url 'dashboard:confirm_approve' form.form.getReqno %}">อนุมัติแบบฟอร์ม</a>
+                </td>
+                <td>
                     <a href="{% url 'dashboard:get_form' form.form.getReqno %}">ดูคำร้อง</a> |
                     <a href="{% url 'dashboard:edit_form' form.form.getReqno %}">แก้ไขคำร้อง</a> |
-                    <a href="{% url 'dashboard:delete_form' form.form.getReqno %}">ลบคำร้อง</a> 
-                    {% if can_approve_form %}
-                    |
-                    <a href="{% url 'dashboard:confirm_approve' form.form.getReqno %}">Approve</a> |
-                    <a href="{% url 'dashboard:confirm_reject' form.form.getReqno %}">Reject</a>
-                    {% endif %}
+                    <a href="{% url 'dashboard:delete_form' form.form.getReqno %}">ลบคำร้อง</a> |
                 </td>
             </tr>
             {% endif %}

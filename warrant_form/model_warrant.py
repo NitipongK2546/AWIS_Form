@@ -63,6 +63,8 @@ class WarrantDataModel(models.Model):
 
     # reqforms
 
+    reqforms = "ReqformDataModel"
+
     woa_date = models.DateTimeField(blank=True, null=True)
 
     fault_type_id = models.IntegerField() # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
