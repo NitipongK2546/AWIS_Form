@@ -1,6 +1,13 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'admin_panel/success.css' %}">
+
 {% if status == "success" %}
-<h1>เพิ่มผู้ใช้สำเร็จ</h1>
-<h2>ปิดหน้าต่างเพื่ออัพเดตสถานะ</h2>
+<div class="alert success">
+  <h1>เพิ่มผู้ใช้สำเร็จ</h1>
+  <h2>ปิดหน้าต่างเพื่ออัพเดตสถานะ</h2>
+</div>
 {% elif status == "failed" %}
-<h1>เกิดข้อผิดผลาด</h1>
+<div class="alert error">
+  <h1>เกิดข้อผิดพลาด</h1>
+</div>
 {% endif %}
