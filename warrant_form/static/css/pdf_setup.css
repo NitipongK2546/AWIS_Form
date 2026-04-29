@@ -35,9 +35,6 @@
 
         height: 22px;
     }
-    form input[type="checkbox"] {
-        width: 22px;
-    }
     select {
         background: none;
         appearance: none; 
