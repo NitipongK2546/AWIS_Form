@@ -1,4 +1,4 @@
-# Permissions v0.2.1
+# Permissions v0.2.2
 
 ## AWIS CUSTOM SETTINGS
 
@@ -68,4 +68,4 @@ def view_x(request : HttpRequest):
 
 1. list[PermissionType] เพื่อกำหนดสิทธิ์ทั้งหมดที่ต้องมีในการเข้าถึง
 1. PermissionList เพื่อบอกว่าต้องการสิทธิ์จากระบบอะไรเพื่อเข้าถึง
-1. AccessType เพื่อเก็บว่าผู้ใช้ทำอะไรไปในการเข้าถึง URL ดังกล่าว
+1. AccessType เพื่อเก็บว่าผู้ใช้ทำอะไรไปในการเข้าถึง URL ดังกล่าว (ใช้สำหรับการเก็บ LOG)
