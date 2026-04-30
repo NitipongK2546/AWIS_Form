@@ -9,8 +9,6 @@ if command -v python3 >/dev/null 2>&1; then
     PYTHON=python3
     VENV_TYPE=bin
 
-    chmod +x _scripts/_quick_migrate.sh
-
 elif command -v python >/dev/null 2>&1; then
     PYTHON=python
     VENV_TYPE=Scripts
@@ -21,7 +19,8 @@ fi
 
 $PYTHON --version
 
-"./_scripts/_quick_migrate.sh"
+python manage.py makemigrations
+python manage.py migrate
 
 # Add collectstatic later if we have to.
 #
