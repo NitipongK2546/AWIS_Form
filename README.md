@@ -2,8 +2,10 @@
 
 ## Markdown Directory
 
-1. [Guideline อธิบาย](/_documentation/GUIDELINE.md)
-1. [Permission อธิบาย](/_documentation/PERMISSIONS.md)
+1. [อธิบาย Setup](/_documentation/SETUP.md)
+1. [อธิบาย Forms](/_documentation/FORMS.md)
+1. [อธิบาย Permission](/_documentation/PERMISSIONS.md)
+1. [อธิบาย API](/_documentation/API.md)
 
 
 ## 0. ติดตั้ง
