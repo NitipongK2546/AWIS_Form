@@ -7,7 +7,6 @@ from django.core.mail import send_mail
 import pyotp
 from .models import OTPCollection
 
-from api.internal.endpoints import login_via_api
 from .forms import UserAuthForm
 from .models import UserDataModel
 
@@ -15,6 +14,8 @@ import _log_utils.file_logger as FileLogger
 from _log_utils.file_logger import AccessType
 
 from .permissions import PermissionList, PermissionType
+
+from _request_utils.connect_api import login_via_api
 
 import os
 from dotenv import load_dotenv
