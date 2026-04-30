@@ -16,6 +16,7 @@
 </head>
 <body>
     <form method="post">
+    <button type="button" onclick="window.history.back()" class="back-button">กลับ</button>
         {% csrf_token %}
         {{ draft_form.as_p }}
 
