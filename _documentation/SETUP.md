@@ -6,11 +6,20 @@
 ./full_setup_docker.sh
 ```
 
-ซึ่งจะสร้าง Docker และรัน
+โดยข้างในคือ
 
 ```bash
-./setup.sh
+docker compose up -d --build
+
+# รอจนกว่า Database จะเริ่มทำงานเต็มตัว 
+# แล้วจึงจะไปขั้นต่อไป
+# echo "Database Server is up" สามารถเปลี่ยนเป็นคำสั่งก็ได้
+./_scripts/wait-for-it.sh localhost:3306 -- echo "Database Server is up."
+
+# รัน setup.sh ใน Container ที่มี Server อยู่
+docker exec awis_server ./setup.sh
 ```
+
 โดยสิ่งที่จะเกิดขึ้นคือ
 
 1. Database ถูก Migrate
