@@ -27,7 +27,7 @@ def create_draft_main_local_page(request : HttpRequest):
 
     ReqformDraftDataModel.objects.create(
         draft_container=draft_container,
-        req_form_number=ReqformDataModel.objects.count(),
+        req_form_number=(ReqformDataModel.objects.count() + 1),
         create_uid=request.user.api_uid
     )
 
