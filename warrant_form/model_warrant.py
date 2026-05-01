@@ -46,6 +46,11 @@ WOA_TYPE_CHOICES = [
     (2, "47 ทวิ"),
 ]
 
+FAULT_TYPE_ID_CHOICES = [
+    (1, "แพ่ง"),
+    (2, "อาญา"),
+]
+
 # หมายเรียกที่ติดไปด้วย
 class WarrantDataModel(models.Model):
     """
@@ -65,9 +70,17 @@ class WarrantDataModel(models.Model):
 
     reqforms = "ReqformDataModel"
 
-    woa_date = models.DateTimeField(blank=True, null=True)
+    woa_no = models.IntegerField(blank=True, null=True)
+    woa_refno = models.CharField(max_length=16, blank=True)
+    woa_type = models.IntegerField()
 
-    fault_type_id = models.IntegerField() # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
+    woa_year = models.PositiveIntegerField(blank=True, null=True)
+    # For my sanity, I'm seperating year and date. It won't be confusing, I swear. 
+    woa_date = models.DateTimeField(blank=True, null=True)
+    # And yes, despite the API sheet saying it's Date without Time, the API accept DateTime. Good God.
+    
+
+    fault_type_id = models.IntegerField() # (อาญา.แพ่ง)
     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร
     cause_text = models.CharField(max_length=400) # ด้วย
 
@@ -101,11 +114,6 @@ class WarrantDataModel(models.Model):
 
     appointment_date = models.DateTimeField(blank=True, null=True)
 
-    woa_no = models.IntegerField()
-    woa_refno = models.CharField(max_length=16, blank=True)
-
-    woa_type = models.IntegerField()
-
     plaintiff = models.CharField(max_length=400, blank=True)
     court_name = models.CharField(max_length=250, blank=True)
 
@@ -128,6 +136,14 @@ class WarrantDataModel(models.Model):
         woa_type_dict = dict(WOA_TYPE_CHOICES)
 
         return woa_type_dict.get(self.woa_type, "-----")
+    
+    def get_fault_type_text(self) -> str:
+        fault_type_dict = dict(FAULT_TYPE_ID_CHOICES)
+
+        return fault_type_dict.get(self.fault_type_id, "-----")
+    
+    def get_woa_no_and_year(self) -> str:
+        return f"{self.woa_no if self.woa_no else '000'}/{self.woa_year if self.woa_year else '0000'}"
 
     def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:
         """

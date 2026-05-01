@@ -1,0 +1,31 @@
+<header id="awis-header-container" style="all: unset;">
+<div id="awis-system-header" style="align-content: center; display: block; padding-top: 0; padding-bottom: 0;"></div>
+<script>
+  const host = document.querySelector('#awis-system-header');
+  const shadow = host.attachShadow({mode: 'open'});
+
+  // Add your own styles here
+  shadow.innerHTML = `
+    <style>
+        .header-inside {
+            all: unset;
+            display: block;
+            text-align: center;
+            // position: fixed;
+            width: 99vw;
+
+            margin: 0 -20px 0 -20px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+
+            background: black;
+            color: white;
+            font-family: sans-serif;
+        }
+    </style>
+    <div class="header-inside">
+      ระบบ AWIS
+    </div>
+  `;
+</script>
+</header>

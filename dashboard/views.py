@@ -30,6 +30,9 @@ from users.permissions.decorators import perm_req_log
 def getFormAwaitViaReqno(reqno : str):
     return FormAwaitingApproval.objects.filter(form__reqno=reqno).first()
 
+def getFormAwaitViaPlaintiff(req_no_plaintiff : str):
+    return FormAwaitingApproval.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
+
 def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : UserDataModel):
 
     is_not_user = not (user_data in (form.form_creator, form.form_owner))
@@ -75,6 +78,8 @@ def dashboard(request : HttpRequest):
 
     return render(request, "dashboard/dashboard.html", context)
 
+############################################################################
+
 @permission_required(perm_str_list([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL))
 def approve_table_page(request):
     written_form = FormAwaitingApproval.objects.filter(form_creator=request.user)
@@ -85,15 +90,71 @@ def approve_table_page(request):
         "forms": form_awaiting_approval,
     })
 
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+def confirm_approve(request : HttpRequest, form_id : str):
+
+    selected_form = getFormAwaitViaPlaintiff(form_id)
+    # print(selected_form)
+    if request.method == "POST":
+        try:
+            if settings.ENABLE_API:
+                AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
+
+            selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.APPROVED
+            selected_form.date_approved = timezone.now()
+            selected_form.save()
+
+            for warrant in selected_form.form.warrants.all():
+                VisualWarrantData.objects.create(
+                    warrant=warrant,
+                    judge_name=selected_form.form.judge_name,
+                )
+            
+            VisualReqformData.objects.create(
+                form=selected_form.form,
+                accept=VisualReqformData.AcceptStatus.WAITING,
+            )
+
+            FileLogger.createNormalLog(request, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict(),)
+
+            return redirect(reverse("dashboard:success_page"))
+        except Exception as e:
+            return redirect(reverse("dashboard:dashboard"))
+
+    return render(request, "dashboard/confirmation_page.html", {
+        "user": request.user,
+        "action": "Approve",
+        "form": selected_form,
+    })
+    
+
+@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+def confirm_reject(request : HttpRequest, form_id : str):
+    selected_form = getFormAwaitViaPlaintiff(form_id)
+    if request.method == "POST":
+        selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.REJECTED
+        selected_form.save()
+
+        FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
+  
+        return redirect(reverse("dashboard:success_page"))
+    
+    return render(request, "dashboard/confirmation_page.html", {
+        "user": request.user,
+        "action": "Reject",
+        "form": selected_form,
+    })
+
+
+###########################################################################
+
 @permission_required(perm_str_list([PermissionType.VIEW], PermissionList.REQFORM_SUBMITTED))
 def accept_table_page(request):
     form_sent = VisualReqformData.objects.all()
 
     output_list = []
     for obj in form_sent:
-        obj.form.getReqno()
         data_dict = {
-            "id": obj.form.req_form_number,
             "recive_date": convert_time(obj.recive_date),
             "accept": obj.get_accept_display,
             "accept_date": convert_time(obj.accept_date),
@@ -108,9 +169,9 @@ def accept_table_page(request):
     })
 
 @permission_required(perm_str_list([PermissionType.VIEW], PermissionList.REQFORM_SUBMITTED))
-def warrant_status_page(request, reqno : str):
+def warrant_status_page(request, req_no_plaintiff : str):
 
-    reqform = VisualReqformData.objects.filter(form__reqno=reqno).first()
+    reqform = getFormAwaitViaPlaintiff(req_no_plaintiff)
 
     # warrants : list[VisualWarrantData] = VisualWarrantData.objects.filter(warrant_data.reqforms.first().reqno)
 
@@ -122,19 +183,15 @@ def warrant_status_page(request, reqno : str):
 
         data_dict = {
             "court_injunction": warrant_wrap.get_court_injunction_display, 
-            "woa_no": f"{warrant_data.woa_no}",
-            "woa_year": warrant_data.woa_date.year + 543,
-            "woa_type": f"หมายจับ {warrant_data.get_woa_type_text()}",
+            "woa_no_and_year": warrant_data.get_woa_no_and_year,
+            "woa_type": f"{warrant_data.get_woa_type_text()} | {warrant_data.get_fault_type_text()}",
             "woa_refno": warrant_data.woa_refno,
             "judge_name": warrant_wrap.judge_name,
             "injunction_date": convert_time(warrant_wrap.injunction_date),
             "file_path": warrant_wrap.file_path,
             "because": warrant_wrap.because,
 
-            "woa_type_int": warrant_data.woa_type,
             "court_injunction_int": warrant_wrap.court_injunction, 
-
-            "reqno": reqno,
         }
 
         warrants_list.append(data_dict)
@@ -153,7 +210,7 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
 
-    selected_form = getFormAwaitViaReqno(form_id)
+    selected_form = getFormAwaitViaPlaintiff(form_id)
 
     if isNotUserAndNotHaveApprovePerm(selected_form, user_data):
         return HttpResponseForbidden("ท่านไม่ใช่เจ้าของหรือผู้ร่างแบบฟอร์มดังกล่าว")
@@ -211,7 +268,7 @@ def edit_form(request : HttpRequest, form_id : int):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
 
-    form_await = getFormAwaitViaReqno(form_id)
+    form_await = getFormAwaitViaPlaintiff(form_id)
     reqform = None
 
     if not form_await:
@@ -286,69 +343,10 @@ def approve_form_page(request : HttpRequest):
         "forms": all_forms,
     })
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
-def confirm_approve(request : HttpRequest, form_id : str):
-
-    selected_form = getFormAwaitViaReqno(form_id)
-    # print(selected_form)
-    if request.method == "POST":
-        try:
-            if settings.ENABLE_API:
-                AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
-
-            # print(json.dumps(selected_form.form.toAPICompatibleDictWithConvertedWarrants(), indent=2, ensure_ascii=False))
-
-            selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.APPROVED
-            selected_form.date_approved = timezone.now()
-            selected_form.save()
-
-            for warrant in selected_form.form.warrants.all():
-                VisualWarrantData.objects.create(
-                    warrant=warrant,
-                    judge_name=selected_form.form.judge_name,
-                )
-            
-            VisualReqformData.objects.create(
-                form=selected_form.form,
-                accept=VisualReqformData.AcceptStatus.WAITING,
-            )
-
-            FileLogger.createNormalLog(request, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict(),)
-
-            return redirect(reverse("dashboard:success_page"))
-        except Exception as e:
-            return redirect(reverse("dashboard:dashboard"))
-
-    return render(request, "dashboard/confirmation_page.html", {
-        "user": request.user,
-        "action": "Approve",
-        "form": selected_form,
-    })
-    
-
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
-def confirm_reject(request : HttpRequest, form_id : str):
-    selected_form = getFormAwaitViaReqno(form_id)
-
-    if request.method == "POST":
-        selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.REJECTED
-        selected_form.save()
-
-        FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
-  
-        return redirect(reverse("dashboard:success_page"))
-    
-    return render(request, "dashboard/confirmation_page.html", {
-        "user": request.user,
-        "action": "Reject",
-        "form": selected_form,
-    })
-
-
 @permission_required(perm_str(PermissionType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
 def delete_form(request : HttpRequest, form_id : str):
 
-    selected_form = getFormAwaitViaReqno(form_id)
+    selected_form = getFormAwaitViaPlaintiff(form_id)
 
     if isNotUserAndNotHaveApprovePerm(selected_form, request.user):
         return HttpResponseForbidden()

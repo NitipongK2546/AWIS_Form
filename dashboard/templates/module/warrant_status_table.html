@@ -9,9 +9,7 @@
             </tr>
             <tr>
                 <th>คำสั่งศาล</th>
-                <th>เลขที่ร้อง</th>
                 <th>เลขที่หมายจับ</th>
-                <th>ปีหมายจับ</th>
                 <th>ประเภทหมายจับ</th>
                 <th>เลขอ้างอิงจากศาล</th>
                 <th>ชื่อผู้พิพากษาที่ลงนาม</th>
@@ -32,13 +30,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    {{ form.reqno }}
-                </td>
-                <td>
-                    {{ form.woa_no }}
-                </td>
-                <td>
-                    {{ form.woa_year }}
+                    {{ form.woa_no_and_year }}
                 </td>
                 <td>
                     {{ form.woa_type }}

@@ -1,17 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Draft Main Page</title>
-</head>
-<body>
+{% extends 'warrant_form/awis_base.html' %}
+{% load static %}
+
+{% block title %}Draft Main Page{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/draft_main.css' %}">
+{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; background-color: rgb(224, 232, 239);">
     <h3>
         <a href="{% url 'dashboard:dashboard' %}">กลับ</a>
     </h3>   
 
-    <h2>แก้ครั้งล่าสุด: {{ draft_container.last_edit }}</h2>   
-    
+    <h2>แก้ครั้งล่าสุด: {{ draft_container.last_edit }}</h2>
+
     <div>
         <form action="" method="post">
             {% csrf_token %}
@@ -39,7 +42,7 @@
             {{ draft_container.reqform_draft }}
         </p>
     </div>
-    
+
     <hr>
 
     <div>
@@ -63,11 +66,13 @@
     <hr>
 
     <p><a href="{% url 'forms:create-reqform' draft_container.pk %}">สร้างคำร้องจากร่างคำร้องขอ</a></p>
+</div>
+{% endblock %}
 
+{% block script %}
 <script>
 function confirmWithUser() {
     return confirm('ต้องการลบจริงหรือไม่')
 }
 </script>
-</body>
-</html>
+{% endblock %}

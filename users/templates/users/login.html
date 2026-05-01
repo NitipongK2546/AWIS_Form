@@ -1,16 +1,18 @@
-{% extends 'warrant_form/base.html' %}
 {% load static %}
 
 {% block title %}Login{% endblock %}
 
-{% block content %}
+{% block style %}
 <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
 
+{% block body %}
 <div class="login-container">
     <div class="login-left-container">
         <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
     </div>
     <div class="login-right-container">
+        <h1>ระบบ AWIS</h1>
         <h1>Login</h1>
         <form method="post">
             {% csrf_token %}

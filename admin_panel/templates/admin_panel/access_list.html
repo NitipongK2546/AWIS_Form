@@ -1,47 +1,48 @@
+{% extends "admin_panel/base.html" %}
 {% load static %}
+
+
+{% block title %}Access List{% endblock %}
+
+{% block style %}
 <link rel="stylesheet" href="{% static 'admin_panel/css/select_users.css' %}">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Access List</title>
-  <style>
+<style>
 .popup {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.6);
 }
 
 .popup-content {
-  position: relative;
-  width: 80%;
-  height: 80%;
-  margin: 5% auto;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
+position: relative;
+width: 80%;
+height: 80%;
+margin: 5% auto;
+background: white;
+border-radius: 10px;
+overflow: hidden;
 }
 
 .popup iframe {
-  width: 100%;
-  height: 100%;
+width: 100%;
+height: 100%;
 }
 
 .close {
-  position: absolute;
-  right: 10px;
-  top: 5px;
-  font-size: 24px;
-  cursor: pointer;
+position: absolute;
+right: 10px;
+top: 5px;
+font-size: 24px;
+cursor: pointer;
 }
 </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
 <div style="display: flexbox;">
   <div>
     <h1>Granted Access Users</h1>
@@ -100,9 +101,12 @@
   </div>
 </div>
 
+
 <!-- <a href="">Go to Select Users</a> -->
 <button onclick="openPopup()">Add Access List</button>
+{% endblock %}
 
+{% block script %}
 <script>
 function openPopup() {
   document.getElementById("popup").style.display = "block";
@@ -117,6 +121,7 @@ function closePopup() {
   window.location.reload();
 }
 </script>
+{% endblock %}
 
 <!-- <a href="">Go to Select Users</a> -->
 <!-- <button onclick="openPopup()">Add Access List</button>
@@ -133,5 +138,3 @@ function openPopup() {
   }, 500);
 }
 </script> -->
-</body>
-</html>

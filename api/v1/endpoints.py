@@ -20,6 +20,24 @@ from users import PermissionList, PermissionType, perm_str
 
 from django.core.exceptions import PermissionDenied
 
+# Reqno Helper function
+# Split the Number from the type and buddhist year.
+# The number is chosen by court.
+
+#Sample => "reqno": "จ.1/2569"
+def getDataFromReqno(reqno : str):
+    first_split : list[str] = reqno.split("/")
+    second_split : list[str] = first_split[0].split(".")
+
+    if (len(first_split) == 2) and (len(second_split) == 2):
+        return {
+            "req_case_type_id": second_split[0],
+            "req_form_number": second_split[1],
+            "req_year": first_split[1],
+        }
+
+    return False
+
 # V1 ENDPOINTS
 
 # Of course, we except from having to use csrf token, because... it's cross site.
@@ -114,22 +132,27 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     # }
 
     try:
-        print(data)
+        # Should be unique, so there's really only 1.
         form_obj = ReqformDataModel.objects.get(
             req_no_plaintiff = data.get("req_no_plaintiff"),
-            reqno = data.get("reqno"),
         )
 
         target_object = VisualReqformData.objects.filter(
             form=form_obj,
         )
 
-        iso8601_str_format = "%Y-%m-%dT%H:%M:%S"     
+        iso8601_str_format = "%Y-%m-%dT%H:%M:%S" 
 
         data_recive_date = data.get("recive_date")
         data_accept_date = data.get("accept_date")
 
-        update_dict = {}
+        reqno_data = getDataFromReqno(data.get("reqno"))
+
+        update_dict = {
+            "req_form_number": reqno_data.get("req_form_number"),
+            "req_year": reqno_data.get("req_year"),
+            "req_case_type_id": reqno_data.get("req_case_type_id"),
+        }
 
         if data_recive_date:
             recive_date = timezone.datetime.strptime(data_recive_date, iso8601_str_format)
@@ -198,18 +221,45 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
     # Failed.
     if isinstance(data, JsonResponse):
         return data
+    
+        # Data confirm to be dictionary.   
+
+        # {
+        #     "req_no_plaintiff": "123456789",
+        #     "reqno": "จ.1/2569",
+
+        #     "woa_no": 2,
+        #     "woa_year": 2569,
+        #     "woa_type": 2,
+        #     "woa_refno": "1234",
+
+        #     "judge_name": "xxxxxx xxxx",
+        #     "court_injunction": 1,
+        #     "injunction_date": "2006-01-02T00:00:00",
+        #     "file_path": "",
+        #     "because": ""
+        # }
 
     try:
-        form_obj = ReqformDataModel.objects.filter(
+        return JsonResponse({
+            "status": "UNFINISHED",
+            "message": "TODO: PLEASE ASK THE COURT WHAT KIND OF FIELD THEY WANT TO REFER SO THEY CAN UPDATE THE CORRECT WARRANT! PLEASE! THE API DOESN'T SEND ANYTHING REQUIRED"
+        })
+
+        #
+        # A VERY BIG TO DO LIST
+        #
+        #
+
+
+        form_obj = ReqformDataModel.objects.get(
             req_no_plaintiff = data.get("req_no_plaintiff"),
-            reqno = data.get("reqno"),
-        ).first()
+        )
 
         related_warrants = form_obj.warrants.all()
 
         warrants_matched : WarrantDataModel = related_warrants.filter(
-            woa_no = data.get("woa_no"),
-            woa_date__year = data.get("woa_year") - 543,
+            woa_refno = data.get("woa_refno"),
             woa_type = data.get("woa_type"),
         ).first()
 
@@ -228,14 +278,26 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
         injunction_date = timezone.datetime.strptime(data.get("injunction_date"), iso8601_str_format)
         injunction_date = timezone.make_aware(injunction_date, timezone.UTC,)
 
+        # reqno_data = getDataFromReqno(data.get("reqno"))
+
+        update_dict = {
+            # "req_form_number": reqno_data.get("req_form_number"),
+            # "req_year": reqno_data.get("req_year"),
+            # "req_case_type_id": reqno_data.get("req_case_type_id"),
+
+            
+            "judge_name": data.get("judge_name"),
+            "court_injunction": data.get("court_injunction"),
+            "injunction_date": injunction_date,
+            "file_path": data.get("file_path", ""),
+            "because": data.get("because", ""),
+        }
+
         woa_wrapper_matched.update(
-            judge_name = data.get("judge_name"),
-            court_injunction = data.get("court_injunction"),
-            injunction_date = injunction_date,
-            file_path = data.get("file_path", ""),
-            because = data.get("because", ""),
+            **update_dict,
         )
-        warrants_matched.woa_refno = data.get("woa_refno")
+
+        warrants_matched.woa_no = data.get("woa_no")
         warrants_matched.save()
         # warrants_matched.
 
@@ -259,20 +321,3 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
 
 
         
-    # Data confirm to be dictionary.   
-
-# {
-#     "req_no_plaintiff": "123456789",
-#     "reqno": "จ.1/2569",
-
-#     "woa_no": 2,
-#     "woa_year": 2569,
-#     "woa_type": 2,
-#     "woa_refno": "1234",
-
-#     "judge_name": "xxxxxx xxxx",
-#     "court_injunction": 1,
-#     "injunction_date": "2006-01-02T00:00:00",
-#     "file_path": "",
-#     "because": ""
-# }
