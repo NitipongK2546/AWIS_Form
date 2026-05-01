@@ -22,16 +22,10 @@
 
         <h1>สร้างคำร้อง </h1>
         <div>
-            <h2>หมายเลขคำร้อง</h2>
-            <p>UID:     {{ draft_form.create_uid }}</p>
+            <h2>ข้อมูลคำร้อง</h2>
+            <p>UID ผู้สร้างคำร้อง:     {{ draft_form.create_uid }}</p>
             <p>หมายเลขอ้างอิง:         {{ draft_form.ref_no }}</p>
-        </div>
-
-        <div>
-            <h2>คำร้อง</h2>
-            <!-- <p>reqno:              {{ draft_form.reqno }}</p> -->
-            <p>หมายเลขคำร้อง:    {{ draft_form.req_form_number }}</p>
-            <p>วันที่สร้างคำร้อง: {{ draft_form.req_day  }}{{ draft_form.req_month }}{{ draft_form.req_year }}</p>
+            <p>วันที่สร้างคำร้อง: {{ reqform_time }}</p>
             <p>ประเภทคำร้อง:   {{ draft_form.req_case_type_id }}</p>
             <p>หมายเลขโจทก์:   {{ draft_form.req_no_plaintiff }}</p>
         </div>
@@ -54,9 +48,11 @@
             <p>ตำแหน่งผู้กรอกคำร้อง :            {{ draft_form.req_pos }}</p>
             <p>สถานที่ทำงานของผู้กรอกคำร้อง:         {{ draft_form.req_office }}</p>
             <p>อายุผู้กรอกคำร้อง:            {{ draft_form.req_age }}</p>
-            <p>ตำบล/แขวง:   {{ draft_form.req_sub_district }}</p>
-            <p>อำเภอ/เขต:       {{ draft_form.req_district }}</p>
-            <p>จังหวัด:       {{ draft_form.req_province }}</p>
+            <p>
+                <span>จังหวัด: {{ draft_form.req_province }}</span>
+                <span>อำเภอ/เขต: {{ draft_form.req_district }}</span>
+                <span>ตำบล/แขวง: {{ draft_form.req_sub_district }}</span>
+            </p>
             <p>หมายเลขโทรศัพท์ผู้กรอกคำร้อง:            {{ draft_form.req_tel }}</p>
         </div>
 
@@ -73,10 +69,11 @@
             <p>หมู่บ้าน:          {{ draft_form.acc_vilno }}</p>
             <p>ถนน:           {{ draft_form.acc_road }}</p>
             <p>ซอย:            {{ draft_form.acc_soi }}</p>
-            <p>ใกล้เคียง:           {{ draft_form.acc_near }}</p>
-            <p>ตำบล/แขวง:   {{ draft_form.acc_sub_district }}</p>
-            <p>อำเภอ/เขต:       {{ draft_form.acc_district }}</p>
-            <p>จังหวัด:       {{ draft_form.acc_province }}</p>
+            <p>
+                <span>จังหวัด: {{ draft_form.acc_province }}</span>
+                <span>อำเภอ/เขต: {{ draft_form.acc_district }}</span>
+                <span>ตำบล/แขวง: {{ draft_form.acc_sub_district }}</span>
+            </p>
             <p>เบอร์โทร:            {{ draft_form.acc_tel }}</p>
         </div>
 

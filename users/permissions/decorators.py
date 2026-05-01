@@ -1,7 +1,7 @@
 import functools
 from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
-from django.http import HttpRequest, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponseBadRequest, HttpResponseServerError
 
 # from django.shortcuts import redirect
 from django.contrib.auth.views import redirect_to_login
@@ -41,7 +41,7 @@ def perm_req_log(perm_list : list[PermissionType], system : PermissionList, acce
                 
                 FileLogger.createErrorLog(request, access, system, error_reason)
 
-                return HttpResponseBadRequest("เกิดข้อผิดพลาดขึ้น")
+                return HttpResponseServerError("เกิดข้อผิดพลาดขึ้น")
 
         return _wrapped_view
     

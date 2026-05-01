@@ -18,6 +18,8 @@ from _log_utils.file_logger import AccessType
 from users import PermissionList, PermissionType
 from users.permissions.decorators import perm_req_log
 
+from django.utils import timezone
+
 @perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_DRAFT, AccessType.CREATE)
 def create_draft_main_local_page(request : HttpRequest):
     draft_container = FormDraftContainer.objects.create(
@@ -27,7 +29,6 @@ def create_draft_main_local_page(request : HttpRequest):
 
     ReqformDraftDataModel.objects.create(
         draft_container=draft_container,
-        req_form_number=ReqformDataModel.objects.count(),
         create_uid=request.user.api_uid
     )
 
@@ -96,6 +97,7 @@ def edit_reqform_draft(request : HttpRequest, container_id : int):
             print(reqform_form.errors)
 
         return render(request, "drafts/awis_draft_reqform.html", {
+            "reqform_time": timezone.now(),
             "draft_form": reqform_form,
         })
     

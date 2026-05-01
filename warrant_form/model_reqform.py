@@ -48,10 +48,7 @@ class ReqformDataModel(models.Model):
         GENERAL = (1, "ทั่วไป") # จ.
         DRUGS = (2, "ยาเสพติด") # ยจ.
     
-    reqno = models.CharField(max_length=50, blank=True, unique=True)
-    # เป็นการผสมกันระหว่าง case_type_id, req_form_number, และ req_year
-
-    req_form_number = models.IntegerField()
+    req_form_number = models.IntegerField(blank=True, null=True)
     
     req_day = models.PositiveIntegerField()
     req_month = models.PositiveIntegerField()

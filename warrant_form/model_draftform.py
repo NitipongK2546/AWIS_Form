@@ -42,6 +42,8 @@ class FormDraftContainer(models.Model):
 
     warrant_drafts = QuerySet["WarrantDraftDataModel"]
 
+from django.utils import timezone
+
 class ReqformDraftDataModel(models.Model):
 
     draft_container = models.OneToOneField(FormDraftContainer, on_delete=models.CASCADE, related_name="reqform_draft")
@@ -49,15 +51,6 @@ class ReqformDraftDataModel(models.Model):
     class ReqCaseTypeIDChoices(models.IntegerChoices):
         GENERAL = (1, "ทั่วไป") # จ.
         DRUGS = (2, "ยาเสพติด") # ยจ.
-    
-    reqno = models.CharField(blank=True, max_length=50,)
-    # เป็นการผสมกันระหว่าง case_type_id, req_form_number, และ req_year
-
-    req_form_number = models.IntegerField(blank=True, null=True, )
-    
-    req_day = models.PositiveIntegerField(blank=True, null=True, )
-    req_month = models.PositiveIntegerField(blank=True, null=True, )
-    req_year = models.PositiveIntegerField(blank=True, null=True, )
 
     req_case_type_id = models.IntegerField(blank=True, null=True,) 
 
@@ -157,7 +150,7 @@ class ReqformDraftDataModel(models.Model):
     acc_tel = models.CharField(blank=True, max_length=20, )
 
     def __str__(self):
-        return f"(แบบคำร้อง #{self.req_form_number}, ผู้ต้องสงสัย: {self.accused or '---'}, req_no_plaintiff: {self.req_no_plaintiff or '---'}, )"
+        return f"(ผู้ต้องสงสัย: {self.accused or '---'}, req_no_plaintiff: {self.req_no_plaintiff or '---'}, )"
     
     def getReqno(self): 
         return f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year + 543}"
@@ -230,7 +223,6 @@ class WarrantDraftDataModel(models.Model):
 
     draft_container = models.ForeignKey(FormDraftContainer, on_delete=models.CASCADE, related_name="warrant_drafts")
 
-    woa_no = models.IntegerField(blank=True, null=True)
     woa_type = models.IntegerField(blank=True, null=True)
     woa_date = models.DateTimeField(blank=True, null=True)
 
