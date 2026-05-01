@@ -1,20 +1,21 @@
+{% extends 'warrant_form/awis_base.html' %}
 {% load static %}
+
+{% block title %}Draft Warrant{% endblock %}
+
+{% block style %}
 <link rel="stylesheet" href="{% static 'css/draft_reqform.css' %}">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draft Warrant</title>
-    <script src="{% static 'js/get_cookie.js' %}"></script>
-    <script src="{% static 'js/fetchDistrict.js' %}"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script type="module">
-    import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
-</head>
-<body>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block header_script %}
+<script type="module">
+import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
+</script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
+{% endblock %}
+
+{% block content %}
     <form method="post">
     <button type="button" onclick="window.history.back()" class="back-button">กลับ</button>
         {% csrf_token %}
@@ -61,9 +62,11 @@
 {{ draft_form.appointment_date }}
 {% endcomment %}
 
-        <button type="submit">Create Draft</button>
-    </form>
+    <button type="submit">Create Draft</button>
+</form>
+{% endblock %}
 
+{% block script %}
 <script>
     const acc_province = "{{ acc_province|escapejs|default:10 }}"
     const acc_district = "{{ acc_district|escapejs|default:1001 }}"
@@ -82,5 +85,4 @@
         locale: Thai,
     });
 </script>
-</body>
-</html>
+{% endblock %}
