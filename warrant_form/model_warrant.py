@@ -46,6 +46,11 @@ WOA_TYPE_CHOICES = [
     (2, "47 ทวิ"),
 ]
 
+FAULT_TYPE_ID_CHOICES = [
+    (1, "แพ่ง"),
+    (2, "อาญา"),
+]
+
 # หมายเรียกที่ติดไปด้วย
 class WarrantDataModel(models.Model):
     """
@@ -131,6 +136,14 @@ class WarrantDataModel(models.Model):
         woa_type_dict = dict(WOA_TYPE_CHOICES)
 
         return woa_type_dict.get(self.woa_type, "-----")
+    
+    def get_fault_type_text(self) -> str:
+        fault_type_dict = dict(FAULT_TYPE_ID_CHOICES)
+
+        return fault_type_dict.get(self.fault_type_id, "-----")
+    
+    def get_woa_no_and_year(self) -> str:
+        return f"{self.woa_no if self.woa_no else '000'}/{self.woa_year if self.woa_year else '0000'}"
 
     def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:
         """

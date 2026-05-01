@@ -96,9 +96,7 @@ class VisualReqformData(models.Model):
         return form.req_no_plaintiff
     
     def getReqNo(self):
-        form : ReqformDataModel = self.form
-
-        return form.reqno
+        return self.form.getReqno()
     
     def getLogInfoDict(self):
         return {

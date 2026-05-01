@@ -168,44 +168,41 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
     selected_draft = FormDraftContainer.objects.filter(pk=container_id).first()
 
     if selected_draft:
-        if request.method == "POST":
-            try:
-                existing_reqform = ReqformDataModel.objects.filter(
-                    reqno=selected_draft.reqform_draft.getReqno()
-                ).union(
-                    ReqformDataModel.objects.filter(
-                        reqno=selected_draft.reqform_draft.req_no_plaintiff
-                    )
-                ).first()
-
-                if existing_reqform:
-                    return HttpResponseBadRequest("รหัสของฟอร์มคำร้องซ้ำกับคำร้องที่เคยมีอยู่")
-
-                reqform_obj = ReqformDataModel.objects.create(
-                    **selected_draft.reqform_draft.toRealReqform()
+        if request.method == "POST":          
+            existing_reqform = ReqformDataModel.objects.filter(
+                req_no_plaintiff=selected_draft.reqform_draft.req_no_plaintiff
+            ).union(
+                ReqformDataModel.objects.filter(
+                    req_no_plaintiff=selected_draft.reqform_draft.req_no_plaintiff
                 )
+            ).first()
 
-                for draft in selected_draft.warrant_drafts.all():
-                    warrant = WarrantDataModel.objects.create(
-                        **model_to_dict(draft, exclude=["id", "draft_container"])
-                    )
-                    reqform_obj.warrants.add(warrant)
-
-                FormAwaitingApproval.objects.create(
-                    form=reqform_obj, 
-                    form_owner=selected_draft.form_owner, 
-                    form_creator=selected_draft.form_creator, 
-                    approve_status=1
-                )
-
-
-                return redirect("dashboard:dashboard")
+            if existing_reqform:
+                return HttpResponseBadRequest("รหัสของฟอร์มคำร้องซ้ำกับคำร้องที่เคยมีอยู่")
             
-            except Exception as e:
-                if reqform_obj:
-                    reqform_obj.delete()
+            reqform_obj = ReqformDataModel(
+                **selected_draft.reqform_draft.toRealReqform()
+            )
 
-                return JsonResponse({"error": str(e)}, json_dumps_params={"ensure_ascii": False})
+            warrrant_wait_list = []
+            for draft in selected_draft.warrant_drafts.all():
+                warrant = WarrantDataModel.objects.create(
+                    **model_to_dict(draft, exclude=["id", "draft_container"])
+                )
+                warrrant_wait_list.append(warrant)
+
+            reqform_obj.save()
+            reqform_obj.warrants.add(warrant)
+
+            FormAwaitingApproval.objects.create(
+                form=reqform_obj, 
+                form_owner=selected_draft.form_owner, 
+                form_creator=selected_draft.form_creator, 
+                approve_status=1
+            )
+
+
+            return redirect("dashboard:dashboard")
 
         return render(request, "dashboard/confirmation_page.html", {
             "action": "Create Reqform from Draft",

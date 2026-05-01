@@ -50,8 +50,7 @@ class ReqformDataModel(models.Model):
     
     req_form_number = models.IntegerField(blank=True, null=True)
     
-    req_day = models.PositiveIntegerField()
-    req_month = models.PositiveIntegerField()
+    req_date = models.DateTimeField(blank=True, null=True)
     req_year = models.PositiveIntegerField()
 
     req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) 
@@ -161,7 +160,7 @@ class ReqformDataModel(models.Model):
         #     "id": self.pk,
         #     "reqno": self.reqno
         # }, ensure_ascii=False)
-        return f"(pk: {self.pk}, reqno: {self.reqno})"
+        return f"(pk: {self.pk}, req_no_plaintiff: {self.req_no_plaintiff})"
     
     def getLogInfoDict(self):
         return {
@@ -174,14 +173,10 @@ class ReqformDataModel(models.Model):
         return CentralForm.court_codes.getValueOf(self.court_code)
     
     def getReqno(self):
-        if self.reqno:
-            return self.reqno
+        if self.req_form_number:
+            return f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year + 543}"
         
-        self.reqno = f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year + 543}"
-        
-        self.save()
-        
-        return self.reqno
+        return "-"
     
     # def getReqno(self):
     #     if self.reqno:

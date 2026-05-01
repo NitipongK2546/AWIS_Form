@@ -152,14 +152,15 @@ class ReqformDraftDataModel(models.Model):
     def __str__(self):
         return f"(ผู้ต้องสงสัย: {self.accused or '---'}, req_no_plaintiff: {self.req_no_plaintiff or '---'}, )"
     
-    def getReqno(self): 
-        return f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year + 543}"
-    
     def toRealReqform(self) -> dict[str,]:
         
         dict_main_awis = model_to_dict(self, exclude=["id", "draft_container"])
+
+        thai_date_now = timezone.now().astimezone(timezone.get_current_timezone())
+
         dict_main_awis.update({
-            "reqno": self.getReqno()
+            "req_date": thai_date_now,
+            "req_year": thai_date_now.year + 543,
         })
 
         return dict_main_awis
