@@ -1,80 +1,81 @@
+{% extends "admin_panel/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logs</title>
-    <link rel="stylesheet" href="{% static 'admin_panel/css/log_list.css' %}">
-</head>
-<body>
-    <div class="filter-section">
-        <a href="{% url 'admin_panel:collections' %}" class="btn-red">กลับ</a>
-        <h2>Filter Logs</h2>
-        <form method="get">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Start date:</label>
-                    {{ query.start_day }}{{ query.start_month }}{{ query.start_year }}
-                </div>
-                <div class="form-group">
-                    <label>End date:</label>
-                    {{ query.end_day }}{{ query.end_month }}{{ query.end_year }}
-                </div>
-                <div class="form-group">
-                    <label>User ID:</label>
-                    {{ query.user_id }}
-                </div>
-            </div>
-        
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Action Type:</label>
-                    {{ query.action }}
-                </div>
-                <div>
-                    <label>ค้นหาหมายเลขคำขอ:</label>
-                    {{ query.reqno }}
-                </div>
-            </div>
-        
-            <div class="form-actions">
-                <button type="submit" class="btn-primary">ค้นหา</button>
-                <a href="{% url 'admin_panel:view_logs' %}" class="btn-secondary">รีเซ็ต</a>
-            </div>
-        </form>
-    </div>
 
-    <div>
-        <div class="log-export">
-            <a href="{% url 'admin_panel:export_logs' %}" class="btn-secondary">Export Log</a>
-            <a href="{% url 'admin_panel:delete_logs' %}?{{ request.GET.urlencode }}" class="btn-secondary">Delete Log</a>
+{% block title %}ดู Log ระบบ AWIS{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'admin_panel/css/log_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="filter-section">
+    <a href="{% url 'admin_panel:collections' %}" class="btn-red">กลับ</a>
+    <h2>Filter Logs</h2>
+    <form method="get">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Start date:</label>
+                {{ query.start_day }}{{ query.start_month }}{{ query.start_year }}
+            </div>
+            <div class="form-group">
+                <label>End date:</label>
+                {{ query.end_day }}{{ query.end_month }}{{ query.end_year }}
+            </div>
+            <div class="form-group">
+                <label>User ID:</label>
+                {{ query.user_id }}
+            </div>
         </div>
-    </div>
     
-
-    <section>
-        <h1>Normal Log</h1>
-        <div class="log-table">
-            {% include 'module/log_table.html' with page_obj=normal_page_obj page_param="normal_page" %}
+        <div class="form-row">
+            <div class="form-group">
+                <label>Action Type:</label>
+                {{ query.action }}
+            </div>
+            <div>
+                <label>ค้นหาหมายเลขคำขอ:</label>
+                {{ query.reqno }}
+            </div>
         </div>
-    </section>
-
-    <section>
-        <h1>Errors Log</h1>
-        <div class="log-table">
-            {% include 'module/log_table.html' with page_obj=errors_page_obj page_param="errors_page" %}
+    
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">ค้นหา</button>
+            <a href="{% url 'admin_panel:view_logs' %}" class="btn-secondary">รีเซ็ต</a>
         </div>
-    </section>
+    </form>
+</div>
 
-    <section>
-        <h1>Denied Log</h1>
-        <div class="log-table">
-            {% include 'module/log_table.html' with page_obj=denied_page_obj page_param="denied_page" %}
-        </div>
-    </section>
+<div>
+    <div class="log-export">
+        <a href="{% url 'admin_panel:export_logs' %}" class="btn-secondary">Export Log</a>
+        <a href="{% url 'admin_panel:delete_logs' %}?{{ request.GET.urlencode }}" class="btn-secondary">Delete Log</a>
+    </div>
+</div>
 
-    <script src="{% static 'admin_panel/js/adjustDate.js' %}"></script>
-    <script src="{% static 'admin_panel/js/queryHandler.js' %}"></script>
-</body>
-</html>
+
+<section>
+    <h1>Normal Log</h1>
+    <div class="log-table">
+        {% include 'module/log_table.html' with page_obj=normal_page_obj page_param="normal_page" %}
+    </div>
+</section>
+
+<section>
+    <h1>Errors Log</h1>
+    <div class="log-table">
+        {% include 'module/log_table.html' with page_obj=errors_page_obj page_param="errors_page" %}
+    </div>
+</section>
+
+<section>
+    <h1>Denied Log</h1>
+    <div class="log-table">
+        {% include 'module/log_table.html' with page_obj=denied_page_obj page_param="denied_page" %}
+    </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'admin_panel/js/adjustDate.js' %}"></script>
+<script src="{% static 'admin_panel/js/queryHandler.js' %}"></script>
+{% endblock %}
