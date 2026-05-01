@@ -65,9 +65,17 @@ class WarrantDataModel(models.Model):
 
     reqforms = "ReqformDataModel"
 
-    woa_date = models.DateTimeField(blank=True, null=True)
+    woa_no = models.IntegerField(blank=True, null=True)
+    woa_refno = models.CharField(max_length=16, blank=True)
+    woa_type = models.IntegerField()
 
-    fault_type_id = models.IntegerField() # UNCLEAR, HOW IS IT A NUMBER? ความ (อาญา.แพ่ง)
+    woa_year = models.PositiveIntegerField(blank=True, null=True)
+    # For my sanity, I'm seperating year and date. It won't be confusing, I swear. 
+    woa_date = models.DateTimeField(blank=True, null=True)
+    # And yes, despite the API sheet saying it's Date without Time, the API accept DateTime. Good God.
+    
+
+    fault_type_id = models.IntegerField() # (อาญา.แพ่ง)
     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร
     cause_text = models.CharField(max_length=400) # ด้วย
 
@@ -100,11 +108,6 @@ class WarrantDataModel(models.Model):
     # appointment_date = models.CharField(max_length=19, blank=True, null=True) # SAME DATE FORMAT AS BELOW
 
     appointment_date = models.DateTimeField(blank=True, null=True)
-
-    woa_no = models.IntegerField()
-    woa_refno = models.CharField(max_length=16, blank=True)
-
-    woa_type = models.IntegerField()
 
     plaintiff = models.CharField(max_length=400, blank=True)
     court_name = models.CharField(max_length=250, blank=True)

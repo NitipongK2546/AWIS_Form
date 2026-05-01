@@ -112,7 +112,6 @@ def create_warrant_draft(request : HttpRequest, container_id : int):
     if draft_container:
         WarrantDraftDataModel.objects.create(
             draft_container=draft_container,
-            woa_no=(draft_container.warrant_drafts.count() + 1),
             **draft_container.reqform_draft.getAccusedInfo(),
         )
         draft_container.save()
