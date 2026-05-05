@@ -177,11 +177,10 @@
     
     <p align="center">ควรมิควรแล้วแต่จะโปรด</p>
 
-    <p align="center">
-      (ลงชื่อ) 
-      <span class="plaintiff_2">{{ form.plaintiff_2 }}</span>  
-      ผู้ร้อง
-    </p>
+    <div style="text-align: center;">
+      <p class="plaintiff_2">(ลงชื่อ) {{ form.req_signature }} (ผู้ร้อง)</p>  
+      <p class="plaintiff_2">({{ form.plaintiff_2 }})</p>
+    </div>
 
     {% if not disabled %}
     <p style="display: flex; justify-content: center; margin: 30px 0px"> <button type="submit" class="button no-print" style="background-color: green; margin: 0px;font-size: 2rem;">หน้าถัดไป</button> </p>

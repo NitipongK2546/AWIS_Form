@@ -241,7 +241,7 @@ class ReqformDataModel(models.Model):
             if datetime_obj:
                 return datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
             
-            return None
+            return timezone.datetime.fromtimestamp(0, timezone.UTC).strftime("%Y-%m-%d %H:%M:%S")
 
         result_dict = {
             "court_code": self.court_code,

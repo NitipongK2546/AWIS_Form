@@ -123,6 +123,8 @@ class AWISFormStep1(forms.Form):
     create_uid = forms.IntegerField()
     ref_no = forms.CharField(max_length=50, widget=forms.HiddenInput(), required=False)
 
+    req_signature = forms.CharField(max_length=250, required=False)
+
     #######################
 
     woa_start_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices, attrs={
