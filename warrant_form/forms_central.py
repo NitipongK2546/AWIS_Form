@@ -77,5 +77,11 @@ def splitTime(time_split_list : list[str], target_dict : dict) -> dict[str,]:
             target_dict.update({f"{item}_year" : datetime_obj.year})
 
             target_dict.update({f"{item}_timehalf" : datetime_obj.time().isoformat()})
+        else:
+            target_dict.update({f"{item}_day" : 1})
+            target_dict.update({f"{item}_month" : 1})
+            target_dict.update({f"{item}_year" : 1970})
+
+            target_dict.update({f"{item}_timehalf" : "07:00:00"})
 
     return target_dict

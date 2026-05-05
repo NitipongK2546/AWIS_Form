@@ -107,7 +107,7 @@ def auth_api(request : HttpRequest) -> JsonResponse:
         }, status=400)
 
 @api_perm_log([PermissionType.EDIT], PermissionList.REQFORM_SUBMITTED, AccessType.EDIT)
-def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
+def update_status_req_warrant(request : HttpRequest, req_no_plaintiff : str) -> JsonResponse:
     if request.method != "PUT":
         # Wrong request method.
         return JsonResponse({
@@ -146,7 +146,7 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     try:
         # Should be unique, so there's really only 1.
         form_obj = ReqformDataModel.objects.filter(
-            req_no_plaintiff = data.get("req_no_plaintiff"),
+            req_no_plaintiff = req_no_plaintiff,
         )
 
         if not form_obj.first():
@@ -200,7 +200,7 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
         }, status=400)
 
 @api_perm_log([PermissionType.EDIT], PermissionList.REQFORM_SUBMITTED, AccessType.EDIT)
-def update_status_warrant(request : HttpRequest) -> JsonResponse:
+def update_status_warrant(request : HttpRequest, woa_refno : str) -> JsonResponse:
     if request.method != "PUT":
         # Wrong request method.
         return JsonResponse({
@@ -267,7 +267,7 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
         related_warrants = form_obj.first().warrants.all()
 
         warrants_matched = related_warrants.filter(
-            woa_refno=data.get("woa_refno"),
+            woa_refno=woa_refno,
         )
 
         if not warrants_matched.first():

@@ -301,7 +301,7 @@ class ReqformDataModel(models.Model):
         dict_main_awis = model_to_dict(self)
 
         duped_list = ["accused", "plaintiff", "court_name"]
-        time_split_list = ["woa_start_date", "woa_end_date", "scene_date"]
+        time_split_list = ["woa_start_date", "woa_end_date", "scene_date", "req_date"]
 
         dict_main_awis = CentralForm.createDupe(duped_list, dict_main_awis)
         dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis)

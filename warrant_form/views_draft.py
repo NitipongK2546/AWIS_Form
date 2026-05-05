@@ -186,13 +186,19 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
 
             warrrant_wait_list = []
             for draft in selected_draft.warrant_drafts.all():
-                warrant = WarrantDataModel.objects.create(
+                warrant = WarrantDataModel(
                     **model_to_dict(draft, exclude=["id", "draft_container"])
                 )
                 warrrant_wait_list.append(warrant)
 
+                if WarrantDataModel.objects.filter(woa_refno=warrant.woa_refno).first():
+                    return HttpResponseBadRequest("เลขอ้างอิงของหมายซ้ำกับหมายที่เคยสร้างขึ้น")
+
             reqform_obj.save()
-            reqform_obj.warrants.add(warrant)
+
+            for warrant in warrrant_wait_list:
+                warrant.save()
+                reqform_obj.warrants.add(warrant)
 
             FormAwaitingApproval.objects.create(
                 form=reqform_obj, 

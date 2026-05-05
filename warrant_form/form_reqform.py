@@ -21,14 +21,14 @@ class AWISFormStep1(forms.Form):
 
     req_form_number = forms.IntegerField()
     
-    req_day = forms.IntegerField(widget=forms.Select(choices=CentralForm.day_choices, attrs={
+    req_date_day = forms.IntegerField(widget=forms.Select(choices=CentralForm.day_choices, attrs={
         'class': 'datehalf day',
     }))
-    req_month = forms.IntegerField(widget=forms.Select(choices=CentralForm.month_choices, attrs={
+    req_date_month = forms.IntegerField(widget=forms.Select(choices=CentralForm.month_choices, attrs={
         'class': 'datehalf month',
         'onchange': 'changeDate(req_day, req_month, req_year)'
     }))
-    req_year = forms.IntegerField(widget=forms.Select(choices=CentralForm.year_choices, attrs={
+    req_date_year = forms.IntegerField(widget=forms.Select(choices=CentralForm.year_choices, attrs={
         'class': 'datehalf year',
         'onchange': 'changeDate(req_day, req_month, req_year)'
     }))
@@ -125,7 +125,7 @@ class AWISFormStep1(forms.Form):
 
     req_signature = forms.CharField(max_length=250, required=False)
 
-    #######################
+    #######################_date
 
     woa_start_date_day = forms.IntegerField(required=False, widget=forms.Select(choices=CentralForm.day_choices, attrs={
         'class': 'datehalf day',
