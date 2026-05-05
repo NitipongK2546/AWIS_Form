@@ -51,6 +51,9 @@ FAULT_TYPE_ID_CHOICES = [
     (2, "อาญา"),
 ]
 
+from django.utils import timezone
+import datetime
+
 # หมายเรียกที่ติดไปด้วย
 class WarrantDataModel(models.Model):
     """
@@ -146,32 +149,47 @@ class WarrantDataModel(models.Model):
         return f"{self.woa_no if self.woa_no else '000'}/{self.woa_year if self.woa_year else '0000'}"
 
     def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:
-        """
-        Convert the model object into a dictionary that fits what the API required.
-        It uses model_to_dict to, first, convert the model into a dictionary with matching field names,
-        then convert or remove some fields to match the API.\n
-        It is, of course, not JSON object, so don't forget to json.dumps(dict) it later.
-        """
-        dict_warrant = toAPICompatibleDictGeneral(self)
+        def datetime_format(datetime_obj : datetime.datetime):
+            if datetime_obj:
+                return datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
+            
+            return None
 
-        dict_warrant = cleanDateTimeFields(dict_warrant)
+        result_dict = {
+            "woa_refno": self.woa_refno,
+            "woa_date": datetime_format(self.woa_date),
+            "fault_type_id": self.fault_type_id,
+            "send_to_name": self.send_to_name,
+            "cause_text": self.cause_text,
+            "charge": self.charge,
+            "charge_type_1": 1 if self.charge_type_1 else 0,
+            "charge_type_2": 1 if self.charge_type_2 else 0,
+            "charge_type_2_1": 1 if self.charge_type_2_1 else 0,
+            "charge_type_2_2": 1 if self.charge_type_2_2 else 0,
+            "charge_type_2_3": 1 if self.charge_type_2_3 else 0,
+            "charge_type_3": 1 if self.charge_type_3 else 0,
+            "charge_other_text": self.charge_other_text,
+            "acc_full_name": self.acc_full_name,
+            "acc_card_type": self.acc_card_type,
+            "acc_card_id": self.acc_card_id,
+            "acc_origin": self.acc_origin,
+            "acc_nation": self.acc_nation,
+            "acc_occupation": self.acc_occupation,
+            "acc_addno": self.acc_addno,
+            "acc_vilno": self.acc_vilno,
+            "acc_road": self.acc_road,
+            "acc_soi": self.acc_soi,
+            "acc_near": self.acc_near,
+            "acc_sub_district": self.acc_sub_district,
+            "acc_district": self.acc_district,
+            "acc_province": self.acc_province,
+            "acc_tel": self.acc_tel,
+            "appointment_type": self.appointment_type,
+            "appointment_date": datetime_format(self.appointment_date),
+            "woa_type": self.woa_type
+        }
 
-        # date_list = ["appointment_date", ]
-
-        # for date in date_list:
-        #     date_value = dict_warrant.get(date)
-        #     if (not date_value) or len(date_value) != 19:
-        #         dict_warrant.update({
-        #             date: "1970-01-01 12:00:00",
-        #         })
-
-        prefixed_dict = {}
-        if prefix:
-            prefixed_dict = {f"{prefix}-{key}":value for key, value in dict_warrant.items()}
-
-            return prefixed_dict
-
-        return dict_warrant
+        return result_dict
     
     def convertBacktoFormView(self) -> dict[str, object]:
         dict_main_awis = model_to_dict(self)

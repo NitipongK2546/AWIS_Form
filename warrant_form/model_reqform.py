@@ -237,78 +237,64 @@ class ReqformDataModel(models.Model):
         return dict_main_awis
     
     def toAPICompatibleDict(self,) -> dict[str, object]:
-        current_dict = self.toDocumentCompatibleDict()
-        current_dict.pop("day", None)
-        current_dict.pop("month", None)
-        current_dict.pop("year", None)
+        def datetime_format(datetime_obj : datetime.datetime):
+            if datetime_obj:
+                return datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
+            
+            return None
 
-        bool_key_dict : dict[str, int] = {
-            "cause_type_id": 2,
-            "have_req": 2,
-            # "charge_type": 2,
+        result_dict = {
+            "court_code": self.court_code,
+            "req_year": self.req_year,
+            "req_case_type_id": self.req_case_type_id,
+            "police_station_id": self.police_station_id,
+            "req_no_plaintiff": self.req_no_plaintiff,
+            "plaintiff": self.plaintiff,
+            "accused": self.accused,
+            "req_name": self.req_name,
+            "req_pos": self.req_pos,
+            "req_age": self.req_age,
+            "req_office": self.req_office,
+            "req_sub_district": self.req_sub_district,
+            "req_district": self.req_district,
+            "req_province": self.req_province,
+            "req_tel": self.req_tel,
+            "cause_type_id": self.cause_type_id,
+            "cause_text": self.cause_text,
+            "charge": self.charge,
+            "charge_type_1": 1 if self.charge_type_1 else 0,
+            "charge_type_2": 1 if self.charge_type_2 else 0,
+            "scene": self.scene,
+            "scene_date": datetime_format(self.scene_date),
+            "act": self.act,
+            "law": self.law,
+            "court_owner_code": self.court_owner_code,
+            "prescription": self.prescription,
+            "woa_start_date": datetime_format(self.woa_start_date),
+            "woa_end_date": datetime_format(self.woa_end_date),
+            "agent_name": self.agent_name,
+            "agent_pos": self.agent_pos,
+            "have_req": self.have_req,
+            "have_court_code": self.have_court_code,
+            "have_act": self.have_act,
+            "have_injunc": self.have_injunc,
+            "composer_name": self.composer_name,
+            "composer_position": self.composer_position,
+            "writer_name": self.writer_name,
+            "write_position": self.write_position,
+            "create_uid": self.create_uid,
+            "ref_no": self.ref_no,
         }
-        for bool_key, total_num in bool_key_dict.items():
-            bool_value_list = []
-            for num in range(total_num):
-                # Example: cause_type_id_1
-                key = f"{bool_key}_{num + 1}"
+        warrant_list = []
+        for warrant in self.warrants.all():
+            warrant_dict = warrant.toAPICompatibleDict()
+            warrant_list.append(warrant_dict)
 
-                var_value = current_dict.get(key)
-                bool_value_list.append((key, var_value))
+        result_dict.update({
+            "warrants": warrant_list
+        })
 
-                current_dict.pop(key, None)
-
-            if bool_value_list[0][1] == 1:
-                current_dict.update({bool_key: 0})
-            else:
-                current_dict.update({bool_key: 1})
-
-        current_dict.pop("req_day")
-        current_dict.pop("req_month")
-
-        current_dict.update({"req_year": current_dict.get("req_year") + 543})
-
-        current_dict.pop("court_name")
-
-        current_dict.pop("acc_full_name")
-
-        current_dict.pop("acc_origin")
-        current_dict.pop("acc_nation")
-        current_dict.pop("acc_occupation")
-
-        current_dict.pop("acc_card_id")
-        current_dict.pop("acc_card_type")
-
-        current_dict.pop("acc_sub_district")
-        current_dict.pop("acc_district")
-        current_dict.pop("acc_province")
-
-        current_dict.pop("acc_addno")
-        current_dict.pop("acc_vilno")
-        current_dict.pop("acc_road")
-        current_dict.pop("acc_soi")
-        current_dict.pop("acc_near")
-        current_dict.pop("acc_tel")
-
-        return current_dict
-    
-    
-    def toAPICompatibleDictWithConvertedWarrants(self, prefix : str = None) -> dict[str, object]:
-        cleaned_dict = self.toAPICompatibleDict()
-
-        warrants_obj = self.warrants.all()
-        warrants_list = [item.toAPICompatibleDict() for item in warrants_obj]
-
-        if prefix:
-            cleaned_dict.update({f"{prefix}_warrants": warrants_list})
-            return cleaned_dict
-        
-        cleaned_dict.update({f"warrants": warrants_list})
-
-        cleaned_dict.pop("reqno")
-        cleaned_dict.pop("req_form_number")
-
-        return cleaned_dict
+        return result_dict
     
 
     def convertBacktoFormView(self) -> dict[str,]:

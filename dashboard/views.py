@@ -216,6 +216,9 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         return HttpResponseForbidden("ท่านไม่ใช่เจ้าของหรือผู้ร่างแบบฟอร์มดังกล่าว")
 
     reqform = selected_form.form
+
+    print(json.dumps(reqform.toAPICompatibleDict(), ensure_ascii=False, indent=2))
+
     # print(selected_form.prepareTextToSpeech())
 
     warrants : list[WarrantDataModel] = reqform.warrants.all()
