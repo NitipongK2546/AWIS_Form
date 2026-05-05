@@ -177,21 +177,6 @@ class ReqformDataModel(models.Model):
             return f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year}"
         
         return "-"
-    
-    # def getReqno(self):
-    #     if self.reqno:
-    #         return self.reqno
-        
-    #     case_type_text = {
-    #         1: "จ.",
-    #         2: "ยจ.",
-    #     }
-    #     buddhist_year = self.req_year + 543
-    #     reqno = f"{case_type_text.get(self.req_case_type_id)}{self.req_form_number}/{buddhist_year}"
-
-    #     self.reqno = reqno
-
-    #     return reqno
 
 
     def toDocumentCompatibleDict(self) -> dict[str, object]:

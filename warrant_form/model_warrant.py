@@ -74,7 +74,7 @@ class WarrantDataModel(models.Model):
     reqforms = "ReqformDataModel"
 
     woa_no = models.IntegerField(blank=True, null=True)
-    woa_refno = models.CharField(max_length=16, blank=True)
+    woa_refno = models.CharField(max_length=16, blank=True, unique=True)
     woa_type = models.IntegerField()
 
     woa_year = models.PositiveIntegerField(blank=True, null=True)

@@ -150,7 +150,7 @@ class ReqformDraftDataModel(models.Model):
     acc_tel = models.CharField(blank=True, max_length=20, )
 
     def __str__(self):
-        return f"(ผู้ต้องสงสัย: {self.accused or '---'}, req_no_plaintiff: {self.req_no_plaintiff or '---'}, )"
+        return f"(รหัส: {self.req_no_plaintiff or '---'}, ผู้ต้องสงสัย: {self.accused or '---'})"
     
     def toRealReqform(self) -> dict[str,]:
         
@@ -264,4 +264,4 @@ class WarrantDraftDataModel(models.Model):
     court_name = models.CharField(max_length=250, blank=True)
 
     def __str__(self):
-        return f"(หมายจับ: {woa_type_dict.get(self.woa_type)}, นัดหมาย: {self.get_appointment_type_display()})"
+        return f"(เลขอ้างอิง: {self.woa_refno}, หมายจับ: {self.acc_full_name})"

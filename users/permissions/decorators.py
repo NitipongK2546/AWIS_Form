@@ -11,12 +11,15 @@ import _log_utils.file_logger as FileLogger
 from _log_utils.file_logger import AccessType
 from users.permissions import PermissionList, PermissionType, perm_str_list, PERMISSION_CODE
 
-def error_code_gen(perm_list, system):
-    type_str = "".join([type[0] for type in perm_list])
+def error_code_gen(perm_list : PermissionList | list[PermissionList], system):
+    if isinstance(perm_list, PermissionList):
+        perm_list = [perm_list]
+
+    type_str = "".join([type.value[0] for type in perm_list]).upper()
 
     system_code = PERMISSION_CODE.get(system)
 
-    return f"{type_str}_{system_code}"
+    return f"{type_str}-{system_code}"
 
 def server_error_util(request : HttpRequest, perm_list, system):
     error_code = error_code_gen(perm_list, system)

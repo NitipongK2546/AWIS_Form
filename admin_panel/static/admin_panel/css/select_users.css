@@ -38,7 +38,7 @@ button:hover {
     background-color: c;
 }
 
-a.btn {
+a.btn, span.btn {
     background-color: #3498db;
     color: white;
     border: none;

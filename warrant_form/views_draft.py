@@ -20,6 +20,8 @@ from users.permissions.decorators import perm_req_log
 
 from django.utils import timezone
 
+import uuid
+
 @perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_DRAFT, AccessType.CREATE)
 def create_draft_main_local_page(request : HttpRequest):
     draft_container = FormDraftContainer.objects.create(
@@ -29,7 +31,8 @@ def create_draft_main_local_page(request : HttpRequest):
 
     ReqformDraftDataModel.objects.create(
         draft_container=draft_container,
-        create_uid=request.user.api_uid
+        create_uid=1000010,
+        police_station_id="TCCT0001",
     )
 
     # return redirect("dashboard:dashboard")
@@ -105,6 +108,9 @@ def edit_reqform_draft(request : HttpRequest, container_id : int):
 
 ###############################################################################
 
+# def woa_refno_reduce():
+#     woa_num = max(0, woa_num - 1)
+
 @perm_req_log([PermissionType.EDIT], PermissionList.REQFORM_DRAFT, AccessType.EDIT)
 def create_warrant_draft(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
@@ -163,6 +169,13 @@ def delete_warrant_draft(request : HttpRequest, container_id : int, warrant_id :
 
 ###############################################################################
 
+def req_no_plaintiff_generate():
+    today = timezone.now()
+    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{ReqformDataModel.objects.count() + 1}".zfill(4)}"
+
+def woa_refno_generate():
+    return f"TCCT{timezone.now().year + 543}{f"{WarrantDataModel.objects.count() + 1}".zfill(4)}"
+
 @perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
 def create_reqform_from_draft(request : HttpRequest, container_id : int):
     selected_draft = FormDraftContainer.objects.filter(pk=container_id).first()
@@ -178,37 +191,53 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             ).first()
 
             if existing_reqform:
-                return HttpResponseBadRequest("รหัสของฟอร์มคำร้องซ้ำกับคำร้องที่เคยมีอยู่")
+                return render(request, "errors/400.html", {
+                    "reason": "รหัสของฟอร์มคำร้องซ้ำกับคำร้องที่เคยมีอยู่"
+                }, status=400)
             
             reqform_obj = ReqformDataModel(
-                **selected_draft.reqform_draft.toRealReqform()
+                **selected_draft.reqform_draft.toRealReqform(),
             )
 
-            warrrant_wait_list = []
+            warrrant_wait_list : list[WarrantDataModel] = []
             for draft in selected_draft.warrant_drafts.all():
                 warrant = WarrantDataModel(
-                    **model_to_dict(draft, exclude=["id", "draft_container"])
+                    **model_to_dict(draft, exclude=["id", "draft_container"]),
                 )
                 warrrant_wait_list.append(warrant)
 
                 if WarrantDataModel.objects.filter(woa_refno=warrant.woa_refno).first():
-                    return HttpResponseBadRequest("เลขอ้างอิงของหมายซ้ำกับหมายที่เคยสร้างขึ้น")
+                    return render(request, "errors/400.html", {
+                        "reason": "เลขอ้างอิงของหมายซ้ำกับหมายที่เคยสร้างขึ้น"
+                    }, status=400)
 
-            reqform_obj.save()
+            try:
+                reqform_obj.req_no_plaintiff = req_no_plaintiff_generate()
+                reqform_obj.save()
 
-            for warrant in warrrant_wait_list:
-                warrant.save()
-                reqform_obj.warrants.add(warrant)
+                for warrant in warrrant_wait_list:
+                    warrant.woa_refno = woa_refno_generate()
+                    warrant.save()
+                    reqform_obj.warrants.add(warrant)
 
-            FormAwaitingApproval.objects.create(
-                form=reqform_obj, 
-                form_owner=selected_draft.form_owner, 
-                form_creator=selected_draft.form_creator, 
-                approve_status=1
-            )
+                FormAwaitingApproval.objects.create(
+                    form=reqform_obj, 
+                    form_owner=selected_draft.form_owner, 
+                    form_creator=selected_draft.form_creator, 
+                    approve_status=1
+                )
 
+                return redirect("dashboard:dashboard")
+            except Exception:
+                if reqform_obj.pk:
+                    reqform_obj.delete()
+                for warrant in warrrant_wait_list:
+                    if warrant.pk:
+                        warrant.delete()
 
-            return redirect("dashboard:dashboard")
+                return render(request, "errors/400.html", {
+                    "reason": "ข้อมูลที่ใส่ลงไปในร่างไม่เพียงพอ"
+                }, status=400)
 
         return render(request, "dashboard/confirmation_page.html", {
             "action": "Create Reqform from Draft",

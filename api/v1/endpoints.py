@@ -301,6 +301,7 @@ def update_status_warrant(request : HttpRequest, woa_refno : str) -> JsonRespons
 
         reqform_update_dict = {
             # "prescription_unit": data.get("prescription_unit"), 
+            "judge_name": data.get("judge_name"),
             "prescription": data.get("prescription"), 
             "woa_start_date": datetime_format(data.get("woa_start_date")),
             "woa_end_date": datetime_format(data.get("woa_end_date")),
