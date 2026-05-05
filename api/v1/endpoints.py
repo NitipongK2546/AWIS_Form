@@ -25,6 +25,7 @@ from django.core.exceptions import PermissionDenied
 # The number is chosen by court.
 
 #Sample => "reqno": "จ.1/2569"
+# Is absolutely useless now because API specification changed.
 def getDataFromReqno(reqno : str):
     first_split : list[str] = reqno.split("/")
     second_split : list[str] = first_split[0].split(".")
@@ -37,6 +38,16 @@ def getDataFromReqno(reqno : str):
         }
 
     return False
+
+def datetime_format(datetime_str : str):
+    iso8601_str_format = "%Y-%m-%dT%H:%M:%S" 
+    html_str_format = "%Y-%m-%d %H:%M:%S" 
+
+    if datetime_str:
+        datetime_obj = timezone.datetime.strptime(datetime_str, html_str_format).astimezone(timezone.get_current_timezone())
+        return datetime_obj
+    
+    return None
 
 # V1 ENDPOINTS
 
@@ -125,57 +136,49 @@ def update_status_req_warrant(request : HttpRequest) -> JsonResponse:
     # Sample
     # {
     #     "req_no_plaintiff": "123456789",
-    #     "recive_date": "2006-01-02T00:00:00",
-    #     "reqno": "จ.1/2569",
+    #     "req_year": 2569
+    #     "req_no": 1
+    #     "req_case_type_id": 0-1,
     #     "accept": 1,
-    #     "accept_date": "2006-01-02T00:00:00"
+    #     "accept_date": "2006-01-02 00:00:00"
     # }
 
     try:
         # Should be unique, so there's really only 1.
-        form_obj = ReqformDataModel.objects.get(
+        form_obj = ReqformDataModel.objects.filter(
             req_no_plaintiff = data.get("req_no_plaintiff"),
         )
 
-        target_object = VisualReqformData.objects.filter(
-            form=form_obj,
+        if not form_obj.first():
+            return JsonResponse({
+                "status": 404,
+                "message": "ไม่มีคำร้องที่มีเลขคำร้องดังกล่าว" 
+            }, status=400)
+
+        form_status_obj = VisualReqformData.objects.filter(
+            form__in=form_obj,
         )
 
-        iso8601_str_format = "%Y-%m-%dT%H:%M:%S" 
-
-        data_recive_date = data.get("recive_date")
-        data_accept_date = data.get("accept_date")
-
-        reqno_data = getDataFromReqno(data.get("reqno"))
-
-        update_dict = {
-            "req_form_number": reqno_data.get("req_form_number"),
-            "req_year": reqno_data.get("req_year"),
-            "req_case_type_id": reqno_data.get("req_case_type_id"),
+        wrapper_update_dict = {
+            "accept": data.get("accept"),
+            "accept_date": datetime_format(data.get("accept_date")),
         }
 
-        if data_recive_date:
-            recive_date = timezone.datetime.strptime(data_recive_date, iso8601_str_format)
-            recive_date = timezone.make_aware(recive_date, timezone.UTC,)
+        reqform_update_dict = {
+            "req_year": data.get("req_year"),
+            "req_form_number": data.get("req_no"),
+            "req_case_type_id": data.get("req_case_type_id"),
+        }
 
-            update_dict.update({"recive_date": recive_date})
-        else:
-            raise HttpResponseBadRequest("No receive date")
-
-        if data_accept_date:
-            accept_date = timezone.datetime.strptime(data_accept_date, iso8601_str_format) 
-            accept_date = timezone.make_aware(accept_date, timezone.UTC,)
-
-            update_dict.update({"accept_date": accept_date})
-            update_dict.update({"accept": data.get("accept")})
-        else:
-            raise HttpResponseBadRequest("No accept date")
-
-        target_object.update(
-            **update_dict,
+        form_status_obj.update(
+            **wrapper_update_dict,
         )
 
-        affected_objs = [obj.getLogInfoDict() for obj in target_object]
+        form_obj.update(
+            **reqform_update_dict
+        )
+
+        affected_objs = [obj.getLogInfoDict() for obj in form_status_obj]
 
         FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_SUBMITTED, affected_objs, user_bypass=user, remark="VIA JSON WEB TOKEN")
 
@@ -224,9 +227,13 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
     
         # Data confirm to be dictionary.   
 
+        # Data confirm to be dictionary.   
+        # Sample
         # {
+        #     "req_case_type_id": 0-1,
+        #     "req_num": 000,
+        #     "req_num_year": 2569,
         #     "req_no_plaintiff": "123456789",
-        #     "reqno": "จ.1/2569",
 
         #     "woa_no": 2,
         #     "woa_year": 2569,
@@ -234,37 +241,43 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
         #     "woa_refno": "1234",
 
         #     "judge_name": "xxxxxx xxxx",
-        #     "court_injunction": 1,
+        #     "court_injuction": 1,
         #     "injunction_date": "2006-01-02T00:00:00",
         #     "file_path": "",
         #     "because": ""
+
+        #     "prescription_unit": 1 2 3, #ประเภท ปี เดือน วัน
+        #     "prescription": 00 # จำนวน
+        #     "woa_start_date":
+        #     "woa_end_date": 
         # }
 
     try:
-        return JsonResponse({
-            "status": "UNFINISHED",
-            "message": "TODO: PLEASE ASK THE COURT WHAT KIND OF FIELD THEY WANT TO REFER SO THEY CAN UPDATE THE CORRECT WARRANT! PLEASE! THE API DOESN'T SEND ANYTHING REQUIRED"
-        })
 
-        #
-        # A VERY BIG TO DO LIST
-        #
-        #
-
-
-        form_obj = ReqformDataModel.objects.get(
+        form_obj = ReqformDataModel.objects.filter(
             req_no_plaintiff = data.get("req_no_plaintiff"),
         )
+        
+        if not form_obj.first():
+            return JsonResponse({
+                "status": 404,
+                "message": "ไม่มีคำร้องที่มีเลขคำร้องดังกล่าว" 
+            }, status=400)
 
-        related_warrants = form_obj.warrants.all()
+        related_warrants = form_obj.first().warrants.all()
 
-        warrants_matched : WarrantDataModel = related_warrants.filter(
-            woa_refno = data.get("woa_refno"),
-            woa_type = data.get("woa_type"),
-        ).first()
+        warrants_matched = related_warrants.filter(
+            woa_refno=data.get("woa_refno"),
+        )
+
+        if not warrants_matched.first():
+            return JsonResponse({
+                "status": 404,
+                "message": "ไม่มีหมายที่มีเลขอ้างอิงกล่าว" 
+            }, status=400)
 
         woa_wrapper_matched = VisualWarrantData.objects.filter(
-            warrant=warrants_matched,
+            warrant__in=warrants_matched,
         )
 
         if len(woa_wrapper_matched) == 0:
@@ -272,36 +285,40 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
                 "status": 400,
                 "message": "No warrant found."
             }, status=400)
-
-        iso8601_str_format = "%Y-%m-%dT%H:%M:%S"    
-
-        injunction_date = timezone.datetime.strptime(data.get("injunction_date"), iso8601_str_format)
-        injunction_date = timezone.make_aware(injunction_date, timezone.UTC,)
-
-        # reqno_data = getDataFromReqno(data.get("reqno"))
-
-        update_dict = {
-            # "req_form_number": reqno_data.get("req_form_number"),
-            # "req_year": reqno_data.get("req_year"),
-            # "req_case_type_id": reqno_data.get("req_case_type_id"),
-
-            
+        
+        wrapper_update_dict = {
             "judge_name": data.get("judge_name"),
-            "court_injunction": data.get("court_injunction"),
-            "injunction_date": injunction_date,
+            "court_injunction": data.get("court_injuction"),
             "file_path": data.get("file_path", ""),
             "because": data.get("because", ""),
         }
 
+        warrant_update_dict = {
+            "woa_type": data.get("woa_type"),
+            "woa_no": data.get("woa_no"),
+            "woa_year": data.get("woa_year"),
+        }
+
+        reqform_update_dict = {
+            # "prescription_unit": data.get("prescription_unit"), 
+            "prescription": data.get("prescription"), 
+            "woa_start_date": datetime_format(data.get("woa_start_date")),
+            "woa_end_date": datetime_format(data.get("woa_end_date")),
+        }
+
         woa_wrapper_matched.update(
-            **update_dict,
+            **wrapper_update_dict,
         )
 
-        warrants_matched.woa_no = data.get("woa_no")
-        warrants_matched.save()
-        # warrants_matched.
+        warrants_matched.update(
+            **warrant_update_dict,
+        )
 
-        FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_SUBMITTED, warrants_matched.getLogInfoDict(), user_bypass=user, remark="VIA JSON WEB TOKEN")
+        form_obj.update(
+            **reqform_update_dict
+        )
+
+        FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_SUBMITTED, woa_wrapper_matched.first().getLogInfoDict(), user_bypass=user, remark="VIA JSON WEB TOKEN")
 
         return JsonResponse({
             "status": 200,
@@ -313,11 +330,11 @@ def update_status_warrant(request : HttpRequest) -> JsonResponse:
             "status": 403,
             "message": "Current User Lack Permission" 
         }, status=403)
-    except HttpResponseBadRequest:
+    except Exception as e:
+        print(e)
         return JsonResponse({
             "status": 400,
             "message": "Updating Failed." 
         }, status=400)
-
 
         

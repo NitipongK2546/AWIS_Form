@@ -60,7 +60,7 @@
                 </td>
                 <td>
                     {% if form.court_injunction_int == 1 %}
-                    <a href="{% url 'dashboard:report_warrant' form.reqno form.woa_refno form.woa_year form.woa_type_int form.woa_no %}">รายงานผลหมาย</a>
+                    <a href="{% url 'dashboard:report_warrant' form.req_no_plaintiff form.woa_refno %}">รายงานผลหมาย</a>
                     {% endif %}
                 </td>
             </tr>

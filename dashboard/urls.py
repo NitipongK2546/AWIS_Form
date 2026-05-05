@@ -24,5 +24,5 @@ urlpatterns = [
     
     path("unsend/<str:req_no_plaintiff>/", views.unsend_reqform, name="delete_sent_reqform"),
 
-    path("report/<path:form_reqno_id>/warrant/<str:woa_refno>/<int:woa_year>/<int:woa_type>/<int:woa_no>/", views.report_update_warrant_arrest_yet, name="report_warrant"),
+    path("report/<str:req_no_plaintiff>/warrant/<str:woa_refno>/", views.report_update_warrant_arrest_yet, name="report_warrant"),
 ]   

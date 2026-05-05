@@ -73,7 +73,6 @@ class VisualReqformData(models.Model):
     form = models.OneToOneField(ReqformDataModel, on_delete=models.CASCADE, related_name='finalized_form')
 
     # THIS NAME IS CORRECT, DON'T CHANGE THIS, FUTURE READER!!!
-    recive_date = models.DateTimeField(blank=True, null=True)
     accept_date = models.DateTimeField(blank=True, null=True)
 
     accept = models.IntegerField(choices=AcceptStatus, blank=True, null=True)

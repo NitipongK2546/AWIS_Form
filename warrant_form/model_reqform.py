@@ -174,7 +174,7 @@ class ReqformDataModel(models.Model):
     
     def getReqno(self):
         if self.req_form_number:
-            return f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year + 543}"
+            return f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year}"
         
         return "-"
     

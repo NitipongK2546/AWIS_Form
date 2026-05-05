@@ -155,7 +155,6 @@ def accept_table_page(request):
     output_list = []
     for obj in form_sent:
         data_dict = {
-            "recive_date": convert_time(obj.recive_date),
             "accept": obj.get_accept_display,
             "accept_date": convert_time(obj.accept_date),
             "req_no_plaintiff": obj.getReqNoPlaintiff(),
@@ -182,8 +181,8 @@ def warrant_status_page(request, req_no_plaintiff : str):
         warrant_wrap = VisualWarrantData.objects.filter(warrant=warrant_data).first()
 
         data_dict = {
-            "court_injunction": warrant_wrap.get_court_injunction_display, 
-            "woa_no_and_year": warrant_data.get_woa_no_and_year,
+            "court_injunction": warrant_wrap.get_court_injunction_display(), 
+            "woa_no_and_year": warrant_data.get_woa_no_and_year(),
             "woa_type": f"{warrant_data.get_woa_type_text()} | {warrant_data.get_fault_type_text()}",
             "woa_refno": warrant_data.woa_refno,
             "judge_name": warrant_wrap.judge_name,
@@ -192,6 +191,7 @@ def warrant_status_page(request, req_no_plaintiff : str):
             "because": warrant_wrap.because,
 
             "court_injunction_int": warrant_wrap.court_injunction, 
+            "req_no_plaintiff": req_no_plaintiff,
         }
 
         warrants_list.append(data_dict)
@@ -262,8 +262,6 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
         "acc_province": form_data.get("acc_province"),
         "acc_district": form_data.get("acc_district"),
         "acc_sub_district": form_data.get("acc_sub_district"),
-
-        "speech": reqform.prepareTextToSpeech(),
     })
 
 @permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
@@ -378,10 +376,10 @@ def success_page(request : HttpRequest):
 from .forms_report_warrant import ReportWarrantForm
 
 @permission_required(perm_str_list([PermissionType.EDIT, PermissionType.CREATE, PermissionType.APPROVE], PermissionList.REPORT_WARRANT_ARREST), raise_exception=True)
-def report_update_warrant_arrest_yet(request : HttpRequest, form_reqno_id : str, woa_refno : str, woa_year : int, woa_type : int, woa_no : int):
-    selected_form = getFormAwaitViaReqno(form_reqno_id)
+def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
+    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
 
-    target_warrant : WarrantDataModel = selected_form.form.warrants.filter(woa_no=woa_no, woa_date__year=(woa_year-543), woa_type=woa_type, woa_refno=woa_refno).first()
+    target_warrant : WarrantDataModel = selected_form.form.warrants.filter(woa_refno=woa_refno).first()
 
     current_user : UserDataModel = request.user
 
@@ -394,9 +392,9 @@ def report_update_warrant_arrest_yet(request : HttpRequest, form_reqno_id : str,
     
     context = {
         "court_code": selected_form.form.court_code,
-        "woa_no": woa_no,
-        "woa_type": woa_type,
-        "woa_year": woa_year,
+        "woa_no": target_warrant.woa_no,
+        "woa_type": target_warrant.woa_type,
+        "woa_year": target_warrant.woa_year,
         "req_num_case_type_id": selected_form.form.req_case_type_id,
         "arrest_report_date": timezone.now().astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%d %H:%M:%S"),
         "arrest_report_uid": current_user.api_uid

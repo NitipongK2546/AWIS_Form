@@ -35,17 +35,11 @@ class VisualWarrantData(models.Model):
     because = models.CharField(max_length=300, blank=True,)
 
     def __str__(self):
-        # return json.dumps({
-        #     "type": ["warrant_form", "VisualWarrantData"],
-        #     "id": self.pk,
-        #     "form": self.warrant
-        # }, ensure_ascii=False)
-
         return f"<Warrant Data (pk: {self.pk}, {self.warrant})>"
     
     def getLogInfoDict(self):
         return {
-            "type": ["warrant_form", "VisualWarrantData"],
+            "type": ["dashboard", "VisualWarrantData"],
             "id": self.pk,
-            "form": self.warrant
+            "form": self.warrant.getLogInfoDict()
         }
