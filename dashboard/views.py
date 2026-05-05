@@ -213,7 +213,9 @@ def view_form(request : HttpRequest, form_id : int, ObjWarrantForm = DisabledWar
     selected_form = getFormAwaitViaPlaintiff(form_id)
 
     if isNotUserAndNotHaveApprovePerm(selected_form, user_data):
-        return HttpResponseForbidden("ท่านไม่ใช่เจ้าของหรือผู้ร่างแบบฟอร์มดังกล่าว")
+        return render(request, "errors/403.html", {
+            "reason": "ท่านไม่ใช่เจ้าของหรือผู้ร่างแบบฟอร์มดังกล่าว"
+        }, status=403)
 
     reqform = selected_form.form
 
@@ -386,9 +388,7 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
     report_form = ReportWarrantForm()
 
     if not target_warrant:
-        return JsonResponse({
-            "Error": "No warrant with this specification found"
-        })
+        raise Http404("ไม่พบข้อมูลดังกล่าว")
     
     context = {
         "court_code": selected_form.form.court_code,
@@ -442,7 +442,9 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
     print(warrant_results)
 
     if sent_form.accept == 1:
-        return HttpResponseForbidden("Reqform has already been accepted by Court.")
+        return render(request, "errors/400.html", {
+            "reason": "คำร้องดังกล่าวไม่สามารถยกเลิกการส่งได้แล้ว"
+        }, status=403)
 
     if request.method == "POST":
         try:
