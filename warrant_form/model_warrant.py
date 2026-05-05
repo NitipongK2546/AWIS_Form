@@ -151,7 +151,7 @@ class WarrantDataModel(models.Model):
     def toAPICompatibleDict(self, prefix : str = None) -> dict[str, object]:
         def datetime_format(datetime_obj : datetime.datetime):
             if datetime_obj:
-                return datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
+                return datetime_obj.astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%d %H:%M:%S")
             
             return timezone.datetime.fromtimestamp(0, timezone.UTC).strftime("%Y-%m-%d %H:%M:%S")
 
