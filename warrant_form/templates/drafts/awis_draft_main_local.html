@@ -4,9 +4,18 @@
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/draft_main.css' %}">
+<style>
+div.main-draft-page {
+    margin-bottom: 25px;
+    padding: 15px;
+    border-radius: 6px;
+    background-color: #fafafa;
+}
+</style>
 {% endblock %}
 
 {% block content %}
+<div class="main-draft-page">
   <!-- Navigation -->
   <nav class="top-nav">
     <a href="{% url 'dashboard:dashboard' %}" class="back-button">กลับ</a>
@@ -60,6 +69,7 @@
       สร้างคำร้องจากร่างคำร้องขอ
     </a>
   </section>
+</div>
 {% endblock %}
 
 {% block script %}

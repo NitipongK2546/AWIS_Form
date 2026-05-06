@@ -119,6 +119,8 @@ def create_warrant_draft(request : HttpRequest, container_id : int):
         WarrantDraftDataModel.objects.create(
             draft_container=draft_container,
             **draft_container.reqform_draft.getAccusedInfo(),
+            woa_type=2,
+            fault_type_id=2,
         )
         draft_container.save()
 
@@ -202,7 +204,7 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             warrrant_wait_list : list[WarrantDataModel] = []
             for draft in selected_draft.warrant_drafts.all():
                 warrant = WarrantDataModel(
-                    **model_to_dict(draft, exclude=["id", "draft_container"]),
+                    **draft.toRealWarrant()
                 )
                 warrrant_wait_list.append(warrant)
 

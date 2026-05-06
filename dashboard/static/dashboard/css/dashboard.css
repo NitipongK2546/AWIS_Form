@@ -128,6 +128,8 @@ body {
 #body-table {
     margin: 20px;
     overflow-x: auto;
+    display: flex;
+    justify-content: center;
 }
 
 .styled-table {

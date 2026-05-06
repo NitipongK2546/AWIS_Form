@@ -7,6 +7,7 @@ from users.models import UserDataModel
 
 from django.db.models import QuerySet
 
+
 THAI_MONTHS = {
     1: "มกราคม",
     2: "กุมภาพันธ์",
@@ -265,3 +266,15 @@ class WarrantDraftDataModel(models.Model):
 
     def __str__(self):
         return f"(หมายจับ: {self.acc_full_name})"
+    
+    def toRealWarrant(self) -> dict[str,]:
+        
+        dict_main_awis = model_to_dict(self, exclude=["id", "draft_container"])
+
+        thai_date_now = timezone.now().astimezone(timezone.get_current_timezone())
+
+        dict_main_awis.update({
+            "woa_date": thai_date_now,
+        })
+
+        return dict_main_awis
