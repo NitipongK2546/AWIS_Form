@@ -47,6 +47,21 @@ button:hover {
     background-color: #3367d6;
 }
 
+.back-button {
+    display: inline-block;
+    background-color: #cd0000ed;
+    color: #ffffff;
+    padding: 8px 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    /* margin: 20px; */
+}
+
+.back-button:hover {
+    background-color: #a60101ed;
+}
+
 span {
     margin-right: 10px;
 }
