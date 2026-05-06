@@ -39,20 +39,25 @@
         <a href="{% url 'api:test:check_reqform' %}" >ทดสอบ CHECK REQFORM</a>
         {% endcomment %}
     </div>
-    <div>
+    <div style="display: flex; justify-content: center;">
         {% include 'module/drafts_form_table.html' %}
-        <div class="dashboard-tools">
+    </div>
+    <div>
+        <h1 style="text-align: center;">สถานะคำร้อง</h1>
+        <div class="dashboard-tools" style="display: flex; justify-content: center;">
             <div class="tool-card">
                 <a href="{% url 'dashboard:approve_table_page' %}">
                     <img src="{% static 'dashboard/images/pending-approval.svg' %}" alt="Approve">
-                    <h3>สถานะคำร้องที่รอการอนุมัติเพื่อส่งให้กับศาล</h3>
+                    <h3>สถานะคำร้อง</h3>
+                    <h3>รอการอนุมัติเพื่อส่งให้กับศาล</h3>
                 </a>
             </div>
         
             <div class="tool-card">
             <a href="{% url 'dashboard:accept_table_page' %}">
                     <img src="{% static 'dashboard/images/approved-form.png' %}" alt="Accept">
-                    <h3>ตารางสถานะคำร้องที่ส่งให้ศาลสำเร็จแล้ว</h3>
+                    <h3>สถานะคำร้อง</h3>
+                    <h3>ส่งให้ศาลสำเร็จแล้ว</h3>
                 </a>
             </div>
             
@@ -67,11 +72,5 @@
         </div>
         
     </div>
-
-    {% comment %} 
-
-    {% include 'module/accept_table.html' %}
-
-    {% include 'module/warrant_status_table.html' %} {% endcomment %}
 </div>
 {% endblock %}

@@ -8,14 +8,17 @@
                 <th colspan="11">สถานะของหมายศาล</th>
             </tr>
             <tr>
+                <th>เลขอ้างอิงหมายศาล</th>
                 <th>คำสั่งศาล</th>
+                {% comment %}
                 <th>เลขที่หมายจับ</th>
                 <th>ประเภทหมายจับ</th>
-                <th>เลขอ้างอิงจากศาล</th>
                 <th>ชื่อผู้พิพากษาที่ลงนาม</th>
                 <th>วันที่ศาลมีคำสั่ง</th>
+                {% endcomment %}
                 <th>ที่อยู่ไฟล์หมายจับ</th>
                 <th>หมายเหตุ</th>
+                <th>สถานะการรายงาน</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -23,12 +26,16 @@
             {% for form in warrants %}
             <tr>
                 <td>
+                    {{ form.woa_refno }}
+                </td>
+                <td>
                     {% if form.court_injunction %}
                         {{ form.court_injunction }}
                     {% else %}
-                        รอการพิจารณา
+                        ---
                     {% endif %}
                 </td>
+                {% comment %}
                 <td>
                     {{ form.woa_no_and_year }}
                 </td>
@@ -36,14 +43,12 @@
                     {{ form.woa_type }}
                 </td>
                 <td>
-                    {{ form.woa_refno }}
-                </td>
-                <td>
                     {{ form.judge_name }}
                 </td>
                 <td>
                     {{ form.injunction_date|buddhist_date }}
                 </td>
+                {% endcomment %}
                 <td>
                     {% if form.file_path != "" %}
                     <a href="{{ form.file_path }}">
@@ -57,6 +62,13 @@
                 </td>
                 <td>
                     {{ form.because }}
+                </td>
+                <td>
+                    {% if form.report_status == 0 %}
+                    ยังไม่ได้รายงาน
+                    {% elif form.report_status == 1 %}
+                    รายงานแล้ว
+                    {% endif %}
                 </td>
                 <td>
                     {% if form.court_injunction_int == 1 %}

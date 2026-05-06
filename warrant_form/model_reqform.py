@@ -28,6 +28,11 @@ case_type_text = {
     2: "ยจ",
 }
 
+req_case_type_id_text = {
+    1: "ทั่วไป",
+    2: "ยาเสพติด"
+}
+
 THAI_MONTHS = {
     1: "มกราคม",
     2: "กุมภาพันธ์",
@@ -178,6 +183,15 @@ class ReqformDataModel(models.Model):
         
         return "-"
 
+    def getReqCaseTypeIDText(self, data_type = "abbr"):
+        """
+        type = abbr ตัวย่อ\n
+        type = full ตัวเต็ม
+        """
+        if data_type == "abbr":
+            return case_type_text.get(data_type)
+
+        return req_case_type_id_text.get(data_type)
 
     def toDocumentCompatibleDict(self) -> dict[str, object]:
         """

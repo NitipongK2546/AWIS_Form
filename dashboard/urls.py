@@ -10,19 +10,15 @@ urlpatterns = [
 
     ##########################################
     
-    path("approve/", views.approve_form_page, name="approve_form_page"),
-    path("approve/<path:form_id>/confirm_approve/", views.confirm_approve, name="confirm_approve"),
-    path("approve/<path:form_id>/confirm_reject/", views.confirm_reject, name="confirm_reject"),
+    # path("approve/", views.approve_form_page, name="approve_form_page"),
+    path("dashboard/approve_table/", views.approve_table_page, name="approve_table_page"),
+    path("dashboard/approve/<str:req_no_plaintiff>/confirm_approve/", views.confirm_approve, name="confirm_approve"),
+    path("dashboard/approve/<str:req_no_plaintiff>/confirm_reject/", views.confirm_reject, name="confirm_reject"),
 
-    path("view/<path:form_id>/", views.view_form, name="get_form"),
-    path("edit/<path:form_id>/", views.edit_form, name="edit_form"),
-    path("delete/<path:form_id>/", views.delete_form, name="delete_form"),
-    path("approve_table/", views.approve_table_page, name="approve_table_page"),
-    path("accept_table/", views.accept_table_page, name="accept_table_page"),
+    path("dashboard/accept_table/", views.accept_table_page, name="accept_table_page"),
+    path("dashboard/unsend/<str:req_no_plaintiff>/", views.unsend_reqform, name="delete_sent_reqform"),
 
-    path("accept_table/<path:req_no_plaintiff>/warrants/", views.warrant_status_page, name="view_reqform_warrants"),
-    
-    path("unsend/<str:req_no_plaintiff>/", views.unsend_reqform, name="delete_sent_reqform"),
+    path("dashboard/accept_table/<str:req_no_plaintiff>/warrants/", views.warrant_status_page, name="view_reqform_warrants"),
+    path("dashboard/report/<str:req_no_plaintiff>/warrant/<str:woa_refno>/", views.report_update_warrant_arrest_yet, name="report_warrant"),
 
-    path("report/<str:req_no_plaintiff>/warrant/<str:woa_refno>/", views.report_update_warrant_arrest_yet, name="report_warrant"),
 ]   

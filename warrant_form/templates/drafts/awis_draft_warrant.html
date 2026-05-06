@@ -21,31 +21,41 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
         {% csrf_token %}
 
         <!-- Warrant Info -->
-        <div>
+        <!-- <div>
           <h2>หมายเลขหมายจับ</h2>
           <p>หมายเลขอ้างอิง: {{ draft_form.woa_refno }}</p>
-          <p>ประเภทหมายจับ: {{ draft_form.woa_type }}</p>
-        </div>
+        </div> -->
     
         <!-- Fault / Cause -->
         <div>
           <h2>รายละเอียดคดี</h2>
+          <p>ประเภทหมายจับ: {{ draft_form.woa_type }}</p>
           <p>ประเภทความผิด: {{ draft_form.fault_type_id }}</p>
           <p>ส่งหมายถึง: {{ draft_form.send_to_name }}</p>
-          <p>ด้วย: {{ draft_form.cause_text }}</p>
         </div>
     
         <!-- Charges -->
         <div>
           <h2>ข้อกล่าวหา</h2>
+          <p>ด้วย: {{ draft_form.cause_text }}</p>
           <p>ซึ่งต้องหาว่ากระทำความผิดฐาน: {{ draft_form.charge }}</p>
-          <p>1. ได้หรือน่าจะได้กระทำความผิดอาญาซึ่งมีอัตราโทษจำคุกอย่างสูงเกินสามปี: {{ draft_form.charge_type_1 }}</p>
-          <p>2. ได้หรือน่าจะได้กระทำความผิดอาญาและมีอันควรเชื่อว่า: {{ draft_form.charge_type_2 }}</p>
-          <p>2.1 จะหลบหนี: {{ draft_form.charge_type_2_1 }}</p>
-          <p>2.2 จะไปยุ่งเหยิงกับพยานหลักฐาน: {{ draft_form.charge_type_2_2 }}</p>
-          <p>2.3 ก่อเหตุอันตรายประการอื่น: {{ draft_form.charge_type_2_3 }}</p>
-          <p>3. อื่นๆ: {{ draft_form.charge_type_3 }}</p>
-          <p>{{ draft_form.charge_other_text }}</p>
+          <p>
+            {{ draft_form.charge_type_1 }} 1. ได้หรือน่าจะได้กระทำความผิดอาญาซึ่งมีอัตราโทษจำคุกอย่างสูงเกินสามปี
+          </p>
+          <p>
+            {{ draft_form.charge_type_2 }} 2. ได้หรือน่าจะได้กระทำความผิดอาญาและมีอันควรเชื่อว่า</p>
+          <p>
+            {{ draft_form.charge_type_2_1 }} 2.1 จะหลบหนี 
+          </p>
+          <p>
+            {{ draft_form.charge_type_2_2 }} 2.2 จะไปยุ่งเหยิงกับพยานหลักฐาน
+          </p>
+          <p>
+            {{ draft_form.charge_type_2_3 }} 2.3 ก่อเหตุอันตรายประการอื่น
+          </p>
+          <p>
+            {{ draft_form.charge_type_3 }} 3. อื่นๆ {{ draft_form.charge_other_text }}
+          </p>
         </div>
     
         <!-- Accused Info -->
