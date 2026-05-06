@@ -200,6 +200,7 @@ class WarrantDataModel(models.Model):
         time_split_list = ["woa_date", "appointment_date"]
 
         dict_main_awis.update({
+            "woa_no": "12345/2569",
             "court_name": self.reqforms.first().getCourtName(),
             "judge_name": self.reqforms.first().judge_name,
             "plaintiff": self.reqforms.first().plaintiff,

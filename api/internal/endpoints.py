@@ -4,8 +4,6 @@ from warrant_form.forms_central import thai_codes
 from users.models import UserDataModel
 import json
 
-from _request_utils.authenticate_user import post_login_authorize
-
 # import requests
 # import os
 
