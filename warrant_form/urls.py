@@ -23,6 +23,10 @@ urlpatterns = [
 
     path("reqform-draft/create-reqform/<int:container_id>/", views_draft.create_reqform_from_draft, name="create-reqform"),
 
+    # path('reqform-draft/create-reqform/<int:container_id>/confirm', views.step3_confirm_form, name="confirm-create-reqform"),
+
+    ###########################################################################
+
     path("create-reqform/", views.step0_confirm_owner, name="step0"),
 
     path('create-reqform/step1/', views.step1_reqform, name="step1"),

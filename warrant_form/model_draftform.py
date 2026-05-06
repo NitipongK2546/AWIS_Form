@@ -42,6 +42,8 @@ class FormDraftContainer(models.Model):
 
     warrant_drafts = QuerySet["WarrantDraftDataModel"]
 
+from django.utils import timezone
+
 class ReqformDraftDataModel(models.Model):
 
     draft_container = models.OneToOneField(FormDraftContainer, on_delete=models.CASCADE, related_name="reqform_draft")
@@ -49,15 +51,6 @@ class ReqformDraftDataModel(models.Model):
     class ReqCaseTypeIDChoices(models.IntegerChoices):
         GENERAL = (1, "ทั่วไป") # จ.
         DRUGS = (2, "ยาเสพติด") # ยจ.
-    
-    reqno = models.CharField(blank=True, max_length=50,)
-    # เป็นการผสมกันระหว่าง case_type_id, req_form_number, และ req_year
-
-    req_form_number = models.IntegerField(blank=True, null=True, )
-    
-    req_day = models.PositiveIntegerField(blank=True, null=True, )
-    req_month = models.PositiveIntegerField(blank=True, null=True, )
-    req_year = models.PositiveIntegerField(blank=True, null=True, )
 
     req_case_type_id = models.IntegerField(blank=True, null=True,) 
 
@@ -157,16 +150,17 @@ class ReqformDraftDataModel(models.Model):
     acc_tel = models.CharField(blank=True, max_length=20, )
 
     def __str__(self):
-        return f"(แบบคำร้อง #{self.req_form_number}, ผู้ต้องสงสัย: {self.accused or '---'}, req_no_plaintiff: {self.req_no_plaintiff or '---'}, )"
-    
-    def getReqno(self): 
-        return f"{case_type_text.get(self.req_case_type_id)}.{self.req_form_number}/{self.req_year + 543}"
+        return f"(รหัส: {self.req_no_plaintiff or '---'}, ผู้ต้องสงสัย: {self.accused or '---'})"
     
     def toRealReqform(self) -> dict[str,]:
         
         dict_main_awis = model_to_dict(self, exclude=["id", "draft_container"])
+
+        thai_date_now = timezone.now().astimezone(timezone.get_current_timezone())
+
         dict_main_awis.update({
-            "reqno": self.getReqno()
+            "req_date": thai_date_now,
+            "req_year": thai_date_now.year + 543,
         })
 
         return dict_main_awis
@@ -230,7 +224,6 @@ class WarrantDraftDataModel(models.Model):
 
     draft_container = models.ForeignKey(FormDraftContainer, on_delete=models.CASCADE, related_name="warrant_drafts")
 
-    woa_no = models.IntegerField(blank=True, null=True)
     woa_type = models.IntegerField(blank=True, null=True)
     woa_date = models.DateTimeField(blank=True, null=True)
 
@@ -271,4 +264,4 @@ class WarrantDraftDataModel(models.Model):
     court_name = models.CharField(max_length=250, blank=True)
 
     def __str__(self):
-        return f"(หมายจับ: {woa_type_dict.get(self.woa_type)}, นัดหมาย: {self.get_appointment_type_display()})"
+        return f"(เลขอ้างอิง: {self.woa_refno}, หมายจับ: {self.acc_full_name})"

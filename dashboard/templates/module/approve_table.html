@@ -22,7 +22,7 @@
             {% for form in forms %}
             {% if form.approve_status != 2 %}
             <tr>
-                <td>{{ form.form.getReqno }}</td>
+                <td>{{ form.form.req_no_plaintiff }}</td>
                 <td>{{ form.get_approve_status_display }}</td>
                 <td>{{ form.form_creator }}</td>
                 <td>{{ form.form_owner }}</td>
@@ -35,12 +35,12 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:confirm_approve' form.form.getReqno %}">อนุมัติแบบฟอร์ม</a>
+                    <a href="{% url 'dashboard:confirm_approve' form.form.req_no_plaintiff %}">อนุมัติแบบฟอร์ม</a>
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:get_form' form.form.getReqno %}">ดูคำร้อง</a> |
-                    <a href="{% url 'dashboard:edit_form' form.form.getReqno %}">แก้ไขคำร้อง</a> |
-                    <a href="{% url 'dashboard:delete_form' form.form.getReqno %}">ลบคำร้อง</a> |
+                    <a href="{% url 'dashboard:get_form' form.form.req_no_plaintiff %}">ดูคำร้อง</a> |
+                    <a href="{% url 'dashboard:edit_form' form.form.req_no_plaintiff %}">แก้ไขคำร้อง</a> |
+                    <a href="{% url 'dashboard:delete_form' form.form.req_no_plaintiff %}">ลบคำร้อง</a> |
                 </td>
             </tr>
             {% endif %}

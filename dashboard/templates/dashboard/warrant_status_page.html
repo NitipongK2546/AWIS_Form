@@ -3,6 +3,11 @@
 
 {% block title %}warrant_status_page{% endblock %}
 
+{% block style %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
 <div id="header-container">
     <div class="logo-row">
@@ -11,9 +16,8 @@
         <div class="separate-line"></div>
     </div>
     <div>
-    <a href="{% url 'dashboard:dashboard' %}" class="button-logout" style="margin-top: 10px">Back</a>
+    <a href="{% url 'dashboard:accept_table_page' %}" class="button-logout" style="margin-top: 10px">Back</a>
     </div>
     {% include 'module/warrant_status_table.html' %}
-    <a href="{% url 'dashboard:accept_table_page' %}" class="button-logout" style="margin-top: 10px">ไปหน้าสถานะคำร้อง</a>
 </div>
 {% endblock %}

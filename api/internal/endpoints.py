@@ -28,16 +28,6 @@ def get_province(request : HttpRequest) -> JsonResponse:
         "data": province_select
     }, json_dumps_params={'ensure_ascii': False})
 
-def login_via_api(request : HttpRequest):
-    response : JsonResponse = post_login_authorize("", request)
-    data : dict = json.loads(response.text)
-
-    if data.get("status") != 200:
-        print(data.get("message"))
-        return False
-    
-    return data.get("id")
-
 # ORG_API_FETCH_USERS = os.getenv("ORG_API_FETCH_USERS")
 # def get_erp_users(request : HttpRequest):
 #     response = requests.get(ORG_API_FETCH_USERS, timeout=5)

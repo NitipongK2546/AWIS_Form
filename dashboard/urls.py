@@ -19,11 +19,10 @@ urlpatterns = [
     path("delete/<path:form_id>/", views.delete_form, name="delete_form"),
     path("approve_table/", views.approve_table_page, name="approve_table_page"),
     path("accept_table/", views.accept_table_page, name="accept_table_page"),
-    # path("warrant_status_table/", views.warrant_status_page, name="warrant_status_page"),
 
-    path("accept_table/<path:reqno>/warrants/", views.warrant_status_page, name="view_reqform_warrants"),
+    path("accept_table/<path:req_no_plaintiff>/warrants/", views.warrant_status_page, name="view_reqform_warrants"),
     
     path("unsend/<str:req_no_plaintiff>/", views.unsend_reqform, name="delete_sent_reqform"),
 
-    path("report/<path:form_reqno_id>/warrant/<str:woa_refno>/<int:woa_year>/<int:woa_type>/<int:woa_no>/", views.report_update_warrant_arrest_yet, name="report_warrant"),
+    path("report/<str:req_no_plaintiff>/warrant/<str:woa_refno>/", views.report_update_warrant_arrest_yet, name="report_warrant"),
 ]   

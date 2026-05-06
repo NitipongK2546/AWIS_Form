@@ -281,11 +281,22 @@ def get_court_list(version : str, request : HttpRequest) -> dict:
     
     return {}
 
-#######################################################################
-#
-# Additional
-#
-#######################################################################\
+##########################################################
+# External User Server (ERP)
+# 
+
+import json
+
+def login_via_api(request : HttpRequest):
+    response : JsonResponse = post_login_authorize("", request)
+    data : dict = json.loads(response.text)
+
+    if data.get("status") != 200:
+        print(data.get("message"))
+        return False
+    
+    return data.get("id")
+
 
 ##############################################################################
 # 1.

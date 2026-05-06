@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>500 - Server Error</title>
+    <title>400 - Client Error</title>
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
     <style>
@@ -14,11 +14,10 @@
 </head>
 <body>
     <div class="error-container">
-        <div class="error-code">500</div>
-        <h2 class="mb-3">Server Error</h2>
-        <p class="text-muted">เกิดข้อผิดพลาดภายในระบบ กรุณาลองใหม่อีกครั้ง</p>
-        <p class="text-muted">Error: {{ error_code }}</p>
-        <a href="/" class="btn btn-primary btn-custom" style="font-size: 1.2rem;">กลับไปหน้าแรก</a>
+        <div class="error-code">400</div>
+        <h2 class="mb-3">Client Error</h2>
+        <p class="text-muted" style="color: red;">{{ reason }}</p>
+        <a href="#" onclick="history.back();" class="btn btn-primary btn-custom" style="font-size: 1.2rem;">กลับไปหน้าก่อน</a>
     </div>
 </body>
 </html>

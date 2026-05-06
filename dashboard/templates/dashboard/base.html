@@ -5,12 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-    {% block style %}
-        <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
-    {% endblock %}
+    {% block style %}{% endblock %}
 </head>
 <body>
+    {% include 'system/sys_header.html' %}
     {% block body %}
     {% endblock %}
     {% block script %}

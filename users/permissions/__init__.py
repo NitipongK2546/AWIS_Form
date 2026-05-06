@@ -1,5 +1,6 @@
 from . import perms
 from .perms import PermissionList, PermissionType, perm_str, perm_str_list, perm_str_list_of_all
+from awis_custom_settings.settings import PERMISSION_CODE
 
 class AWISPermissions:
     permissison_list : list[tuple] = []

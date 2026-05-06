@@ -1,13 +1,12 @@
+{% extends 'warrant_form/awis_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Draft Main Page</title>
-  <link rel="stylesheet" href="{% static 'css/draft_main.css' %}">
-</head>
-<body>
+{% block title %}Draft Main Page{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/draft_main.css' %}">
+{% endblock %}
+
+{% block content %}
   <!-- Navigation -->
   <nav class="top-nav">
     <a href="{% url 'dashboard:dashboard' %}" class="back-button">กลับ</a>
@@ -23,7 +22,10 @@
     <h3>ข้อมูลเจ้าของคำร้อง</h3>
     <form action="" method="post">
       {% csrf_token %}
-      <p><strong>เจ้าของคำร้อง:</strong> {{ draft_container.form_owner }} | {{ ownership_form.form_owner }}<button type="submit" class="primary-button" style="margin-left:10px;">เปลี่ยนเจ้าของ</button></p>
+      <p>
+        <strong>เจ้าของคำร้อง:</strong> {{ draft_container.form_owner }} | {{ ownership_form.form_owner }}
+        <button type="submit" class="primary-button" style="margin-left:10px;">เปลี่ยนเจ้าของ</button>
+      </p>
     </form>
     <p><strong>ผู้เขียน:</strong> {{ draft_container.form_creator }}</p>
   </section>
@@ -31,34 +33,39 @@
   <!-- Reqform card -->
   <section class="card">
     <h3>คำร้อง</h3>
-    <div class="actions">
-      <p>{{ draft_container.reqform_draft }}<a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}" class="edit-button" style="margin-left:10px;">แก้ไข</a></p>
-    </div>
+    <p>
+      {{ draft_container.reqform_draft }}
+      <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}" class="edit-button" style="margin-left:10px;">แก้ไข</a>
+    </p>
   </section>
 
   <!-- Warrant card -->
   <section class="card">
     <h3>หมายจับทั้งหมด</h3>
-    <div class="actions">
-      <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}" class="add-button">+ เพิ่มหมายจับ</a>
-      {% for warrant in draft_container.warrant_drafts.all %}
-        <p>
-          {{ forloop.counter }}. {{ warrant }}
-          <a href="{% url 'forms:edit-draft-container-warrant' draft_container.pk warrant.pk %}" class="edit-button">แก้ไข</a>
-          <a href="{% url 'forms:delete-draft-container-warrant' draft_container.pk warrant.pk %}" class="delete-button" onclick="return confirm('ต้องการลบจริงหรือไม่')">ลบ</a>
-        </p>
-      {% empty %}
-    </div>
-    
+    <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}" class="add-button">+ เพิ่มหมายจับ</a>
+    {% for warrant in draft_container.warrant_drafts.all %}
+      <p>
+        {{ forloop.counter }}. {{ warrant }}
+        <a href="{% url 'forms:edit-draft-container-warrant' draft_container.pk warrant.pk %}" class="edit-button">แก้ไข</a>
+        <a href="{% url 'forms:delete-draft-container-warrant' draft_container.pk warrant.pk %}" class="delete-button" onclick="return confirm('ต้องการลบจริงหรือไม่')">ลบ</a>
+      </p>
+    {% empty %}
       <p>ไม่มีหมายจับ</p>
     {% endfor %}
   </section>
-  
+
   <!-- Create reqform card -->
   <section class="card">
-    <a href="{% url 'forms:create-reqform' draft_container.pk %}" class="button">
+    <a href="{% url 'forms:create-reqform' draft_container.pk %}" class="primary-button">
       สร้างคำร้องจากร่างคำร้องขอ
     </a>
   </section>
-</body>
-</html>
+{% endblock %}
+
+{% block script %}
+<script>
+function confirmWithUser() {
+    return confirm('ต้องการลบจริงหรือไม่')
+}
+</script>
+{% endblock %}

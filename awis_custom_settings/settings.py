@@ -5,21 +5,41 @@ from django.db import models
 # เพิ่มตามที่ต้องการ
 class PermissionList(models.TextChoices):
 
-    ADMIN_PANEL = "adminPanel"
-    USER_ACCESS = "userAccess"
-    LOG_ACCESS = "logAccess"
-
-    ADMIN_ROLE = "adminRole"
-    USER_ROLE = "userRole"
-
-    REQFORM_SUBMITTED = "reqformSubmitted"
-
-    REQFORM_DRAFT = "reqformDraft"
-    REQFORM_AWAIT_APPROVAL = "reqformAwaitApproval"
-
-    REPORT_WARRANT_ARREST = "reportWarrantArrest"
+    # Admin => 1000
+    ADMIN_PANEL             = "adminPanel"          # 1100
+    USER_ACCESS             = "userAccess"          # 1200
+    LOG_ACCESS              = "logAccess"           # 1300
     
-    LOGIN_PAGE = "loginPage"
+    ADMIN_ROLE              = "adminRole"           # 1410
+    USER_ROLE               = "userRole"            # 1420
+
+    # Form => 2000
+    REQFORM_DRAFT           = "reqformDraft"        # 2100
+    REQFORM_AWAIT_APPROVAL  = "reqformAwaitApproval"# 2200
+    REQFORM_SUBMITTED       = "reqformSubmitted"    # 2300
+    REPORT_WARRANT_ARREST   = "reportWarrantArrest" # 2400
+    
+    # Login => 3000
+    LOGIN_PAGE              = "loginPage"           # 3100
+
+# class PermissionCode(models.TextChoices):
+PERMISSION_CODE = {
+    # Admin => 1000
+    PermissionList.ADMIN_PANEL             : "1-100",
+    PermissionList.USER_ACCESS             : "1-110",  
+    PermissionList.LOG_ACCESS              : "1-120",   
+    PermissionList.ADMIN_ROLE              : "1-130",   
+    PermissionList.USER_ROLE               : "1-140",    
+
+    # Form => 2000
+    PermissionList.REQFORM_DRAFT           : "2-100",   
+    PermissionList.REQFORM_AWAIT_APPROVAL  : "2-200",   
+    PermissionList.REQFORM_SUBMITTED       : "2-300",   
+    PermissionList.REPORT_WARRANT_ARREST   : "2-400",   
+    
+    # Login => 3000
+    PermissionList.LOGIN_PAGE              : "3-100",
+}
 
 class RoleList(Enum):
     EMPLOYEE = "เจ้าหน้าที่"

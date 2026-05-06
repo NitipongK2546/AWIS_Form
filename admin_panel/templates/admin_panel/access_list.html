@@ -1,47 +1,48 @@
+{% extends "admin_panel/base.html" %}
 {% load static %}
+
+
+{% block title %}Access List{% endblock %}
+
+{% block style %}
 <link rel="stylesheet" href="{% static 'admin_panel/css/select_users.css' %}">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Access List</title>
-  <style>
+<style>
 .popup {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.6);
 }
 
 .popup-content {
-  position: relative;
-  width: 80%;
-  height: 80%;
-  margin: 5% auto;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
+position: relative;
+width: 80%;
+height: 80%;
+margin: 5% auto;
+background: white;
+border-radius: 10px;
+overflow: hidden;
 }
 
 .popup iframe {
-  width: 100%;
-  height: 100%;
+width: 100%;
+height: 100%;
 }
 
 .close {
-  position: absolute;
-  right: 10px;
-  top: 5px;
-  font-size: 24px;
-  cursor: pointer;
+position: absolute;
+right: 10px;
+top: 5px;
+font-size: 24px;
+cursor: pointer;
 }
 </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
 <div style="display: flexbox;">
   <div>
     <h1>Granted Access Users</h1>
@@ -59,7 +60,19 @@
         <td>{{ user.user_id }}</td>
         <td>{{ user.fullname }}</td>
         <td>{{ user.department }}</td>
-        <td>{{ user.get_role_display }}</td>
+        <td>
+          <span class="btn"
+          {% if user.role == 10 %}
+          style="background-color: #3498db;">
+          {% elif user.role == 11 %}
+          style="background-color: #21cc0a;">
+          {% elif user.role == 12 %}
+          style="background-color: #dbb732;">
+          {% elif user.role == 99 %}
+          style="background-color: #32cddb;">
+          {% endif %}
+          {{ user.get_role_display }}</span>
+        </td>
         <td>
           <a class="btn" style="background-color: #3498db;" href="{% url 'admin_panel:update_role' user.user_id 10 %}">
             เจ้าหน้าที่
@@ -75,13 +88,13 @@
           </a> |
           <a class="btn" style="background-color: #e01717;" href="{% url 'admin_panel:delete_access' user.user_id %}" 
             onclick="return confirm('Are you sure you want to remove access for {{ user.fullname }}?');">
-            Delete
+            ลบสิทธิ์การเข้าถึงระบบ AWIS
           </a>
         </td>
       </tr>
       {% empty %}
       <tr>
-        <td colspan="5">No users have been granted access yet.</td>
+        <td colspan="5">ไม่มีผู้ที่มีสิทธิเข้าถึงระบบได้</td>
       </tr>
       {% endfor %}
     </table>
@@ -100,9 +113,12 @@
   </div>
 </div>
 
+
 <!-- <a href="">Go to Select Users</a> -->
 <button onclick="openPopup()">Add Access List</button>
+{% endblock %}
 
+{% block script %}
 <script>
 function openPopup() {
   document.getElementById("popup").style.display = "block";
@@ -117,6 +133,7 @@ function closePopup() {
   window.location.reload();
 }
 </script>
+{% endblock %}
 
 <!-- <a href="">Go to Select Users</a> -->
 <!-- <button onclick="openPopup()">Add Access List</button>
@@ -133,5 +150,3 @@ function openPopup() {
   }, 500);
 }
 </script> -->
-</body>
-</html>

@@ -284,6 +284,8 @@ p.cause-id-paragraph {
     align-items: center;
 }
 
+/*                                             */
+
 form p.text-area-para textarea {
     flex: 1;
     max-height: 120px;
@@ -310,7 +312,7 @@ form p.text-area-para textarea {
     width: 500px;
 }
 
-#id_main_form-plaintiff_2 {
+#id_main_form-plaintiff_2, #id_main_form-req_signature {
     width: 220px;
 }
 
