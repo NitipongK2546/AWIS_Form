@@ -173,10 +173,12 @@ def delete_warrant_draft(request : HttpRequest, container_id : int, warrant_id :
 
 def req_no_plaintiff_generate():
     today = timezone.now()
-    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{ReqformDataModel.objects.last().pk + 1}".zfill(4)}"
+    num = ReqformDataModel.objects.last().pk if ReqformDataModel.objects.last() else 0
+    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}"
 
 def woa_refno_generate():
-    return f"TCCT{timezone.now().year + 543}{f"{WarrantDataModel.objects.last().pk + 1}".zfill(4)}"
+    num = WarrantDataModel.objects.last().pk if WarrantDataModel.objects.last() else 0
+    return f"TCCT{timezone.now().year + 543}{f"{num + 1}".zfill(4)}"
 
 @perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
 def create_reqform_from_draft(request : HttpRequest, container_id : int):

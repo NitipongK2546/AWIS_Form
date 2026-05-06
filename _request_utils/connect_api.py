@@ -81,26 +81,29 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = N
     
     # Response OK.
     if not data.get("token"):
+        print("Authen Fail")
         return JsonResponse({
             "status": "fail"
         }, status=400)
     
+    return data.get("token")
+    
     ##############################################################
     # Rewrap in real Django HTTP request/ json
 
-    response : JsonResponse = JsonResponse({
-        "status": 200,
-        "message": "Success"
-    }, status=200)    
+    # response : JsonResponse = JsonResponse({
+    #     "status": 200,
+    #     "message": "Success"
+    # }, status=200)    
     
-    if storage == "session":
-        request.session["bearer_token"] = data.get("token")
-    elif storage == "cookies":
-        response.set_cookie("bearer_token", data.get("token"), max_age=1800, httponly=True)
-    else:
-        return str(data.get("token", ""))
+    # if storage == "session":
+    #     request.session["bearer_token"] = data.get("token")
+    # elif storage == "cookies":
+    #     response.set_cookie("bearer_token", data.get("token"), max_age=1800, httponly=True)
+    # else:
+    #     return str(data.get("token", ""))
     
-    return response
+    # return response
 
 ##############################################################################
 # 3. 
