@@ -194,6 +194,8 @@ def warrant_status_page(request, req_no_plaintiff : str):
 
             "court_injunction_int": warrant_wrap.court_injunction, 
             "req_no_plaintiff": req_no_plaintiff,
+
+            "report_status": warrant_wrap.report_status
         }
 
         warrants_list.append(data_dict)
@@ -229,6 +231,7 @@ def success_page(request : HttpRequest):
 ################################################################################
 
 from .forms_report_warrant import ReportWarrantForm
+import warrant_form.forms_central as CentralForm
 
 @permission_required(perm_str_list([PermissionType.EDIT, PermissionType.CREATE, PermissionType.APPROVE], PermissionList.REPORT_WARRANT_ARREST), raise_exception=True)
 def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
@@ -244,6 +247,14 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
         raise Http404("ไม่พบข้อมูลดังกล่าว")
     
     context = {
+        "court_code": CentralForm.court_codes.getValueOf(selected_form.form.court_code),
+        "woa_no": target_warrant.get_woa_no_and_year(),
+        "woa_type": target_warrant.get_woa_type_text(),
+        "req_num_case_type_id": selected_form.form.get_req_case_type_id_display(),
+        "arrest_report_uid": current_user.api_uid
+    }
+
+    api_data = {
         "court_code": selected_form.form.court_code,
         "woa_no": target_warrant.woa_no,
         "woa_type": target_warrant.woa_type,
@@ -261,22 +272,26 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
             
             put_data = combine_date(put_data)
 
-            put_data.update(context)
+            put_data.update(api_data)
 
             try:
                 if settings.ENABLE_API:
                     AWISConnectAPI.put_report_warrant_result("v1.1", request, put_data)
+                else:
+                    print(put_data)
 
-                print(put_data)
+                warrant_wrapper = VisualWarrantData.objects.filter(warrant=target_warrant).first()
 
-                return JsonResponse({
-                    "status": "success"
-                })
+                # Change status to reported.
+                warrant_wrapper.report_status = 1
+                warrant_wrapper.save()
+
+                return redirect("dashboard:view_reqform_warrants", req_no_plaintiff)
 
             except:
-                return JsonResponse({
-                    "status": "error"
-                }, status=400)
+                return render(request, "errors/500.html", {
+
+                })
 
     context.update({
         "report_form": report_form,

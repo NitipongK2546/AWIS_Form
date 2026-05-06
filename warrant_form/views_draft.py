@@ -171,10 +171,10 @@ def delete_warrant_draft(request : HttpRequest, container_id : int, warrant_id :
 
 def req_no_plaintiff_generate():
     today = timezone.now()
-    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{ReqformDataModel.objects.count() + 1}".zfill(4)}"
+    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{ReqformDataModel.objects.last().pk + 1}".zfill(4)}"
 
 def woa_refno_generate():
-    return f"TCCT{timezone.now().year + 543}{f"{WarrantDataModel.objects.count() + 1}".zfill(4)}"
+    return f"TCCT{timezone.now().year + 543}{f"{WarrantDataModel.objects.last().pk + 1}".zfill(4)}"
 
 @perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
 def create_reqform_from_draft(request : HttpRequest, container_id : int):
@@ -228,13 +228,13 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                 )
 
                 return redirect("dashboard:dashboard")
-            except Exception:
+            except Exception as e:
                 if reqform_obj.pk:
                     reqform_obj.delete()
                 for warrant in warrrant_wait_list:
                     if warrant.pk:
                         warrant.delete()
-
+                
                 return render(request, "errors/400.html", {
                     "reason": "ข้อมูลที่ใส่ลงไปในร่างไม่เพียงพอ"
                 }, status=400)

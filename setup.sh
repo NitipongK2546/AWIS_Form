@@ -21,15 +21,8 @@ fi
 
 $PYTHON --version
 
-"./_scripts/_quick_migrate.sh"
-
-# Add collectstatic later if we have to.
-#
-# python manage.py collectstatic --no-input
-#
-# I'll need to add STATIC_ROOT later.
-
-# source .venv/$VENV_TYPE/activate
+python manage.py makemigrations
+python manage.py migrate
 
 which $PYTHON
 

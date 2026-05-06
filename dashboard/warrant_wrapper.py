@@ -22,10 +22,12 @@ class VisualWarrantData(models.Model):
         DENIED = (0, "ไม่อนุมัติ")
         ACCEPTED = (1, "อนุมัติ")
         WAITING = (99, "รอการพิจารณา")
-    
-    warrant = models.OneToOneField(WarrantDataModel, on_delete=models.CASCADE, related_name='finalized_warrant')
 
-    # THIS NAME IS CORRECT, DON'T CHANGE THIS, FUTURE READER!!!
+    class ReportStatus(models.IntegerChoices):
+        NOT_REPORTED = (0, "ยังไม่ได้รายงาน")
+        REPORTED = (1, "รายงานแล้ว")
+
+    warrant = models.OneToOneField(WarrantDataModel, on_delete=models.CASCADE, related_name='finalized_warrant')
 
     judge_name = models.CharField(max_length=250)
     court_injunction = models.IntegerField(choices=AcceptStatus, blank=True, null=True)
@@ -33,6 +35,8 @@ class VisualWarrantData(models.Model):
 
     file_path = models.CharField(max_length=250, blank=True,)
     because = models.CharField(max_length=300, blank=True,)
+
+    report_status = models.IntegerField(choices=ReportStatus, default=ReportStatus.NOT_REPORTED)
 
     def __str__(self):
         return f"<Warrant Data (pk: {self.pk}, {self.warrant})>"

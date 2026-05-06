@@ -10,12 +10,15 @@
             <tr>
                 <th>เลขอ้างอิงหมายศาล</th>
                 <th>คำสั่งศาล</th>
+                {% comment %}
                 <th>เลขที่หมายจับ</th>
                 <th>ประเภทหมายจับ</th>
                 <th>ชื่อผู้พิพากษาที่ลงนาม</th>
                 <th>วันที่ศาลมีคำสั่ง</th>
+                {% endcomment %}
                 <th>ที่อยู่ไฟล์หมายจับ</th>
                 <th>หมายเหตุ</th>
+                <th>สถานะการรายงาน</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -32,6 +35,7 @@
                         ---
                     {% endif %}
                 </td>
+                {% comment %}
                 <td>
                     {{ form.woa_no_and_year }}
                 </td>
@@ -44,6 +48,7 @@
                 <td>
                     {{ form.injunction_date|buddhist_date }}
                 </td>
+                {% endcomment %}
                 <td>
                     {% if form.file_path != "" %}
                     <a href="{{ form.file_path }}">
@@ -57,6 +62,13 @@
                 </td>
                 <td>
                     {{ form.because }}
+                </td>
+                <td>
+                    {% if form.report_status == 0 %}
+                    ยังไม่ได้รายงาน
+                    {% elif form.report_status == 1 %}
+                    รายงานแล้ว
+                    {% endif %}
                 </td>
                 <td>
                     {% if form.court_injunction_int == 1 %}
