@@ -24,7 +24,9 @@
 
 {% include 'module/warrant/warrant_date.html' %}
 
-<p align="right" > <input type="text" placeholder="ชื่อผู้พิพากษา"> ผู้พิพากษา </p>
+<p align="right" >
+    {{ form.judge_name }} ผู้พิพากษา 
+</p>
 
 {% if not disabled %}
 <p style="display: flex; justify-content: center; margin: 30px 0px"> <button type="submit" class="button" style="background-color: green; margin: 0px;font-size: 2rem;">หน้าถัดไป</button> </p>

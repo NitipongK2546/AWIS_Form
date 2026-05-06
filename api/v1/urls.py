@@ -8,8 +8,8 @@ urlpatterns = [
 
     #######################
 
-    path("requests/<str:req_no_plaintiff>/", endpoints.update_status_req_warrant, name="update_reqwarrant"),
-    path("warrants/<str:woa_refno>/", endpoints.update_status_warrant, name="update_warrant"),
+    path("requests/<str:req_no_plaintiff>", endpoints.update_status_req_warrant, name="update_reqwarrant"),
+    path("warrants/<str:woa_refno>", endpoints.update_status_warrant, name="update_warrant"),
 
     ########################
 ]

@@ -1,11 +1,9 @@
 from django.urls import path
-from warrant_form import views, views_draft
+from warrant_form import views, views_draft, views_reqform
 
 app_name = "forms"
 
-urlpatterns = [
-    path("", views.plain_form, name="to-new-form"),
-
+draft_urls = [
     path("reqform-draft/create/", views_draft.create_draft_main_local_page, name="create-draft-container"),
 
     path("reqform-draft/view/<int:container_id>/", views_draft.view_draft_main_local_page, name="view-draft-container"),
@@ -24,14 +22,27 @@ urlpatterns = [
     path("reqform-draft/create-reqform/<int:container_id>/", views_draft.create_reqform_from_draft, name="create-reqform"),
 
     # path('reqform-draft/create-reqform/<int:container_id>/confirm', views.step3_confirm_form, name="confirm-create-reqform"),
+]
 
-    ###########################################################################
+form_data_interact_urls = [
+    path("reqform/view/<str:req_no_plaintiff>/", views_reqform.view_form, name="view_form"),
+    path("reqform/edit/<str:req_no_plaintiff>/", views_reqform.edit_form, name="edit_form"),
+    path("reqform/delete/<str:req_no_plaintiff>/", views_reqform.delete_form, name="delete_form"),
 
+]
+
+old_form_style_urls = [
     path("create-reqform/", views.step0_confirm_owner, name="step0"),
 
     path('create-reqform/step1/', views.step1_reqform, name="step1"),
     path('create-reqform/step2/', views.step2_warrantform, name="step2"),
     path('create-reqform/step3/', views.step3_confirm_form, name="step3"),
+]
+
+others_urls = [
+    path("", views.plain_form, name="to-new-form"),
 
     path('success/', views.success_page, name="success"),
 ]
+
+urlpatterns = draft_urls + form_data_interact_urls + old_form_style_urls + others_urls

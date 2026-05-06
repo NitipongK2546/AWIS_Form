@@ -59,14 +59,13 @@
     {% endblock %}
 </form>
 <hr class="no-print">
-{% block print %}
-<div style="text-align:center;">
-    <button id="print-doc" class="button no-print" type="button">Print Document</button>
-<div>
+
+<form method="post" style="text-align: center;">
+{% csrf_token %}
+<button type="submit" class="confirm-button no-print">ยืนยันส่งคำร้องให้กับศาล</button>
+</form>
 <script src="{% static 'js/printFile.js' %}"></script>
 {% endblock %}
-{% endblock %}
-
 {% block script %}
 {% include 'module/view_form_script.html' %}
 {% endblock %}

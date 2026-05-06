@@ -8,10 +8,10 @@
                 <th colspan="11">สถานะของหมายศาล</th>
             </tr>
             <tr>
+                <th>เลขอ้างอิงหมายศาล</th>
                 <th>คำสั่งศาล</th>
                 <th>เลขที่หมายจับ</th>
                 <th>ประเภทหมายจับ</th>
-                <th>เลขอ้างอิงจากศาล</th>
                 <th>ชื่อผู้พิพากษาที่ลงนาม</th>
                 <th>วันที่ศาลมีคำสั่ง</th>
                 <th>ที่อยู่ไฟล์หมายจับ</th>
@@ -23,10 +23,13 @@
             {% for form in warrants %}
             <tr>
                 <td>
+                    {{ form.woa_refno }}
+                </td>
+                <td>
                     {% if form.court_injunction %}
                         {{ form.court_injunction }}
                     {% else %}
-                        รอการพิจารณา
+                        ---
                     {% endif %}
                 </td>
                 <td>
@@ -34,9 +37,6 @@
                 </td>
                 <td>
                     {{ form.woa_type }}
-                </td>
-                <td>
-                    {{ form.woa_refno }}
                 </td>
                 <td>
                     {{ form.judge_name }}

@@ -8,15 +8,7 @@ function printPage() {
     window.print();
 }
 
-print_button.addEventListener("click", () => {
-    printPage()
-})
-
 ///////////////////////////////////////////////////////////////
-
-time_inputs.forEach(element => {
-    element.removeAttribute("type")
-});
 
 function newCheckbox(isChecked = false) {
     const elem = document.createElement("span");
@@ -44,4 +36,16 @@ checkbox_inputs.forEach(element => {
             newCheckbox()
         )
     }
+});
+
+///////////////////////////////////////////
+
+if (print_button) {
+    print_button.addEventListener("click", () => {
+        printPage()
+    })
+}
+
+time_inputs.forEach(element => {
+    element.removeAttribute("type")
 });

@@ -80,8 +80,9 @@ class WarrantDataModel(models.Model):
     woa_year = models.PositiveIntegerField(blank=True, null=True)
     # For my sanity, I'm seperating year and date. It won't be confusing, I swear. 
     woa_date = models.DateTimeField(blank=True, null=True)
-    # And yes, despite the API sheet saying it's Date without Time, the API accept DateTime. Good God.
-    
+    # woa_start_date = models.DateTimeField(blank=True, null=True)
+    # woa_end_date = models.DateTimeField(blank=True, null=True)
+    # Start and end date is used for display
 
     fault_type_id = models.IntegerField() # (อาญา.แพ่ง)
     send_to_name = models.CharField(max_length=250) # ส่งหมายถึงใคร
@@ -119,6 +120,7 @@ class WarrantDataModel(models.Model):
 
     plaintiff = models.CharField(max_length=400, blank=True)
     court_name = models.CharField(max_length=250, blank=True)
+    # judge_name = models.CharField(max_length=250, blank=True)
 
     def __str__(self):
         # return json.dumps({
@@ -199,6 +201,8 @@ class WarrantDataModel(models.Model):
 
         dict_main_awis.update({
             "court_name": self.reqforms.first().getCourtName(),
+            "judge_name": self.reqforms.first().judge_name,
+            "plaintiff": self.reqforms.first().plaintiff,
             "prescription": self.reqforms.first().prescription,
             "woa_start_date": self.reqforms.first().woa_start_date,
             "woa_end_date": self.reqforms.first().woa_end_date,

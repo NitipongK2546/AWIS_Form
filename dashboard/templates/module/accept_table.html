@@ -9,9 +9,9 @@
             </tr>
             <tr>
                 <th>เลขอ้างอิงคำร้อง</th>
+                <th>สถานะการรับคำร้อง</th>
                 <th>เลขที่คำร้อง</th>
                 <th>วันที่รับคำร้อง</th>
-                <th>สถานะการรับคำร้อง</th>
                 <th>วันที่อนุมัติคำร้อง</th>
                 <th>ดูหมายจับ</th>
                 <th>Actions</th>
@@ -21,13 +21,13 @@
             {% for form in forms_sent %}
             <tr>
                 <td>{{ form.req_no_plaintiff }}</td>
+                <td>{{ form.accept }}</td>
                 <td>{{ form.reqno }}</td>
                 <td>{% if form.recive_date %}
                         {{ form.recive_date | buddhist_date}}
                     {% else %}
                         -
                     {% endif %}</td>
-                <td>{{ form.accept }}</td>
                 <td>
                     {% if form.accept_date %}
                         {{ form.accept_date|buddhist_date }}
@@ -39,7 +39,7 @@
                     <a href="{% url 'dashboard:view_reqform_warrants' form.req_no_plaintiff %}">ดูหมายจับ</a>
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:get_form' form.req_no_plaintiff %}">ดูคำร้อง</a>
+                    <a href="{% url 'forms:view_form' form.req_no_plaintiff %}">ดูคำร้อง</a>
                     <a href="{% url 'dashboard:delete_sent_reqform' form.req_no_plaintiff %}">ยกเลิกการส่งคำร้อง</a>
                 </td>
             </tr>
