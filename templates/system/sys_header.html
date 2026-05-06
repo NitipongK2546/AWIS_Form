@@ -1,31 +1,60 @@
 <header id="awis-header-container" class="no-print" style="all: unset;">
-<div id="awis-system-header" style="align-content: center; display: block; padding-top: 0; padding-bottom: 0;"></div>
-<script>
-  const host = document.querySelector('#awis-system-header');
-  const shadow = host.attachShadow({mode: 'open'});
+  <div id="awis-system-header" style="display: block;"></div>
 
-  // Add your own styles here
-  shadow.innerHTML = `
-    <style>
+  <script>
+    const host = document.querySelector('#awis-system-header');
+    const shadow = host.attachShadow({ mode: 'open' });
+
+    shadow.innerHTML = `
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun&display=swap');
+
         .header-inside {
-            all: unset;
-            display: block;
-            text-align: center;
-            // position: fixed;
-            width: 99vw;
+          all: unset;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
 
-            margin: 0 -20px 0 -20px;
-            padding-top: 20px;
-            padding-bottom: 20px;
+          width: 100vw;
+          padding: 20px 0;
+          margin: 0;
 
-            background: black;
-            color: white;
-            font-family: sans-serif;
+          background: linear-gradient(90deg, #0d47a1, #1976d2);
+          color: white;
+          font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+          font-size: 24px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
-    </style>
-    <div class="header-inside">
-      ระบบ AWIS
-    </div>
-  `;
-</script>
+
+        .logo {
+          display: flex;
+          gap: 5px;
+        }
+
+        .hex {
+          width: 22px;
+          height: 22px;
+          clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+        }
+
+        .hex.red { background-color: #e53935; }
+        .hex.blue { background-color: #1e88e5; }
+        .hex.green { background-color: #43a047; }
+      </style>
+
+      <div class="header-inside">
+        <div class="logo">
+          <div class="hex red"></div>
+          <div class="hex blue"></div>
+          <div class="hex green"></div>
+        </div>
+        ระบบ AWIS
+      </div>
+    `;
+  </script>
 </header>

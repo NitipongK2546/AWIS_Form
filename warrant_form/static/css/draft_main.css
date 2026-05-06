@@ -5,6 +5,7 @@
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
 }
 
 /* Page header */
@@ -12,11 +13,17 @@
     padding: 10px;
     font-size: 18px;
     color: #5f6368;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
 }
 
 /* Navigation */
 .top-nav {
     margin-top: 10px;
+    margin-left: 10px;
+}
+
+.back-button {
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
 }
 
 /* Buttons */
@@ -29,6 +36,7 @@
     cursor: pointer;
     font-weight: bold;
     text-decoration: none;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
 }
 
 .primary-button:hover {
@@ -42,6 +50,7 @@
     border-radius: 4px;
     text-decoration: none;
     margin-left: 10px;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
 }
 
 .edit-button:hover {
@@ -54,6 +63,7 @@
     padding: 6px 12px;
     border-radius: 4px;
     text-decoration: none;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
 }
 
 .add-button:hover {
