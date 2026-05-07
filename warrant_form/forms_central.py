@@ -25,6 +25,22 @@ month_choices = [
     (11, "พฤศจิกายน"),
     (12, "ธันวาคม"),
 ]
+
+THAI_MONTHS = {
+    1: "มกราคม",
+    2: "กุมภาพันธ์",
+    3: "มีนาคม",
+    4: "เมษายน",
+    5: "พฤษภาคม",
+    6: "มิถุนายน",
+    7: "กรกฎาคม",
+    8: "สิงหาคม",
+    9: "กันยายน",
+    10:"ตุลาคม",
+    11:"พฤศจิกายน",
+    12:"มกราคม",
+}
+
 thai_codes = ThaiCountryAreaCode()
 
 nation_codes = CountryNationalityCode()
@@ -65,7 +81,7 @@ def createDupe(duped_list : list[str], target_dict : dict) -> dict[str,]:
 
     return target_dict
 
-def splitTime(time_split_list : list[str], target_dict : dict) -> dict[str,]:
+def splitTime(time_split_list : list[str], target_dict : dict, month_as_text : bool = False, two_digit_year : bool = False, buddhist_year : bool = False) -> dict[str,]:
     for item in time_split_list:
         datetime_obj : datetime.datetime = target_dict.get(item)
 
@@ -73,14 +89,35 @@ def splitTime(time_split_list : list[str], target_dict : dict) -> dict[str,]:
             datetime_obj = datetime_obj.astimezone(CURRENT_TIMEZONE)
 
             target_dict.update({f"{item}_day" : datetime_obj.day})
-            target_dict.update({f"{item}_month" : datetime_obj.month})
-            target_dict.update({f"{item}_year" : datetime_obj.year})
+
+            if month_as_text:
+                target_dict.update({f"{item}_month" : THAI_MONTHS.get(datetime_obj.month)})
+            else:
+                target_dict.update({f"{item}_month" : datetime_obj.month})
+
+            if buddhist_year:
+                current_year = datetime_obj.year + 543
+            else:
+                current_year = datetime_obj.year
+
+            if two_digit_year:
+                target_dict.update({f"{item}_year" : int(str(current_year)[-2:])})
+            else:
+                target_dict.update({f"{item}_year" : current_year})
 
             target_dict.update({f"{item}_timehalf" : datetime_obj.time().isoformat()})
         else:
             target_dict.update({f"{item}_day" : 1})
-            target_dict.update({f"{item}_month" : 1})
-            target_dict.update({f"{item}_year" : 1970})
+
+            if month_as_text:
+                target_dict.update({f"{item}_month" : THAI_MONTHS.get(1)})
+            else:
+                target_dict.update({f"{item}_month" : 1})
+
+            if two_digit_year:
+                target_dict.update({f"{item}_year" : 70})
+            else:
+                target_dict.update({f"{item}_year" : 1970})
 
             target_dict.update({f"{item}_timehalf" : "07:00:00"})
 

@@ -36,6 +36,10 @@ class ReqformDraftModelForm(forms.ModelForm):
         'onchange': 'changeDate(req_day, req_month, req_year)'
     }),
     "req_case_type_id": forms.Select(choices=req_case_type_id_choices),
+    "scene_date": forms.DateTimeInput(attrs={
+        'class': 'datetimepicker',
+        'placeholder': "เลือกวันที่และเวลา"
+    }),
     "woa_start_date": forms.DateTimeInput(attrs={
         'class': 'datetimepicker',
         'placeholder': "เลือกวันที่และเวลา"

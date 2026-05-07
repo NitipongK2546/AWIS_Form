@@ -334,6 +334,21 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
         "action": "Unsend Reqform"
     })
 
+###############################################################################
+
+from warrant_form import doc_create
+
+def download_warrant(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
+    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+
+    target_warrant : WarrantDataModel = selected_form.form.warrants.filter(woa_refno=woa_refno).first()
+
+    doc_data = target_warrant.convertToDocumentData()
+
+    response = doc_create.create_pdf(doc_data)
+
+    return response
+
 
 ###############################################################################
 

@@ -64,6 +64,7 @@
                     {{ form.because }}
                 </td>
                 <td>
+                    <a href="{% url 'dashboard:download_warrant' form.req_no_plaintiff form.woa_refno %}">Download ไฟล์หมาย</a>
                     {% if form.report_status == 0 %}
                     ยังไม่ได้รายงาน
                     {% elif form.report_status == 1 %}

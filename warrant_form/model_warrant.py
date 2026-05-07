@@ -193,29 +193,34 @@ class WarrantDataModel(models.Model):
 
         return result_dict
     
-    def convertBacktoFormView(self) -> dict[str, object]:
+    def convertBacktoFormView(self, month_as_text : bool = False, two_digit_year : bool = False, buddhist_year : bool = False) -> dict[str, object]:
         dict_main_awis = model_to_dict(self)
 
         duped_list = ["acc_full_name", ]
-        time_split_list = ["woa_date", "appointment_date"]
+        time_split_list = ["woa_date", "appointment_date", "woa_start_date", "woa_end_date"]
 
         dict_main_awis.update({
-            "woa_no": "12345/2569",
             "court_name": self.reqforms.first().getCourtName(),
             "judge_name": self.reqforms.first().judge_name,
             "plaintiff": self.reqforms.first().plaintiff,
             "prescription": self.reqforms.first().prescription,
             "woa_start_date": self.reqforms.first().woa_start_date,
             "woa_end_date": self.reqforms.first().woa_end_date,
+            "req_name": self.reqforms.first().req_name,
         })
 
-        dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis)
+        dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis, month_as_text, two_digit_year, buddhist_year)
 
         for item in duped_list:
             dict_main_awis.update({f"{item}_1" : dict_main_awis.get(item)})
             dict_main_awis.update({f"{item}_2" : dict_main_awis.get(item)})
 
         return dict_main_awis
+    
+    def convertToDocumentData(self):
+        data_dict = self.convertBacktoFormView(month_as_text=True, two_digit_year=True, buddhist_year=True)
+
+        return data_dict
     
 ##########################################################################
 
