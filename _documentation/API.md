@@ -1,4 +1,4 @@
-# API v0.2.2
+# API v0.2.3.1-fix-01
 
 ## 1. API ของภายนอก 
 
@@ -8,12 +8,12 @@
 
 ```
 VisualReqformData
-{{ HOST }}/api/v1/update-status/reqwarrant/
+{{ HOST }}/api/v1/requests/<str:req_no_plaintiff>/
 ```
 
 ```
 VisualWarrantData
-{{ HOST }}/api/v1/update-status/warrant/
+{{ HOST }}/api/v1/warrant/<str:woa_refno>/
 ```
 
 โดยจะใช้ข้อมูลบางส่วนที่ถูกส่งมาเป็น Key ในการหา Reqform ที่ต้องการ ซึ่งจะทำให้เจอ Warrant ที่ต้องการด้วย
@@ -25,7 +25,7 @@ VisualWarrantData
 `Authorization: Bearer {{ JWT_TOKEN }}
 `
 
-โดยสามารถขอ JWT ได้จาก Directory ดังกล่าว ด้วยการส่ง POST Request
+โดยสามารถขอ JWT ได้จาก URL ดังกล่าว ด้วยการส่ง POST Request
 
 ```
 {{ HOST }}/api/v1/authenticate/
@@ -55,4 +55,4 @@ Reverse url สามารถเข้าถึง API ได้โดย "api:
 
 เก็บ Function การเชื่อมต่อ API เข้า Server อื่น ๆ ไว้
 
-แต่ตอนนี้ใน Codebase มีบางฟังก์ชันที่เรียกเลย ไม่ได้ผ่านช่องทางนี้...
+หากการส่ง API มีปัญหา ให้ลองแก้ไฟล์ใน Directory นี้

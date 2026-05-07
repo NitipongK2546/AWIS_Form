@@ -69,3 +69,12 @@ def view_x(request : HttpRequest):
 1. list[PermissionType] เพื่อกำหนดสิทธิ์ทั้งหมดที่ต้องมีในการเข้าถึง
 1. PermissionList เพื่อบอกว่าต้องการสิทธิ์จากระบบอะไรเพื่อเข้าถึง
 1. AccessType เพื่อเก็บว่าผู้ใช้ทำอะไรไปในการเข้าถึง URL ดังกล่าว (ใช้สำหรับการเก็บ LOG)
+
+```python
+@api_perm_log([...], ..., ...)
+def api_endpoint_x(request : HttpRequest):
+    pass
+```
+เป็น Decorator สำหรับ API Endpoint โดยเฉพาะ โดยทำงานเหมือนกับด้านบน
+
+มีไว้เพื่อรองรับ User ที่ยืนยันตัวตนผ่าน JSON Web Token
