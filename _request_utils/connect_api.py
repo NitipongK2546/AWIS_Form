@@ -303,34 +303,6 @@ def login_via_api(request : HttpRequest):
     
     return data.get("id")
 
-import json
-
-# def login_via_api(request : HttpRequest):
-
-#     base_url = "http://10.10.10.60:8000/"
-
-#     parameter = ["login"]
-
-#     username = request.POST.get("username")
-#     password = request.POST.get("password")
-
-#     post_data = {
-#         "username": username,
-#         "password": password,
-#     }
-#     response : HttpResponse = RequestUtils.post_request(
-#         base_url, 
-#         parameter_data=parameter, 
-#         post_data=post_data
-#     )
-#     data : dict = response.json()
-
-#     if data.get("status") != 200:
-#         print(data.get("message"))
-#         return False
-    
-#     return data.get("id")
-
 ##############################################################################
 # 1.
 # def put_update_request_status(version : str, request : HttpRequest, put_data : dict) -> dict:

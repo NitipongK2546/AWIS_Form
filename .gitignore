@@ -9,6 +9,8 @@ _log_output
 /test_files
 /.test_files
 
+output.docx
+
 /_test_json
 
 ### Django ###
