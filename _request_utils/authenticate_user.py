@@ -29,7 +29,7 @@ def toDjangoJsonResponse(response : Response) -> JsonResponse:
 
 # 1. Get Credentials
 
-def post_login_authorize(version : str, request : HttpRequest, storage : str = "cookies"):
+def erp_login_authorize(version : str, request : HttpRequest, storage : str = "cookies"):
     """
     Token จะถูกใส่ลงไปใน Session/Cookie
     """

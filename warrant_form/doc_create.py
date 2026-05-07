@@ -1,7 +1,7 @@
 from docxtpl import DocxTemplate
 from warrant_form.code_handler import ThaiCountryAreaCode
 
-def clean_data_for_docx(incoming_context : dict) -> dict:
+def multiple_checkboxes(incoming_context : dict) -> dict:
     bool_key_dict : dict[str, int] = {
         "cause_type_id": 2,
         "have_req": 2,
@@ -21,35 +21,25 @@ def clean_data_for_docx(incoming_context : dict) -> dict:
 
     return incoming_context
 
-def set_year_to_buddhist_era(incoming_context : dict) -> dict:
-    year_list = ['req_year', 'scene_date_year']
-    for year in year_list:
-        year_value = incoming_context.get(year, None)
-        incoming_context.update({year: year_value + 543})
-
-    return incoming_context
-
-def setup_codes_to_text(incoming_context : dict) -> dict:
-    all_codes_field = ['acc_province', 'acc_district', 'acc_sub_district',
-                        'req_province', 'req_district', 'req_sub_district',]
-    
-    code_dict = ThaiCountryAreaCode().getCodeDict()
-    for code_key in all_codes_field:
-        area_code = incoming_context.get(code_key, None)
-
-        area_text = code_dict.get(area_code, None)
-
-        incoming_context.update({code_key: area_text})
+def bool_to_checkbox(incoming_context : dict):
+    for key, item in incoming_context.items():
+        if isinstance(item, bool):
+            if item:
+                incoming_context.update({
+                    key: "✓"
+                })
+            else:
+                incoming_context.update({
+                    key: ""
+                })
 
     return incoming_context
     
 
 def doc_create_with_context(incoming_context : dict):
-    doc = DocxTemplate("warrant_form/resources/warrrant_form.docx")
+    doc = DocxTemplate("warrant_form/resources/warrant_template.docx")
 
-    context = clean_data_for_docx(incoming_context)
-    incoming_context = setup_codes_to_text(incoming_context)
-    incoming_context = set_year_to_buddhist_era(incoming_context)
+    context = bool_to_checkbox(incoming_context)
 
     doc.render(context)
 

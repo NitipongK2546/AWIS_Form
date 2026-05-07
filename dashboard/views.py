@@ -97,7 +97,7 @@ def confirm_approve(request : HttpRequest, req_no_plaintiff : str):
     if request.method == "POST":
         try:
             if settings.ENABLE_API:
-                AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDictWithConvertedWarrants())
+                AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDict())
 
             selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.APPROVED
             selected_form.date_approved = timezone.now()

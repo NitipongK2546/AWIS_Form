@@ -18,6 +18,8 @@ from _log_utils.file_logger import AccessType
 from users.permissions.perms import PermissionList, PermissionType, perm_str, perm_str_list
 from users.permissions.decorators import perm_req_log
 
+from .doc_create import doc_create_with_context
+
 def getFormAwaitViaReqno(reqno : str):
     return FormAwaitingApproval.objects.filter(form__reqno=reqno).first()
 
@@ -63,6 +65,7 @@ def view_form(request : HttpRequest, req_no_plaintiff : int, ObjWarrantForm = Di
     woa_date_list = []
     for item in warrants:
         dict_item = item.convertBacktoFormView()
+        doc_create_with_context(dict_item)
         form = ObjWarrantForm(initial=dict_item)
         warrant_list.append(
             form
