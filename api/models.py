@@ -7,6 +7,9 @@ class ExternalSelectorData(models.Model):
     prev_data : dict = models.JSONField(default=dict)
 
     def isHashDifferent(self, new_hash_str : str) -> bool:
+        if not new_hash_str:
+            return False
+
         if self.hash_hex_str != new_hash_str:
             return True
         

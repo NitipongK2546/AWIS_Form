@@ -7,4 +7,6 @@ urlpatterns = [
     path("get-sub-district/", endpoints.get_sub_district, name="get_sub_district"),
     path("get-district/", endpoints.get_district, name="get_district"),
     path("get-province/", endpoints.get_province, name="get_province"),
+
+    path("check-court-difference/", endpoints.fetch_court_check, name="check_court"),
 ]

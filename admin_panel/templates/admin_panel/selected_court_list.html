@@ -47,6 +47,8 @@ cursor: pointer;
   <div>
     <h1>Court Selected</h1>
     <a class="btn_red" href="{% url 'admin_panel:collections' %}">Back</a>
+    <button onclick="fetchCourt()">Fetch Latest Courts</button>
+    <h3 id="different-display"></h3>
     <table border="1" style="margin: 10 10px">
         <tr>
             <th>No.</th>
@@ -86,6 +88,8 @@ cursor: pointer;
 
 {% block script %}
 <script>
+const different_display = document.getElementById("different-display")
+
 function openPopup() {
   document.getElementById("popup").style.display = "block";
   document.getElementById("popup-frame").src = "{% url 'admin_panel:edit_courts' %}";
@@ -97,6 +101,29 @@ function closePopup() {
   document.getElementById("popup-frame").src = "";
   document.getElementById("loading").style.display = "none";
   window.location.reload();
+}
+
+async function fetchCourt() {
+    const response = await fetch("{% url 'api:internal:check_court' %}", {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+    })
+
+    const data = await response.json()
+
+    if (data.status == "error") {
+        different_display.textContent = "ERROR: Cannot connect to AWIS API"
+        return
+    }
+
+    if (data.different) {
+        different_display.textContent = "Court List is different."
+    }
+    else {
+        different_display.textContent = "Court List is the same."
+    }
 }
 </script>
 {% endblock %}
