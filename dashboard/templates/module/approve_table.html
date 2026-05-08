@@ -39,7 +39,9 @@
                 </td>
                 <td>
                     <a href="{% url 'forms:view_form' form.form.req_no_plaintiff %}">ดูคำร้อง</a><br>
+                    {% comment %}
                     <a href="{% url 'forms:edit_form' form.form.req_no_plaintiff %}">แก้ไขคำร้อง</a><br>
+                    {% endcomment %}
                     <a href="{% url 'forms:delete_form' form.form.req_no_plaintiff %}">ลบคำร้อง</a><br>
                 </td>
             </tr>

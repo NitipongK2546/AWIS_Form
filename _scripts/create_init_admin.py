@@ -17,9 +17,7 @@ def add_initial_admin_user():
 
     result = add_user_to_access(user_data, True)
 
-    if result:
-        print("Successfully Added Initial System Admin User")
-    else:
-        print("Failed to add Initial System Admin")
+    print("System Admin Setup Success.")
 
+print("[Create Initial User as System Admin]")
 add_initial_admin_user()

@@ -211,6 +211,11 @@ class WarrantDataModel(models.Model):
 
         dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis, month_as_text, two_digit_year, buddhist_year)
 
+        if self.woa_year:
+            dict_main_awis.update({
+                "woa_year": str(self.woa_year)[-2:]
+            })
+
         for item in duped_list:
             dict_main_awis.update({f"{item}_1" : dict_main_awis.get(item)})
             dict_main_awis.update({f"{item}_2" : dict_main_awis.get(item)})

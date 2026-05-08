@@ -1,9 +1,13 @@
-import users.models as UserFile
+import users.models as UserCreation
 
-UserFile.create_superuser()
+print("[Special User Creation]")
 
-UserFile.create_court_user(
+UserCreation.create_superuser()
+
+print("1. Django Superuser Creation Success")
+
+UserCreation.create_court_user(
     "testcourtuser7", "court@example.com", "testpass999999", "CourtUser", "Court"
 )
 
-print("Success")
+print("2. Court User Creation Success")

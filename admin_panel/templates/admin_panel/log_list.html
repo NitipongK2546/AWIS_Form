@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="filter-section">
+<div class="filter-section" style="margin: 8px;">
     <a href="{% url 'admin_panel:collections' %}" class="btn-red">กลับ</a>
     <h2>Filter Logs</h2>
     <form method="get">
@@ -45,31 +45,30 @@
     </form>
 </div>
 
-<div>
-    <div class="log-export">
+<section>
+    <div class="log-table">
         <a href="{% url 'admin_panel:export_logs' %}" class="btn-secondary">Export Log</a>
         <a href="{% url 'admin_panel:delete_logs' %}?{{ request.GET.urlencode }}" class="btn-secondary">Delete Log</a>
     </div>
-</div>
-
+</section>
 
 <section>
-    <h1>Normal Log</h1>
     <div class="log-table">
+        <h1>Normal Log</h1>
         {% include 'module/log_table.html' with page_obj=normal_page_obj page_param="normal_page" %}
     </div>
 </section>
 
 <section>
-    <h1>Errors Log</h1>
     <div class="log-table">
+        <h1>Errors Log</h1>
         {% include 'module/log_table.html' with page_obj=errors_page_obj page_param="errors_page" %}
     </div>
 </section>
 
 <section>
-    <h1>Denied Log</h1>
     <div class="log-table">
+        <h1>Denied Log</h1>
         {% include 'module/log_table.html' with page_obj=denied_page_obj page_param="denied_page" %}
     </div>
 </section>

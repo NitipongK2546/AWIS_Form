@@ -20,6 +20,7 @@
                 <th>หมายเหตุ</th>
                 <th>สถานะการรายงาน</th>
                 <th>Action</th>
+                <th>ไฟล์</th>
             </tr>
         </thead>
         <tbody>
@@ -64,7 +65,6 @@
                     {{ form.because }}
                 </td>
                 <td>
-                    <a href="{% url 'dashboard:download_warrant' form.req_no_plaintiff form.woa_refno %}">Download ไฟล์หมาย</a>
                     {% if form.report_status == 0 %}
                     ยังไม่ได้รายงาน
                     {% elif form.report_status == 1 %}
@@ -75,6 +75,9 @@
                     {% if form.court_injunction_int == 1 %}
                     <a href="{% url 'dashboard:report_warrant' form.req_no_plaintiff form.woa_refno %}">รายงานผลหมาย</a>
                     {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'dashboard:download_warrant' form.req_no_plaintiff form.woa_refno %}">Download ไฟล์หมาย</a>
                 </td>
             </tr>
             {% empty %}

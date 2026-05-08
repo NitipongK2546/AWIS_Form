@@ -43,7 +43,7 @@ cursor: pointer;
 {% endblock %}
 
 {% block content %}
-<div style="display: flexbox;">
+<div style="display: flexbox; margin: 8px;">
   <div>
     <h1>Granted Access Users</h1>
     <a class="btn_red" href="{% url 'admin_panel:collections' %}">Back</a>
@@ -88,9 +88,8 @@ cursor: pointer;
       {% endfor %}
     </table>
   </div>
-</div>
 
-<div id="popup" class="popup" style="display: none;">
+  <div id="popup" class="popup" style="display: none;">
     <div class="popup-content">
       <span class="close" onclick="closePopup()">&times;</span>
       <div id="loading" style="display: none; text-align: center; align-content: center;">
@@ -100,11 +99,11 @@ cursor: pointer;
       </iframe>
     </div>
   </div>
-</div>
-
-
+  
 <!-- <a href="">Go to Select Users</a> -->
+ <br>
 <button onclick="openPopup()">Add Access List</button>
+</div>
 {% endblock %}
 
 {% block script %}

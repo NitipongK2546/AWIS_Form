@@ -8,11 +8,15 @@ from users.permissions import AWISPermissions, PermissionList, PermissionType, c
 
 from users.models import UserDataModel
 
+print("[Permission Section]")
+
 for name in PermissionList:
     ct = creation.createContentType(name)
 
     for perm in PermissionType:
         creation.createPermissionObj(ct, perm, name)
+
+print("1. Permission Creation Success.")
 
 user = UserDataModel.objects.get(username="testcourtuser7")
 permission = Permission.objects.get(codename=
@@ -20,6 +24,7 @@ permission = Permission.objects.get(codename=
 )
 user.user_permissions.add(permission)
 
+print("2. Court User Permission Assigned.")
 
 for role in settings.RoleList:
     role_group, created = Group.objects.get_or_create(
@@ -29,5 +34,7 @@ for role in settings.RoleList:
 
     for item in default_permissions:
         role_group.permissions.add(item)
+
+print("3. Users Default Permission Assigned.")
 
 
