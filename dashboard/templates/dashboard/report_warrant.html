@@ -1,30 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Warrant</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Warrant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'dashboard/css/report_warrant.css' %}">
 </head>
 <body>
-    <div>
-        <p>ชื่อศาล: {{ court_code }}</p>
-        <p>หมายจับประเภท: {{ woa_type }}</p>
-        <p>เลขหมายจับ: {{ woa_no }}</p>
-        <p>Req num case type id: {{ req_num_case_type_id }}</p>
-        <p>Arrest report uid: {{ arrest_report_uid }}</p>
-    </div>
-    <div>
-        <form method="post">
-            {% csrf_token %}
-            <p>Arrest result: {{ report_form.arrest_result }}</p>
-            <p>Arrest Date : {{ report_form.arrest_date_day }}{{ report_form.arrest_date_month }}{{ report_form.arrest_date_year }}</p>
-            <p>arrest_result_other_text : {{ report_form.arrest_result_other_text }}</p>
-            <p>arrest_officer_name : {{ report_form.arrest_officer_name }}</p>
+  <!-- Court Info -->
+  <section class="card">
+    <h2>ข้อมูลหมายจับ</h2>
+    <p><strong>ชื่อศาล:</strong> {{ court_code }}</p>
+    <p><strong>หมายจับประเภท:</strong> {{ woa_type }}</p>
+    <p><strong>เลขหมายจับ:</strong> {{ woa_no }}</p>
+    <p><strong>Req num case type id:</strong> {{ req_num_case_type_id }}</p>
+    <p><strong>Arrest report uid:</strong> {{ arrest_report_uid }}</p>
+  </section>
 
-            <button type="submit" onclick="return confirm('Are you sure?');">
-                Send Data to Court
-            </button>
-        </form>
-    </div>
+  <!-- Report Form -->
+  <section class="card">
+    <h2>รายงานการจับกุม</h2>
+    <form method="post">
+      {% csrf_token %}
+      <label>ผลการจับกุม: {{ report_form.arrest_result }}</label>
+
+      <label>วันที่จับกุม: {{ report_form.arrest_date_day }} / {{ report_form.arrest_date_month }} / {{ report_form.arrest_date_year }}</label>
+
+      <label>รายละเอียดเพิ่มเติม: {{ report_form.arrest_result_other_text }}</label>
+
+      <label>ชื่อเจ้าหน้าที่จับกุม: {{ report_form.arrest_officer_name }}</label>
+
+      <button type="submit" class="primary-button" onclick="return confirm('Are you sure?');">
+        ส่งข้อมูลไปยังศาล
+      </button>
+    </form>
+  </section>
 </body>
 </html>
