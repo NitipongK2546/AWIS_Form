@@ -67,7 +67,6 @@ INSTALLED_APPS = [
     'dashboard',
     'admin_panel',
     'api',
-    # 'permissions',
 ]
 
 AUTH_USER_MODEL = "users.UserDataModel"
