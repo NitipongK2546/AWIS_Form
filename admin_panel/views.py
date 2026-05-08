@@ -297,7 +297,7 @@ def edit_selected_courts(request : HttpRequest):
 
     if request.method == "POST":
         selected_codes = request.POST.getlist("selected_courts")
-        
+
         for court in court_list:
             if len(selected_codes) == 0:
                 break
@@ -321,6 +321,6 @@ def edit_selected_courts(request : HttpRequest):
 def view_all_selected_courts(request : HttpRequest):
     all_selected_courts = SelectedCourt.objects.all()
 
-    return render(request, "module/selected_court_list.html", {
+    return render(request, "admin_panel/selected_court_list.html", {
         "court_list": all_selected_courts,
     })
