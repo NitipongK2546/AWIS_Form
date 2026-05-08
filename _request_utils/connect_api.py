@@ -269,7 +269,7 @@ def get_court_list(version : str) -> dict:
     #     return False
 
     base_url = RequestUtils.get_full_url_from_env()
-    parameter = [version, "awis", "court"]
+    parameter = [version, "awis", "courts"]
 
     auth_token : str = post_login_authorize("v1.1", None, None)
     response : JsonResponse = RequestUtils.get_request_with_auth(

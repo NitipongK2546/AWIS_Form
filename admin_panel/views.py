@@ -296,4 +296,6 @@ def all_courts(request : HttpRequest):
 
     # status = court.checkCourtDifferent()
 
-    return JsonResponse(dict_data)
+    return render(request, "module/court_table.html", {
+        "court_list": dict_data,
+    })
