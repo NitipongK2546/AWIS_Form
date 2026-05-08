@@ -288,3 +288,14 @@ def delete_logs(request : HttpRequest):
     return render(request, "admin_panel/confirm_export_log.html", {
         "action": "Delete Log"
     })
+
+from api.selector import court
+
+def all_courts(request : HttpRequest):
+    court.checkCourtDifferent()
+
+    dict_data = court.getCourtData()
+
+    # status = court.checkCourtDifferent()
+
+    return JsonResponse(dict_data)

@@ -1,11 +1,11 @@
 from api.models import ExternalSelectorData
-from _request_utils.connect_api import get_court_list
+from _request_utils.connect_api import get_court_list as _api_get_court_list
 
 import hashlib
 import json
 
 def checkCourtDifferent(court_selector : ExternalSelectorData) -> bool:
-    court_list = get_court_list("v1")
+    court_list = _api_get_court_list("v1")
     court_list_str = json.dumps(court_list).encode()
     hash_obj = hashlib.sha1(court_list_str)
     hash_hex_str = hash_obj.hexdigest()
