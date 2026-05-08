@@ -137,14 +137,15 @@ class LogSystem(models.Model):
         else:
             return self.toStrExtra()    
         
-    def getUserAndGroupData(self) -> dict:
-        user_obj = UserDataModel.objects.get(api_uid=self.user_id)
-        user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
+    # def getUserAndGroupData(self) -> dict:
 
-        return {
-            "user": user_obj,
-            "groups": user_obj.getGroupString()
-        }
+    #     user_obj = UserDataModel.objects.get(api_uid=self.user_id)
+    #     user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
+
+    #     return {
+    #         "user": user_obj,
+    #         "groups": user_obj.getGroupString()
+    #     }
     
     def getRelevantDataObj(self, type : str):
         if type == "normal":
@@ -168,8 +169,11 @@ class LogSystem(models.Model):
 
         human_datetime_info = datetime_info.strftime("%Y-%m-%d %H:%M:%S (UTC%:z)")
 
-        user_obj = UserDataModel.objects.get(api_uid=self.user_id)
-        user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
+        if self.user_id:
+            user_obj = UserDataModel.objects.get(api_uid=self.user_id)
+            user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
+        else:
+            user_info = f"Unknown User"
 
         action_info = f"{self.action} -> {self.system}"
 

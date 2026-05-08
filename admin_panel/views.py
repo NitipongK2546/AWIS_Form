@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, JsonResponse, HttpResponseForbidden
 
 from awis_custom_settings.settings import RoleChoices, RoleList
 
@@ -114,12 +114,15 @@ def admin_select_users(request : HttpRequest):
 def add_user_to_access(user_data : dict, is_sys_admin : bool = False):
     uid = user_data["USR_ID"]
     if not UserAccess.objects.filter(user_id=uid).exists():
-        UserAccess.objects.create(
+        new_user_access = UserAccess.objects.create(
             user_id=uid,
             username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
             fullname=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']} {user_data['USR_LNAME']}",
             department=user_data["Dept"]
         )
+        if is_sys_admin:
+            new_user_access.role = 99
+            new_user_access.save()
 
         user = UserDataModel.objects.filter(
             username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}"
@@ -141,6 +144,7 @@ def add_user_to_access(user_data : dict, is_sys_admin : bool = False):
             group = Group.objects.get(name=group_name)
 
             new_user.groups.add(group)
+            
 
             new_user.set_unusable_password()
             new_user.save()
@@ -151,16 +155,53 @@ def add_user_to_access(user_data : dict, is_sys_admin : bool = False):
 ##############################################################################
 
 @perm_req_log([PermissionType.VIEW], PermissionList.USER_ACCESS, AccessType.VIEW)
-def access_list(request):
+def access_list(request : HttpRequest):
     # ดึงข้อมูลทั้งหมดจาก UserAccess
     allowed_users = UserAccess.objects.all()
 
+    current_user_access = UserAccess.objects.filter(user_id=request.user.api_uid).first()
+    current_user_model = request.user
+
     return render(request, "admin_panel/access_list.html", {
-        "allowed_users": allowed_users
+        "allowed_users": allowed_users,
+        "user_access": current_user_access,
+        "user_model": current_user_model,
     })
 
 @perm_req_log([PermissionType.EDIT], PermissionList.USER_ROLE, AccessType.EDIT)
 def update_role(request, user_id, role_value):
+    user : UserAccess = get_object_or_404(UserAccess, user_id=user_id)
+    django_user : UserDataModel = UserDataModel.objects.filter(api_uid=user_id).first()
+    if int(role_value) in [choice[0] for choice in RoleChoices.choices]:
+        user.role = int(role_value)
+
+        group_name = user.get_role_display()
+        group = Group.objects.get(name=group_name)
+
+        django_user.groups.clear()
+        django_user.groups.add(group)
+        
+        user.save()
+        django_user.save()
+
+        FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.USER_ROLE, django_user.getLogInfoDict())
+
+    return redirect("admin_panel:access_list")
+
+@perm_req_log([PermissionType.EDIT], PermissionList.ADMIN_ROLE, AccessType.EDIT)
+def update_role_admin(request : HttpRequest, user_id, role_value):
+
+    current_user = UserAccess.objects.filter(user_id=request.user.api_uid).first()
+    current_user_model = request.user
+    # System Admin or not Superuser
+    # Here's hoping that me not writing a util function for something like this won't come to bite me later.
+    # But really, how long would it take for someone to read this code again?
+    # Haha.
+    if current_user and (not current_user_model.is_superuser) and current_user.role != 99:
+        return render(request, "errors/403.html", {
+            "error": "Not Superuser or System Admin"
+        })
+    
     user : UserAccess = get_object_or_404(UserAccess, user_id=user_id)
     django_user : UserDataModel = UserDataModel.objects.filter(api_uid=user_id).first()
     if int(role_value) in [choice[0] for choice in RoleChoices.choices]:

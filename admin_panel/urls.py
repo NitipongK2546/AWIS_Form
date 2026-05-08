@@ -12,7 +12,10 @@ urlpatterns = [
     # path("add_specific-user/", views.add_specific_user, name="add_specific_user"),
     
     path("access_list/", views.access_list, name="access_list"),
+
     path("update-role/<int:user_id>/<int:role_value>/", views.update_role, name="update_role"),
+    path("update-role-admin/<int:user_id>/<int:role_value>/", views.update_role_admin, name="update_role_admin"),
+
     path("delete-access/<int:user_id>/", views.delete_access, name="delete_access"),
 
     path("logs/", views.view_all_logs, name="view_logs"),

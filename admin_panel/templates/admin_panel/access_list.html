@@ -74,22 +74,11 @@ cursor: pointer;
           {{ user.get_role_display }}</span>
         </td>
         <td>
-          <a class="btn" style="background-color: #3498db;" href="{% url 'admin_panel:update_role' user.user_id 10 %}">
-            เจ้าหน้าที่
-          </a> |
-          <a class="btn" style="background-color: #21cc0a;" href="{% url 'admin_panel:update_role' user.user_id 11 %}">
-            ผู้อนุมัติ
-          </a> |
-          <a class="btn" style="background-color: #dbb732;" href="{% url 'admin_panel:update_role' user.user_id 12 %}">
-            ผู้ดูแลระดับฝ่าย
-          </a> |
-          <a class="btn" style="background-color: #32cddb;" href="{% url 'admin_panel:update_role' user.user_id 99 %}">
-            ผู้ดูแลระบบ
-          </a> |
-          <a class="btn" style="background-color: #e01717;" href="{% url 'admin_panel:delete_access' user.user_id %}" 
-            onclick="return confirm('Are you sure you want to remove access for {{ user.fullname }}?');">
-            ลบสิทธิ์การเข้าถึงระบบ AWIS
-          </a>
+          {% if user.role == 12 or user.role == 99 %}
+          {% include 'module/access_action_admin_user.html' with role_value=user_access.role is_superuser=user_model.is_superuser %}
+          {% else %}
+          {% include 'module/access_action.html' %}
+          {% endif %}
         </td>
       </tr>
       {% empty %}

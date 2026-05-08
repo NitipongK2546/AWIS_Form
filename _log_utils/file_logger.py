@@ -126,7 +126,7 @@ def getOrFilterLogs(query : QueryDict = {}, as_text : bool = False):
             data_dict = {
                 "time_logged": log.time_logged,
                 "user_id": log.user_id,
-                "username": user_obj.username,
+                "username": "Unknown User" if log.user_id == -1 else user_obj.username,
                 "fullname": f"{user_obj.first_name} {user_obj.last_name}",
                 "action": log.action,
                 "system": log.system,
@@ -173,12 +173,13 @@ def _createLog(
     if isinstance(request.user, AnonymousUser):
         if user_bypass:
             user : UserDataModel = user_bypass
+            user_id = user.api_uid
         else:
             user = None
+            user_id = -1
     else:
         user : UserDataModel = request.user
-
-    user_id = user.api_uid
+        user_id = user.api_uid
 
     time_logged : timezone.datetime = timezone.now()
     log_obj = LogSystem.objects.create(
