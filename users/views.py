@@ -55,7 +55,7 @@ def user_login(request : HttpRequest):
                         "message": f"Wrong username or password? ({data.get("username")})",
                     }
 
-                    FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, deny_reason)
+                    FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, deny_reason,)
                     
                     return render(request, "users/login.html", {
                         "form": form,

@@ -148,17 +148,20 @@ class LogSystem(models.Model):
     #     }
     
     def getRelevantDataObj(self, type : str):
-        if type == "normal":
-            if self.relevant_info:
-                return self.toStrExtra(False)
-            else:
-                return ""
-        elif type == "errors":
-            return self.relevant_info.get("message")
-        elif type == "denied":
-            return self.relevant_info.get("message")
+        if isinstance(self.relevant_info, str):
+            return self.relevant_info
         else:
-            raise Exception
+            if type == "normal":
+                if self.relevant_info:
+                    return self.toStrExtra(False)
+                else:
+                    return ""
+            elif type == "errors":
+                return self.relevant_info.get("message")
+            elif type == "denied":
+                return self.relevant_info.get("message")
+            else:
+                raise Exception
 
     def getStuff():
         pass
@@ -169,7 +172,7 @@ class LogSystem(models.Model):
 
         human_datetime_info = datetime_info.strftime("%Y-%m-%d %H:%M:%S (UTC%:z)")
 
-        if self.user_id:
+        if self.user_id != -1:
             user_obj = UserDataModel.objects.get(api_uid=self.user_id)
             user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
         else:

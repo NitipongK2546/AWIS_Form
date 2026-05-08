@@ -10,6 +10,10 @@ from datetime import timedelta
 
 from users.models import UserDataModel
 
+import _log_utils.file_logger as FileLogger
+from users import PermissionList, PermissionType
+from _log_utils.file_logger import AccessType
+
 load_dotenv()
 
 JWT_SECRET = os.getenv("JWT_SECRET")
@@ -42,9 +46,9 @@ def _verify_jwt(token : str):
     except jwt.InvalidTokenError:
         return "Invalid Token"
     
-def _extract_jwt_from_header(headers : dict[str]):
-    
-    auth_header : str = headers.get("Authorization")
+def _extract_jwt_from_header(request : HttpRequest):
+
+    auth_header : str = request.headers.get("Authorization")
 
     if not auth_header:
         return JsonResponse({
@@ -66,6 +70,8 @@ def _extract_jwt_from_header(headers : dict[str]):
 
     # FAILED BECAUSE ERROR
     if isinstance(payload, str):
+        FileLogger.createErrorLog(request, AccessType.LOGIN, PermissionList.JWT_ENDPOINT, remark=payload)
+
         return JsonResponse({
             "status": 401,
             "message": payload
@@ -75,7 +81,7 @@ def _extract_jwt_from_header(headers : dict[str]):
     return payload
 
 def extract_jwt(request : HttpRequest):
-    result = _extract_jwt_from_header(request.headers)
+    result = _extract_jwt_from_header(request)
     
     return result
 

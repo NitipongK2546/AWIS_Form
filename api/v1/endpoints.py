@@ -77,6 +77,8 @@ def auth_api(request : HttpRequest) -> JsonResponse:
         user : UserDataModel = authenticate(username=username, password=password)
 
         if not user:
+            FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.JWT_ENDPOINT, remark="Wrong Username or Password")
+
             return JsonResponse({
                 "status": 401,
                 "message": "Wrong Username or Password"
@@ -86,7 +88,7 @@ def auth_api(request : HttpRequest) -> JsonResponse:
             perm_str_list([PermissionType.EDIT], PermissionList.REQFORM_SUBMITTED)
         )):
             
-            FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.REQFORM_SUBMITTED, user_bypass=user, remark="JWT not allowed.")
+            FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.JWT_ENDPOINT, user_bypass=user, remark="JWT not allowed.")
             return JsonResponse({
                 "status": 403,
                 "message": "JWT cannot be created for with user."
@@ -94,13 +96,14 @@ def auth_api(request : HttpRequest) -> JsonResponse:
         
         token = JWTHandle.create_jwt(user)
 
-        FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.REQFORM_SUBMITTED, user_bypass=user, remark="JWT Created")
+        FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.JWT_ENDPOINT, user_bypass=user, remark="JWT Created")
 
         return JsonResponse({
             "status": 200,
             "token": token,
         })
     except Exception as e:
+        FileLogger.createErrorLog(request, AccessType.LOGIN, PermissionList.REQFORM_SUBMITTED, str(e))
         return JsonResponse({
             "status": 400,
             "message": "Authentication failed."

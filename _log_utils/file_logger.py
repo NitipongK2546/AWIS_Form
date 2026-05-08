@@ -127,7 +127,7 @@ def getOrFilterLogs(query : QueryDict = {}, as_text : bool = False):
                 "time_logged": log.time_logged,
                 "user_id": log.user_id,
                 "username": "Unknown User" if log.user_id == -1 else user_obj.username,
-                "fullname": f"{user_obj.first_name} {user_obj.last_name}",
+                "fullname": "Unknown User" if log.user_id == -1 else f"{user_obj.first_name} {user_obj.last_name}",
                 "action": log.action,
                 "system": log.system,
                 "relevant_info": log.getRelevantDataObj(log.type),
