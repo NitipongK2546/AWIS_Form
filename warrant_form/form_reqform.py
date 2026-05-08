@@ -37,7 +37,7 @@ class AWISFormStep1(forms.Form):
 
     court_name_1 = forms.CharField(max_length=250, required=False)
     court_name_2 = forms.CharField(max_length=250, required=False)
-    court_code = forms.CharField(max_length=8, widget=forms.Select(choices=CentralForm.court_codes.getChoices()))
+    court_code = forms.CharField(max_length=8, widget=forms.Select(choices=CentralForm.court_codes_choices))
 
     judge_name = forms.CharField(max_length=250, required=False)
 
@@ -98,7 +98,7 @@ class AWISFormStep1(forms.Form):
     law = forms.CharField(max_length=200, required=False)
 
     court_owner_code = forms.ChoiceField(
-        choices=CentralForm.court_codes.getChoices()
+        choices=CentralForm.court_codes_choices
     ),
 
     prescription = forms.IntegerField(required=False, ) # อายุความ ปี
@@ -110,7 +110,7 @@ class AWISFormStep1(forms.Form):
     have_req_2 = forms.BooleanField(required=False) 
 
     have_court_code = forms.ChoiceField(
-        choices=CentralForm.court_codes.getChoices()
+        choices=CentralForm.court_codes_choices
     ),
     have_act = forms.CharField(max_length=400, required=False)
     have_injunc = forms.CharField(max_length=50, required=False)

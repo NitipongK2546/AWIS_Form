@@ -56,8 +56,8 @@ cursor: pointer;
         {% for court in court_list %}
         <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ court.court_code }}</td>
-            <td>{{ court.name }}</td>
+            <td>{{ court.data.court_code }}</td>
+            <td>{{ court.data.name }}</td>
         </tr>
         {% empty %}
         <tr>

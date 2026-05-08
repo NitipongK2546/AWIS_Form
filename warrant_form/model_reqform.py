@@ -60,7 +60,7 @@ class ReqformDataModel(models.Model):
 
     req_case_type_id = models.IntegerField(choices=ReqCaseTypeIDChoices) 
 
-    court_code = models.CharField(max_length=8, choices=CentralForm.court_codes.getChoices())
+    court_code = models.CharField(max_length=8, choices=CentralForm.court_codes_choices)
 
     judge_name = models.CharField(max_length=250, blank=True)
 
