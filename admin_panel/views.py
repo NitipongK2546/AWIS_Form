@@ -292,8 +292,6 @@ def delete_logs(request : HttpRequest):
 from api.selector import court
 
 def all_courts(request : HttpRequest):
-    court.checkCourtDifferent()
-
     dict_data = court.getCourtData()
 
     # status = court.checkCourtDifferent()
