@@ -54,7 +54,7 @@ def get_health_check(version : str) -> bool:
 
 ##############################################################################
 # 2. 
-def post_login_authorize(version : str, request : HttpRequest, storage : str = None):
+def post_login_authorize(version : str, request : HttpRequest = None, storage : str = None):
     """
     Token จะถุก Return กลับมาทันที เว้นว่าใส่ Storage ซึ่ง Token จะถูกใส่ลงไปใน Session/Cookie
     """
@@ -64,9 +64,6 @@ def post_login_authorize(version : str, request : HttpRequest, storage : str = N
     
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "authorize"]
-
-    # username = request.POST.get("username")
-    # password = request.POST.get("password")
 
     username = os.getenv("API_USERNAME")
     password = os.getenv("API_PASSWORD")
@@ -266,7 +263,7 @@ def unsend_reqform_from_court(version : str, request : HttpRequest, req_no_plain
 
 ##############################################################################
 # 9.
-def get_court_list(version : str, request : HttpRequest) -> dict:
+def get_court_list(version : str) -> dict:
 
     # if not get_health_check("v1"):
     #     return False
@@ -274,7 +271,7 @@ def get_court_list(version : str, request : HttpRequest) -> dict:
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "awis", "court"]
 
-    auth_token : str = post_login_authorize("v1.1", request, None)
+    auth_token : str = post_login_authorize("v1.1", None, None)
     response : JsonResponse = RequestUtils.get_request_with_auth(
         base_url, 
         parameter_data=parameter,
