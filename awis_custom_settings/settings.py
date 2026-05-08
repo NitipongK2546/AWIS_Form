@@ -57,6 +57,9 @@ class RoleList(Enum):
     
     def getDefaultRoleChoiceAssigned():
         return RoleChoices.EMPLOYEE
+    
+    def getSystemAdminRoleValue():
+        return RoleList.SYSTEM_SUPERADMIN.value
 
 class RoleChoices(models.IntegerChoices):
 

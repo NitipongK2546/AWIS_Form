@@ -111,7 +111,7 @@ def admin_select_users(request : HttpRequest):
 
 ################################################################################
 
-def add_user_to_access(user_data : dict):
+def add_user_to_access(user_data : dict, is_sys_admin : bool = False):
     uid = user_data["USR_ID"]
     if not UserAccess.objects.filter(user_id=uid).exists():
         UserAccess.objects.create(
@@ -121,41 +121,32 @@ def add_user_to_access(user_data : dict):
             department=user_data["Dept"]
         )
 
-        user = UserDataModel.objects.create_user(
-            username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
-            api_uid=user_data['USR_ID'],
-            first_name=user_data['USR_FNAME'],
-            last_name=user_data['USR_LNAME'],
-        )
+        user = UserDataModel.objects.filter(
+            username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}"
+        ).first()
 
-        group_name = RoleList.getDefaultRoleValue()
-        group = Group.objects.get(name=group_name)
+        if not user:
+            new_user = UserDataModel.objects.create_user(
+                username=f"{user_data['USR_PREFIX']}{user_data['USR_FNAME']}",
+                api_uid=user_data['USR_ID'],
+                first_name=user_data['USR_FNAME'],
+                last_name=user_data['USR_LNAME'],
+            )
 
-        user.groups.add(group)
+            if is_sys_admin:
+                group_name = RoleList.getSystemAdminRoleValue()
+            else:
+                group_name = RoleList.getDefaultRoleValue()
 
-        user.set_unusable_password()
-        user.save()
+            group = Group.objects.get(name=group_name)
+
+            new_user.groups.add(group)
+
+            new_user.set_unusable_password()
+            new_user.save()
 
         return True
     return False
-
-@perm_req_log([PermissionType.CREATE], PermissionList.USER_ACCESS, AccessType.CREATE)
-def add_specific_user(request: HttpRequest):
-    user_data = {
-        "USR_ID": int(os.getenv("TEST_ID")),
-        "USR_PREFIX": os.getenv("TEST_PREFIX"),
-        "USR_FNAME": os.getenv("TEST_FNAME"),
-        "USR_LNAME": os.getenv("TEST_LNAME"),
-        "Dept": os.getenv("TEST_DEPT"),
-        "Position": os.getenv("TEST_POSITION"),
-    }
-
-    added = add_user_to_access(user_data)
-
-    if added:
-        return redirect("admin_panel:access_list")
-    else:
-        return redirect("admin_panel:access_list")
 
 ##############################################################################
 
@@ -201,21 +192,6 @@ def delete_access(request, user_id):
 
 from .forms import LogQuery
 from django.core.paginator import Paginator
-
-
-# @perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
-# def view_all_logs(request : HttpRequest):
-#     filter = request.GET
-#     query_form = LogQuery(data=filter)
-
-#     logs = FileLogger.getOrFilterLogs(filter)
-
-#     return render(request, "admin_panel/log_list.html", {
-#         "normal_logs": logs.get("normal"),
-#         "errors_logs": logs.get("errors"),
-#         "denied_logs": logs.get("denied"),
-#         "query": query_form,
-#     })
 
 @perm_req_log([PermissionType.VIEW], PermissionList.LOG_ACCESS, AccessType.VIEW)
 def view_all_logs(request: HttpRequest):

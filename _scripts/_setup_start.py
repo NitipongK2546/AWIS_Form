@@ -9,5 +9,6 @@
 
 import _scripts.create_superuser
 import _scripts._permissions.full_setup_group_perm 
+import _scripts.create_init_admin
 
 ###############################################################################
