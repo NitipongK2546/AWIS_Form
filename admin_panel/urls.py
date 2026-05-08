@@ -23,5 +23,6 @@ urlpatterns = [
     path("logs/export/", views.export_logs, name="export_logs"),
     path("logs/delete/", views.delete_logs, name="delete_logs"),
 
-    path("courts/", views.all_courts, name="view_courts")
+    path("courts/", views.view_all_selected_courts, name="view_courts"),
+    path("courts/edit/", views.edit_selected_courts, name="edit_courts")
 ]

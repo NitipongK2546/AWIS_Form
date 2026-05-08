@@ -289,13 +289,38 @@ def delete_logs(request : HttpRequest):
         "action": "Delete Log"
     })
 
-from api.selector import court
+from api.selector import court as CourtUtil
+from .models import SelectedCourt
 
-def all_courts(request : HttpRequest):
-    dict_data = court.getCourtData()
+def edit_selected_courts(request : HttpRequest):
+    court_list : list[dict] = CourtUtil.getCourtData().get("courts")
 
-    # status = court.checkCourtDifferent()
+    if request.method == "POST":
+        selected_codes = request.POST.getlist("selected_courts")
+        
+        for court in court_list:
+            if len(selected_codes) == 0:
+                break
+
+            current_code = court.get("court_code") 
+            if current_code in selected_codes:
+                SelectedCourt.objects.get_or_create(
+                    data=court
+                )
+                selected_codes.remove(current_code)
+
+        return JsonResponse({
+            "message": "Success"
+        })
+
 
     return render(request, "module/court_table.html", {
-        "court_list": dict_data,
+        "court_list": court_list,
+    })
+
+def view_all_selected_courts(request : HttpRequest):
+    all_selected_courts = SelectedCourt.objects.all()
+
+    return render(request, "module/selected_court_list.html", {
+        "court_list": all_selected_courts,
     })

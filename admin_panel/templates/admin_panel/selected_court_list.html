@@ -1,0 +1,68 @@
+{% extends "admin_panel/base.html" %}
+{% load static %}
+
+
+{% block title %}Access List{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'admin_panel/css/select_users.css' %}">
+{% endblock %}
+
+{% block content %}
+<div style="display: flexbox; margin: 8px;">
+  <div>
+    <h1>Court Selected</h1>
+    <a class="btn_red" href="{% url 'admin_panel:collections' %}">Back</a>
+    <table border="1" style="margin: 10 10px">
+        <tr>
+            <th>No.</th>
+            <th>Court Code</th>
+            <th>Court Name</th>
+        </tr>
+        {% for court in court_list %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ court.court_code }}</td>
+            <td>{{ court.name }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">ไม่ได้เลือกข้อมูลไว้</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>
+
+  <div id="popup" class="popup" style="display: none;">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup()">&times;</span>
+      <div id="loading" style="display: none; text-align: center; align-content: center;">
+      </div>
+      <iframe id="popup-frame" src="" frameborder="0">
+        Waiting...
+      </iframe>
+    </div>
+  </div>
+  
+<!-- <a href="">Go to Select Users</a> -->
+ <br>
+<button onclick="openPopup()">Add Access List</button>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+function openPopup() {
+  document.getElementById("popup").style.display = "block";
+  document.getElementById("popup-frame").src = "{% url 'admin_panel:edit_courts' %}";
+  document.getElementById("loading").style.display = "block";
+}
+
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+  document.getElementById("popup-frame").src = "";
+  document.getElementById("loading").style.display = "none";
+  window.location.reload();
+}
+</script>
+{% endblock %}
