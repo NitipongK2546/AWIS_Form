@@ -50,12 +50,12 @@ class UserAccess(models.Model):
 def create_court_user(
     username : str, email : str, password : str, 
     fname : str, lname : str, 
-    uid : int = 9_999_998
+    uid : int
 ):
     User : UserDataModel = get_user_model()
 
     user = User.objects.filter(
-        username=username,
+        uid=uid,
     ).first()
 
     if user:
@@ -76,11 +76,15 @@ def create_court_user(
 
     return user
 
-def create_superuser():
+def create_superuser(
+    username : str, email : str, password : str, 
+    fname : str, lname : str, 
+    uid : int
+):
     User : UserDataModel = get_user_model()
 
     user = User.objects.filter(
-        username="admin",
+        uid=uid,
     ).first()
 
     if user:
@@ -173,7 +177,7 @@ class LogSystem(models.Model):
         human_datetime_info = datetime_info.strftime("%Y-%m-%d %H:%M:%S (UTC%:z)")
 
         if self.user_id != -1:
-            user_obj = UserDataModel.objects.get(api_uid=self.user_id)
+            user_obj = UserDataModel.objects.filter(api_uid=self.user_id).first()
             user_info = f"{user_obj.getGroupString()} {user_obj.username} ({user_obj.first_name} {user_obj.last_name})"
         else:
             user_info = f"Unknown User"
@@ -218,7 +222,10 @@ class LogSystem(models.Model):
         affected_obj = ""
 
         for info in info_list:
-            affected_obj = affected_obj + f"{info.get("message")}, "
+            if isinstance(info, str):
+                affected_obj = affected_obj + f"{info}, "
+            else:
+                affected_obj = affected_obj + f"{info.get("message")}, "
 
         failed_info : str = f"{reason}: [ {affected_obj} ]"
 
