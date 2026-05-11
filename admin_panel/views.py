@@ -4,7 +4,7 @@ from django.http import HttpRequest, JsonResponse, HttpResponseForbidden
 from awis_custom_settings.settings import RoleChoices, RoleList
 
 from django.contrib.auth.decorators import permission_required
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 
 from users.models import UserDataModel
 
@@ -182,10 +182,17 @@ def add_court_user(request : HttpRequest):
         court_user_form = CourtUserCreationForm(request.POST)
         if court_user_form.is_valid():
             data = court_user_form.cleaned_data
-            create_court_user(
+            user = create_court_user(
                 data.get("username"),
                 data.get("password")
             )
+
+            if user:
+                permission = Permission.objects.get(codename=
+                    perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED).split(".")[1]
+                )
+                user.user_permissions.add(permission)
+
             return JsonResponse({
                 "message": "Success"
             })
