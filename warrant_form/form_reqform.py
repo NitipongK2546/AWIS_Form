@@ -13,6 +13,12 @@ req_case_type_id_choices = [
 
 class AWISFormStep1(forms.Form):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in ["court_code", "has_court_code", "court_owner_code"]:
+            self.fields[field].choices = CentralForm.getCourtChodeChoices()
+
     court_code = forms.CharField(max_length=8, widget=forms.HiddenInput())
     police_station_id = forms.CharField(max_length=8, widget=forms.HiddenInput())
     req_no_plaintiff = forms.CharField(max_length=50, widget=forms.HiddenInput())
@@ -37,7 +43,7 @@ class AWISFormStep1(forms.Form):
 
     court_name_1 = forms.CharField(max_length=250, required=False)
     court_name_2 = forms.CharField(max_length=250, required=False)
-    court_code = forms.CharField(max_length=8, widget=forms.Select(choices=CentralForm.getCourtChodeChoices()))
+    court_code = forms.CharField(max_length=8, widget=forms.Select(choices=[]))
 
     judge_name = forms.CharField(max_length=250, required=False)
 
@@ -98,7 +104,7 @@ class AWISFormStep1(forms.Form):
     law = forms.CharField(max_length=200, required=False)
 
     court_owner_code = forms.ChoiceField(
-        choices=CentralForm.getCourtChodeChoices()
+        choices=[]
     ),
 
     prescription = forms.IntegerField(required=False, ) # อายุความ ปี
