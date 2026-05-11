@@ -18,7 +18,7 @@ load_dotenv()
 
 LOGIN_URL = "/users/login/"
 ENABLE_API = False
-DEBUG = True
+DEBUG = False
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
@@ -37,6 +37,14 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")  
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 
 # SESSION_COOKIE_AGE = os.getenv("SESSION_TIMEOUT")
 # SESSION_EXPIRE_AT_BROWSER_CLOSE =
@@ -73,6 +81,8 @@ AUTH_USER_MODEL = "users.UserDataModel"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
