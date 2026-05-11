@@ -15,8 +15,7 @@ class AWISFormStep1(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        for field in ["court_code", "has_court_code", "court_owner_code"]:
+        for field in ["court_code", "have_court_code", "court_owner_code"]:
             self.fields[field].choices = CentralForm.getCourtChodeChoices()
 
     court_code = forms.CharField(max_length=8, widget=forms.HiddenInput())
