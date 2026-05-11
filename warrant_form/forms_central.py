@@ -49,13 +49,16 @@ court_codes = CourtCodeList()
 
 from admin_panel.models import SelectedCourt
 
-court_codes_choices = [
-    (court.data.get("court_code"), court.data.get("name")) 
-    for court in SelectedCourt.objects.all()
-]
+def getCourtChodeChoices():
+    court_codes_choices = [
+        (court.data.get("court_code"), court.data.get("name")) 
+        for court in SelectedCourt.objects.all()
+    ]
 
-if not court_codes_choices:
-    court_codes_choices = [("-1" ,"ไม่มีศาลให้เลือก กรุณาติดต่อผู้ดูแลระบบ")]
+    if not court_codes_choices:
+        court_codes_choices = [("-1" ,"ไม่มีศาลให้เลือก กรุณาติดต่อผู้ดูแลระบบ")]
+
+    return court_codes_choices
 
 def reattachDateTime(current_dict : dict, field : str):
         

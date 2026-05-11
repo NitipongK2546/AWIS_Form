@@ -73,13 +73,13 @@ class ReqformDraftModelForm(forms.ModelForm):
         choices=CentralForm.nation_codes.getChoices()
     ),
     "court_code": forms.Select(
-        choices=CentralForm.court_codes_choices
+        choices=CentralForm.getCourtChodeChoices()
     ),
     "have_court_code": forms.Select(
-        choices=CentralForm.court_codes_choices
+        choices=CentralForm.getCourtChodeChoices()
     ),
     "court_owner_code": forms.Select(
-        choices=CentralForm.court_codes_choices
+        choices=CentralForm.getCourtChodeChoices()
     ),
     "have_req": forms.Select(
         choices=(
