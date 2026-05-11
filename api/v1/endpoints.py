@@ -88,11 +88,11 @@ def auth_api(request : HttpRequest) -> JsonResponse:
             perm_str_list([PermissionType.EDIT], PermissionList.REQFORM_SUBMITTED)
         )):
             
-            FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.JWT_ENDPOINT, user_bypass=user, remark="JWT not allowed.")
+            FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.JWT_ENDPOINT, user_bypass=user, remark="JWT not allowed. Return as Wrong Username or Password")
             return JsonResponse({
-                "status": 403,
-                "message": "JWT cannot be created for with user."
-            }, status=403)
+                "status": 401,
+                "message": "Wrong Username or Password"
+            }, status=401)
         
         token = JWTHandle.create_jwt(user)
 
