@@ -39,22 +39,22 @@ def collections(request : HttpRequest):
     return render(request, "admin_panel/collections.html")
 
 
-def check_all_users(request : HttpRequest):
-    all_users = UserDataModel.objects.all()
+# def check_all_users(request : HttpRequest):
+#     all_users = UserDataModel.objects.all()
 
-    user_display_list = [
-        {
-            "id": user.pk, 
-            "full_name": user.get_full_name(), 
-            "group_perm": user.groups.all() if not user.is_superuser else "SUPERUSER",
-            "user_perm": user.get_user_permissions() if not user.is_superuser else "SUPERUSER",
-        }
-        for user in all_users
-    ]
+#     user_display_list = [
+#         {
+#             "id": user.pk, 
+#             "full_name": user.get_full_name(), 
+#             "group_perm": user.groups.all() if not user.is_superuser else "SUPERUSER",
+#             "user_perm": user.get_user_permissions() if not user.is_superuser else "SUPERUSER",
+#         }
+#         for user in all_users
+#     ]
 
-    return render(request, "admin_panel/user_list.html", {
-        "user_list": user_display_list
-    })
+#     return render(request, "admin_panel/user_list.html", {
+#         "user_list": user_display_list
+#     })
 
 ORG_API_FETCH_USERS = os.getenv("ORG_API_FETCH_USERS")
 
@@ -154,6 +154,9 @@ def add_user_to_access(user_data : dict, is_sys_admin : bool = False):
 
 ##############################################################################
 
+from users.models import create_court_user
+from .forms import CourtUserCreationForm
+
 @perm_req_log([PermissionType.VIEW], PermissionList.USER_ACCESS, AccessType.VIEW)
 def access_list(request : HttpRequest):
     # ดึงข้อมูลทั้งหมดจาก UserAccess
@@ -162,11 +165,44 @@ def access_list(request : HttpRequest):
     current_user_access = UserAccess.objects.filter(user_id=request.user.api_uid).first()
     current_user_model = request.user
 
+    all_court_accounts = UserDataModel.objects.filter(
+        api_uid__lte=-2000
+    )
+
     return render(request, "admin_panel/access_list.html", {
         "allowed_users": allowed_users,
         "user_access": current_user_access,
         "user_model": current_user_model,
+        "court_accounts": all_court_accounts,
     })
+
+@perm_req_log([PermissionType.EDIT], PermissionList.JWT_ENDPOINT, AccessType.EDIT)
+def add_court_user(request : HttpRequest):
+    if request.method == "POST":
+        court_user_form = CourtUserCreationForm(request.POST)
+        if court_user_form.is_valid():
+            data = court_user_form.cleaned_data
+            create_court_user(
+                data.get("username"),
+                data.get("password")
+            )
+            return JsonResponse({
+                "message": "Success"
+            })
+    
+    court_user_form = CourtUserCreationForm()
+
+    return render(request, "popup/add_user.html", {
+        "form": court_user_form,
+    })
+
+@perm_req_log([PermissionType.DELETE], PermissionList.JWT_ENDPOINT, AccessType.EDIT)
+def delete_court_user(request : HttpRequest, user_id):
+    django_user : UserDataModel = UserDataModel.objects.filter(api_uid=user_id).first()
+    django_user.delete()
+    FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.USER_ROLE, django_user.getLogInfoDict())
+    
+    return redirect("admin_panel:access_list")
 
 @perm_req_log([PermissionType.EDIT], PermissionList.USER_ROLE, AccessType.EDIT)
 def update_role(request, user_id, role_value):

@@ -1,13 +1,22 @@
 import users.models as UserCreation
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 print("[Special User Creation]")
 
-UserCreation.create_superuser()
+email = os.getenv("SUPERUSER_EMAIL")
+password = os.getenv("SUPERUSER_PASSWORD")
 
-print("1. Django Superuser Creation Success")
+if email and password:
+    UserCreation.create_superuser(**{
+        "email": email,
+        "password": password
+    })
 
-UserCreation.create_court_user(
-    "testcourtuser7", "court@example.com", "testpass999999", "CourtUser", "Court"
-)
+######################################################################
 
-print("2. Court User Creation Success")
+# UserCreation.create_court_user(
+#     "testcourtuser7", "court@example.com", "testpass999999", "CourtUser", "Court"
+# )

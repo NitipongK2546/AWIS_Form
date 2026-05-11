@@ -48,14 +48,13 @@ class UserAccess(models.Model):
     )
 
 def create_court_user(
-    username : str, email : str, password : str, 
-    fname : str, lname : str, 
-    uid : int
+    username : str, password : str, 
 ):
-    User : UserDataModel = get_user_model()
+    COURT_USER_CIRCLE = -2_000
 
+    User : UserDataModel = get_user_model()
     user = User.objects.filter(
-        uid=uid,
+        username=username,
     ).first()
 
     if user:
@@ -63,45 +62,48 @@ def create_court_user(
 
     user = User.objects.create_user(
         username=username,
-        email=email,
         password=password,
     )
 
-    user.first_name = fname
-    user.last_name = lname
+    user.first_name = "COURTUSER"
+    user.last_name = "COURTUSER"
 
-    user.api_uid = uid
+    user.api_uid = COURT_USER_CIRCLE - user.pk
 
     user.save()
+
+    print("2. Court User Creation Success")
 
     return user
 
 def create_superuser(
-    username : str, email : str, password : str, 
-    fname : str, lname : str, 
-    uid : int
-):
+    email : str, password : str, 
+):  
+    ADMIN_USERNAME = "awis_superadmin"
+
     User : UserDataModel = get_user_model()
 
     user = User.objects.filter(
-        uid=uid,
+        username=ADMIN_USERNAME,
     ).first()
 
     if user:
         return
 
     user = User.objects.create_superuser(
-        username="admin",
-        email="admin@example.com",
-        password="adminpass999999",
+        username=ADMIN_USERNAME,
+        email=email,
+        password=password,
     )
 
-    user.first_name = "Mr. Admin"
-    user.last_name = "Superuser"
+    user.first_name = "SUPERADMIN"
+    user.last_name = "SUPERADMIN"
 
-    user.api_uid = 9_999_999
+    user.api_uid = -(999)
 
     user.save()
+
+    print("1. Django Superuser Creation Success")
 
 ############################################################################
 

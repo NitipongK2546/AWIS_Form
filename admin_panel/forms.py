@@ -9,21 +9,18 @@ from django.utils import timezone
 from users.models import UserDataModel
 import warrant_form.forms_central as CentralForm
 
-# from users.models import PermissionList, PermissionType, PathPermission
-
-# from awis_custom_settings.settings import PermissionChoices
-
-# class PermissionAddForm(forms.Form):
-#     view = forms.BooleanField(required=False)
-#     edit = forms.BooleanField(required=False)
-#     create = forms.BooleanField(required=False)
-#     delete = forms.BooleanField(required=False)
-#     approve = forms.BooleanField(required=False)
-#     perm = forms.ChoiceField(choices=PermissionChoices)
-
-#     selected_type = forms.ChoiceField(choices=PathPermission.get_all_keys())
-
 from warrant_form.model_reqform import ReqformDataModel
+
+class CourtUserCreationForm(forms.Form):
+    username = forms.CharField(max_length=255)
+    password = forms.CharField(max_length=255, widget=forms.PasswordInput(render_value=False, attrs={
+        'autocomplete': 'off',
+        'class': 'password-field'
+    }))
+    confirm_password = forms.CharField(max_length=255, widget=forms.PasswordInput(render_value=False, attrs={
+        'autocomplete': 'off',
+        'class': 'password-field'
+    }))
 
 class LogQuery(forms.Form):
     def getReqnoChoices():

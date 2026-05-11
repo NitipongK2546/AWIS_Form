@@ -24,6 +24,12 @@ input[type="text"] {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+input[type="password"] {
+    padding: 5px;
+    margin-right: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 
 button {
     background-color: #3498db;

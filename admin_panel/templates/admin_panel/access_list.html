@@ -49,6 +49,7 @@ cursor: pointer;
     <a class="btn_red" href="{% url 'admin_panel:collections' %}">Back</a>
     <table border="1" style="margin: 10 10px">
       <tr>
+        <th>#</th>
         <th>User ID</th>
         <th>Full Name</th>
         <th>Department</th>
@@ -57,6 +58,7 @@ cursor: pointer;
       </tr>
       {% for user in allowed_users %}
       <tr>
+        <td>{{ forloop.counter }}</td>
         <td>{{ user.user_id }}</td>
         <td>{{ user.fullname }}</td>
         <td>{{ user.department }}</td>
@@ -99,40 +101,74 @@ cursor: pointer;
       </iframe>
     </div>
   </div>
-  
-<!-- <a href="">Go to Select Users</a> -->
-<button onclick="openPopup()" style="margin: 10px;">Add Access List</button>
+  <button onclick="openPopup()" style="margin: 10px;">Add Access List</button>
+
+  <div>
+    <h2>บัญชีศาลทั้งหมด</h2>
+    <table border="1" style="margin: 10 10px">
+      <tr>
+        <th>#</th>
+        <th>UID</th>
+        <th>Username</th>
+        <th>Action</th>
+      </tr>
+      {% for user in court_accounts %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ user.api_uid }}</td>
+        <td>{{ user.username }}</td>
+        <td>
+          <a href="{% url 'admin_panel:delete_court_user' user.api_uid %}">ลบบัญชี</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">ไม่มีผู้ที่มีสิทธิเข้าถึงระบบได้</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div id="court-popup" class="popup" style="display: none;">
+      <div class="popup-content">
+          <span class="close" onclick="closeCourtPopup()">&times;</span>
+          <div id="court-loading" style="display: none; text-align: center; align-content: center;">
+          </div>
+          <iframe id="court-popup-frame" src="" frameborder="0">
+          Waiting...
+          </iframe>
+      </div>
+  </div>
+  <button onclick="openCourtPopup()" style="margin: 10px;">เพิ่มผู้ใช้ให้กับศาล</button>
+</div>
 {% endblock %}
 
 {% block script %}
 <script>
-function openPopup() {
-  document.getElementById("popup").style.display = "block";
-  document.getElementById("popup-frame").src = "{% url 'admin_panel:select_users' %}";
-  document.getElementById("loading").style.display = "block";
-}
-
 function closePopup() {
   document.getElementById("popup").style.display = "none";
   document.getElementById("popup-frame").src = "";
   document.getElementById("loading").style.display = "none";
   window.location.reload();
 }
+
+function closeCourtPopup() {
+  document.getElementById("court-popup").style.display = "none";
+  document.getElementById("court-popup-frame").src = "";
+  document.getElementById("court-loading").style.display = "none";
+  window.location.reload();
+}
+
+function openPopup() {
+  document.getElementById("popup").style.display = "block";
+  document.getElementById("popup-frame").src = "{% url 'admin_panel:select_users' %}";
+  document.getElementById("loading").style.display = "block";
+}
+
+function openCourtPopup() {
+  document.getElementById("court-popup").style.display = "block";
+  document.getElementById("court-popup-frame").src = "{% url 'admin_panel:select_court_users' %}";
+  document.getElementById("court-loading").style.display = "block";
+}
 </script>
 {% endblock %}
-
-<!-- <a href="">Go to Select Users</a> -->
-<!-- <button onclick="openPopup()">Add Access List</button>
-
-<script>
-function openPopup() {
-  let popup = window.open("{% url 'admin_panel:select_users' %}", 'Popup', 'width=600, height=400');
-
-  const timer = setInterval(() => {
-      if (popup.closed) {
-          clearInterval(timer);
-          window.location.reload();
-      }
-  }, 500);
-}
-</script> -->

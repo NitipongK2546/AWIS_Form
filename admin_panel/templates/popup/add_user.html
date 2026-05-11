@@ -1,0 +1,54 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'admin_panel/css/select_users.css' %}">
+<style>
+    .page-content {
+        margin-top: 120px;
+        margin-left: 480px;
+    }
+</style>
+
+<div class="page-content">
+    <h2>เพิ่มผู้ใช้ให้กับศาล</h2>
+    <form action="" method="post">
+    {% csrf_token %}
+    <p>
+        <span style="display: block; min-width: 100px">Username:</span> {{ form.username }}
+    </p>
+    <p>
+        <span style="display: block; min-width: 100px">Password:</span> {{ form.password }}
+        <button type="button" id="toggle-password">Show</button>
+    </p>
+    <p>
+        <span style="display: block; min-width: 100px">Confirm Password:</span> {{ form.confirm_password }}
+        <button type="button" id="toggle-confirm-password">Show</button>
+    </p>
+    <button style="margin: 10px;" type="submit">Add Court User</button>
+    </form>
+</div>
+
+<script>
+  const password_field = document.getElementById("id_password")
+  const confirm_password_field = document.getElementById("id_confirm_password")
+  const password_btn = document.getElementById("toggle-password")
+  const confirm_password_btn = document.getElementById("toggle-confirm-password")  
+
+  password_btn.addEventListener("click", () => {
+    if (password_field.type === "password") {
+      password_field.type = "text";
+      password_btn.textContent = "Hide";
+    } else {
+      password_field.type = "password";
+      password_btn.textContent = "Show";
+    }
+  });
+  confirm_password_btn.addEventListener("click", () => {
+    if (confirm_password_field.type === "password") {
+      confirm_password_field.type = "text";
+      confirm_password_btn.textContent = "Hide";
+    } else {
+      confirm_password_field.type = "password";
+      confirm_password_btn.textContent = "Show";
+    }
+  });
+
+</script>
