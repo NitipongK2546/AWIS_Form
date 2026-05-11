@@ -73,13 +73,13 @@ class ReqformDraftModelForm(forms.ModelForm):
         choices=CentralForm.nation_codes.getChoices()
     ),
     "court_code": forms.Select(
-        choices=[]
+        choices=CentralForm.getCourtChodeChoices
     ),
     "have_court_code": forms.Select(
-        choices=[]
+        choices=CentralForm.getCourtChodeChoices
     ),
     "court_owner_code": forms.Select(
-        choices=[]
+        choices=CentralForm.getCourtChodeChoices
     ),
     "have_req": forms.Select(
         choices=(
@@ -94,12 +94,7 @@ class ReqformDraftModelForm(forms.ModelForm):
         )
     ),
 }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in ["court_code", "have_court_code", "court_owner_code"]:
-            self.fields[field].choices = CentralForm.getCourtChodeChoices()    
-    
+        
 WOA_TYPE_CHOICES = [
     (1, "47"),
     (2, "47 ทวิ"),
