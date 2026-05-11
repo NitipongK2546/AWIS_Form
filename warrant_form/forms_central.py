@@ -50,10 +50,9 @@ court_codes = CourtCodeList()
 from admin_panel.models import SelectedCourt
 
 def getCourtChodeChoices():
-    court_codes_choices = [
-        (court.data.get("court_code"), court.data.get("name")) 
-        for court in SelectedCourt.objects.all()
-    ]
+    court_codes_choices = []
+    for court in SelectedCourt.objects.all():
+        court_codes_choices.append(court.data.get("court_code"), court.data.get("name")) 
 
     if not court_codes_choices:
         court_codes_choices = [("-1" ,"ไม่มีศาลให้เลือก กรุณาติดต่อผู้ดูแลระบบ")]
