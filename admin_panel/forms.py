@@ -60,14 +60,14 @@ class LogQuery(forms.Form):
 
 
     user_trigger = forms.BooleanField(required=False)
-    user_id = forms.ChoiceField(choices=getUserChocies(), required=False)
+    user_id = forms.ChoiceField(choices=getUserChocies, required=False)
     
     action_trigger = forms.BooleanField(required=False)
     action = forms.MultipleChoiceField(choices=action_choices, required=False,
                                        widget=forms.CheckboxSelectMultiple())
 
     reqno_trigger = forms.BooleanField(required=False)
-    reqno = forms.ChoiceField(choices=getReqnoChoices(), required=False)
+    reqno = forms.ChoiceField(choices=getReqnoChoices, required=False)
 
     # def clean(self):
     #     def cleanDate(data : dict):

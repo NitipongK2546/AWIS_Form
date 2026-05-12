@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpRequest, JsonResponse, Http404
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 from dashboard.models import FormAwaitingApproval 
@@ -77,7 +77,7 @@ def dashboard(request : HttpRequest):
 
 ############################################################################
 
-@permission_required(perm_str_list([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL))
+@perm_req_log([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.APPROVE)
 def approve_table_page(request):
     written_form = FormAwaitingApproval.objects.filter(form_creator=request.user)
     owned_form = FormAwaitingApproval.objects.filter(form_owner=request.user)
@@ -89,7 +89,7 @@ def approve_table_page(request):
 
 from warrant_form.views_reqform import view_form
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@perm_req_log([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.APPROVE)
 def confirm_approve(request : HttpRequest, req_no_plaintiff : str):
 
     selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
@@ -129,7 +129,7 @@ def confirm_approve(request : HttpRequest, req_no_plaintiff : str):
     # })
     
 
-@permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@perm_req_log([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.REJECT)
 def confirm_reject(request : HttpRequest, req_no_plaintiff : str):
     selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
     if request.method == "POST":
@@ -149,10 +149,9 @@ def confirm_reject(request : HttpRequest, req_no_plaintiff : str):
 
 ###########################################################################
 
-@permission_required(perm_str_list([PermissionType.VIEW], PermissionList.REQFORM_SUBMITTED))
+@perm_req_log([PermissionType.VIEW], PermissionList.REQFORM_SUBMITTED)
 def accept_table_page(request):
     form_sent = VisualReqformData.objects.all()
-    
 
     output_list = []
     for obj in form_sent:
@@ -169,7 +168,7 @@ def accept_table_page(request):
         "forms_sent": output_list,
     })
 
-@permission_required(perm_str_list([PermissionType.VIEW], PermissionList.REQFORM_SUBMITTED))
+@perm_req_log([PermissionType.VIEW], PermissionList.REQFORM_SUBMITTED, AccessType.VIEW)
 def warrant_status_page(request, req_no_plaintiff : str):
 
     reqform = getFormAwaitViaPlaintiff(req_no_plaintiff)
@@ -233,7 +232,7 @@ def success_page(request : HttpRequest):
 from .forms_report_warrant import ReportWarrantForm
 import warrant_form.forms_central as CentralForm
 
-@permission_required(perm_str_list([PermissionType.EDIT, PermissionType.CREATE, PermissionType.APPROVE], PermissionList.REPORT_WARRANT_ARREST), raise_exception=True)
+@perm_req_log([PermissionType.EDIT, PermissionType.CREATE, PermissionType.APPROVE], PermissionList.REPORT_WARRANT_ARREST, AccessType.APPROVE)
 def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
     selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
 
