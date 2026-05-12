@@ -22,7 +22,7 @@ import uuid
 
 from . import _permissions as ReqformPerm 
 
-@perm_req_log(ReqformPerm.CREATE_DRAFT)
+@perm_req_log(*ReqformPerm.CREATE_DRAFT)
 def create_draft_main_local_page(request : HttpRequest):
     draft_container = FormDraftContainer.objects.create(
         form_owner=request.user,
@@ -38,7 +38,7 @@ def create_draft_main_local_page(request : HttpRequest):
     # return redirect("dashboard:dashboard")
     return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
-@perm_req_log(ReqformPerm.VIEW_DRAFT)
+@perm_req_log(*ReqformPerm.VIEW_DRAFT)
 def view_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -61,7 +61,7 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
     
     raise Http404()
 
-@perm_req_log(ReqformPerm.DELETE_DRAFT)
+@perm_req_log(*ReqformPerm.DELETE_DRAFT)
 def delete_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -80,7 +80,7 @@ def delete_draft_main_local_page(request : HttpRequest, container_id : int):
 
 #####################################################################
 
-@perm_req_log(ReqformPerm.EDIT_DRAFT)
+@perm_req_log(*ReqformPerm.EDIT_DRAFT)
 def edit_reqform_draft(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -111,7 +111,7 @@ def edit_reqform_draft(request : HttpRequest, container_id : int):
 # def woa_refno_reduce():
 #     woa_num = max(0, woa_num - 1)
 
-@perm_req_log(ReqformPerm.EDIT_DRAFT)
+@perm_req_log(*ReqformPerm.EDIT_DRAFT)
 def create_warrant_draft(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -128,7 +128,7 @@ def create_warrant_draft(request : HttpRequest, container_id : int):
     
     raise Http404()
 
-@perm_req_log(ReqformPerm.EDIT_DRAFT)
+@perm_req_log(*ReqformPerm.EDIT_DRAFT)
 def edit_warrant_draft(request : HttpRequest, container_id : int, warrant_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -150,7 +150,7 @@ def edit_warrant_draft(request : HttpRequest, container_id : int, warrant_id : i
     
     raise Http404()
 
-@perm_req_log(ReqformPerm.EDIT_DRAFT)
+@perm_req_log(*ReqformPerm.EDIT_DRAFT)
 def delete_warrant_draft(request : HttpRequest, container_id : int, warrant_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -173,14 +173,35 @@ def delete_warrant_draft(request : HttpRequest, container_id : int, warrant_id :
 
 def req_no_plaintiff_generate():
     today = timezone.now()
-    num = ReqformDataModel.objects.last().pk if ReqformDataModel.objects.last() else 0
+    last_request = ReqformDataModel.objects.last()
+    if not last_request:
+        num = 0
+        return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}"
+
+    all_same_day_requests = ReqformDataModel.objects.filter(
+        req_date__date=today.date()
+    )
+
+    num = all_same_day_requests.count()
+
     return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}"
 
 def woa_refno_generate():
-    num = WarrantDataModel.objects.last().pk if WarrantDataModel.objects.last() else 0
+    today = timezone.now()
+    last_warrant = WarrantDataModel.objects.last()
+    if not last_warrant:
+        num = 0
+        return f"TCCT{timezone.now().year + 543}{f"{num + 1}".zfill(4)}"
+
+    all_same_day_requests = WarrantDataModel.objects.filter(
+        woa_date__date=today.date()
+    )
+
+    num = all_same_day_requests.count()
+
     return f"TCCT{timezone.now().year + 543}{f"{num + 1}".zfill(4)}"
 
-@perm_req_log(ReqformPerm.CREATE_REQFORM)
+@perm_req_log(*ReqformPerm.CREATE_REQFORM)
 def create_reqform_from_draft(request : HttpRequest, container_id : int):
     selected_draft = FormDraftContainer.objects.filter(pk=container_id).first()
 
