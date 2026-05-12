@@ -21,7 +21,7 @@ ENABLE_API = True
 DEBUG = False
 
 SECRET_KEY = os.getenv("DJANGO_KEY",)
-ALLOWED_HOSTS = [os.getenv("HOST_SERVER"), os.getenv("UAT_SERVER"), os.getenv("HOST_DOMAIN_NAME")]
+ALLOWED_HOSTS = [os.getenv("HOST_SERVER"), os.getenv("HOST_DOMAIN_NAME")]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
