@@ -9,18 +9,6 @@ from users.permissions import PermissionType as T
 # from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 
-# class PermissionTypeNum(Enum):
-#     T.CREATE = 16
-#     T.
-
-def getBinaryString(number : int):
-    return f"{number:b}"
-
-# def handleEachBit(binary_string : str, ):
-#     for bit, perm_type in zip(binary_string, PermissionType):
-#         if bit == "1":
-#             codename = perm_str(perm_type,)
-
 def get_perm(role : RoleList) -> list[str]:
     return DefaultPermission[role].value
 
@@ -42,8 +30,10 @@ def get_perm_objs(role : RoleList) -> list[Permission]:
 
     return perm_obj_list
 
+##################################################################
 
 class DefaultPermission(Enum):
+
     COURT_USER = [
         perm_str(T.EDIT, N.REQFORM_SUBMITTED),
     ]
@@ -56,8 +46,11 @@ class DefaultPermission(Enum):
         [T.VIEW, T.CREATE, T.EDIT, T.DELETE], 
         N.REQFORM_AWAIT_APPROVAL
     ) + perm_str_list(
-        [T.VIEW], 
+        [T.VIEW, T.CREATE, T.DELETE], 
         N.REQFORM_SUBMITTED
+    ) + perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
+        N.REPORT_WARRANT_ARREST
     )
 
     APPROVER = perm_str_list_of_all(
@@ -65,8 +58,11 @@ class DefaultPermission(Enum):
         [
             N.REQFORM_DRAFT, 
             N.REQFORM_AWAIT_APPROVAL,
-            N.REQFORM_SUBMITTED, 
+            N.REPORT_WARRANT_ARREST,
         ]
+    ) + perm_str_list(
+        [T.VIEW, T.CREATE, T.DELETE], 
+        N.REQFORM_SUBMITTED
     )
 
     BRANCH_ADMIN = perm_str_list_of_all(
@@ -79,8 +75,11 @@ class DefaultPermission(Enum):
 
             N.REQFORM_DRAFT, 
             N.REQFORM_AWAIT_APPROVAL,
-            N.REQFORM_SUBMITTED, 
+            N.REPORT_WARRANT_ARREST,
         ]
+    ) + perm_str_list(
+        [T.VIEW, T.CREATE, T.DELETE], 
+        N.REQFORM_SUBMITTED
     )
 
 

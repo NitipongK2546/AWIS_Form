@@ -3,6 +3,8 @@
 
 ### PERSONAL IGNORE ###
 
+/staticfiles
+
 _log_output
 
 /output
