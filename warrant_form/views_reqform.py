@@ -103,7 +103,7 @@ def view_form(request : HttpRequest, req_no_plaintiff : int, ObjWarrantForm = Di
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
-@permission_required(perm_str(PermissionType.EDIT, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@perm_req_log([PermissionType.EDIT], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.EDIT)
 def edit_form(request : HttpRequest, req_no_plaintiff : int):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
