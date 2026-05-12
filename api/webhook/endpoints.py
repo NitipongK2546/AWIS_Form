@@ -67,6 +67,10 @@ def delete_user_access_webhook(request : HttpRequest) -> JsonResponse:
         })
 
     except Exception as e:
+        FileLogger.createErrorLog(request, AccessType.DELETE, PermissionList.USER_ACCESS, {
+            "message": str(e)
+        }, remark="Via Webhook")
+
         return JsonResponse({
             "status": 500,
             "message": "Something went wrong."
