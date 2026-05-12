@@ -20,6 +20,8 @@ from users.permissions.decorators import perm_req_log
 
 from warrant_form import doc_create
 
+from . import _permissions as ReqformPerm 
+
 def getFormAwaitViaReqno(reqno : str):
     return FormAwaitingApproval.objects.filter(form__reqno=reqno).first()
 
@@ -41,7 +43,7 @@ def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : User
 # Form Edit and View Section 
 #
 
-@perm_req_log([PermissionType.VIEW], PermissionList.REQFORM_AWAIT_APPROVAL)
+@perm_req_log(ReqformPerm.VIEW_REQFORM)
 def view_form(request : HttpRequest, req_no_plaintiff : int, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
@@ -103,7 +105,7 @@ def view_form(request : HttpRequest, req_no_plaintiff : int, ObjWarrantForm = Di
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
-@perm_req_log([PermissionType.EDIT], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.EDIT)
+@perm_req_log(ReqformPerm.EDIT_REQFORM)
 def edit_form(request : HttpRequest, req_no_plaintiff : int):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
@@ -167,7 +169,7 @@ def edit_form(request : HttpRequest, req_no_plaintiff : int):
         
     return view_form(request, req_no_plaintiff, WarrantForm, AWISFormStep1, "edit_form.html")
 
-@permission_required(perm_str(PermissionType.DELETE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
+@perm_req_log(ReqformPerm.DELETE_REQFORM)
 def delete_form(request : HttpRequest, req_no_plaintiff : str):
 
     selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)

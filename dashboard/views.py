@@ -24,6 +24,8 @@ from django.utils import timezone
 from users.permissions.perms import PermissionList, PermissionType, perm_str, perm_str_list
 from users.permissions.decorators import perm_req_log
 
+from . import _permissions as DashboardPerm
+
 def getFormAwaitViaReqno(reqno : str):
     return FormAwaitingApproval.objects.filter(form__reqno=reqno).first()
 
@@ -77,7 +79,7 @@ def dashboard(request : HttpRequest):
 
 ############################################################################
 
-@perm_req_log([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.APPROVE)
+@perm_req_log(DashboardPerm.REQFORM_AWAIT_APPROVAL_PAGE)
 def approve_table_page(request):
     written_form = FormAwaitingApproval.objects.filter(form_creator=request.user)
     owned_form = FormAwaitingApproval.objects.filter(form_owner=request.user)
@@ -89,7 +91,7 @@ def approve_table_page(request):
 
 from warrant_form.views_reqform import view_form
 
-@perm_req_log([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.APPROVE)
+@perm_req_log(DashboardPerm.APPROVE_REQFORM)
 def confirm_approve(request : HttpRequest, req_no_plaintiff : str):
 
     selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
@@ -129,7 +131,7 @@ def confirm_approve(request : HttpRequest, req_no_plaintiff : str):
     # })
     
 
-@perm_req_log([PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.REJECT)
+@perm_req_log(DashboardPerm.REJECT_REQFORM)
 def confirm_reject(request : HttpRequest, req_no_plaintiff : str):
     selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
     if request.method == "POST":
@@ -149,7 +151,7 @@ def confirm_reject(request : HttpRequest, req_no_plaintiff : str):
 
 ###########################################################################
 
-@perm_req_log([PermissionType.VIEW], PermissionList.REQFORM_SUBMITTED)
+@perm_req_log(DashboardPerm.REQFORM_SUBMITTED_PAGE)
 def accept_table_page(request):
     form_sent = VisualReqformData.objects.all()
 
@@ -168,7 +170,7 @@ def accept_table_page(request):
         "forms_sent": output_list,
     })
 
-@perm_req_log([PermissionType.VIEW], PermissionList.REQFORM_SUBMITTED, AccessType.VIEW)
+@perm_req_log(DashboardPerm.WARRANT_SUBMITTED_PAGE)
 def warrant_status_page(request, req_no_plaintiff : str):
 
     reqform = getFormAwaitViaPlaintiff(req_no_plaintiff)
@@ -232,7 +234,7 @@ def success_page(request : HttpRequest):
 from .forms_report_warrant import ReportWarrantForm
 import warrant_form.forms_central as CentralForm
 
-@perm_req_log([PermissionType.EDIT, PermissionType.CREATE, PermissionType.APPROVE], PermissionList.REPORT_WARRANT_ARREST, AccessType.APPROVE)
+@perm_req_log(DashboardPerm.CREATE_REPORT_WARRANT_SUBMITTED)
 def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
     selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
 
@@ -298,7 +300,7 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
     
     return render(request, "dashboard/report_warrant.html", context)
 
-@perm_req_log([PermissionType.DELETE], PermissionList.REQFORM_SUBMITTED, AccessType.DELETE)
+@perm_req_log(DashboardPerm.DELETE_REQFORM_SUBMITTED)
 def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
     sent_form = VisualReqformData.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
 
