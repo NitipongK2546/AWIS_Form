@@ -47,41 +47,52 @@ class DefaultPermission(Enum):
     COURT_USER = [
         perm_str(T.EDIT, N.REQFORM_SUBMITTED),
     ]
-
+    #####################################################################
 
     EMPLOYEE = perm_str_list(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
+        N.REQFORM_DRAFT
+    ) + perm_str_list(
         [T.VIEW, T.CREATE, T.EDIT, T.DELETE], 
         N.REQFORM_AWAIT_APPROVAL
     ) + perm_str_list(
-        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
-        N.REQFORM_AWAIT_APPROVAL
+        [T.VIEW], 
+        N.REQFORM_SUBMITTED
     )
 
     APPROVER = perm_str_list_of_all(
         [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE],
-        [N.REQFORM_SUBMITTED, N.REQFORM_DRAFT, N.REQFORM_AWAIT_APPROVAL,]
+        [
+            N.REQFORM_DRAFT, 
+            N.REQFORM_AWAIT_APPROVAL,
+            N.REQFORM_SUBMITTED, 
+        ]
     )
 
     BRANCH_ADMIN = perm_str_list_of_all(
         [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE],
-        [N.USER_ROLE, N.USER_ACCESS, N.ADMIN_PANEL, N.LOG_ACCESS,
-         N.REQFORM_SUBMITTED, N.REQFORM_DRAFT, N.REQFORM_AWAIT_APPROVAL,]
+        [
+            N.ADMIN_PANEL,
+            N.USER_ROLE, 
+            N.USER_ACCESS,  
+            N.LOG_ACCESS,
+
+            N.REQFORM_DRAFT, 
+            N.REQFORM_AWAIT_APPROVAL,
+            N.REQFORM_SUBMITTED, 
+        ]
     )
 
 
-    SYSTEM_SUPERADMIN = perm_str_list(
-        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
-        N.ADMIN_PANEL
-    ) + perm_str_list(
-        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
-        N.USER_ROLE
-    ) + perm_str_list(
-        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
-        N.ADMIN_ROLE
-    ) + perm_str_list(
-        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE], 
-        N.LOG_ACCESS
+    SYSTEM_SUPERADMIN = perm_str_list_of_all(
+        [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE],
+        [
+            N.ADMIN_PANEL,
+            N.USER_ROLE, 
+            N.USER_ACCESS, 
+            N.LOG_ACCESS,
+            N.ADMIN_ROLE,
+        ]
     )
-
 # for perm in DefaultPermission:
 #     print(perm.value)

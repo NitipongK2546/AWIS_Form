@@ -15,14 +15,14 @@ from django.forms.models import model_to_dict
 
 import _log_utils.file_logger as FileLogger
 from _log_utils.file_logger import AccessType
-from users import PermissionList, PermissionType
 from users.permissions.decorators import perm_req_log
 
 from django.utils import timezone
-
 import uuid
 
-@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_DRAFT, AccessType.CREATE)
+from . import _permissions as ReqformPerm 
+
+@perm_req_log(ReqformPerm.CREATE_DRAFT)
 def create_draft_main_local_page(request : HttpRequest):
     draft_container = FormDraftContainer.objects.create(
         form_owner=request.user,
@@ -38,7 +38,7 @@ def create_draft_main_local_page(request : HttpRequest):
     # return redirect("dashboard:dashboard")
     return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
-@perm_req_log([PermissionType.VIEW], PermissionList.REQFORM_DRAFT, AccessType.VIEW)
+@perm_req_log(ReqformPerm.VIEW_DRAFT)
 def view_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -61,7 +61,7 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
     
     raise Http404()
 
-@perm_req_log([PermissionType.DELETE], PermissionList.REQFORM_DRAFT, AccessType.DELETE)
+@perm_req_log(ReqformPerm.DELETE_DRAFT)
 def delete_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -80,7 +80,7 @@ def delete_draft_main_local_page(request : HttpRequest, container_id : int):
 
 #####################################################################
 
-@perm_req_log([PermissionType.EDIT], PermissionList.REQFORM_DRAFT, AccessType.EDIT)
+@perm_req_log(ReqformPerm.EDIT_DRAFT)
 def edit_reqform_draft(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -111,7 +111,7 @@ def edit_reqform_draft(request : HttpRequest, container_id : int):
 # def woa_refno_reduce():
 #     woa_num = max(0, woa_num - 1)
 
-@perm_req_log([PermissionType.EDIT], PermissionList.REQFORM_DRAFT, AccessType.EDIT)
+@perm_req_log(ReqformPerm.EDIT_DRAFT)
 def create_warrant_draft(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -128,7 +128,7 @@ def create_warrant_draft(request : HttpRequest, container_id : int):
     
     raise Http404()
 
-@perm_req_log([PermissionType.EDIT], PermissionList.REQFORM_DRAFT, AccessType.EDIT)
+@perm_req_log(ReqformPerm.EDIT_DRAFT)
 def edit_warrant_draft(request : HttpRequest, container_id : int, warrant_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -150,7 +150,7 @@ def edit_warrant_draft(request : HttpRequest, container_id : int, warrant_id : i
     
     raise Http404()
 
-@perm_req_log([PermissionType.DELETE, PermissionType.EDIT], PermissionList.REQFORM_DRAFT, AccessType.DELETE)
+@perm_req_log(ReqformPerm.EDIT_DRAFT)
 def delete_warrant_draft(request : HttpRequest, container_id : int, warrant_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
@@ -180,7 +180,7 @@ def woa_refno_generate():
     num = WarrantDataModel.objects.last().pk if WarrantDataModel.objects.last() else 0
     return f"TCCT{timezone.now().year + 543}{f"{num + 1}".zfill(4)}"
 
-@perm_req_log([PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL, AccessType.CREATE)
+@perm_req_log(ReqformPerm.CREATE_REQFORM)
 def create_reqform_from_draft(request : HttpRequest, container_id : int):
     selected_draft = FormDraftContainer.objects.filter(pk=container_id).first()
 
