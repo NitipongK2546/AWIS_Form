@@ -21,10 +21,10 @@ fi
 
 $PYTHON --version
 
-python manage.py makemigrations
-python manage.py migrate
+$PYTHON manage.py makemigrations
+$PYTHON manage.py migrate
 
-which $PYTHON
+$PYTHON manage.py collectstatic --no-input
 
 # Setup django server.
 $PYTHON manage.py shell < "_scripts/_setup_start.py"

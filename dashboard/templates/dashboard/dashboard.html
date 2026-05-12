@@ -26,25 +26,30 @@
         </p>
     </div>
     <div class="header-bar">
-        {% if can_create_form %}
-        <a href="{% url 'forms:step0' %}" >เพิ่มคำร้องหมายจับ</a>
-        {% endif %}
-
         {% comment %}
-        {% if can_approve_form %}
-        <a href="{% url 'dashboard:approve_form_page' %}">อนุมัติแบบฟอร์ม</a>
-        {% endif %}
-        <a href="{% url 'api:test:login' %}" >ทดสอบเอา token ใส่คุ้กกี้</a>
-        <a href="{% url 'api:test:health' %}" >ทดสอบ HEALTH CHECK</a>
-        <a href="{% url 'api:test:check_reqform' %}" >ทดสอบ CHECK REQFORM</a>
+            {% if can_create_form %}
+            <a href="{% url 'forms:step0' %}" >เพิ่มคำร้องหมายจับ</a>
+            {% endif %}
+            {% if can_approve_form %}
+            <a href="{% url 'dashboard:approve_form_page' %}">อนุมัติแบบฟอร์ม</a>
+            {% endif %}
+            <a href="{% url 'api:test:login' %}" >ทดสอบเอา token ใส่คุ้กกี้</a>
+            <a href="{% url 'api:test:health' %}" >ทดสอบ HEALTH CHECK</a>
+            <a href="{% url 'api:test:check_reqform' %}" >ทดสอบ CHECK REQFORM</a>
         {% endcomment %}
-    </div>
-    <div style="display: flex; justify-content: center;">
-        {% include 'module/drafts_form_table.html' %}
+        <h1 style="text-align: center; color: white;">เมนู (Menu)</h1>
     </div>
     <div>
-        <h1 style="text-align: center;">สถานะคำร้อง</h1>
+        <!-- <h1 style="text-align: center;">เมนู (Menu)</h1> -->
         <div class="dashboard-tools" style="display: flex; justify-content: center;">
+            <div class="tool-card">
+                <a href="{% url 'forms:draft-page' %}">
+                    <img src="{% static 'dashboard/images/approved-form.png' %}" alt="Accept">
+                    <h3>สร้างคำร้อง</h3>
+                    <h3>เพื่อส่งให้ศาล</h3>
+                </a>
+            </div>
+
             <div class="tool-card">
                 <a href="{% url 'dashboard:approve_table_page' %}">
                     <img src="{% static 'dashboard/images/pending-approval.svg' %}" alt="Approve">
