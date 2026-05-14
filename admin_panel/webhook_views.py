@@ -3,7 +3,10 @@ from django.http import HttpRequest
 from django.shortcuts import render, redirect
 
 from users.permissions import perm_str, PermissionList, PermissionType
+from users.permissions.decorators import perm_req_log
+from _log_utils.file_logger import AccessType
 
+@perm_req_log([PermissionType.VIEW, PermissionType.CREATE], PermissionList.API_KEY, AccessType.VIEW)
 def api_secret_page(request : HttpRequest):
 
     request.session.pop("api_key", "")
@@ -36,7 +39,7 @@ def api_secret_page(request : HttpRequest):
 
     return render(request, "api_page/api_page.html", context)
 
-
+@perm_req_log([PermissionType.VIEW, PermissionType.CREATE], PermissionList.API_KEY, AccessType.CREATE)
 def generate_api_secret(request : HttpRequest):
     return render(request, "api_page/api_key_page.html", {
         "api_key": request.session.get("api_key", "No API Key, Error.")

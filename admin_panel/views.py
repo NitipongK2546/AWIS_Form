@@ -38,24 +38,6 @@ def collections(request : HttpRequest):
 
     return render(request, "admin_panel/collections.html")
 
-
-# def check_all_users(request : HttpRequest):
-#     all_users = UserDataModel.objects.all()
-
-#     user_display_list = [
-#         {
-#             "id": user.pk, 
-#             "full_name": user.get_full_name(), 
-#             "group_perm": user.groups.all() if not user.is_superuser else "SUPERUSER",
-#             "user_perm": user.get_user_permissions() if not user.is_superuser else "SUPERUSER",
-#         }
-#         for user in all_users
-#     ]
-
-#     return render(request, "admin_panel/user_list.html", {
-#         "user_list": user_display_list
-#     })
-
 ORG_API_FETCH_USERS = os.getenv("ORG_API_FETCH_USERS")
 
 @perm_req_log([PermissionType.CREATE], PermissionList.ADMIN_PANEL, AccessType.CREATE)
@@ -320,6 +302,7 @@ def export_logs(request : HttpRequest):
         "action": "Export Log"
     })
 
+@perm_req_log([PermissionType.DELETE], PermissionList.LOG_ACCESS, AccessType.DELETE)
 def delete_logs(request : HttpRequest):
     filter = request.GET
 
@@ -335,6 +318,7 @@ def delete_logs(request : HttpRequest):
 from api.selector import court as CourtUtil
 from .models import SelectedCourt
 
+@perm_req_log([PermissionType.EDIT], PermissionList.COURT_LIST, AccessType.EDIT)
 def edit_selected_courts(request : HttpRequest):
     court_list : list[dict] = CourtUtil.getCourtData().get("courts")
 
@@ -361,6 +345,7 @@ def edit_selected_courts(request : HttpRequest):
         "court_list": court_list,
     })
 
+@perm_req_log([PermissionType.VIEW], PermissionList.COURT_LIST, AccessType.VIEW)
 def view_all_selected_courts(request : HttpRequest):
     all_selected_courts = SelectedCourt.objects.all()
 
