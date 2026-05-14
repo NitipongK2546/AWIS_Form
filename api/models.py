@@ -25,31 +25,77 @@ class ExternalSelectorData(models.Model):
         self.data = incoming_data.get("data")
         self.save()
 
+from users.models import UserAccess, UserDataModel
+from django.http import HttpRequest
+
 class APISecret(models.Model):
+    owner = models.ForeignKey(UserDataModel, on_delete=models.CASCADE)
     hashed_api_key = models.CharField(max_length=64)
+    identifier = models.CharField(max_length=16, unique=True)
     salt = models.CharField(max_length=16)
-    permissions : list[dict] = models.JSONField(default=list)
+    permissions : dict[str] = models.JSONField(default=dict)
+
+    def __str__(self):
+        return f"{self.owner}: {self.permissions}"
 
     @staticmethod
-    def createAPIKey(permissions : list[dict]):
+    def createAPIKey(request : HttpRequest, permissions : dict[str]):
         salt = secrets.token_hex(8)
         api_key = api_key = secrets.token_hex(32)
 
-        hashed_key = hashlib.sha256(salt + api_key)
-        
-        APISecret.objects.create(
-            hashed_api_key = hashed_key,
-            salt = salt,
-            permissions = permissions,
-        )
+        hashed_key = hashlib.sha256((salt + api_key).encode())
 
-        return api_key
+        identifier = _createIdentifier()
+
+        result = APISecret.objects.filter(owner=request.user.pk)
+        if result:
+            result.update(
+                hashed_api_key = hashed_key.hexdigest(),
+                salt = salt,
+                permissions = permissions,
+                identifier = identifier,
+            )
+        else:
+            APISecret.objects.create(
+                hashed_api_key = hashed_key.hexdigest(),
+                salt = salt,
+                permissions = permissions,
+                owner = request.user,
+                identifier = identifier,
+            )
+
+        return (identifier + api_key)
     
-    def checkAPIKey(self, api_key : str):
-        salt = self.salt
-        result = hashlib.sha256(salt + api_key)
+    @staticmethod
+    def checkAPIKey(api_key_with_id : str):
+        result = False
 
-        if result == self.hashed_api_key:
-            return True
+        identifier = api_key_with_id[:16]
+        key = api_key_with_id[16:]
+
+        api_obj = APISecret.checkIdentifier(identifier)
+
+        if api_obj:
+            salt = api_obj.salt
+            hash = hashlib.sha256((salt + key).encode())
+
+            if hash.hexdigest() == api_obj.hashed_api_key:
+                result = api_obj.permissions
         
-        return False
+        return result
+    
+    @staticmethod
+    def checkIdentifier(identifier : str):
+        api_obj = APISecret.objects.filter(identifier=identifier).first()
+
+        if api_obj:
+            return api_obj
+        
+        return None
+    
+def _createIdentifier():
+    while True:
+        identifier = secrets.token_hex(8)
+
+        if not APISecret.checkIdentifier(identifier):
+            return identifier
