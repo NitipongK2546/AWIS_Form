@@ -18,14 +18,6 @@ for name in PermissionList:
 
 print("1. Permission Creation Success.")
 
-# user = UserDataModel.objects.get(username="testcourtuser7")
-# permission = Permission.objects.get(codename=
-#     perm_str(PermissionType.EDIT, PermissionList.REQFORM_SUBMITTED).split(".")[1]
-# )
-# user.user_permissions.add(permission)
-
-# print("2. Court User Permission Assigned.")
-
 for role in settings.RoleList:
     role_group, created = Group.objects.get_or_create(
         name=role.value
@@ -35,6 +27,6 @@ for role in settings.RoleList:
     for item in default_permissions:
         role_group.permissions.add(item)
 
-print("3. Users Default Permission Assigned.")
+print("2. Users Default Permission Assigned.")
 
 

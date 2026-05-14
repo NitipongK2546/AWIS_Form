@@ -1,0 +1,30 @@
+{% extends "admin_panel/base.html" %}
+{% load static %}
+
+
+{% block title %}Access List{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'admin_panel/css/select_users.css' %}">
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1>API Token Request</h1>
+
+    <p>{{ api_key }}</p>
+
+    <div>
+        {% for key in api_keys %}
+        {{ key }}
+        {% empty %}
+        <p>No API Key</p>
+        {% endfor %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Generate Token</button>
+    </form>
+</div>
+{% endblock %}

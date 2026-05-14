@@ -1,0 +1,23 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Accept_table_page{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div id="header-container">
+    <div class="logo-row">
+        <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
+        <br>
+        <div class="separate-line"></div>
+    </div>
+    <div>
+    <a href="{% url 'dashboard:dashboard' %}" class="button-logout" style="margin-top: 10px">กลับไป Dashboard</a>
+    </div>
+    {% include 'module/drafts_form_table.html' %}
+</div>
+{% endblock %}

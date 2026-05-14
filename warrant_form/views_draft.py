@@ -23,6 +23,17 @@ import uuid
 from . import _permissions as ReqformPerm 
 
 @perm_req_log(*ReqformPerm.CREATE_DRAFT)
+def view_draft_creation_page(request : HttpRequest):
+
+    written_draft = FormDraftContainer.objects.filter(form_creator=request.user)
+    owned_draft = FormDraftContainer.objects.filter(form_owner=request.user)
+    all_drafts = written_draft.union(owned_draft)
+    
+    return render(request, "dashboard/draft_creation_page.html", {
+        "drafts": all_drafts
+    })
+
+@perm_req_log(*ReqformPerm.CREATE_DRAFT)
 def create_draft_main_local_page(request : HttpRequest):
     draft_container = FormDraftContainer.objects.create(
         form_owner=request.user,

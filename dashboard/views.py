@@ -51,13 +51,8 @@ def index(request : HttpRequest):
 @login_required
 def dashboard(request : HttpRequest):
 
-    written_draft = FormDraftContainer.objects.filter(form_creator=request.user)
-    owned_draft = FormDraftContainer.objects.filter(form_owner=request.user)
-    all_drafts = written_draft.union(owned_draft)
-
     context = {
         "user": request.user,
-        "drafts": all_drafts,
     }
 
     if request.user.has_perms(

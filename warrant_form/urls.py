@@ -4,8 +4,8 @@ from warrant_form import views, views_draft, views_reqform
 app_name = "forms"
 
 draft_urls = [
+    path("reqform-draft/", views_draft.view_draft_creation_page, name="draft-page"),
     path("reqform-draft/create/", views_draft.create_draft_main_local_page, name="create-draft-container"),
-
     path("reqform-draft/view/<int:container_id>/", views_draft.view_draft_main_local_page, name="view-draft-container"),
     path("reqform-draft/delete/<int:container_id>/", views_draft.delete_draft_main_local_page, name="delete-draft-container"),
 

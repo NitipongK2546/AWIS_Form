@@ -29,7 +29,7 @@ class VisualWarrantData(models.Model):
 
     warrant = models.OneToOneField(WarrantDataModel, on_delete=models.CASCADE, related_name='finalized_warrant')
 
-    judge_name = models.CharField(max_length=250)
+    judge_name = models.CharField(max_length=250, blank=True,)
     court_injunction = models.IntegerField(choices=AcceptStatus, blank=True, null=True)
     injunction_date = models.DateTimeField(blank=True, null=True)
 

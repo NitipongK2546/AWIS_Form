@@ -1,6 +1,6 @@
 import functools
 from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, BadRequest
 from django.http import HttpRequest, JsonResponse
 
 # from django.shortcuts import redirect
@@ -26,6 +26,7 @@ def api_perm_log(perm_list : list[PermissionType], system : PermissionList, acce
             user = UserDataModel.objects.filter(
                 api_uid=payload.get("user_id")
             ).first()
+
             try:
                 # no_csrf_func = csrf_exempt(view_func)
                 result = view_func(request, *args, **kwargs)

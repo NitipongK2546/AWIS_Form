@@ -31,18 +31,34 @@ def user_login(request : HttpRequest):
     if request.method == "POST":
         form = UserAuthForm(request.POST)
         if form.is_valid():
-            data = form.cleaned_data
-            user : UserDataModel = authenticate(request, username=data.get("username"), password=data.get("password"))
+            form_data = form.cleaned_data
+            user : UserDataModel = authenticate(request, username=form_data.get("username"), password=form_data.get("password"))
             if user is not None:
-                if not (os.getenv("PRODUCTION") == "YES"):
-                    login(request, user)
-                    FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
-                    # if user.is_superuser:
-                    #     return redirect("admin_panel:collections")
-                    return redirect("dashboard:dashboard")
+                login(request, user)
+
+                FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
+
+                return redirect("dashboard:dashboard")
             else:
                 try:
-                    result_user_id = login_via_api(request)
+                    response_data = login_via_api(request)
+                    
+                    if response_data.get("status") != 200:
+                        
+                        deny_reason = {
+                            "message": f"{form_data.get("message")} ({form_data.get("username")})",
+                        }
+
+                        FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, deny_reason,)
+
+                        return render(request, "users/login.html", {
+                            "form": form,
+                            "error": True,
+                            "reason": form_data.get("message")
+                        })
+                    
+                    result_user_id = form_data.get("id")
+
                     if result_user_id:
                         user = UserDataModel.objects.get(api_uid=result_user_id)
                         login(request, user)
@@ -51,8 +67,10 @@ def user_login(request : HttpRequest):
 
                         return redirect("dashboard:dashboard")
                     
+                    # Fail, No USER ID detected in UserDataModel.
+
                     deny_reason = {
-                        "message": f"Wrong username or password? ({data.get("username")})",
+                        "message": f"Wrong username or password? ({form_data.get("username")})",
                     }
 
                     FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, deny_reason,)
@@ -60,19 +78,19 @@ def user_login(request : HttpRequest):
                     return render(request, "users/login.html", {
                         "form": form,
                         "error": True,
-                        "reason": "Wrong username or password?"
+                        "reason": "ชื่อหรือรหัสผ่านผิด"
                     })
                 except:
                     return render(request, "users/login.html", {
                         "form": form,
                         "error": True,
-                        "reason": "Cannot connect to ERP Service"
+                        "reason": "เชื่อมกับระบบ ERP ไม่ได้"
                     })
 
-                # PRODUCTION
-                send_email_otp(user)
+                # # PRODUCTION
+                # send_email_otp(user)
 
-                return redirect("users:verify_otp")
+                # return redirect("users:verify_otp")
     else:
         form = AuthenticationForm()
     return render(request, "users/login.html", {"form": form})

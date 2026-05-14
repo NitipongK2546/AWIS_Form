@@ -175,8 +175,7 @@ body {
     align-items: center;
     height: 80px;
     width: 100%;
-    justify-content: right;
-    display: flex;
+    display: block;
 }
 
 .header-bar a {

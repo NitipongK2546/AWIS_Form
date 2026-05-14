@@ -192,6 +192,19 @@ def _createLog(
 ########################################################################
 
 def createNormalLog(request : HttpRequest, action : AccessType, system : PermissionList, access_info : dict = None, remark : str = None, user_bypass : UserDataModel = None):
+    """
+    access_info:\n
+    Either check the models for function of getLogInfoDict()\n
+    Or the input is:\n
+    {
+        "message": "Message Here",
+    }
+    \n
+    user bypass:\n
+    Leave Empty for AnonymousUser without known UserDataModel.\n
+    Put UserDataModel Object to associate the User with the Action.\n
+    If request User is not Anonymous, the Log will use the user from request.
+    """
     
     log_obj = _createLog(request, action, system, "normal", access_info, remark, NORMAL_LOG, user_bypass)
 
@@ -205,6 +218,20 @@ def createNormalLog(request : HttpRequest, action : AccessType, system : Permiss
     return log_obj 
 
 def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : PermissionList, denied_reason : dict = None, remark : str = None, user_bypass : UserDataModel = None):
+    """
+    access_info:\n
+    Either check the models for function of getLogInfoDict()\n
+    Or the input is:\n
+    {
+        "message": "Message Here",
+    }
+    \n
+    user bypass:\n
+    Leave Empty for AnonymousUser without known UserDataModel.\n
+    Put UserDataModel Object to associate the User with the Action.\n
+    If request User is not Anonymous, the Log will use the user from request.
+    """
+
 
     log_obj = _createLog(request, action, system, "denied", denied_reason, remark, NORMAL_LOG, user_bypass)
 
@@ -219,6 +246,19 @@ def createAccessDeniedLog(request : HttpRequest, action : AccessType, system : P
     
 
 def createErrorLog(request : HttpRequest, action : AccessType, system : PermissionList, error_reason : dict = None, remark : str = None, user_bypass : UserDataModel = None):
+    """
+    access_info:\n
+    Either check the models for function of getLogInfoDict()\n
+    Or the input is:\n
+    {
+        "message": "Message Here",
+    }
+    \n
+    user bypass:\n
+    Leave Empty for AnonymousUser without known UserDataModel.\n
+    Put UserDataModel Object to associate the User with the Action.\n
+    If request User is not Anonymous, the Log will use the user from request.
+    """
 
     log_obj = _createLog(request, action, system, "errors", error_reason, remark, NORMAL_LOG, user_bypass)
 

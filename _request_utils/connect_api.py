@@ -292,10 +292,6 @@ import json
 
 def login_via_api(request : HttpRequest):
     response : JsonResponse = erp_login_authorize("", request)
-    data : dict = json.loads(response.text)
+    data : dict = response.json()
 
-    if data.get("status") != 200:
-        print(data.get("message"))
-        return False
-    
-    return data.get("id")
+    return data

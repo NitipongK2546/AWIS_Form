@@ -37,6 +37,13 @@ class DefaultPermission(Enum):
     COURT_USER = [
         perm_str(T.EDIT, N.REQFORM_SUBMITTED),
     ]
+
+    #####################################################################
+
+    WEBHOOK_USER = [
+        perm_str(T.DELETE, N.USER_ACCESS),
+    ]
+
     #####################################################################
 
     EMPLOYEE = perm_str_list(
