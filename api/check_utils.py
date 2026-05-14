@@ -30,7 +30,7 @@ def check_token(data : dict) -> bool | JsonResponse:
         
         token : str = authorization.split()[1]
 
-        # Do the checking thing.
+        
 
         return True
 

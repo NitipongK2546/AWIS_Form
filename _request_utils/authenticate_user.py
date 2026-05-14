@@ -71,7 +71,7 @@ def erp_login_authorize(version : str, request : HttpRequest, storage : str = "c
     if not status:
       return JsonResponse({
             "status": 403,
-            "message": "Forbidden"
+            "message": "ผู้ใช้ไม่ได้รับอนุญาตให้เข้าใน User Access"
         }, status=403)
     
     return JsonResponse({

@@ -34,15 +34,24 @@ def user_login(request : HttpRequest):
             data = form.cleaned_data
             user : UserDataModel = authenticate(request, username=data.get("username"), password=data.get("password"))
             if user is not None:
-                if not (os.getenv("PRODUCTION") == "YES"):
-                    login(request, user)
-                    FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
-                    # if user.is_superuser:
-                    #     return redirect("admin_panel:collections")
-                    return redirect("dashboard:dashboard")
+                login(request, user)
+
+                FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
+
+                return redirect("dashboard:dashboard")
             else:
                 try:
                     result_user_id = login_via_api(request)
+                    
+                    if data.get("status") != 200:
+                        return render(request, "users/login.html", {
+                            "form": form,
+                            "error": True,
+                            "reason": data.get("message")
+                        })
+                    
+                    result_user_id = data.get("id")
+
                     if result_user_id:
                         user = UserDataModel.objects.get(api_uid=result_user_id)
                         login(request, user)
@@ -51,6 +60,8 @@ def user_login(request : HttpRequest):
 
                         return redirect("dashboard:dashboard")
                     
+                    # Fail, No USER ID detected in UserDataModel.
+
                     deny_reason = {
                         "message": f"Wrong username or password? ({data.get("username")})",
                     }
@@ -69,10 +80,10 @@ def user_login(request : HttpRequest):
                         "reason": "Cannot connect to ERP Service"
                     })
 
-                # PRODUCTION
-                send_email_otp(user)
+                # # PRODUCTION
+                # send_email_otp(user)
 
-                return redirect("users:verify_otp")
+                # return redirect("users:verify_otp")
     else:
         form = AuthenticationForm()
     return render(request, "users/login.html", {"form": form})
