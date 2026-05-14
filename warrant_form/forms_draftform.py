@@ -24,6 +24,30 @@ class ReqformDraftModelForm(forms.ModelForm):
         model = ReqformDraftDataModel
         exclude = ["draft_container",]
         widgets = {
+    "cause_text": forms.Textarea(attrs={
+        "rows": 5,
+        "cols": 60,
+        "style": "resize:none; width: 100%;",
+        "placeholder": "เหตุผลที่จับกุม"
+    }),
+    "charge": forms.Textarea(attrs={
+        "rows": 5,
+        "cols": 60,
+        "style": "resize:none; width: 100%;",
+        "placeholder": "ฐานความผิด"
+    }),
+    "scene": forms.Textarea(attrs={
+        "rows": 5,
+        "cols": 60,
+        "style": "resize:none; width: 100%;",
+        "placeholder": "สถานที่เกิดเหตุ"
+    }),
+    "act": forms.Textarea(attrs={
+        "rows": 5,
+        "cols": 60,
+        "style": "resize:none; width: 100%;",
+        "placeholder": "มีพฤติการกระทำความผิด"
+    }),
     "req_day": forms.Select(choices=CentralForm.day_choices, attrs={
         'class': 'datehalf day',
     }),
@@ -115,6 +139,12 @@ class WarrantDraftDataModelForm(forms.ModelForm):
         model = WarrantDraftDataModel
         exclude = ["draft_container", "court_name", "plaintiff", "woa_date"]
         widgets = {
+    "charge": forms.Textarea(attrs={
+        "rows": 5,
+        "cols": 60,
+        "style": "resize:none; width: 100%;",
+        "placeholder": "มีความผิดฐาน"
+    }),
     "acc_sub_district": forms.Select(
         choices=CentralForm.thai_codes.getSubDistrictChoices()[:5]
     ),
