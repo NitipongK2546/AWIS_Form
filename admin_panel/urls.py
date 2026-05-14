@@ -1,5 +1,5 @@
 from django.urls import path
-from admin_panel import views
+from admin_panel import views, webhook_views
 
 app_name = "admin_panel"
 
@@ -24,5 +24,9 @@ urlpatterns = [
     path("logs/delete/", views.delete_logs, name="delete_logs"),
 
     path("courts/", views.view_all_selected_courts, name="view_courts"),
-    path("courts/edit/", views.edit_selected_courts, name="edit_courts")
+    path("courts/edit/", views.edit_selected_courts, name="edit_courts"),
+
+    path("api_secret/", webhook_views.api_secret_page, name="view_api_page"),
+    path("api_secret/create/", webhook_views.generate_api_secret, name="create_api_secret")
+
 ]

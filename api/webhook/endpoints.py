@@ -11,7 +11,8 @@ from users.models import UserAccess, UserDataModel
 
 from django.views.decorators.csrf import csrf_exempt
 
-# @api_perm_log([PermissionType.DELETE], PermissionList.USER_ACCESS, AccessType.DELETE)
+from api.check_utils import check_api_secret
+
 @csrf_exempt
 def delete_user_access_webhook(request : HttpRequest) -> JsonResponse:
     if request.method != "POST":
@@ -19,6 +20,11 @@ def delete_user_access_webhook(request : HttpRequest) -> JsonResponse:
             "status": 405,
             "message": "Method not allowed. Please POST JSON Data."
         }, status=405)
+    
+    result = check_api_secret(request)
+
+    if isinstance(result, JsonResponse):
+        return result
     
     data = UtilsHandle.json_retrieval(request)
 
