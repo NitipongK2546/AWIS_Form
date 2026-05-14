@@ -16,7 +16,8 @@ def api_secret_page(request : HttpRequest):
 
     if request.method == "POST":
         api_key = APISecret.createAPIKey(request, {
-            "owner": request.user.api_uid,
+            "name": "delete_user_access",
+            "reason": "Delete UserAccess via Webhook",
             "permission": [
                 perm_str(PermissionType.DELETE, PermissionList.USER_ACCESS)
             ]

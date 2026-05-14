@@ -29,27 +29,31 @@ from users.models import UserAccess, UserDataModel
 from django.http import HttpRequest
 
 class APISecret(models.Model):
-    hashed_api_key = models.CharField(max_length=64)
-    salt = models.CharField(max_length=16)
-    permissions : list[dict] = models.JSONField(default=list)
     owner = models.ForeignKey(UserDataModel, on_delete=models.CASCADE)
+    hashed_api_key = models.CharField(max_length=64)
+    identifier = models.CharField(max_length=16, unique=True)
+    salt = models.CharField(max_length=16)
+    permissions : dict[str] = models.JSONField(default=dict)
 
     def __str__(self):
         return f"{self.owner}: {self.permissions}"
 
     @staticmethod
-    def createAPIKey(request : HttpRequest, permissions : list[dict]):
+    def createAPIKey(request : HttpRequest, permissions : dict[str]):
         salt = secrets.token_hex(8)
         api_key = api_key = secrets.token_hex(32)
 
         hashed_key = hashlib.sha256((salt + api_key).encode())
 
-        result = APISecret.objects.filter(owner=request.user)
+        identifier = _createIdentifier()
+
+        result = APISecret.objects.filter(owner=request.user.pk)
         if result:
             result.update(
                 hashed_api_key = hashed_key.hexdigest(),
                 salt = salt,
                 permissions = permissions,
+                identifier = identifier,
             )
         else:
             APISecret.objects.create(
@@ -57,20 +61,41 @@ class APISecret(models.Model):
                 salt = salt,
                 permissions = permissions,
                 owner = request.user,
+                identifier = identifier,
             )
 
-        return api_key
+        return (identifier + api_key)
     
     @staticmethod
-    def checkAPIKey(api_key : str):
+    def checkAPIKey(api_key_with_id : str):
         result = False
 
-        for api_obj in APISecret.objects.all():
+        identifier = api_key_with_id[:16]
+        key = api_key_with_id[16:]
+
+        api_obj = APISecret.checkIdentifier(identifier)
+
+        if api_obj:
             salt = api_obj.salt
-            hash = hashlib.sha256((salt + api_key).encode())
+            hash = hashlib.sha256((salt + key).encode())
 
             if hash.hexdigest() == api_obj.hashed_api_key:
-                result = True
-                break
+                result = api_obj.permissions
         
         return result
+    
+    @staticmethod
+    def checkIdentifier(identifier : str):
+        api_obj = APISecret.objects.filter(identifier=identifier).first()
+
+        if api_obj:
+            return api_obj
+        
+        return None
+    
+def _createIdentifier():
+    while True:
+        identifier = secrets.token_hex(8)
+
+        if not APISecret.checkIdentifier(identifier):
+            return identifier

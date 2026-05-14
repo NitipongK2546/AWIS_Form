@@ -19,7 +19,7 @@ def json_retrieval(request : HttpRequest) -> dict[str,] | JsonResponse:
             "message": "Cannot decode JSON"
         }, status=400)
 
-def check_api_secret(request : HttpRequest):
+def check_api_secret_permission(request : HttpRequest, required_permissions : list[str]):
 
     auth_header : str = request.headers.get("Authorization")
 
@@ -39,12 +39,21 @@ def check_api_secret(request : HttpRequest):
     
     token : str = splitted_header[1]
 
-    success = APISecret.checkAPIKey(token)
+    result = APISecret.checkAPIKey(token)
 
-    if not success:
+    if not result:
         return JsonResponse({
             "status": 400,
             "message": "No such API Key existed."
         }, status=401)
+    
+    gotten_permissions = result.get("permission")
+    
+    for perm in required_permissions:
+        if perm not in gotten_permissions:
+            return JsonResponse({
+                "status": 403,
+                "message": "Forbidden. This Key doesn't have such permission."
+            }, status=401)
     
     return True
