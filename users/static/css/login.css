@@ -7,8 +7,8 @@
 
 /* Background */
 body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: linear-gradient(135deg, #222831, #3e434b);
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    background: #D1D3D4;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -59,8 +59,8 @@ body {
 
 
 .login-left-container {
-    background: #fff;
-    padding: 2rem;
+    background: #213259;
+    color: #fff;
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
@@ -68,17 +68,25 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 .login-left-container img {
-    width: 100%;
+    width: 60%;
     height: auto;
     border-radius: 12px;
+    margin-top: 20px;
 }
 
+.login-right-container img {
+    width: 30%;
+    height: auto;
+    text-align: left;
+
+}
 
 .login-right-container {
-    background: #fff;
+    background: #FFFFFF;
     padding: 2rem;
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
@@ -86,28 +94,30 @@ body {
     width: 500px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    text-align: left;
 }
 
 /* Title */
 .login-right-container h1 {
+    margin-top: 1.5rem;
     margin-bottom: 1.5rem;
     color: #333;
-    font-size: 1.8rem;
+    font-size: 2rem;
 }
 
 /* Form fields */
 .login-right-container form {
     display: flex;
     flex-direction: column;
+    width: 100%;
     gap: 1rem;
 }
 
 .login-right-container input[type="text"],
 .login-right-container input[type="password"] {
-    width: 100%;
-    max-width: 300px;
+    width: 85%;
+    max-width: 400px;
     padding: 0.8rem;
     border: 1px solid #ccc;
     border-radius: 8px;
