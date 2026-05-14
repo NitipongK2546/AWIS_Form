@@ -1,7 +1,7 @@
 from django.http import HttpRequest, JsonResponse
 from _log_utils.file_logger import AccessType
 from api.decorators import api_perm_log
-from users import PermissionList, PermissionType
+from users.permissions import perm_str, PermissionList, PermissionType
 
 from api import check_utils as UtilsHandle
 
@@ -11,7 +11,7 @@ from users.models import UserAccess, UserDataModel
 
 from django.views.decorators.csrf import csrf_exempt
 
-from api.check_utils import check_api_secret
+from api.check_utils import check_api_secret_permission
 
 @csrf_exempt
 def delete_user_access_webhook(request : HttpRequest) -> JsonResponse:
@@ -21,16 +21,23 @@ def delete_user_access_webhook(request : HttpRequest) -> JsonResponse:
             "message": "Method not allowed. Please POST JSON Data."
         }, status=405)
     
-    result = check_api_secret(request)
-
-    if isinstance(result, JsonResponse):
-        return result
-    
     data = UtilsHandle.json_retrieval(request)
 
     # Failed.
     if isinstance(data, JsonResponse):
         return data
+    
+    #####################################################
+    
+    result = check_api_secret_permission(
+        request, 
+        [
+            perm_str(PermissionType.DELETE, PermissionList.USER_ACCESS)
+        ]
+    )
+
+    if isinstance(result, JsonResponse):
+        return result
     
     try:
         user_id = data.get("USR_ID")
