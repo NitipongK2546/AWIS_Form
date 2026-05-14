@@ -23,6 +23,10 @@ DEBUG = False
 SECRET_KEY = os.getenv("DJANGO_KEY",)
 ALLOWED_HOSTS = [os.getenv("HOST_SERVER"), os.getenv("HOST_DOMAIN_NAME")]
 
+CSRF_TRUSTED_ORIGINS = [
+    os.getenv("TRUSTED_ORIGIN_URL")
+]
+
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # Internationalization
