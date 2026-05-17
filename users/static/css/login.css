@@ -132,7 +132,7 @@ body {
 
 /* Button */
 .login-right-container button {
-    background: #00ADB5;
+    background: #C9161C;
     color: #fff;
     padding: 0.8rem;
     border: none;
@@ -143,7 +143,7 @@ body {
 }
 
 .login-right-container button:hover {
-    background: #006d73;
+    background: #840f13;
 }
 
 /* Links */
