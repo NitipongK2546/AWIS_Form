@@ -3,9 +3,17 @@
 
 {% block title %}Dashboard{% endblock %}
 
+{% block header_script %}
+<script type="module">
+import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
+</script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
+{% endblock %}
+
 {% block style %}
     <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock %}
 
 {% block body %}
@@ -42,7 +50,27 @@
     {% endcomment %}
 </div>
 
+<div>
+    <form method="get">
+    {{ filter_form.as_p }}
+    <button type="submit">Filter</button>
+    </form>
+</div>
+
 {% include "module/all_in_one_table.html" %}
+{% endblock %}
 
+{% block script %}
+<script type="module">
+    import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
 
+    const datetime_elements = document.querySelectorAll(".datetimepicker");
+    flatpickr(datetime_elements, {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i:ss",
+        altInput: true,
+        altFormat: "j F Y H:i น.",
+        locale: Thai,
+    });
+</script>
 {% endblock %}

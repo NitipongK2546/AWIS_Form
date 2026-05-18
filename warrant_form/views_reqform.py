@@ -146,15 +146,16 @@ def edit_form(request : HttpRequest, req_no_plaintiff : int):
                     temp_warrants_store.append(warrant)
 
             old_form = form_await.form
-            old_form.delete()
 
-            reqform : ReqformDataModel = ReqformDataModel.objects.create(**form.cleaned_data)
+            targetted_reqform = ReqformDataModel.objects.filter(pk=old_form.pk)
+            targetted_reqform.update(**form.cleaned_data)
+
+            reqform = targetted_reqform.first()
 
             for item in temp_warrants_store:
                 if reqform:
                     reqform.warrants.add(item)
 
-            form_await.form = reqform
             form_await.approve_status = 1
 
             form_await.save()

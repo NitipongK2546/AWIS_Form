@@ -62,6 +62,8 @@ def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dic
 def index(request : HttpRequest):
     return redirect("dashboard:dashboard")
 
+from .forms_filter import DashboardFilterForm
+
 @login_required
 def dashboard(request : HttpRequest):
     drafts = FormDraftContainer.objects.all()
@@ -103,15 +105,17 @@ def dashboard(request : HttpRequest):
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_accept_display(),
                 "status_int":  reqform.accept,
-                "action": "resend_warrant"
+                "action": "report"
             },
             id=reqform.form.req_no_plaintiff,
         )
 
-    # dashboard_list.reverse()
-    dashboard_list.sort(
-        key=lambda x: x["req_date"]
-    )
+    dashboard_list.reverse()
+    # dashboard_list.sort(
+    #     key=lambda x: x["req_date"]
+    # )
+
+    filter_form = DashboardFilterForm()
     
     context = {
         "reqform_infos": dashboard_list,
@@ -119,6 +123,7 @@ def dashboard(request : HttpRequest):
         "draft_count": draft_count,
         "approve_form": approved,
         "accept_form": accepted,
+        "filter_form": filter_form,
     }
 
     if request.user.has_perms(
@@ -150,14 +155,13 @@ def approve_table_page(request):
         "forms": form_awaiting_approval,
     })
 
+##############################################################################
+
 from warrant_form.views_reqform import view_form
 
 @perm_req_log(*DashboardPerm.APPROVE_REQFORM)
-def confirm_approve(request : HttpRequest, req_no_plaintiff : str):
-
-    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
-
-    if request.method == "POST":
+def reqform_approve_page(request : HttpRequest, req_no_plaintiff : str):
+    def handle_form_approved():
         try:
             if settings.ENABLE_API:
                 AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDict())
@@ -179,18 +183,39 @@ def confirm_approve(request : HttpRequest, req_no_plaintiff : str):
 
             FileLogger.createNormalLog(request, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict(),)
 
-            return redirect("dashboard:accept_table_page")
+            return redirect("dashboard:dashboard")
         except Exception as e:
             return redirect("dashboard:dashboard")
+
+    def handle_form_rejected():
+        selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.REJECTED
+        selected_form.save()
+
+        FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
+
+        return redirect("dashboard:dashboard")
+        
+    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+
+    if request.method == "POST":
+        if request.POST.get("confirm_approve") and request.POST.get("confirm_reject"):
+            # ไม่ควรเกิดขึ้น หาก Javascript ทำงาน
+            return render(request, "errors/400.html", {
+                "reason": "ท่านเลือกที่จะอนุมัติและปฎิเสธพร้อมกัน"
+            }, status=400)
+
+        if request.POST.get("confirm_approve"):
+            return handle_form_approved()
+        elif request.POST.get("confirm_reject"):
+            return handle_form_rejected()
+
+        else:
+            # ไม่ควรเกิดขึ้น หาก input ยังอยู่
+            return render(request, "errors/400.html", {
+                "reason": "ไม่ได้รับข้อมูลว่าอนุมัติหรือปฏิเสธ"
+            }, status=400)
         
     return view_form(request, req_no_plaintiff, selected_html="approve_form_view.html")
-
-    # return render(request, "dashboard/confirmation_page.html", {
-    #     "user": request.user,
-    #     "action": "Approve",
-    #     "form": selected_form,
-    # })
-    
 
 @perm_req_log(*DashboardPerm.REJECT_REQFORM)
 def confirm_reject(request : HttpRequest, req_no_plaintiff : str):
@@ -245,10 +270,11 @@ def warrant_status_page(request, req_no_plaintiff : str):
         warrant_wrap = VisualWarrantData.objects.filter(warrant=warrant_data).first()
 
         data_dict = {
-            "court_injunction": warrant_wrap.get_court_injunction_display(), 
             "woa_no_and_year": warrant_data.get_woa_no_and_year(),
             "woa_type": f"{warrant_data.get_woa_type_text()} | {warrant_data.get_fault_type_text()}",
             "woa_refno": warrant_data.woa_refno,
+
+            "court_injunction": warrant_wrap.get_court_injunction_display(), 
             "judge_name": warrant_wrap.judge_name,
             "injunction_date": convert_time(warrant_wrap.injunction_date),
             "file_path": warrant_wrap.file_path,
@@ -369,8 +395,6 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
 
     warrant_results = VisualWarrantData.objects.filter(warrant__in=unneeded_warrants)
 
-    print(warrant_results)
-
     if sent_form.accept == 1:
         return render(request, "errors/400.html", {
             "reason": "คำร้องดังกล่าวไม่สามารถยกเลิกการส่งได้แล้ว"
@@ -381,9 +405,14 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
             if settings.ENABLE_API:
                 AWISConnectAPI.unsend_reqform_from_court("v1.1", request, req_no_plaintiff)
 
-            for warrant in warrant_results.all():
-                warrant.warrant.delete()
-            sent_form.form.delete()
+            form_await_approval = FormAwaitingApproval.objects.filter(
+                form=sent_form.form
+            ).first()
+            
+            form_await_approval.approve_status = FormAwaitingApproval.ApprovalStatus.PENDING
+
+            form_await_approval.save()
+            sent_form.delete()
                 
             return redirect("dashboard:success_page")
 

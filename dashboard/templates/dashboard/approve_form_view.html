@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="{% static 'css/step2.css' %}">
 <link rel="stylesheet" href="{% static 'dashboard/css/view_form.css' %}">
 <style>
-    form input, form select {
+    form.main_form input, form.main_form select {
         text-align: center !important;
         color: black;
 
@@ -22,7 +22,7 @@
         -webkit-appearance: none;
         -moz-appearance: none;
     }
-    select {
+    form.main_form select {
         background: none;
         appearance: none; 
         -webkit-appearance: none;
@@ -34,7 +34,7 @@
 {% endblock %}
 
 {% block form %}
-<form method="post">
+<form method="post" class="main_form">
     {% block return %}
     <p class="no-print">
          <a href="javascript:history.back()" class="button" style="margin: 0px;" >กลับ</a> 
@@ -59,13 +59,26 @@
     {% endblock %}
 </form>
 <hr class="no-print">
-
-<form method="post" style="text-align: center;">
-{% csrf_token %}
-<button type="submit" class="confirm-button no-print">ยืนยันส่งคำร้องให้กับศาล</button>
-</form>
-<script src="{% static 'js/printFile.js' %}"></script>
 {% endblock %}
+
 {% block script %}
+<script src="{% static 'js/printFile.js' %}"></script>
 {% include 'module/view_form_script.html' %}
+{% endblock %}
+
+{% block confirmation %}
+<form method="post" style="text-align: center; padding-bottom: 20rem;">
+{% csrf_token %}
+<div>
+    <p>
+        <span>อนุมัติและส่งให้กับศาล</span>
+        <input id="id_confirm_approve" name="confirm_approve" type="checkbox">
+    </p>
+    <p>
+        <span>ปฎิเสธคำร้อง</span>
+        <input id="id_confirm_reject" name="confirm_reject" type="checkbox">
+    </p>
+</div>
+<button type="submit" class="confirm-button no-print">ยืนยันผล</button>
+</form>
 {% endblock %}

@@ -12,8 +12,8 @@ urlpatterns = [
     
     # path("approve/", views.approve_form_page, name="approve_form_page"),
     path("dashboard/approve_table/", views.approve_table_page, name="approve_table_page"),
-    path("dashboard/approve/<str:req_no_plaintiff>/confirm_approve/", views.confirm_approve, name="confirm_approve"),
-    path("dashboard/approve/<str:req_no_plaintiff>/confirm_reject/", views.confirm_reject, name="confirm_reject"),
+    path("dashboard/approve/<str:req_no_plaintiff>/confirm_approve/", views.reqform_approve_page, name="confirm_approve"),
+    # path("dashboard/approve/<str:req_no_plaintiff>/confirm_reject/", views.confirm_reject, name="confirm_reject"),
 
     path("dashboard/accept_table/", views.accept_table_page, name="accept_table_page"),
     path("dashboard/unsend/<str:req_no_plaintiff>/", views.unsend_reqform, name="delete_sent_reqform"),

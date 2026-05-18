@@ -13,8 +13,10 @@
                 <th>เลขอ้างอิง</th>
                 <th>ผู้ถูกกล่าวหา</th>
                 <th>วันที่คำร้อง</th>
-                <th>Action</th>
+                <th>หมายจับ</th>
+                
                 <th>สถานะ</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -26,11 +28,29 @@
                 <td>{{ form.accused }}</td>
                 <td>{{ form.req_date }}</td>
                 
-                {% if form.action == "approve" %}
+                {% if form.action == "report" %}
                 <td>
-                    <a href="{% url 'dashboard:confirm_approve' form.req_no_plaintiff %}">ตรวจสอบคำร้อง</a>
+                    <a href="{% url 'dashboard:view_reqform_warrants' form.req_no_plaintiff %}">สถานะหมายจับ</a>
                 </td>
-                {% elif form.action == "resend_warrant" %}
+                {% else %}
+                <td>
+                    -
+                </td>
+                {% endif %}
+
+                <td>{{ form.status }}</td>
+                
+                {% if form.action == "approve" %}
+                    {% if form.status_int == 0 %}
+                    <td>
+                        <a href="{% url 'forms:edit_form' form.req_no_plaintiff %}">แก้ไขคำร้อง</a>
+                    </td>
+                    {% else %}
+                    <td>
+                        <a href="{% url 'dashboard:confirm_approve' form.req_no_plaintiff %}">ตรวจสอบคำร้อง</a>
+                    </td>
+                    {% endif %}
+                {% elif form.action == "report" %}
                     {% if form.status_int == 1 %}
                     <td>
                         <a href="{% url 'dashboard:view_reqform_warrants' form.req_no_plaintiff %}">ดูหมายจับ</a>
@@ -41,8 +61,6 @@
                     </td>
                     {% endif %}
                 {% endif %}
-
-                <td>{{ form.status }}</td>
             </tr>
             {% empty %}
             <tr>
