@@ -50,9 +50,16 @@ def index(request : HttpRequest):
 
 @login_required
 def dashboard(request : HttpRequest):
-
+    drafts = FormDraftContainer.objects.all()
+    draft_count = drafts.count()
+    approved = FormAwaitingApproval.objects.count()
+    accepted = VisualReqformData.objects.count()
+    
     context = {
         "user": request.user,
+        "draft_count": draft_count,
+        "approve_form": approved,
+        "accept_form": accepted,
     }
 
     if request.user.has_perms(

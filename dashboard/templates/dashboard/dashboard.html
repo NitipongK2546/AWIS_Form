@@ -9,73 +9,40 @@
 {% endblock %}
 
 {% block body %}
-<div id="header-container">
-    <div class="logo-row">
-        <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
-        <br>
-        <div class="separate-line"></div>
-    </div>
-    <div class="header-row"> 
-        <h1 style="font-size: 40px;margin-left: 20px;">Dashboard</h1> 
-        <p>
-            {% if request.user.is_staff %}
-            <a href="{% url 'admin_panel:collections' %}" class="button">Go to Admin Page</a>
-            {% endif %}
-            Username: <span class="username-value">{{ user.username }}</span> 
-            <a href="{% url 'users:logout' %}" class="button-logout">logout</a>
-        </p>
-    </div>
-    <div class="header-bar">
-        {% comment %}
-            {% if can_create_form %}
-            <a href="{% url 'forms:step0' %}" >เพิ่มคำร้องหมายจับ</a>
-            {% endif %}
-            {% if can_approve_form %}
-            <a href="{% url 'dashboard:approve_form_page' %}">อนุมัติแบบฟอร์ม</a>
-            {% endif %}
-            <a href="{% url 'api:test:login' %}" >ทดสอบเอา token ใส่คุ้กกี้</a>
-            <a href="{% url 'api:test:health' %}" >ทดสอบ HEALTH CHECK</a>
-            <a href="{% url 'api:test:check_reqform' %}" >ทดสอบ CHECK REQFORM</a>
-        {% endcomment %}
-        <h1 style="text-align: center; color: white;">เมนู (Menu)</h1>
-    </div>
-    <div>
-        <!-- <h1 style="text-align: center;">เมนู (Menu)</h1> -->
-        <div class="dashboard-tools" style="display: flex; justify-content: center;">
-            <div class="tool-card">
-                <a href="{% url 'forms:draft-page' %}">
-                    <img src="{% static 'dashboard/images/approved-form.png' %}" alt="Accept">
-                    <h3>สร้างคำร้อง</h3>
-                    <h3>เพื่อส่งให้ศาล</h3>
-                </a>
-            </div>
-
-            <div class="tool-card">
-                <a href="{% url 'dashboard:approve_table_page' %}">
-                    <img src="{% static 'dashboard/images/pending-approval.svg' %}" alt="Approve">
-                    <h3>สถานะคำร้อง</h3>
-                    <h3>รอการอนุมัติเพื่อส่งให้กับศาล</h3>
-                </a>
-            </div>
-        
-            <div class="tool-card">
-            <a href="{% url 'dashboard:accept_table_page' %}">
-                    <img src="{% static 'dashboard/images/approved-form.png' %}" alt="Accept">
-                    <h3>สถานะคำร้อง</h3>
-                    <h3>ส่งให้ศาลสำเร็จแล้ว</h3>
-                </a>
-            </div>
-            
-            {% comment %}
-            <div class="tool-card">
-                <a href="{% url 'dashboard:warrant_status_page' %}">
-                    <img src="{% static 'dashboard/images/checking-status.png' %}" alt="Access-List">
-                    <h3>ตารางสถานะของหมายศาล</h3>
-                </a>
-            </div>
-            {% endcomment %}
-        </div>
-        
-    </div>
+    
+<div class="header-bar">
+    <h1 style="text-align: left; margin-left: 100px;">หน้าหลัก</h1>
 </div>
+
+<div class="dashboard-tools" style="display: flex; justify-content: center;">
+    <div class="tool-card">
+        <a style="padding:0px;" href="{% url 'forms:draft-page' %}">
+            <h3>ร่างคำร้องปัจจุบัน: {{ draft_count }} ร่าง</h3>
+        </a>
+    </div>
+    <div class="tool-card">
+        <a style="padding:0px;" href="{% url 'dashboard:approve_table_page' %}">
+            <h3>ร่างคำร้องที่รอการอนุมัติ: {{ approve_form }} ร่าง</h3>
+        </a>
+    </div>
+
+    <div class="tool-card">
+        <a style="padding:0px;" href="{% url 'dashboard:accept_table_page' %}">
+            <h3>ร่างคำร้องที่ส่งถึงศาลสำเร็จ: {{ accept_form }} ร่าง</h3>
+        </a>
+    </div>
+    
+    {% comment %}
+    <div class="tool-card">
+        <a href="{% url 'dashboard:warrant_status_page' %}">
+            <img src="{% static 'dashboard/images/checking-status.png' %}" alt="Access-List">
+            <h3>ตารางสถานะของหมายศาล</h3>
+        </a>
+    </div>
+    {% endcomment %}
+</div>
+
+{% include "module/approve_table.html" %}
+
+
 {% endblock %}
