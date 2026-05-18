@@ -254,10 +254,10 @@ class ReqformDataModel(models.Model):
         return result_dict
     
 
-    def convertBacktoFormView(self) -> dict[str,]:
+    def convertBacktoFormView(self, month_as_text : bool = False, two_digit_year : bool = False, buddhist_year : bool = False) -> dict[str,]:
         dict_main_awis = model_to_dict(self)
 
-        duped_list = ["accused", "plaintiff", "court_name"]
+        duped_list = ["accused",]
         time_split_list = ["woa_start_date", "woa_end_date", "scene_date", "req_date"]
 
         dict_main_awis = CentralForm.createDupe(duped_list, dict_main_awis)
@@ -279,7 +279,17 @@ class ReqformDataModel(models.Model):
             dict_main_awis.update({f"have_req_2": 1})
 
         return dict_main_awis
-        
+    
+    def convertToDocumentData(self):
+        data_dict = self.convertBacktoFormView(month_as_text=True, two_digit_year=True, buddhist_year=True)
+
+        if self.have_req:
+            data_dict.update({f"have_act_1": 1})
+        else:
+            data_dict.update({f"have_act_2": 0})
+
+        return data_dict
+
 def assemble_cause(cause_id : int, cause_text : str):
     temp = {
         1: f"{cause_text} มาแจ้งความร้องทุกข์ต่อพนักงานสอบสวน",
