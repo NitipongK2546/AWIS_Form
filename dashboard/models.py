@@ -68,7 +68,7 @@ class VisualReqformData(models.Model):
     class AcceptStatus(models.IntegerChoices):
         DENIED = (0, "ไม่รับ")
         ACCEPTED = (1, "รับ")
-        WAITING = (99, "รอการพิจารณา")
+        WAITING = (99, "รอศาลตอบรับ")
     
     form = models.OneToOneField(ReqformDataModel, on_delete=models.CASCADE, related_name='finalized_form')
 

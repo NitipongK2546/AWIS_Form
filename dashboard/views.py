@@ -42,7 +42,21 @@ def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : User
 
     return is_not_user and not_has_approve_perm
 
-# Create your views here.
+#######################################################################
+
+def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dict : dict, id : str):
+    if id not in id_list:
+        id_list.append(id)
+        target_list.append(incoming_dict)
+    else:
+        # If ID is in ID_list
+        target_obj_index = id_list.index(id)
+        target_list.pop(target_obj_index)
+        # target_list.insert(target_obj_index, incoming_dict)
+        target_list.append(incoming_dict)
+
+
+########################################################################
 
 # I will seperate dashboard + index, just in case.
 def index(request : HttpRequest):
@@ -52,10 +66,55 @@ def index(request : HttpRequest):
 def dashboard(request : HttpRequest):
     drafts = FormDraftContainer.objects.all()
     draft_count = drafts.count()
-    approved = FormAwaitingApproval.objects.count()
-    accepted = VisualReqformData.objects.count()
+    approved = FormAwaitingApproval.objects.filter(
+        approve_status=1
+    ).count()
+    accepted = VisualReqformData.objects.filter(
+        accept=99
+    ).count()
+
+    dashboard_list = []
+    req_no_plaintiff_list = []
+
+    for reqform in FormAwaitingApproval.objects.all():
+        append_replace_id(
+            target_list=dashboard_list,
+            id_list=req_no_plaintiff_list,
+            incoming_dict = {
+                "reqno": reqform.form.getReqno(),
+                "req_no_plaintiff": reqform.form.req_no_plaintiff,
+                "accused": reqform.form.accused,
+                "req_date": reqform.form.req_date,            
+                "status": reqform.get_approve_status_display(),
+                "status_int":  reqform.approve_status,
+                "action": "approve"
+            },
+            id=reqform.form.req_no_plaintiff,
+        )
+
+    for reqform in VisualReqformData.objects.all():
+        append_replace_id(
+            target_list=dashboard_list,
+            id_list=req_no_plaintiff_list,
+            incoming_dict = {
+                "reqno": reqform.form.getReqno(),
+                "req_no_plaintiff": reqform.form.req_no_plaintiff,
+                "accused": reqform.form.accused,
+                "req_date": reqform.form.req_date,            
+                "status": reqform.get_accept_display(),
+                "status_int":  reqform.accept,
+                "action": "resend_warrant"
+            },
+            id=reqform.form.req_no_plaintiff,
+        )
+
+    # dashboard_list.reverse()
+    dashboard_list.sort(
+        key=lambda x: x["req_date"]
+    )
     
     context = {
+        "reqform_infos": dashboard_list,
         "user": request.user,
         "draft_count": draft_count,
         "approve_form": approved,

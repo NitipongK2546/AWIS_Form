@@ -1,0 +1,54 @@
+{% load static %}
+{% load thai_locale %}
+
+<div id="body-table">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th colspan="8">สถานะคำร้อง</th>
+            </tr>
+            <tr>
+                <th>#</th>
+                <th>หมายเลขคำร้อง</th>
+                <th>เลขอ้างอิง</th>
+                <th>ผู้ถูกกล่าวหา</th>
+                <th>วันที่คำร้อง</th>
+                <th>Action</th>
+                <th>สถานะ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in reqform_infos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ form.reqno }}</td>
+                <td>{{ form.req_no_plaintiff }}</td>
+                <td>{{ form.accused }}</td>
+                <td>{{ form.req_date }}</td>
+                
+                {% if form.action == "approve" %}
+                <td>
+                    <a href="{% url 'dashboard:confirm_approve' form.req_no_plaintiff %}">ตรวจสอบคำร้อง</a>
+                </td>
+                {% elif form.action == "resend_warrant" %}
+                    {% if form.status_int == 1 %}
+                    <td>
+                        <a href="{% url 'dashboard:view_reqform_warrants' form.req_no_plaintiff %}">ดูหมายจับ</a>
+                    </td>
+                    {% else %}
+                    <td>
+                        <a href="{% url 'dashboard:delete_sent_reqform' form.req_no_plaintiff %}">ยกเลิกการส่งคำร้อง</a>
+                    </td>
+                    {% endif %}
+                {% endif %}
+
+                <td>{{ form.status }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td>ไม่มีคำร้อง</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
