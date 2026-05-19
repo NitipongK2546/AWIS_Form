@@ -19,6 +19,10 @@ urlpatterns = [
 
     path("dashboard/report/<str:req_no_plaintiff>/warrant/<str:woa_refno>/", views.report_update_warrant_arrest_yet, name="report_warrant"),
 
+    ############################################################################
+
+    path("dashboard/download/<str:req_no_plaintiff>/", views.download_reqform, name="download_reqform"),
+
     path("dashboard/download/<str:req_no_plaintiff>/warrant/<str:woa_refno>/", views.download_warrant, name="download_warrant"),
 
     ############################################################################
