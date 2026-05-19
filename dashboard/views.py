@@ -66,6 +66,37 @@ from .forms_filter import DashboardFilterForm
 
 @login_required
 def dashboard(request : HttpRequest):
+    def _format_filter(incoming_dict : dict):
+        filter = {}
+
+        if incoming_dict.get("req_no_plaintiff"):
+            filter.update({
+                "form__req_no_plaintiff": incoming_dict.get("req_no_plaintiff"),
+            })
+
+        start_date = incoming_dict.get("start_date")
+        end_date = incoming_dict.get("end_date")
+        start_obj = None
+        end_obj = None
+
+        if start_date:
+            start_obj = timezone.datetime.strftime(
+                start_date,
+                "%Y-%m-%d %H:%M:%S"
+            )
+        if end_date:
+            end_obj = timezone.datetime.strftime(
+                end_date,
+                "%Y-%m-%d %H:%M:%S"
+            )
+
+        if start_obj and end_obj:
+            filter.update({
+                "form__req_date__range": (start_obj, end_obj),
+            })
+            
+        return filter
+
     drafts = FormDraftContainer.objects.all()
     draft_count = drafts.count()
     approved = FormAwaitingApproval.objects.filter(
@@ -78,7 +109,17 @@ def dashboard(request : HttpRequest):
     dashboard_list = []
     req_no_plaintiff_list = []
 
-    for reqform in FormAwaitingApproval.objects.all():
+    filter_form = DashboardFilterForm(request.GET)
+    if filter_form.is_valid():
+        data = filter_form.cleaned_data
+        filter_data = _format_filter(data)
+    else:
+        filter_data = {}
+
+    form_unsent = FormAwaitingApproval.objects.filter(**filter_data)
+    form_already_sent = VisualReqformData.objects.filter(**filter_data)
+
+    for reqform in form_unsent:
         append_replace_id(
             target_list=dashboard_list,
             id_list=req_no_plaintiff_list,
@@ -95,7 +136,7 @@ def dashboard(request : HttpRequest):
             id=reqform.form.req_no_plaintiff,
         )
 
-    for reqform in VisualReqformData.objects.all():
+    for reqform in form_already_sent:
         append_replace_id(
             target_list=dashboard_list,
             id_list=req_no_plaintiff_list,
@@ -116,8 +157,6 @@ def dashboard(request : HttpRequest):
     # dashboard_list.sort(
     #     key=lambda x: x["req_date"]
     # )
-
-    filter_form = DashboardFilterForm()
     
     context = {
         "reqform_infos": dashboard_list,
