@@ -52,7 +52,7 @@ def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dic
         # If ID is in ID_list
         target_obj_index = id_list.index(id)
         target_list.pop(target_obj_index)
-        # target_list.insert(target_obj_index, incoming_dict)
+        id_list.pop(target_obj_index)
         target_list.append(incoming_dict)
 
 
@@ -85,6 +85,7 @@ def dashboard(request : HttpRequest):
             incoming_dict = {
                 "reqno": reqform.form.getReqno(),
                 "req_no_plaintiff": reqform.form.req_no_plaintiff,
+                "req_name": reqform.form.req_name,
                 "accused": reqform.form.accused,
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_approve_status_display(),
@@ -101,6 +102,7 @@ def dashboard(request : HttpRequest):
             incoming_dict = {
                 "reqno": reqform.form.getReqno(),
                 "req_no_plaintiff": reqform.form.req_no_plaintiff,
+                "req_name": reqform.form.req_name,
                 "accused": reqform.form.accused,
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_accept_display(),

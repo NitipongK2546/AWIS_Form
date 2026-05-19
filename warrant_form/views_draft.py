@@ -210,7 +210,7 @@ def woa_refno_generate():
 
     num = all_same_day_requests.count()
 
-    return f"TCCT{timezone.now().year + 543}{f"{num + 1}".zfill(4)}"
+    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-W"
 
 @perm_req_log(*ReqformPerm.CREATE_REQFORM)
 def create_reqform_from_draft(request : HttpRequest, container_id : int):
@@ -272,6 +272,8 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             for warrant in warrrant_wait_list:
                 if warrant.pk:
                     warrant.delete()
+
+            print(str(e))
             
             return render(request, "errors/400.html", {
                 "reason": "ข้อมูลที่ใส่ลงไปในร่างไม่เพียงพอ"
