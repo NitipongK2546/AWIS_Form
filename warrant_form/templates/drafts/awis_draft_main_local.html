@@ -32,12 +32,27 @@ div.main-draft-page {
     <h3>ข้อมูลเจ้าของคำร้อง</h3>
     <form action="" method="post">
       {% csrf_token %}
+      {% if not_owner_error %}
+      <p>ไม่มีสิทธิเปลี่ยนเจ้าของคำร้องและผู้เขียน</p>
+      {% endif %}
       <p>
-        <strong>เจ้าของคำร้อง:</strong> {{ draft_container.form_owner }} | {{ ownership_form.form_owner }}
-        <button type="submit" class="primary-button" style="margin-left:10px;">เปลี่ยนเจ้าของ</button>
+        <strong>เจ้าของคำร้อง:</strong> 
+        {{ draft_container.form_owner }} | 
+        {% if is_owner %}
+          {{ ownership_form.form_owner }}
+        {% endif %}
       </p>
+      <p>
+        <strong>ผู้เขียน:</strong> 
+        {{ draft_container.form_creator }} | 
+        {% if is_owner %}
+          {{ ownership_form.form_creator }}
+        {% endif %}
+      </p>
+      {% if is_owner %}
+      <button type="submit" class="primary-button" style="margin-left:10px;">เปลี่ยน</button>
+      {% endif %}
     </form>
-    <p><strong>ผู้เขียน:</strong> {{ draft_container.form_creator }}</p>
   </section>
 
   <!-- Reqform card -->

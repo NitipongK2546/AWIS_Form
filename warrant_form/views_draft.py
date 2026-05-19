@@ -53,24 +53,37 @@ def create_draft_main_local_page(request : HttpRequest):
 def view_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
-    if draft_container:
-        if request.method == "POST":
+    if not draft_container:
+        raise Http404()
+    
+    is_owner = False
+    not_owner_error = False
+    if request.user == draft_container.form_owner:
+        is_owner = True
+    
+    if request.method == "POST":
+        if not is_owner:
+            not_owner_error = True
+
+        else:
             ownership_form = OwnershipForm(request.POST)
             if ownership_form.is_valid():
                 cleaned_data = ownership_form.cleaned_data
                 draft_container.form_owner = cleaned_data.get("form_owner")
+                draft_container.form_creator = cleaned_data.get("form_creator")
                 draft_container.save()
 
                 return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
-
-        ownership_form = OwnershipForm()
-        return render(request, "drafts/awis_draft_main_local.html", {
-            "draft_container": draft_container,
-            "ownership_form": ownership_form,
-        })
+    ownership_form = OwnershipForm()
+    return render(request, "drafts/awis_draft_main_local.html", {
+        "draft_container": draft_container,
+        "ownership_form": ownership_form,
+        "is_owner": is_owner,
+        "not_owner_error": not_owner_error,
+    })
     
-    raise Http404()
+    
 
 @perm_req_log(*ReqformPerm.DELETE_DRAFT)
 def delete_draft_main_local_page(request : HttpRequest, container_id : int):

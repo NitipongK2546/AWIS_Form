@@ -187,6 +187,7 @@ def reqform_approve_page(request : HttpRequest, req_no_plaintiff : str):
 
             return redirect("dashboard:dashboard")
         except Exception as e:
+            print(str(e))
             return redirect("dashboard:dashboard")
 
     def handle_form_rejected():
@@ -415,6 +416,7 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
 
             form_await_approval.save()
             sent_form.delete()
+            warrant_results.delete()
                 
             return redirect("dashboard:success_page")
 

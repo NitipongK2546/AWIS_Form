@@ -20,10 +20,15 @@
 
 {% block body %}
 <div>
+    <p>
+        <a href="{% url 'dashboard:dashboard' %}" class="button" style="margin-left: 0;">กลับหน้าหลัก</a>
+    </p>
     <section class="card">
         <h2>คำร้อง</h2>
         <p>สถานะ: {{ status }}</p>
-        <p>{{ reqform }}</p>
+        <p>รหัสอ้างอิง: {{ reqform.req_no_plaintiff }}</p>
+        <p>ผู้ร้อง: {{ reqform.req_name }}</p>
+        <p>ผู้ถูกกล่าวหา: {{ reqform.accused }}</p>
         <p>
             <a href="#">ดูคำร้อง</a>
             <a href="#">ดาวน์โหลดไฟล์</a>
@@ -31,34 +36,40 @@
     </section>
     <section class="card">
         <h2>หมายจับ</h2>
-        {% for warrant_obj in warrants %}
         <div>
+        {% for warrant_obj in warrants %}
             {% if action == "report" %}
-            <p>
-                {{ warrant_obj.warrant }}
-                <span>
-                    สถานะ: 
-                    {{ warrant_obj.get_court_injunction_display }}
-                </span>
-                <a href="#">ดูหมายจับ</a>
-                <a href="#">ดาวน์โหลดไฟล์</a>
-                {% if warrant_obj.court_injunction == 1 %}
-                <a href="#">รายงานผลหมาย</a>
-                {% endif %}
-            </p>
+            <div>
+                {% include 'module/warrant_info.html' with warrant=warrant_obj.warrant num=forloop.counter %}
+                <p>
+                    <span>
+                        สถานะ:
+                        {{ warrant_obj.get_court_injunction_display }}
+                    </span>
+                </p>
+                <p>
+                    <a href="#">ดูหมายจับ</a>
+                    <a href="#">ดาวน์โหลดไฟล์</a>
+                </p>
+                <p>
+                    {% if warrant_obj.court_injunction == 1 %}
+                    <a href="#">รายงานผลหมาย</a>
+                    {% endif %}
+                </p>
+            </div>
             {% elif action == "approve" %}
-            <p>
-                {{ warrant_obj }}
-                <a href="#">ดูหมายจับ</a>
-                <a href="#">ดาวน์โหลดไฟล์</a>
-            </p>
+            <div>
+                {% include 'module/warrant_info.html' with warrant=warrant_obj num=forloop.counter %}
+                <p><a href="#">ดูหมายจับ</a></p>
+                <p><a href="#">ดาวน์โหลดไฟล์</a></p>
+            </div>
             {% endif %}
-        </div>
         {% empty %}
         <div>
             None
         </div>
         {% endfor %}
+        </div>
     </section>
     <section class="card">
         {% if action == "report" %}
@@ -82,7 +93,7 @@
             </p>
             {% else %}
             <p>
-                <a href="{% url 'dashboard:confirm_approve' reqform.req_no_plaintiff %}">ตรวจสอบคำร้อง</a>
+                <a href="{% url 'dashboard:confirm_approve' reqform.req_no_plaintiff %}">พิจารณาคำร้อง</a>
             </p>
             {% endif %}
         {% endif %}
