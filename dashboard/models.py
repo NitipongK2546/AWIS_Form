@@ -32,7 +32,7 @@ class FormAwaitingApproval(models.Model):
     form_creator = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="created_visual_form")
     form_owner = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="owned_visual_form")
 
-    approve_status = models.IntegerField(choices=ApprovalStatus)
+    approve_status = models.IntegerField(choices=ApprovalStatus, default=ApprovalStatus.PENDING)
 
     def __str__(self):
         # return json.dumps({
@@ -75,7 +75,7 @@ class VisualReqformData(models.Model):
     # THIS NAME IS CORRECT, DON'T CHANGE THIS, FUTURE READER!!!
     accept_date = models.DateTimeField(blank=True, null=True)
 
-    accept = models.IntegerField(choices=AcceptStatus, blank=True, null=True)
+    accept = models.IntegerField(choices=AcceptStatus, blank=True, null=True, default=AcceptStatus.WAITING)
 
     def __str__(self):
         # return json.dumps({

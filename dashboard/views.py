@@ -52,7 +52,7 @@ def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dic
         # If ID is in ID_list
         target_obj_index = id_list.index(id)
         target_list.pop(target_obj_index)
-        # target_list.insert(target_obj_index, incoming_dict)
+        id_list.pop(target_obj_index)
         target_list.append(incoming_dict)
 
 
@@ -66,6 +66,37 @@ from .forms_filter import DashboardFilterForm
 
 @login_required
 def dashboard(request : HttpRequest):
+    def _format_filter(incoming_dict : dict):
+        filter = {}
+
+        if incoming_dict.get("req_no_plaintiff"):
+            filter.update({
+                "form__req_no_plaintiff": incoming_dict.get("req_no_plaintiff"),
+            })
+
+        start_date = incoming_dict.get("start_date")
+        end_date = incoming_dict.get("end_date")
+        start_obj = None
+        end_obj = None
+
+        if start_date:
+            start_obj = timezone.datetime.strftime(
+                start_date,
+                "%Y-%m-%d %H:%M:%S"
+            )
+        if end_date:
+            end_obj = timezone.datetime.strftime(
+                end_date,
+                "%Y-%m-%d %H:%M:%S"
+            )
+
+        if start_obj and end_obj:
+            filter.update({
+                "form__req_date__range": (start_obj, end_obj),
+            })
+            
+        return filter
+
     drafts = FormDraftContainer.objects.all()
     draft_count = drafts.count()
     approved = FormAwaitingApproval.objects.filter(
@@ -78,13 +109,24 @@ def dashboard(request : HttpRequest):
     dashboard_list = []
     req_no_plaintiff_list = []
 
-    for reqform in FormAwaitingApproval.objects.all():
+    filter_form = DashboardFilterForm(request.GET)
+    if filter_form.is_valid():
+        data = filter_form.cleaned_data
+        filter_data = _format_filter(data)
+    else:
+        filter_data = {}
+
+    form_unsent = FormAwaitingApproval.objects.filter(**filter_data)
+    form_already_sent = VisualReqformData.objects.filter(**filter_data)
+
+    for reqform in form_unsent:
         append_replace_id(
             target_list=dashboard_list,
             id_list=req_no_plaintiff_list,
             incoming_dict = {
                 "reqno": reqform.form.getReqno(),
                 "req_no_plaintiff": reqform.form.req_no_plaintiff,
+                "req_name": reqform.form.req_name,
                 "accused": reqform.form.accused,
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_approve_status_display(),
@@ -94,13 +136,14 @@ def dashboard(request : HttpRequest):
             id=reqform.form.req_no_plaintiff,
         )
 
-    for reqform in VisualReqformData.objects.all():
+    for reqform in form_already_sent:
         append_replace_id(
             target_list=dashboard_list,
             id_list=req_no_plaintiff_list,
             incoming_dict = {
                 "reqno": reqform.form.getReqno(),
                 "req_no_plaintiff": reqform.form.req_no_plaintiff,
+                "req_name": reqform.form.req_name,
                 "accused": reqform.form.accused,
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_accept_display(),
@@ -114,8 +157,6 @@ def dashboard(request : HttpRequest):
     # dashboard_list.sort(
     #     key=lambda x: x["req_date"]
     # )
-
-    filter_form = DashboardFilterForm()
     
     context = {
         "reqform_infos": dashboard_list,
@@ -185,6 +226,7 @@ def reqform_approve_page(request : HttpRequest, req_no_plaintiff : str):
 
             return redirect("dashboard:dashboard")
         except Exception as e:
+            print(str(e))
             return redirect("dashboard:dashboard")
 
     def handle_form_rejected():
@@ -413,6 +455,7 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
 
             form_await_approval.save()
             sent_form.delete()
+            warrant_results.delete()
                 
             return redirect("dashboard:success_page")
 

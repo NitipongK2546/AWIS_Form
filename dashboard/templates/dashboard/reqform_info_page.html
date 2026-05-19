@@ -1,0 +1,102 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Reqform Info{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
+<style>
+    .card {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div>
+    <p>
+        <a href="{% url 'dashboard:dashboard' %}" class="button" style="margin-left: 0;">กลับหน้าหลัก</a>
+    </p>
+    <section class="card">
+        <h2>คำร้อง</h2>
+        <p>สถานะ: {{ status }}</p>
+        <p>รหัสอ้างอิง: {{ reqform.req_no_plaintiff }}</p>
+        <p>ผู้ร้อง: {{ reqform.req_name }}</p>
+        <p>ผู้ถูกกล่าวหา: {{ reqform.accused }}</p>
+        <p>
+            <a href="#">ดูคำร้อง</a>
+            <a href="#">ดาวน์โหลดไฟล์</a>
+        </p>
+    </section>
+    <section class="card">
+        <h2>หมายจับ</h2>
+        <div>
+        {% for warrant_obj in warrants %}
+            {% if action == "report" %}
+            <div>
+                {% include 'module/warrant_info.html' with warrant=warrant_obj.warrant num=forloop.counter %}
+                <p>
+                    <span>
+                        สถานะ:
+                        {{ warrant_obj.get_court_injunction_display }}
+                    </span>
+                </p>
+                <p>
+                    <a href="#">ดูหมายจับ</a>
+                    <a href="#">ดาวน์โหลดไฟล์</a>
+                </p>
+                <p>
+                    {% if warrant_obj.court_injunction == 1 %}
+                    <a href="#">รายงานผลหมาย</a>
+                    {% endif %}
+                </p>
+            </div>
+            {% elif action == "approve" %}
+            <div>
+                {% include 'module/warrant_info.html' with warrant=warrant_obj num=forloop.counter %}
+                <p><a href="#">ดูหมายจับ</a></p>
+                <p><a href="#">ดาวน์โหลดไฟล์</a></p>
+            </div>
+            {% endif %}
+        {% empty %}
+        <div>
+            None
+        </div>
+        {% endfor %}
+        </div>
+    </section>
+    <section class="card">
+        {% if action == "report" %}
+            {% if status_int == 99 %}
+            <p>
+                <a href="{% url 'dashboard:delete_sent_reqform' reqform.req_no_plaintiff %}">ยกเลิกการส่งคำร้อง</a>
+            </p>
+            {% elif status_int == 0 %}
+            <p>ไม่รับ</p>
+            {% elif status_int == 1 %}
+            <p>
+                รับ
+            </p>
+            {% else %}
+            <p>ERROR</p>
+            {% endif %}
+        {% elif action == "approve" %}
+            {% if status_int == 0 %}
+            <p>
+                <a href="{% url 'forms:edit_form' reqform.req_no_plaintiff %}">แก้ไขคำร้อง</a>
+            </p>
+            {% else %}
+            <p>
+                <a href="{% url 'dashboard:confirm_approve' reqform.req_no_plaintiff %}">พิจารณาคำร้อง</a>
+            </p>
+            {% endif %}
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
