@@ -18,85 +18,142 @@
     <div class="breadcrumb">
       <a href="{% url 'dashboard:dashboard' %}">หน้าหลัก</a>
       <span class="bc-sep">/</span>
+      <a>รายการหมาย</a>
+      <span class="bc-sep">/</span>
       <span class="bc-current">รายงานการจับกุม</span>
     </div>
 
-    <!-- Court Info Card -->
-    <div class="card">
-      <div class="card-header">
-        <h2>ข้อมูลหมายจับ</h2>
-      </div>
-      <div class="card-body">
-        <div class="info-row">
-          <span class="info-label">ชื่อศาล</span>
-          <span class="info-value">{{ court_code }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">ประเภทหมายจับ</span>
-          <span class="info-value">{{ woa_type }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">เลขหมายจับ</span>
-          <span class="info-value">{{ woa_no }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Req num case type id</span>
-          <span class="info-value">{{ req_num_case_type_id }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Arrest report uid</span>
-          <span class="info-value">{{ arrest_report_uid }}</span>
-        </div>
-      </div>
-    </div>
+    <div class="layout">
 
-    <!-- Report Form Card -->
-    <div class="card">
-      <div class="card-header">
-        <h2>รายงานการจับกุม</h2>
-      </div>
-      <div class="card-body">
-        <form method="post">
-          {% csrf_token %}
+      <!-- ===== LEFT: main content ===== -->
+      <div class="col-main">
 
-          <div class="form-group">
-            <label class="form-label">ผลการจับกุม</label>
-            {{ report_form.arrest_result }}
+        <!-- Court Info Card -->
+        <div class="card">
+          <div class="card-header">
+            <h2>ข้อมูลหมายจับ</h2>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">วันที่จับกุม</label>
-            <div class="date-row">
-              {{ report_form.arrest_date_day }}
-              <span class="date-sep">/</span>
-              {{ report_form.arrest_date_month }}
-              <span class="date-sep">/</span>
-              {{ report_form.arrest_date_year }}
+          <div class="card-body">
+            <div class="info-row">
+              <span class="info-label">ชื่อศาล</span>
+              <span class="info-value">{{ court_code }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">ประเภทหมายจับ</span>
+              <span class="info-value">{{ woa_type }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">เลขหมายจับ</span>
+              <span class="info-value">{{ woa_no }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Req num case type id</span>
+              <span class="info-value">{{ req_num_case_type_id }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Arrest report uid</span>
+              <span class="info-value">{{ arrest_report_uid }}</span>
             </div>
           </div>
+        </div>
 
-          <div class="form-group">
-            <label class="form-label">รายละเอียดเพิ่มเติม</label>
-            {{ report_form.arrest_result_other_text }}
+        <!-- Report Form Card -->
+        <div class="card">
+          <div class="card-header">
+            <h2>รายงานการจับกุม</h2>
           </div>
+          <div class="card-body">
+            <form method="post">
+              {% csrf_token %}
 
-          <div class="form-group">
-            <label class="form-label">ชื่อเจ้าหน้าที่จับกุม</label>
-            {{ report_form.arrest_officer_name }}
+              <div class="form-group">
+                <label class="form-label">ผลการจับกุม</label>
+                {{ report_form.arrest_result }}
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">วันที่จับกุม</label>
+                <div class="date-row">
+                  {{ report_form.arrest_date_day }}
+                  <span class="date-sep">/</span>
+                  {{ report_form.arrest_date_month }}
+                  <span class="date-sep">/</span>
+                  {{ report_form.arrest_date_year }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">รายละเอียดเพิ่มเติม</label>
+                {{ report_form.arrest_result_other_text }}
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">ชื่อเจ้าหน้าที่จับกุม</label>
+                {{ report_form.arrest_officer_name }}
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-submit"
+                        onclick="return confirm('ยืนยันการส่งข้อมูลไปยังศาล?');">
+                  ส่งข้อมูลไปยังศาล
+                </button>
+              </div>
+
+            </form>
           </div>
+        </div>
 
-          <div class="form-actions">
-            <button type="submit" class="btn-submit"
-                    onclick="return confirm('ยืนยันการส่งข้อมูลไปยังศาล?');">
-              ส่งข้อมูลไปยังศาล
-            </button>
+      </div><!-- /col-main -->
+
+      <!-- ===== RIGHT: sidebar ===== -->
+      <div class="col-side">
+        <div class="card">
+          <div class="card-header">
+            <h2>ความคืบหน้า</h2>
           </div>
+          <div class="card-body">
+            <ul class="timeline">
 
-        </form>
-      </div>
-    </div>
+              <li class="tl-item done">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <div class="tl-title">ยื่นคำร้องขอหมาย</div>
+                  <div class="tl-date">—</div>
+                </div>
+              </li>
 
-  </div>
+              <li class="tl-item done">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <div class="tl-title">อนุมัติคำร้อง</div>
+                  <div class="tl-date">—</div>
+                </div>
+              </li>
+
+              <li class="tl-item done">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <div class="tl-title">ออกหมายจับโดยศาล</div>
+                  <div class="tl-date">—</div>
+                </div>
+              </li>
+
+              <li class="tl-item pending">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <div class="tl-title">รายงานผลการจับกุม</div>
+                  <div class="tl-date">รอดำเนินการ</div>
+                </div>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+      </div><!-- /col-side -->
+
+    </div><!-- /layout -->
+
+  </div><!-- /page-wrapper -->
 
 </body>
 </html>

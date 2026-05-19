@@ -9,7 +9,7 @@ html {
 
 /* ---------- Page ---------- */
 .page-wrapper {
-    max-width: 720px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 1.25rem 1.5rem 2.5rem;
 }
@@ -41,6 +41,14 @@ html {
     color: #333;
 }
 
+/* ---------- Two-column layout ---------- */
+.layout {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 16px;
+    align-items: start;
+}
+
 /* ---------- Card ---------- */
 .card {
     background: #fff;
@@ -48,6 +56,10 @@ html {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 16px;
     overflow: hidden;
+}
+
+.card:last-child {
+    margin-bottom: 0;
 }
 
 .card-header {
@@ -80,7 +92,7 @@ html {
 }
 
 .info-label {
-    width: 170px;
+    width: 160px;
     flex-shrink: 0;
     color: #666;
     font-size: 12px;
@@ -104,7 +116,6 @@ html {
     margin-bottom: 5px;
 }
 
-/* Style all Django-rendered widgets */
 form input[type="text"],
 form input[type="number"],
 form select,
@@ -177,4 +188,85 @@ form textarea {
 
 .btn-submit:hover {
     background: #7F1D1D;
+}
+
+/* ---------- Timeline ---------- */
+.timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tl-item {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    padding-bottom: 1.1rem;
+}
+
+/* vertical line between dots */
+.tl-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 16px;
+    bottom: 0;
+    width: 2px;
+    background: #E5E7EB;
+}
+
+.tl-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    border: 2px solid #E5E7EB;
+    background: #fff;
+    position: relative;
+    z-index: 1;
+}
+
+.tl-item.done .tl-dot {
+    background: #9B1C1C;
+    border-color: #9B1C1C;
+}
+
+.tl-item.pending .tl-dot {
+    background: #fff;
+    border-color: #9B1C1C;
+    /* hollow ring to indicate current step */
+    box-shadow: 0 0 0 3px rgba(155, 28, 28, 0.12);
+}
+
+.tl-item:last-child {
+    padding-bottom: 0;
+}
+
+.tl-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #202124;
+    line-height: 1.4;
+}
+
+.tl-item.pending .tl-title {
+    color: #9B1C1C;
+}
+
+.tl-date {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 700px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .col-side {
+        order: -1;
+    }
 }
