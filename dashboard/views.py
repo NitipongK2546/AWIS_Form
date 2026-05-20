@@ -116,8 +116,40 @@ def dashboard(request : HttpRequest):
     else:
         filter_data = {}
 
-    form_unsent = FormAwaitingApproval.objects.filter(**filter_data)
-    form_already_sent = VisualReqformData.objects.filter(**filter_data)
+    form_unsent = []
+    form_already_sent = []
+
+    wanted_status = filter_data.get("status")
+
+    if wanted_status in [10, 11, 12]:
+        compare_val = {
+            10: 1,
+            11: 0,
+            12: 2,
+        }
+
+        filter_data.update({
+            "approve_status": compare_val.get(wanted_status)
+        })
+        form_unsent = FormAwaitingApproval.objects.filter(**filter_data)
+    
+    elif wanted_status in [20, 21, 22, 23, 24, 25]:
+        compare_val = {
+            20: 99,
+            21: 0,
+            22: 1,
+            23: 1,
+            24: 1,
+            25: 1,
+        }
+
+        filter_data.update({
+            "accept": compare_val.get(wanted_status)
+        })
+        form_already_sent = VisualReqformData.objects.filter(**filter_data)
+    else:
+        form_unsent = FormAwaitingApproval.objects.filter(**filter_data)
+        form_already_sent = VisualReqformData.objects.filter(**filter_data)
 
     for reqform in form_unsent:
         append_replace_id(
@@ -380,6 +412,18 @@ def statistic_page_view(request : HttpRequest):
             
         return filter
 
+    drafts = FormDraftContainer.objects.all()
+    draft_count = drafts.count()
+    form_unsent_count = FormAwaitingApproval.objects.filter(
+        approve_status=1
+    ).count()
+    form_sent_count = VisualReqformData.objects.filter(
+        accept=99
+    ).count()
+    form_accepted_count = VisualReqformData.objects.filter(
+        accept=1
+    ).count()
+
     dashboard_list = []
     req_no_plaintiff_list = []
 
@@ -435,6 +479,11 @@ def statistic_page_view(request : HttpRequest):
         "reqform_infos": dashboard_list,
         "user": request.user,
         "filter_form": filter_form,
+        "draft_count": draft_count,
+        "unsent_form": form_unsent_count,
+        "sent_form": form_sent_count,
+        "accepted_form": form_accepted_count,
+        "total_count": form_sent_count + form_unsent_count + form_accepted_count,
     }
 
     return render(request, "history/statistic_page_view.html", context)
@@ -509,6 +558,36 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
     })
     
     return render(request, "dashboard/report_warrant.html", context)
+
+@perm_req_log(*DashboardPerm.DELETE_REQFORM_SUBMITTED)
+def cancel_reqform(request : HttpRequest, req_no_plaintiff : str):
+
+    sent_form = VisualReqformData.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
+
+    if sent_form:
+        return render(request, "errors/400.html", {
+            "reason": "คำร้องดังกล่าวถูกส่งไปแล้ว กรุณายกเลิกการส่งคำร้องก่อน"
+        }, status=403)
+
+    if request.method == "POST":
+        try:
+            unsent_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+            
+            unsent_form.approve_status = FormAwaitingApproval.ApprovalStatus.CANCELED
+
+            unsent_form.save()
+            unsent_form.form.save()
+
+            return redirect("dashboard:success_page")
+
+        except:
+            return JsonResponse({
+                "status": "Error",
+            })
+        
+    return render(request, "dashboard/confirmation_page.html", {
+        "action": "Unsend Reqform"
+    })
 
 @perm_req_log(*DashboardPerm.DELETE_REQFORM_SUBMITTED)
 def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
