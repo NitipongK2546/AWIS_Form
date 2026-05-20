@@ -29,6 +29,8 @@ form_data_interact_urls = [
     path("reqform/edit/<str:req_no_plaintiff>/", views_reqform.edit_form, name="edit_form"),
     path("reqform/delete/<str:req_no_plaintiff>/", views_reqform.delete_form, name="delete_form"),
 
+    path("reqform/view-single/<str:req_no_plaintiff>/", views_reqform.view_reqform_only, name="view_single_reqform"),
+    path("reqform/view-single/<str:req_no_plaintiff>/warrant/<str:woa_refno>/", views_reqform.view_warrant_only, name="view_single_warrant"),
 ]
 
 old_form_style_urls = [

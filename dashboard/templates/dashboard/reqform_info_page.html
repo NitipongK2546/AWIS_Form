@@ -49,7 +49,7 @@
         <p>ผู้ร้อง: {{ reqform.req_name }}</p>
         <p>ผู้ถูกกล่าวหา: {{ reqform.accused }}</p>
         <p>
-            <a href="#">ดูคำร้อง</a>
+            <a href="{% url 'forms:view_single_reqform' reqform.req_no_plaintiff %}">ดูคำร้อง</a>
             <a class="file-download" href="{% url 'dashboard:download_reqform' reqform.req_no_plaintiff %}">ดาวน์โหลดไฟล์</a>
         </p>
     </section>
@@ -67,7 +67,7 @@
                     </span>
                 </p>
                 <p>
-                    <a href="#">ดูหมายจับ</a>
+                    <a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">ดูหมายจับ</a>
                     <a class="file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">ดาวน์โหลดไฟล์</a>
                 </p>
                 <p>
@@ -80,7 +80,7 @@
             {% elif action == "approve" %}
             <div>
                 {% include 'module/warrant_info.html' with warrant=warrant_obj num=forloop.counter %}
-                <p><a href="#">ดูหมายจับ</a></p>
+                <p><a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.woa_refno %}">ดูหมายจับ</a></p>
                 <p><a class="file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.woa_refno %}">ดาวน์โหลดไฟล์</a></p>
             </div>
             {% endif %}
@@ -138,11 +138,10 @@
             wait_popup.style.display = "block";
             overlay.style.display = "block";
 
-            // Simulate waiting
-            setTimeout(() => {
+            selected_timer = setTimeout(() => {
                 wait_popup.style.display = "none";
                 overlay.style.display = "none";
-            }, 7500);
+            }, 7500); 
         })
     });
 </script>
