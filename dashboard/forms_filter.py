@@ -16,43 +16,37 @@ status_choices = [
 ]
 
 def get_reqno_choices():
-    choices = [
-        ("", "-----")
-    ]
+    choices = set()
     for reqform in ReqformDataModel.objects.all():
         if reqform.getReqno() == "-":
             continue
-        choices.append(
+        choices.add(
             (reqform.getReqno(), reqform.getReqno())
         )
 
-    return choices
+    return [("", "-----")] + list(choices)
 
 def get_req_no_plaintiff_choices():
-    choices = [
-        ("", "-----")
-    ]
+    choices = set()
     for reqform in ReqformDataModel.objects.all():
         if not reqform.req_no_plaintiff:
             continue
-        choices.append(
+        choices.add(
             (reqform.req_no_plaintiff, reqform.req_no_plaintiff)
         )
 
-    return choices
+    return [("", "-----")] + list(choices)
 
 def get_accused_choices():
-    choices = [
-        ("", "-----")
-    ]
+    choices = set()
     for reqform in ReqformDataModel.objects.all():
         if not reqform.accused:
             continue
-        choices.append(
+        choices.add(
             (reqform.accused, reqform.accused)
         )
 
-    return choices
+    return [("", "-----")] + list(choices)
 
 class DashboardFilterForm(forms.Form):
     req_no_plaintiff = forms.ChoiceField(

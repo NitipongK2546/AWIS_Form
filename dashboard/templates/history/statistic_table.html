@@ -5,10 +5,11 @@
     <table class="styled-table">
         <thead>
             <tr>
-                <th colspan="9">สถานะคำร้อง</th>
+                <th colspan="12">สถานะคำร้อง</th>
             </tr>
             <tr>
                 <th>#</th>
+                <th>ปีคำร้อง</th>
                 <th>หมายเลขคำร้อง</th>
                 <th>เลขอ้างอิง</th>
                 <th>ผู้ร้อง</th>
@@ -23,6 +24,7 @@
             {% for form in reqform_infos %}
             <tr>
                 <td>{{ forloop.counter }}</td>
+                <td>{{ form.req_year }}</td>
                 <td>{{ form.reqno }}</td>
                 <td>{{ form.req_no_plaintiff }}</td>
                 <td>{{ form.req_name }}</td>

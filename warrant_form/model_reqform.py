@@ -48,10 +48,17 @@ THAI_MONTHS = {
     12:"มกราคม",
 }
 
+from .model_draftform import ReqformDraftDataModel
+
 class ReqformDataModel(models.Model):
     class ReqCaseTypeIDChoices(models.IntegerChoices):
         GENERAL = (1, "ทั่วไป") # จ.
         DRUGS = (2, "ยาเสพติด") # ยจ.
+
+    # New field added specially because people didn't tell me how it's supposed to be made.
+    # Oh well.
+    draft_id = models.ForeignKey(ReqformDraftDataModel, on_delete=models.PROTECT)
+    last_update_date = models.DateTimeField(blank=True, null=True, auto_now=True)
     
     req_form_number = models.IntegerField(blank=True, null=True)
     
