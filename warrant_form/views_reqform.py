@@ -37,6 +37,7 @@ def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : User
     # print(is_not_user)
 
     return is_not_user and not_has_approve_perm
+    
 
 #######################################################
 #

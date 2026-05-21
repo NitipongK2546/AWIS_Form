@@ -33,7 +33,11 @@
                     {% include 'module/status_color_module.html' with color=form.status_choice status=form.status %}
                 </td>
                 <td>
+                    {% if form.action == "draft" %}
+                    <a href="{% url 'forms:view-draft-container' form.container_id %}">Here</a>
+                    {% else %}
                     <a href="{% url 'dashboard:reqform_info' form.req_no_plaintiff %}">Here</a>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}

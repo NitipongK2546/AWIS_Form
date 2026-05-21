@@ -24,18 +24,18 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 
 <div class="dashboard-tools" style="display: flex; justify-content: center;">
     <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'forms:draft-page' %}">
+        <a style="padding:0px;" href="?status=1">
             <h3>ร่างคำร้องปัจจุบัน: {{ draft_count }} ร่าง</h3>
         </a>
     </div>
     <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'dashboard:approve_table_page' %}">
+        <a style="padding:0px;" href="?status=10">
             <h3>ร่างคำร้องที่รอการอนุมัติ: {{ approve_form }} ร่าง</h3>
         </a>
     </div>
 
     <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'dashboard:accept_table_page' %}">
+        <a style="padding:0px;" href="?status=20">
             <h3>ร่างคำร้องที่ส่งถึงศาลสำเร็จ: {{ accept_form }} ร่าง</h3>
         </a>
     </div>

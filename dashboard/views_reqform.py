@@ -35,6 +35,16 @@ color_val_sent = {
     1: 23,
 }
 
+def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : UserDataModel):
+
+    is_not_user = not (user_data in (form.form_creator, form.form_owner))
+
+    not_has_approve_perm = not (user_data.has_perm(perm_str(PermissionType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL)))
+
+    # print(is_not_user)
+
+    return is_not_user and not_has_approve_perm
+
 @perm_req_log(*DashboardPerm.VIEW_REQFORM_DETAILS)
 def reqform_info(request : HttpRequest, req_no_plaintiff : str):
 
@@ -55,6 +65,11 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
     form_not_sent = FormAwaitingApproval.objects.filter(
         form__req_no_plaintiff=req_no_plaintiff
     ).first()
+
+    if isNotUserAndNotHaveApprovePerm(form_not_sent, request.user):
+        return render(request, "errors/403.html", {
+            "reason": "ผู้ใช้ไม่มีสิทธิดูคำร้องดังกล่าว"
+        }, status=403)
 
     if form_already_sent:
         status = form_already_sent.get_accept_display()
