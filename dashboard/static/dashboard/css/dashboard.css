@@ -254,3 +254,294 @@ body {
     color: inherit;
     padding: 15px;
 }
+
+/* --------------------------------------------------------------------------- */
+/* ============================================================
+   dashboard.css  –  AWIS Dashboard Page
+   ============================================================ */
+
+body,
+html {
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    background: #f1f3f4;
+    margin: 0;
+    padding: 0;
+    color: #202124;
+}
+
+/* ---------- Page ---------- */
+.page-wrapper {
+    padding: 1.25rem 1.5rem 2.5rem;
+}
+
+/* ---------- Page title ---------- */
+.page-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #202124;
+    margin-bottom: 1.1rem;
+}
+
+/* ---------- Stat cards ---------- */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1.25rem;
+}
+
+.stat-card {
+    background: #213259;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    display: block;
+    transition: opacity .15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    background: #7F1D1D;
+    opacity: .9;
+    text-decoration: none;
+}
+
+.stat-card:active {
+    background: #b12525;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, .7);
+    margin-bottom: 6px;
+}
+
+.stat-number {
+    font-size: 30px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1;
+}
+
+.stat-unit {
+    font-size: 12px;
+    color: rgba(255, 255, 255, .6);
+    margin-top: 4px;
+}
+
+/* ---------- Filter bar ---------- */
+.filter-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    padding: .9rem 1.1rem;
+    margin-bottom: 14px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-label {
+    font-size: 12px;
+    color: #666;
+    white-space: nowrap;
+}
+
+/* Style Django filter widgets */
+.filter-bar select,
+.filter-bar input[type="text"],
+.filter-bar input[type="date"] {
+    padding: 0;
+    border: 1px solid #dadce0;
+    border-radius: 7px;
+    font-size: 13px;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    color: #202124;
+    background: #fff;
+    outline: none;
+    height: 34px;
+    transition: border .15s, box-shadow .15s;
+}
+
+.filter-bar select:focus,
+.filter-bar input:focus {
+    border-color: #9B1C1C;
+    box-shadow: 0 0 0 2px rgba(155, 28, 28, 0.1);
+}
+
+/* flatpickr alt input */
+.filter-bar .flatpickr-input {
+    padding: 6px 10px;
+    border: 1px solid #dadce0;
+    border-radius: 7px;
+    font-size: 13px;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    color: #202124;
+    background: #fff;
+    outline: none;
+    height: 34px;
+    width: 160px;
+}
+
+.filter-btn {
+    height: 34px;
+    padding: 0 18px;
+    background: #9B1C1C;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    transition: background .15s;
+    align-self: flex-end;
+}
+
+.filter-btn:hover {
+    background: #7F1D1D;
+}
+
+/* ---------- Table card ---------- */
+.table-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.table-header {
+    background: #213259;
+    padding: .7rem 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.table-header-title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.table-header-meta {
+    color: rgba(255, 255, 255, .5);
+    font-size: 12px;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead th {
+    background: #f8f9fa;
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+    padding: .6rem .9rem;
+    text-align: center;
+    border-bottom: 1px solid #e8e8e8;
+    white-space: nowrap;
+}
+
+.data-table thead th:nth-child(2),
+.data-table thead th:nth-child(3),
+.data-table thead th:nth-child(4),
+.data-table thead th:nth-child(5) {
+    text-align: left;
+}
+
+.data-table tbody td {
+    font-size: 13px;
+    color: #202124;
+    padding: .65rem .9rem;
+    border-bottom: .5px solid #f0f0f0;
+    vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table tbody tr:hover td {
+    background: #fafafa;
+}
+
+.td-center {
+    text-align: center;
+}
+
+.td-bold {
+    font-weight: 500;
+}
+
+.td-muted {
+    color: #888;
+    font-size: 12px;
+}
+
+.td-empty {
+    text-align: center;
+    padding: 2rem;
+    color: #888;
+    font-size: 13px;
+}
+
+/* ---------- Detail button ---------- */
+.detail-btn {
+    display: inline-block;
+    padding: 3px 10px;
+    border: .5px solid #dadce0;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #444;
+    text-decoration: none;
+    background: #f8f9fa;
+    transition: background .15s;
+}
+
+.detail-btn:hover {
+    background: #e8eaed;
+    text-decoration: none;
+}
+
+/* ---------- Status badge (override status_color_module) ---------- */
+span.colored-status {
+    min-width: 90px;
+    padding: 3px 10px !important;
+    border-radius: 20px !important;
+    display: inline-block !important;
+    font-size: 11px;
+    font-weight: 500;
+    text-align: center;
+    color: #fff;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-btn {
+        width: 100%;
+    }
+}
