@@ -20,9 +20,10 @@ class FormAwaitingApproval(models.Model):
         # ]
 
     class ApprovalStatus(models.IntegerChoices):
-        REJECTED = (0, "ไม่ผ่านการอนุมติ")
+        CANCELED = (-1, "ยกเลิก")
+        REJECTED = (0, "ไม่ผ่านการพิจารณา")
         PENDING = (1, "กำลังรอพิจารณา")
-        APPROVED = (2, "ผ่านการอนุมัติ")
+        APPROVED = (2, "ผ่านการพิจารณา")
     
     form = models.OneToOneField(ReqformDataModel, on_delete=models.CASCADE)
 

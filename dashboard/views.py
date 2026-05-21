@@ -58,6 +58,19 @@ def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dic
 
 ########################################################################
 
+color_val_unsent = {
+    1: 10,
+    0: 11,
+    2: 12,
+    -1: 99,
+}
+
+color_val_sent = {
+    99: 20,
+    0: 22,
+    1: 23,
+}
+
 # I will seperate dashboard + index, just in case.
 def index(request : HttpRequest):
     return redirect("dashboard:dashboard")
@@ -68,6 +81,11 @@ from .forms_filter import DashboardFilterForm
 def dashboard(request : HttpRequest):
     def _format_filter(incoming_dict : dict):
         filter = {}
+
+        if incoming_dict.get("status"):
+            filter.update({
+                "status": incoming_dict.get("status")
+            })
 
         if incoming_dict.get("req_no_plaintiff"):
             filter.update({
@@ -116,47 +134,87 @@ def dashboard(request : HttpRequest):
     else:
         filter_data = {}
 
-    form_unsent = FormAwaitingApproval.objects.filter(**filter_data)
-    form_already_sent = VisualReqformData.objects.filter(**filter_data)
+    form_unsent = []
+    form_already_sent = []
 
+    wanted_status = filter_data.pop("status", None)
+    if isinstance(wanted_status, str):
+        wanted_status = int(wanted_status)
+
+    if wanted_status in [10, 11, 12]:
+        compare_val = {
+            10: 1,
+            11: 0,
+            12: 2,
+        }
+
+        filter_data.update({
+            "approve_status": compare_val.get(wanted_status)
+        })
+        form_unsent = FormAwaitingApproval.objects.filter(**filter_data).exclude(approve_status=-1)
+    
+    elif wanted_status in [20, 21, 22, 23, 24, 25]:
+        compare_val = {
+            20: 99,
+            21: 0,
+            22: 1,
+            23: 1,
+            24: 1,
+            25: 1,
+        }
+
+        filter_data.update({
+            "accept": compare_val.get(wanted_status)
+        })
+        form_already_sent = VisualReqformData.objects.filter(**filter_data)
+    else:
+        form_unsent = FormAwaitingApproval.objects.filter(**filter_data).exclude(approve_status=-1)
+        form_already_sent = VisualReqformData.objects.filter(**filter_data)
+
+              
     for reqform in form_unsent:
         append_replace_id(
             target_list=dashboard_list,
             id_list=req_no_plaintiff_list,
             incoming_dict = {
                 "reqno": reqform.form.getReqno(),
+                "last_update": reqform.form.last_update_date,
                 "req_no_plaintiff": reqform.form.req_no_plaintiff,
                 "req_name": reqform.form.req_name,
                 "accused": reqform.form.accused,
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_approve_status_display(),
                 "status_int":  reqform.approve_status,
+                "status_choice": color_val_unsent.get(reqform.approve_status),
                 "action": "approve"
             },
             id=reqform.form.req_no_plaintiff,
         )
 
-    for reqform in form_already_sent:
+    for reqform in form_already_sent:  
         append_replace_id(
             target_list=dashboard_list,
             id_list=req_no_plaintiff_list,
             incoming_dict = {
                 "reqno": reqform.form.getReqno(),
+                "last_update": reqform.form.last_update_date,
                 "req_no_plaintiff": reqform.form.req_no_plaintiff,
                 "req_name": reqform.form.req_name,
                 "accused": reqform.form.accused,
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_accept_display(),
                 "status_int":  reqform.accept,
+                "status_choice": color_val_sent.get(reqform.accept),
                 "action": "report"
             },
             id=reqform.form.req_no_plaintiff,
         )
 
-    dashboard_list.reverse()
-    # dashboard_list.sort(
-    #     key=lambda x: x["req_date"]
-    # )
+    # dashboard_list.reverse()
+    dashboard_list.sort(
+        key=lambda x: x["last_update"],
+        reverse=True
+    )
     
     context = {
         "reqform_infos": dashboard_list,
@@ -210,6 +268,8 @@ def reqform_approve_page(request : HttpRequest, req_no_plaintiff : str):
             selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.APPROVED
             selected_form.date_approved = timezone.now()
             selected_form.save()
+
+            selected_form.form.save()
 
             for warrant in selected_form.form.warrants.all():
                 VisualWarrantData.objects.create(
@@ -335,28 +395,123 @@ def warrant_status_page(request, req_no_plaintiff : str):
     })
 
 
-#######################################################3
-#
-# FORM APPROVE SECTION
-#
-
-# @permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
-# def approve_form_page(request : HttpRequest):
-
-#     written_form = FormAwaitingApproval.objects.filter(form_creator=request.user)
-#     owned_form = FormAwaitingApproval.objects.filter(form_owner=request.user)
-#     form_awaiting_approval = written_form.union(owned_form)
-
-#     return render(request, "dashboard/approve_page.html", {
-#         "user": request.user,
-#         "forms": form_awaiting_approval,
-#     })
-
 @login_required
 def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {
         "user": request.user,
     })
+
+################################################################################
+
+def statistic_page_view(request : HttpRequest):
+    def _format_filter(incoming_dict : dict):
+        filter = {}
+
+        if incoming_dict.get("req_no_plaintiff"):
+            filter.update({
+                "form__req_no_plaintiff": incoming_dict.get("req_no_plaintiff"),
+            })
+
+        start_date = incoming_dict.get("start_date")
+        end_date = incoming_dict.get("end_date")
+        start_obj = None
+        end_obj = None
+
+        if start_date:
+            start_obj = timezone.datetime.strftime(
+                start_date,
+                "%Y-%m-%d %H:%M:%S"
+            )
+        if end_date:
+            end_obj = timezone.datetime.strftime(
+                end_date,
+                "%Y-%m-%d %H:%M:%S"
+            )
+
+        if start_obj and end_obj:
+            filter.update({
+                "form__req_date__range": (start_obj, end_obj),
+            })
+            
+        return filter
+
+    drafts = FormDraftContainer.objects.all()
+    draft_count = drafts.count()
+    form_unsent_count = FormAwaitingApproval.objects.filter(
+        approve_status=1
+    ).count()
+    form_sent_count = VisualReqformData.objects.filter(
+        accept=99
+    ).count()
+    form_accepted_count = VisualReqformData.objects.filter(
+        accept=1
+    ).count()
+
+    dashboard_list = []
+    req_no_plaintiff_list = []
+
+    filter_form = DashboardFilterForm(request.GET)
+    if filter_form.is_valid():
+        data = filter_form.cleaned_data
+        filter_data = _format_filter(data)
+    else:
+        filter_data = {}
+
+    form_unsent = FormAwaitingApproval.objects.filter(**filter_data)
+    form_already_sent = VisualReqformData.objects.filter(**filter_data)
+
+    for reqform in form_unsent:
+        append_replace_id(
+            target_list=dashboard_list,
+            id_list=req_no_plaintiff_list,
+            incoming_dict = {
+                "reqno": reqform.form.getReqno(),
+                "req_year": reqform.form.req_year,
+                "last_update": reqform.form.last_update_date,
+                "req_no_plaintiff": reqform.form.req_no_plaintiff,
+                "req_name": reqform.form.req_name,
+                "accused": reqform.form.accused,
+                "req_date": reqform.form.req_date,            
+                "status": reqform.get_approve_status_display(),
+                "status_int":  reqform.approve_status,
+                "status_choice": color_val_unsent.get(reqform.approve_status),
+            },
+            id=reqform.form.req_no_plaintiff,
+        )
+
+    for reqform in form_already_sent:
+        append_replace_id(
+            target_list=dashboard_list,
+            id_list=req_no_plaintiff_list,
+            incoming_dict = {
+                "reqno": reqform.form.getReqno(),
+                "req_year": reqform.form.req_year,
+                "last_update": reqform.form.last_update_date,
+                "req_no_plaintiff": reqform.form.req_no_plaintiff,
+                "req_name": reqform.form.req_name,
+                "accused": reqform.form.accused,
+                "req_date": reqform.form.req_date,            
+                "status": reqform.get_accept_display(),
+                "status_int":  reqform.accept,
+                "status_choice": color_val_sent.get(reqform.accept),
+            },
+            id=reqform.form.req_no_plaintiff,
+        )
+
+    dashboard_list.reverse()
+    
+    context = {
+        "reqform_infos": dashboard_list,
+        "user": request.user,
+        "filter_form": filter_form,
+        "draft_count": draft_count,
+        "unsent_form": form_unsent_count,
+        "sent_form": form_sent_count,
+        "accepted_form": form_accepted_count,
+        "total_count": form_sent_count + form_unsent_count + form_accepted_count,
+    }
+
+    return render(request, "history/statistic_page_view.html", context)
 
 ################################################################################
 
@@ -430,6 +585,36 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
     return render(request, "dashboard/report_warrant.html", context)
 
 @perm_req_log(*DashboardPerm.DELETE_REQFORM_SUBMITTED)
+def cancel_reqform(request : HttpRequest, req_no_plaintiff : str):
+
+    sent_form = VisualReqformData.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
+
+    if sent_form:
+        return render(request, "errors/400.html", {
+            "reason": "คำร้องดังกล่าวถูกส่งไปแล้ว กรุณายกเลิกการส่งคำร้องก่อน"
+        }, status=403)
+
+    if request.method == "POST":
+        try:
+            unsent_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+            
+            unsent_form.approve_status = FormAwaitingApproval.ApprovalStatus.CANCELED
+
+            unsent_form.save()
+            unsent_form.form.save()
+
+            return redirect("dashboard:success_page")
+
+        except:
+            return JsonResponse({
+                "status": "Error",
+            })
+        
+    return render(request, "dashboard/confirmation_page.html", {
+        "action": "Unsend Reqform"
+    })
+
+@perm_req_log(*DashboardPerm.DELETE_REQFORM_SUBMITTED)
 def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
     sent_form = VisualReqformData.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
 
@@ -454,6 +639,7 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
             form_await_approval.approve_status = FormAwaitingApproval.ApprovalStatus.PENDING
 
             form_await_approval.save()
+            form_await_approval.form.save()
             sent_form.delete()
             warrant_results.delete()
                 
@@ -472,14 +658,25 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
 
 from warrant_form import doc_create
 
+def download_reqform(request : HttpRequest, req_no_plaintiff : str):
+    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+
+    doc_data = selected_form.form.convertToDocumentData()
+
+    response = doc_create.create_reqform_pdf(doc_data)
+    print(doc_data)
+
+    return response
+
 def download_warrant(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
     selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
 
     target_warrant : WarrantDataModel = selected_form.form.warrants.filter(woa_refno=woa_refno).first()
 
     doc_data = target_warrant.convertToDocumentData()
+    print(doc_data)
 
-    response = doc_create.create_pdf(doc_data)
+    response = doc_create.create_warrant_pdf(doc_data)
 
     return response
 

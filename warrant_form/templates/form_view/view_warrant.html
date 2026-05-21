@@ -1,0 +1,55 @@
+{% extends 'warrant_form/base.html' %}
+{% load static %}
+
+{% block title %}Warrant Form{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/step1.css' %}">
+<link rel="stylesheet" href="{% static 'css/step2.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/css/view_form.css' %}">
+<style>
+    form input, form select {
+        text-align: center !important;
+        color: black;
+
+        border: none !important;
+        
+        border-radius: 0px !important;
+        border-bottom: 2px dotted black !important;
+
+        background: none;
+        appearance: none; 
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+    select {
+        background: none;
+        appearance: none; 
+        -webkit-appearance: none;
+        -moz-appearance: none;
+
+        padding: 1px 2px;
+    }
+</style>
+{% endblock %}
+
+{% block form %}
+<form method="post">
+    {% block return %}
+    <p class="no-print">
+         <a href="javascript:history.back()" class="button" style="margin: 0px;" >กลับ</a> 
+    </p>
+    {% endblock %}
+
+    <div>
+        {% include 'module/warrant/warrant_form.html' with form=warrant %}
+    </div>
+
+    {% block step3_special %}
+    {% endblock %}
+</form>
+{% endblock %}
+
+{% block script %}
+{% include 'module/view_form_script.html' %}
+{% endblock %}

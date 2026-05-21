@@ -1,58 +1,57 @@
 from django import forms
 from warrant_form.model_reqform import ReqformDataModel
 
+from dashboard.models import VisualReqformData, FormAwaitingApproval
+from dashboard.warrant_wrapper import VisualWarrantData
+
 status_choices = [
-    ("", "-----"),
-    (0, "ร่างคำร้อง"),
-    (1, "รอการพิจารณา"),
-    (2, "ไม่ผ่านการพิจารณา"),
-    (3, "ผ่านการพิจารณา"),
-    (4, "รอศาลตอบรับ"),
-    (5, "รับ"),
-    (6, "ไม่รับ"),
-    (7, "รอรายงานผลหมายจับ"),
-    (8, "จับไม่สำเร็จ"),
-    (9, "รายงานผลสำเจ็จ"),
+    (00, "-----"),              # 
+
+    (10, "กำลังรอการพิจารณา"),         # Form Await
+    (11, "ไม่ผ่านการพิจารณา"),      # Form Await
+    # (12, "ผ่านการพิจารณา"),        # Form Await
+    (20, "รอศาลตอบรับ"),          # Visual Form
+    # (21, "รับ"),                  # Visual Form
+    (22, "ไม่รับ"),                # Visual Form
+    (23, "รอรายงานผลหมายจับ"),    # Visual Form (Accepted)
+    (24, "จับไม่สำเร็จ"),            # Visual Form (Failed)
+    (25, "รายงานผลสำเจ็จ"),        # Visual Form (All Warrant Success)
+
+    # (99, "ยกเลิกคำร้อง"),           # Cancel during Form Await
 ]
 
 def get_reqno_choices():
-    choices = [
-        ("", "-----")
-    ]
+    choices = set()
     for reqform in ReqformDataModel.objects.all():
         if reqform.getReqno() == "-":
             continue
-        choices.append(
+        choices.add(
             (reqform.getReqno(), reqform.getReqno())
         )
 
-    return choices
+    return [("", "-----")] + list(choices)
 
 def get_req_no_plaintiff_choices():
-    choices = [
-        ("", "-----")
-    ]
+    choices = set()
     for reqform in ReqformDataModel.objects.all():
         if not reqform.req_no_plaintiff:
             continue
-        choices.append(
+        choices.add(
             (reqform.req_no_plaintiff, reqform.req_no_plaintiff)
         )
 
-    return choices
+    return [("", "-----")] + list(choices)
 
 def get_accused_choices():
-    choices = [
-        ("", "-----")
-    ]
+    choices = set()
     for reqform in ReqformDataModel.objects.all():
         if not reqform.accused:
             continue
-        choices.append(
+        choices.add(
             (reqform.accused, reqform.accused)
         )
 
-    return choices
+    return [("", "-----")] + list(choices)
 
 class DashboardFilterForm(forms.Form):
     req_no_plaintiff = forms.ChoiceField(

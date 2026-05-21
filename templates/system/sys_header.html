@@ -1,5 +1,5 @@
 {% load static %}
-<header id="awis-header-container" class="no-print" style="all: unset;">
+<header id="awis-header-container" class="no-print" style="all: unset; z-index: 999;">
   <div id="awis-system-header" style="display: block;"></div>
 
   <script>
@@ -32,13 +32,16 @@
           gap: 15px;
 
           width: 100vw;
-          padding: 20px 0;
+          padding: 8px 0;
           margin: 0;
         }
 
         .logo {
           display: flex;
           gap: 5px;
+          background-color: white;
+          padding: 10px;
+          border-radius: 10px;
         }
         
         .logo img {
@@ -97,12 +100,7 @@
             <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
           </div>
           <a class="header-text" href="{% url 'dashboard:dashboard' %}">ระบบ AWIS</a>
-
-          <a class="header-text" href="{% url 'forms:draft-page' %}">ร่างคำร้อง</a>
-          {% comment %} <a class="header-text" href="{% url 'dashboard:approve_table_page' %}">อนุมัติคำร้อง</a> {% endcomment %}
-          {% comment %} <a class="header-text" href="{% url 'dashboard:accept_table_page' %}">ยืนยันการใช้หมายจับ</a> {% endcomment %}
-          {% comment %} <a class="header-text" href="{% url 'dashboard:warrant_status_page' %}">ตารางสถานะของหมายศาล</a> {% endcomment %}
-          <a class="header-text" href="{% url 'dashboard:accept_table_page' %}">สถิติหมายจับรายปี</a>
+          <a class="header-text" href="{% url 'dashboard:statistics' %}">สถิติหมายจับรายปี</a>
           <a class="header-text" href="{% url 'admin_panel:collections' %}">Admin Page</a>
           <a class="header-text" style="color: #213259; text-decoration: none;font-weight: 600;"> ชื่อผู้ใช้งาน: <span class="username-value">{{ user.username }}</span> <a class="button-logout" href="{% url 'users:logout' %}" class="button-logout">logout</a> </a>
         </span>
