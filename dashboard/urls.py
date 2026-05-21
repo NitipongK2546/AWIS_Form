@@ -1,11 +1,11 @@
 from django.urls import path
-from dashboard import views, views_reqform
+from dashboard import views, views_reqform, views_main
 
 app_name = "dashboard"
 
 old_stuff = [
     path("", views.index, name="index"),
-    path("dashboard/", views.dashboard, name="dashboard"),
+    path("dashboard/", views_main.dashboard, name="dashboard"),
     path("success/", views.success_page, name="success_page"),
 
     path("dashboard/approve_table/", views.approve_table_page, name="approve_table_page"),
@@ -18,15 +18,15 @@ old_stuff = [
 
 new_stuff = [
 
-    path("dashboard/statistics/", views.statistic_page_view, name="statistics"),
+    path("dashboard/statistics/", views_main.statistic_page_view, name="statistics"),
 
     ####################################################################
 
-    path("dashboard/report/<str:req_no_plaintiff>/warrant/<str:woa_refno>/", views.report_update_warrant_arrest_yet, name="report_warrant"),
+    path("dashboard/report/<str:req_no_plaintiff>/warrant/<str:woa_refno>/", views_reqform.report_update_warrant_arrest_yet, name="report_warrant"),
 
-    path("dashboard/unsend/<str:req_no_plaintiff>/", views.unsend_reqform, name="delete_sent_reqform"),
+    path("dashboard/unsend/<str:req_no_plaintiff>/", views_reqform.unsend_reqform, name="delete_sent_reqform"),
     
-    path("dashboard/cancel/<str:req_no_plaintiff>/", views.cancel_reqform, name="cancel_reqform"),
+    path("dashboard/cancel/<str:req_no_plaintiff>/", views_reqform.cancel_reqform, name="cancel_reqform"),
 
     ############################################################################
 

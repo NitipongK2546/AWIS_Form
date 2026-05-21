@@ -30,6 +30,7 @@ class AccessType(TextChoices):
     APPROVE = "Approve"
     REJECT = "Reject"
     LOGIN = "Login"
+    DOWNLOAD = "Download"
 
 os.makedirs(LOG_DIR, exist_ok=True)
 

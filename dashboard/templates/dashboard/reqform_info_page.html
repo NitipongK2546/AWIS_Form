@@ -62,31 +62,33 @@
         <div>
         {% for warrant_obj in warrants %}
             {% if action == "report" %}
-            <div>
-                {% include 'module/warrant_info.html' with warrant=warrant_obj.warrant num=forloop.counter %}
-                <p>
-                    <span>
-                        สถานะ:
-                        {{ warrant_obj.get_court_injunction_display }}
-                    </span>
-                </p>
-                <p>
-                    <a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">ดูหมายจับ</a>
-                    <a class="file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">ดาวน์โหลดไฟล์</a>
-                </p>
-                <p>
+                <div>
+                    {% include 'module/warrant_info.html' with warrant=warrant_obj.warrant num=forloop.counter %}
+                    <p>
+                        <span>
+                            สถานะ:
+                            {{ warrant_obj.get_court_injunction_display }}
+                        </span>
+                    </p>
+                    <p>
+                        <a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">ดูหมายจับ</a>
+                        <a class="file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">ดาวน์โหลดไฟล์</a>
+                    </p>
+                    <p>
 
-                    {% if warrant_obj.court_injunction == 1 %}
+                        {% if warrant_obj.court_injunction == 1 %}
+                        <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">รายงานผลหมาย</a>
+                        {% endif %}
+                    </p>
+                    # Bypass
                     <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">รายงานผลหมาย</a>
-                    {% endif %}
-                </p>
-            </div>
+                </div>
             {% elif action == "approve" %}
-            <div>
-                {% include 'module/warrant_info.html' with warrant=warrant_obj num=forloop.counter %}
-                <p><a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.woa_refno %}">ดูหมายจับ</a></p>
-                <p><a class="file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.woa_refno %}">ดาวน์โหลดไฟล์</a></p>
-            </div>
+                <div>
+                    {% include 'module/warrant_info.html' with warrant=warrant_obj num=forloop.counter %}
+                    <p><a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.woa_refno %}">ดูหมายจับ</a></p>
+                    <p><a class="file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.woa_refno %}">ดาวน์โหลดไฟล์</a></p>
+                </div>
             {% endif %}
         {% empty %}
         <div>
@@ -99,7 +101,7 @@
         {% if action == "report" %}
             {% if status_int == 99 %}
             <p>
-                <a href="{% url 'dashboard:delete_sent_reqform' reqform.req_no_plaintiff %}">ยกเลิกการส่งคำร้อง</a>
+                <a href="{% url 'dashboard:delete_sent_reqform' reqform.req_no_plaintiff %}">ถอนคำร้องที่ส่งให้ศาล</a>
             </p>
             {% elif status_int == 0 %}
             <p>ไม่รับ</p>
@@ -122,7 +124,7 @@
             {% endif %}
         {% endif %}
         <p>
-            <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}">ยกเลิกการส่งคำร้อง</a>
+            <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}">ยกเลิกคำร้อง</a>
         </p>
     </section>
 </div>
