@@ -19,6 +19,19 @@ from users.permissions.decorators import perm_req_log
 
 from . import _permissions as DashboardPerm
 
+color_val_unsent = {
+    1: 10,
+    0: 11,
+    2: 12,
+    -1: 99,
+}
+
+color_val_sent = {
+    99: 20,
+    0: 22,
+    1: 23,
+}
+
 def reqform_info(request : HttpRequest, req_no_plaintiff : str):
 
     reqform = ReqformDataModel.objects.filter(
@@ -29,6 +42,7 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
     status_int = None
     action = None
     warrants = None
+    status_choice = None
 
     form_already_sent = VisualReqformData.objects.filter(
         form__req_no_plaintiff=req_no_plaintiff
@@ -46,6 +60,7 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
         warrants = VisualWarrantData.objects.filter(
             warrant__in=reqform.warrants.all()
         )
+        status_choice = color_val_sent.get(status_int)
 
     elif form_not_sent:
         status = form_not_sent.get_approve_status_display()
@@ -53,6 +68,7 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
         action = "approve"
 
         warrants = reqform.warrants.all()
+        status_choice = color_val_unsent.get(status_int)
 
     else:
         status = "ร่าง"
@@ -63,4 +79,5 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
         "status": status,
         "status_int": status_int,
         "action": action,
+        "status_choice": status_choice,
     })

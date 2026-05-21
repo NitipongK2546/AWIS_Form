@@ -46,7 +46,9 @@
     </section>
     <section class="card">
         <h2>คำร้อง</h2>
-        <p>สถานะ: {{ status }}</p>
+        <p>
+            สถานะ: {% include 'module/status_color_module.html' with color=status_choice status=status %}
+        </p>
         <p>รหัสอ้างอิง: {{ reqform.req_no_plaintiff }}</p>
         <p>ผู้ร้อง: {{ reqform.req_name }}</p>
         <p>ผู้ถูกกล่าวหา: {{ reqform.accused }}</p>

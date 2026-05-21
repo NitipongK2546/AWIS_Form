@@ -31,7 +31,7 @@
                 <td>{{ form.accused }}</td>
                 <td>{{ form.req_date }}</td>
                 <td>{{ form.last_update }}</td>
-                <td>{% include 'module/status_color_module.html' with color=form.status_choice %}</td>
+                <td>{% include 'module/status_color_module.html' with color=form.status_choice status=form.status %}</td>
                 <td>
                     <a href="{% url 'dashboard:reqform_info' form.req_no_plaintiff %}">Here</a>
                 </td>
