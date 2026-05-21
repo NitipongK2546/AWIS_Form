@@ -4,6 +4,7 @@
 {% block title %}Draft Warrant{% endblock %}
 
 {% block style %}
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/draft_reqform.css' %}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock %}
@@ -16,120 +17,192 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 {% endblock %}
 
 {% block content %}
-    <form method="post">
-    <button type="button" onclick="window.history.back()" class="back-button">กลับ</button>
-        {% csrf_token %}
+<div class="page-wrapper">
 
-        <!-- Warrant Info -->
-        <!-- <div>
-          <h2>หมายเลขหมายจับ</h2>
-          <p>หมายเลขอ้างอิง: {{ draft_form.woa_refno }}</p>
-        </div> -->
-    
-        <!-- Fault / Cause -->
-        <div>
-          <h2>รายละเอียดคดี</h2>
-          <p>ประเภทหมายจับ: {{ draft_form.woa_type }}</p>
-          <p>ประเภทความผิด: {{ draft_form.fault_type_id }}</p>
-          <p>ส่งหมายถึง: {{ draft_form.send_to_name }}</p>
-        </div>
-    
-        <!-- Charges -->
-        <div>
-          <h2>ข้อกล่าวหา</h2>
-          <p>ด้วย: {{ draft_form.cause_text }}</p>
-          <p>ซึ่งต้องหาว่ากระทำความผิดฐาน: {{ draft_form.charge }}</p>
-          <p>
-            {{ draft_form.charge_type_1 }} 1. ได้หรือน่าจะได้กระทำความผิดอาญาซึ่งมีอัตราโทษจำคุกอย่างสูงเกินสามปี
-          </p>
-          <p>
-            {{ draft_form.charge_type_2 }} 2. ได้หรือน่าจะได้กระทำความผิดอาญาและมีอันควรเชื่อว่า</p>
-          <p>
-            {{ draft_form.charge_type_2_1 }} 2.1 จะหลบหนี 
-          </p>
-          <p>
-            {{ draft_form.charge_type_2_2 }} 2.2 จะไปยุ่งเหยิงกับพยานหลักฐาน
-          </p>
-          <p>
-            {{ draft_form.charge_type_2_3 }} 2.3 ก่อเหตุอันตรายประการอื่น
-          </p>
-          <p>
-            {{ draft_form.charge_type_3 }} 3. อื่นๆ {{ draft_form.charge_other_text }}
-          </p>
-        </div>
-    
-        <!-- Accused Info -->
-        <div>
-          <h2>ข้อมูลผู้ต้องหา</h2>
-          <p>ชื่อ-นามสกุล: {{ draft_form.acc_full_name }}</p>
-          <p>ประเภทบัตร: {{ draft_form.acc_card_type }}</p>
-          <p>เลขบัตร: {{ draft_form.acc_card_id }}</label>
-          <p>เชื้อชาติ: {{ draft_form.acc_origin }}</p>
-          <p>สัญชาติ: {{ draft_form.acc_nation }}</p>
-          <p>อาชีพ: {{ draft_form.acc_occupation }}</p>
-          <p>บ้านเลขที่: {{ draft_form.acc_addno }}</p>
-          <p>หมู่ที่: {{ draft_form.acc_vilno }}</p>
-          <p>ถนน: {{ draft_form.acc_road }}</p>
-          <p>ตรอก/ซอย: {{ draft_form.acc_soi }}</p>
-          <p>ใกล้: {{ draft_form.acc_near }}</p>
-          <p>ตำบล/แขวง: {{ draft_form.acc_sub_district }}</p>
-          <p>อำเภอ/เขต: {{ draft_form.acc_district }}</p>
-          <p>จังหวัด: {{ draft_form.acc_province }}</p>
-          <p>หมายเลขโทรศัพท์: {{ draft_form.acc_tel }}</p>
-        </div>
-    
-        <!-- Appointment -->
-        <div>
-          <h2>การนัดหมาย</h2>
-          <p>ประเภทการนัดหมาย: {{ draft_form.appointment_type }}</p>
-          <p>วันที่นัดหมาย: {{ draft_form.appointment_date }}</p>
-        </div>
-    
-        <button type="submit" class="primary-button">บันทึกข้อมูล</button>
-    </form>
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="{% url 'dashboard:dashboard' %}">หน้าหลัก</a>
+    <span class="bc-sep">/</span>
+    <span class="bc-current">สร้างหมายจับ</span>
+  </div>
 
+  <form method="post">
+    {% csrf_token %}
 
-{% comment %}
-<div>
-    <h2>หมายเลขหมายจับ</h2>
-    woa_type: {{ draft_form.woa_refno }}
-    woa_type: {{ draft_form.woa_type }}
-    woa_date: {{ draft_form.woa_date }}
+    <!-- รายละเอียดคดี -->
+    <div class="card">
+      <div class="card-header">
+        <h2>รายละเอียดคดี</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">ประเภทหมายจับ</label>
+          {{ draft_form.woa_type }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ประเภทความผิด</label>
+          {{ draft_form.fault_type_id }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ส่งหมายถึง</label>
+          {{ draft_form.send_to_name }}
+        </div>
+      </div>
+    </div>
+
+    <!-- ข้อกล่าวหา -->
+    <div class="card">
+      <div class="card-header">
+        <h2>ข้อกล่าวหา</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">ด้วย</label>
+          {{ draft_form.cause_text }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ซึ่งต้องหาว่ากระทำความผิดฐาน</label>
+          {{ draft_form.charge }}
+        </div>
+        <div class="form-group">
+          <label class="form-label checkbox-label">
+            {{ draft_form.charge_type_1 }}
+            1. ได้หรือน่าจะได้กระทำความผิดอาญาซึ่งมีอัตราโทษจำคุกอย่างสูงเกินสามปี
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-label checkbox-label">
+            {{ draft_form.charge_type_2 }}
+            2. ได้หรือน่าจะได้กระทำความผิดอาญาและมีอันควรเชื่อว่า
+          </label>
+          <div class="sub-checks">
+            <label class="form-label checkbox-label">
+              {{ draft_form.charge_type_2_1 }} 2.1 จะหลบหนี
+            </label>
+            <label class="form-label checkbox-label">
+              {{ draft_form.charge_type_2_2 }} 2.2 จะไปยุ่งเหยิงกับพยานหลักฐาน
+            </label>
+            <label class="form-label checkbox-label">
+              {{ draft_form.charge_type_2_3 }} 2.3 ก่อเหตุอันตรายประการอื่น
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label checkbox-label">
+            {{ draft_form.charge_type_3 }} 3. อื่นๆ
+          </label>
+          {{ draft_form.charge_other_text }}
+        </div>
+      </div>
+    </div>
+
+    <!-- ข้อมูลผู้ต้องหา -->
+    <div class="card">
+      <div class="card-header">
+        <h2>ข้อมูลผู้ต้องหา</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">ชื่อ-นามสกุล</label>
+          {{ draft_form.acc_full_name }}
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">ประเภทบัตร</label>
+            {{ draft_form.acc_card_type }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">เลขบัตร</label>
+            {{ draft_form.acc_card_id }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">เชื้อชาติ</label>
+            {{ draft_form.acc_origin }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">สัญชาติ</label>
+            {{ draft_form.acc_nation }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">อาชีพ</label>
+            {{ draft_form.acc_occupation }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">บ้านเลขที่</label>
+            {{ draft_form.acc_addno }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">หมู่ที่</label>
+            {{ draft_form.acc_vilno }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">ถนน</label>
+            {{ draft_form.acc_road }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">ตรอก/ซอย</label>
+            {{ draft_form.acc_soi }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">ใกล้</label>
+            {{ draft_form.acc_near }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ที่อยู่</label>
+          <div class="inline-group">
+            <div class="inline-field">
+              <span class="inline-label">ตำบล/แขวง</span>
+              {{ draft_form.acc_sub_district }}
+            </div>
+            <div class="inline-field">
+              <span class="inline-label">อำเภอ/เขต</span>
+              {{ draft_form.acc_district }}
+            </div>
+            <div class="inline-field">
+              <span class="inline-label">จังหวัด</span>
+              {{ draft_form.acc_province }}
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">หมายเลขโทรศัพท์</label>
+          {{ draft_form.acc_tel }}
+        </div>
+      </div>
+    </div>
+
+    <!-- การนัดหมาย -->
+    <div class="card">
+      <div class="card-header">
+        <h2>การนัดหมาย</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">ประเภทการนัดหมาย</label>
+          {{ draft_form.appointment_type }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">วันที่นัดหมาย</label>
+          {{ draft_form.appointment_date }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" onclick="window.history.back()" class="btn-back">กลับ</button>
+      <button type="submit" class="btn-submit">บันทึกข้อมูล</button>
+    </div>
+
+  </form>
 </div>
-
-{{ draft_form.fault_type_id }}
-{{ draft_form.send_to_name }}
-{{ draft_form.cause_text }}
-
-{{ draft_form.charge }}
-{{ draft_form.charge_type_1 }}
-{{ draft_form.charge_type_2 }}
-{{ draft_form.charge_type_2_1 }}
-{{ draft_form.charge_type_2_2 }}
-{{ draft_form.charge_type_2_3 }}
-{{ draft_form.charge_type_3 }}
-{{ draft_form.charge_other_text }}
-
-{{ draft_form.acc_full_name }}
-{{ draft_form.acc_card_type }}
-{{ draft_form.acc_card_id }}
-{{ draft_form.acc_origin }}
-{{ draft_form.acc_nation }}
-{{ draft_form.acc_occupation }}
-{{ draft_form.acc_addno }}
-{{ draft_form.acc_vilno }}
-{{ draft_form.acc_road }}
-{{ draft_form.acc_soi }}
-{{ draft_form.acc_near }}
-{{ draft_form.acc_sub_district }}
-{{ draft_form.acc_district }}
-{{ draft_form.acc_province }}
-{{ draft_form.acc_tel }}
-
-{{ draft_form.appointment_type }} # ในเอกสารคาดว่า Default = 1
-{{ draft_form.appointment_date }}
-{% endcomment %}
-
 {% endblock %}
 
 {% block script %}
@@ -141,7 +214,6 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 <script src="{% static 'js/draft_warrant/handleDistrict.js' %}"></script>
 <script type="module">
     import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
-
     const datetime_elements = document.querySelectorAll(".datetimepicker");
     flatpickr(datetime_elements, {
         enableTime: true,
