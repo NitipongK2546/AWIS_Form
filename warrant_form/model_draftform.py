@@ -161,6 +161,7 @@ class ReqformDraftDataModel(models.Model):
         dict_main_awis.update({
             "req_date": thai_date_now,
             "req_year": thai_date_now.year + 543,
+            "draft_id": self,
         })
 
         return dict_main_awis
@@ -273,7 +274,6 @@ class WarrantDraftDataModel(models.Model):
         thai_date_now = timezone.now().astimezone(timezone.get_current_timezone())
 
         dict_main_awis.update({
-            "draft_id": self.pk,
             "woa_date": thai_date_now,
         })
 

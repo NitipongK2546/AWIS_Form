@@ -58,6 +58,19 @@ def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dic
 
 ########################################################################
 
+color_val_unsent = {
+    1: 10,
+    0: 11,
+    2: 12,
+    -1: 99,
+}
+
+color_val_sent = {
+    99: 20,
+    0: 22,
+    1: 23,
+}
+
 # I will seperate dashboard + index, just in case.
 def index(request : HttpRequest):
     return redirect("dashboard:dashboard")
@@ -68,6 +81,11 @@ from .forms_filter import DashboardFilterForm
 def dashboard(request : HttpRequest):
     def _format_filter(incoming_dict : dict):
         filter = {}
+
+        if incoming_dict.get("status"):
+            filter.update({
+                "status": incoming_dict.get("status")
+            })
 
         if incoming_dict.get("req_no_plaintiff"):
             filter.update({
@@ -119,7 +137,9 @@ def dashboard(request : HttpRequest):
     form_unsent = []
     form_already_sent = []
 
-    wanted_status = filter_data.get("status")
+    wanted_status = filter_data.pop("status", None)
+    if isinstance(wanted_status, str):
+        wanted_status = int(wanted_status)
 
     if wanted_status in [10, 11, 12]:
         compare_val = {
@@ -131,7 +151,7 @@ def dashboard(request : HttpRequest):
         filter_data.update({
             "approve_status": compare_val.get(wanted_status)
         })
-        form_unsent = FormAwaitingApproval.objects.filter(**filter_data)
+        form_unsent = FormAwaitingApproval.objects.filter(**filter_data).exclude(approve_status=-1)
     
     elif wanted_status in [20, 21, 22, 23, 24, 25]:
         compare_val = {
@@ -148,9 +168,10 @@ def dashboard(request : HttpRequest):
         })
         form_already_sent = VisualReqformData.objects.filter(**filter_data)
     else:
-        form_unsent = FormAwaitingApproval.objects.filter(**filter_data)
+        form_unsent = FormAwaitingApproval.objects.filter(**filter_data).exclude(approve_status=-1)
         form_already_sent = VisualReqformData.objects.filter(**filter_data)
 
+              
     for reqform in form_unsent:
         append_replace_id(
             target_list=dashboard_list,
@@ -164,12 +185,13 @@ def dashboard(request : HttpRequest):
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_approve_status_display(),
                 "status_int":  reqform.approve_status,
+                "status_choice": color_val_unsent.get(reqform.approve_status),
                 "action": "approve"
             },
             id=reqform.form.req_no_plaintiff,
         )
 
-    for reqform in form_already_sent:
+    for reqform in form_already_sent:  
         append_replace_id(
             target_list=dashboard_list,
             id_list=req_no_plaintiff_list,
@@ -182,6 +204,7 @@ def dashboard(request : HttpRequest):
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_accept_display(),
                 "status_int":  reqform.accept,
+                "status_choice": color_val_sent.get(reqform.accept),
                 "action": "report"
             },
             id=reqform.form.req_no_plaintiff,
@@ -451,6 +474,7 @@ def statistic_page_view(request : HttpRequest):
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_approve_status_display(),
                 "status_int":  reqform.approve_status,
+                "status_choice": color_val_unsent.get(reqform.approve_status),
             },
             id=reqform.form.req_no_plaintiff,
         )
@@ -469,6 +493,7 @@ def statistic_page_view(request : HttpRequest):
                 "req_date": reqform.form.req_date,            
                 "status": reqform.get_accept_display(),
                 "status_int":  reqform.accept,
+                "status_choice": color_val_sent.get(reqform.accept),
             },
             id=reqform.form.req_no_plaintiff,
         )

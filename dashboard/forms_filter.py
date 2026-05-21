@@ -5,19 +5,19 @@ from dashboard.models import VisualReqformData, FormAwaitingApproval
 from dashboard.warrant_wrapper import VisualWarrantData
 
 status_choices = [
-    ("", "-----"),              # 
-    (00, "ร่างคำร้อง"),             # Show Draft
-    (10, "รอการพิจารณา"),         # Form Await
+    (00, "-----"),              # 
+
+    (10, "กำลังรอการพิจารณา"),         # Form Await
     (11, "ไม่ผ่านการพิจารณา"),      # Form Await
-    (12, "ผ่านการพิจารณา"),        # Form Await
+    # (12, "ผ่านการพิจารณา"),        # Form Await
     (20, "รอศาลตอบรับ"),          # Visual Form
-    (21, "รับ"),                  # Visual Form
+    # (21, "รับ"),                  # Visual Form
     (22, "ไม่รับ"),                # Visual Form
     (23, "รอรายงานผลหมายจับ"),    # Visual Form (Accepted)
     (24, "จับไม่สำเร็จ"),            # Visual Form (Failed)
     (25, "รายงานผลสำเจ็จ"),        # Visual Form (All Warrant Success)
 
-    (99, "ยกเลิกคำร้อง"),           # Cancel during Form Await
+    # (99, "ยกเลิกคำร้อง"),           # Cancel during Form Await
 ]
 
 def get_reqno_choices():

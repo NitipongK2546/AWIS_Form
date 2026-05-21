@@ -42,6 +42,8 @@
     <p>
         <a href="javascript:history.back()" class="button" style="margin-left: 0;">กลับหน้าหลัก</a>
     </p>
+    <section>
+    </section>
     <section class="card">
         <h2>คำร้อง</h2>
         <p>สถานะ: {{ status }}</p>
@@ -117,6 +119,9 @@
             </p>
             {% endif %}
         {% endif %}
+        <p>
+            <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}">ยกเลิกการส่งคำร้อง</a>
+        </p>
     </section>
 </div>
 

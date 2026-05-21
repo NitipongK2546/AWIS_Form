@@ -25,7 +25,8 @@ new_stuff = [
     path("dashboard/report/<str:req_no_plaintiff>/warrant/<str:woa_refno>/", views.report_update_warrant_arrest_yet, name="report_warrant"),
 
     path("dashboard/unsend/<str:req_no_plaintiff>/", views.unsend_reqform, name="delete_sent_reqform"),
-
+    
+    path("dashboard/cancel/<str:req_no_plaintiff>/", views.cancel_reqform, name="cancel_reqform"),
 
     ############################################################################
 
