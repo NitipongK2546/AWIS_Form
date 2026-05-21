@@ -1,5 +1,6 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
+{% load thai_locale %}
 
 {% block title %}Dashboard{% endblock %}
 
@@ -11,66 +12,122 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 {% endblock %}
 
 {% block style %}
-    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
 {% endblock %}
 
 {% block body %}
-    
-<div class="header-bar">
-    <h1 style="text-align: left; margin-left: 100px;">หน้าหลัก</h1>
+<div class="page-wrapper">
+
+  <!-- Page title -->
+  <div class="page-title">หน้าหลัก</div>
+
+  <!-- Stat cards -->
+  <div class="stat-grid">
+    <a href="{% url 'forms:draft-page' %}" class="stat-card">
+      <div class="stat-label">ร่างคำร้องปัจจุบัน</div>
+      <div class="stat-number">{{ draft_count }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+    <a href="{% url 'dashboard:approve_table_page' %}" class="stat-card">
+      <div class="stat-label">รอการอนุมัติ</div>
+      <div class="stat-number">{{ approve_form }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card">
+      <div class="stat-label">ส่งถึงศาลสำเร็จ</div>
+      <div class="stat-number">{{ accept_form }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+  </div>
+
+  <!-- Filter bar -->
+  <form method="get" class="filter-bar">
+    <div class="filter-group">
+      <label class="filter-label">หมายเลขอ้างอิง</label>
+      {{ filter_form.req_no_plaintiff }}
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">ผู้ถูกกล่าวหา</label>
+      {{ filter_form.accused }}
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">วันที่เริ่มต้น</label>
+      {{ filter_form.start_date }}
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">วันที่สิ้นสุด</label>
+      {{ filter_form.end_date }}
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">สถานะ</label>
+      {{ filter_form.status }}
+    </div>
+    <button type="submit" class="filter-btn">ค้นหา</button>
+  </form>
+
+  <!-- Table card -->
+  <div class="table-card">
+    <div class="table-header">
+      <span class="table-header-title">รายการคำร้อง</span>
+      <span class="table-header-meta">{{ reqform_infos|length }} รายการ</span>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>หมายเลขคำร้อง</th>
+            <th>เลขอ้างอิง</th>
+            <th>ผู้ร้อง</th>
+            <th>ผู้ถูกกล่าวหา</th>
+            <th>วันที่คำร้อง</th>
+            <th>อัปเดตล่าสุด</th>
+            <th>สถานะ</th>
+            <th>รายละเอียด</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for form in reqform_infos %}
+          <tr>
+            <td class="td-center">{{ forloop.counter }}</td>
+            <td class="td-bold">{{ form.reqno }}</td>
+            <td>{{ form.req_no_plaintiff }}</td>
+            <td>{{ form.req_name }}</td>
+            <td>{{ form.accused }}</td>
+            <td class="td-center td-muted">{{ form.req_date }}</td>
+            <td class="td-center td-muted">{{ form.last_update }}</td>
+            <td class="td-center">
+              {% include 'module/status_color_module.html' with color=form.status_choice %}
+            </td>
+            <td class="td-center">
+              <a href="{% url 'dashboard:reqform_info' form.req_no_plaintiff %}" class="detail-btn">ดูข้อมูล</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" class="td-empty">ไม่มีคำร้อง</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
-
-<div class="dashboard-tools" style="display: flex; justify-content: center;">
-    <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'forms:draft-page' %}">
-            <h3>ร่างคำร้องปัจจุบัน: {{ draft_count }} ร่าง</h3>
-        </a>
-    </div>
-    <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'dashboard:approve_table_page' %}">
-            <h3>ร่างคำร้องที่รอการอนุมัติ: {{ approve_form }} ร่าง</h3>
-        </a>
-    </div>
-
-    <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'dashboard:accept_table_page' %}">
-            <h3>ร่างคำร้องที่ส่งถึงศาลสำเร็จ: {{ accept_form }} ร่าง</h3>
-        </a>
-    </div>
-    
-    {% comment %}
-    <div class="tool-card">
-        <a href="{% url 'dashboard:warrant_status_page' %}">
-            <img src="{% static 'dashboard/images/checking-status.png' %}" alt="Access-List">
-            <h3>ตารางสถานะของหมายศาล</h3>
-        </a>
-    </div>
-    {% endcomment %}
-</div>
-
-<div>
-    <form method="get">
-    {{ filter_form.as_p }}
-    <button type="submit">Filter</button>
-    </form>
-</div>
-
-{% include "module/all_in_one_table.html" %}
 {% endblock %}
 
 {% block script %}
 <script type="module">
-    import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
-
-    const datetime_elements = document.querySelectorAll(".datetimepicker");
-    flatpickr(datetime_elements, {
-        enableTime: true,
-        dateFormat: "Y-m-d H:i:ss",
-        altInput: true,
-        altFormat: "j F Y H:i น.",
-        locale: Thai,
-    });
+  import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
+  const datetime_elements = document.querySelectorAll(".datetimepicker");
+  flatpickr(datetime_elements, {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i:ss",
+    altInput: true,
+    altFormat: "j F Y H:i น.",
+    locale: Thai,
+  });
 </script>
 {% endblock %}
