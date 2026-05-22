@@ -302,13 +302,43 @@ html {
 }
 
 .stat-card:hover {
-    background: #7F1D1D;
+    background: #2f477e;
     opacity: .9;
     text-decoration: none;
 }
 
-.stat-card:active {
-    background: #b12525;
+.stat-card-yellow {
+    background: #cdc00e;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    display: block;
+    transition: opacity .15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-yellow:hover {
+    background: #dbcd0f;
+    opacity: .9;
+    text-decoration: none;
+}
+
+.stat-card-green {
+    background: #35a80c;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    display: block;
+    transition: opacity .15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-green:hover {
+    background: #45dc0f;
+    opacity: .9;
+    text-decoration: none;
 }
 
 .stat-label {

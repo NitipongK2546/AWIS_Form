@@ -30,12 +30,12 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       <div class="stat-number">{{ draft_count }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'dashboard:approve_table_page' %}" class="stat-card">
+    <a href="{% url 'dashboard:approve_table_page' %}" class="stat-card-yellow">
       <div class="stat-label">รอการอนุมัติ</div>
       <div class="stat-number">{{ approve_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card">
+    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-green">
       <div class="stat-label">ส่งถึงศาลสำเร็จ</div>
       <div class="stat-number">{{ accept_form }}</div>
       <div class="stat-unit">ร่าง</div>
