@@ -52,10 +52,10 @@ def erp_login_authorize(version : str, request : HttpRequest, storage : str = "c
     data : dict = response.json()
     
     if not data.get("authenticated"):
-        return JsonResponse({
+        return {
             "status": 400,
             "message": "Authentication Failed"
-        }, status=400)
+        }
     
     ##############################################################
 
@@ -69,16 +69,16 @@ def erp_login_authorize(version : str, request : HttpRequest, storage : str = "c
         )
 
     if not status:
-      return JsonResponse({
+        return {
             "status": 403,
             "message": "ผู้ใช้ไม่ได้รับอนุญาตให้เข้าใน User Access"
-        }, status=403)
+        }
     
-    return JsonResponse({
+    return {
         "status": 200,
         "message": "Success",
         "id": status.user_id,
-    })
+    }
 
 def checkUserAccess(incoming_user_id) -> bool:
     result = UserAccess.objects.filter(user_id=incoming_user_id).first()

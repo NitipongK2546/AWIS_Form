@@ -67,6 +67,9 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
     <button type="submit" class="filter-btn">ค้นหา</button>
   </form>
 
+  <p style="display: flex; justify-self: end; justify-content: center;">
+      <a href="{% url 'forms:create-draft-container' %}" class="filter-btn" style="padding: 10px 18px; height: auto;">สร้างคำร้องใหม่</a>
+  </p>
   <!-- Table card -->
   <div class="table-card">
     <div class="table-header">
@@ -133,5 +136,15 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
     altFormat: "j F Y H:i น.",
     locale: Thai,
   });
+</script>
+<script>
+window.addEventListener("pageshow", function () {
+    if (
+        window.performance &&
+        performance.getEntriesByType("navigation")[0]?.type === "back_forward"
+    ) {
+        window.location.reload();
+    }
+});
 </script>
 {% endblock %}
