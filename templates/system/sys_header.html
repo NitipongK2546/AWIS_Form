@@ -164,7 +164,7 @@
         <nav class="nav-links">
           <a class="nav-link" href="{% url 'dashboard:dashboard' %}" id="nav-dashboard">หน้าหลัก</a>
           <a class="nav-link" href="{% url 'dashboard:statistics' %}" id="nav-stats">รายงานสถิติ</a>
-          <a class="nav-link" href="{% url 'forms:draft-page' %}" id="nav-draft">ร่างคำร้อง</a>
+          {% comment %} <a class="nav-link" href="{% url 'forms:draft-page' %}" id="nav-draft">ร่างคำร้อง</a> {% endcomment %}
           <a class="nav-link" href="{% url 'admin_panel:collections' %}" id="nav-admin">Admin Page</a>
         </nav>
 
