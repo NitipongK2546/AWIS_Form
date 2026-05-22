@@ -1,110 +1,194 @@
 {% load static %}
-<header id="awis-header-container" class="no-print" style="all: unset; z-index: 999;">
-  <div id="awis-system-header" style="display: block;"></div>
+<header id="awis-header-container" class="no-print" style="all: unset; display: block; width: 100%; z-index: 999;">
+  <div id="awis-system-header" style="display: block; width: 100%;"></div>
 
   <script>
     const host = document.querySelector('#awis-system-header');
     const shadow = host.attachShadow({ mode: 'open' });
 
+    // Detect active page
+    const currentPath = window.location.pathname;
+
+    function isActive(href) {
+      return currentPath === href || currentPath.startsWith(href + '/');
+    }
+
     shadow.innerHTML = `
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         .header-full {
-          background: linear-gradient(90deg, #213259, #C9161C);
-          color: white;
-          font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
-          font-size: 24px;
-          font-weight: 700;
-          letter-spacing: 1px;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-          justify-content: center;
+          background: linear-gradient(90deg, #213259 0%, #7F1D1D 60%, #C9161C 100%);
+          font-family: 'Noto Sans Thai', sans-serif;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+          width: 100%;
+          height: 48px;
           display: flex;
+          align-items: center;
+          padding: 0 16px;
+          gap: 12px;
+          position: relative;
         }
 
-        .header-inside {
-          all: unset;
+        /* ── Logo pill ── */
+        .logo-pill {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: rgba(255,255,255,0.15);
+          border-radius: 999px;
+          padding: 4px 12px 4px 4px;
+          flex-shrink: 0;
+          text-decoration: none;
+        }
+
+        .logo-circle {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: white;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 15px;
-
-          width: 100vw;
-          padding: 8px 0;
-          margin: 0;
+          overflow: hidden;
+          flex-shrink: 0;
         }
 
-        .logo {
-          display: flex;
-          gap: 5px;
-          background-color: white;
-          padding: 10px;
-          border-radius: 10px;
-        }
-        
-        .logo img {
-          max-width: 100px;
+        .logo-circle img {
+          width: 24px;
           height: auto;
         }
 
-        .hex {
-          width: 22px;
-          height: 22px;
-          clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+        .logo-text {
+          color: white;
+          font-size: 14px;
+          font-weight: 600;
+          white-space: nowrap;
         }
 
-        .header-text {
-          color: white;
-          cursor: pointer;
-          text-decoration: none;
-        }
-        
-        .header-inside {
+        /* ── Nav links (center) ── */
+        .nav-links {
           display: flex;
           align-items: center;
-          gap: 20px; /* ระยะห่างระหว่างเมนู */
-        }
-        .header-text {
-          color: white;
-          text-decoration: none;
-          font-weight: 60;
-          font-size: 18px;
-        }
-        .header-text:hover {
-          text-decoration: underline;
-        }
-        
-        .button-logout {
-          margin-left: 10px;
-          background: #ffffff;
-          color: white;
-          padding: 5px 12px;
-          border-radius: 6px;
-          text-decoration: none;
-          font-size: 14px;
-          transition: background 0.3s;
-          color: #C9161C;
+          gap: 2px;
+          flex: 1;
+          justify-content: center;
         }
 
-        .button-logout:hover {
-          background: #ee7171;
+        .nav-link {
+          color: rgba(255,255,255,0.85);
+          text-decoration: none;
+          font-size: 13px;
+          font-weight: 500;
+          padding: 5px 12px;
+          border-radius: 6px;
+          white-space: nowrap;
+          transition: background 0.15s, color 0.15s;
         }
-        
+
+        .nav-link:hover {
+          background: rgba(255,255,255,0.15);
+          color: #fff;
+        }
+
+        .nav-link.active {
+          background: rgba(255,255,255,0.22);
+          color: #fff;
+          font-weight: 600;
+        }
+
+        /* ── User area (right) ── */
+        .user-area {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+
+        .user-avatar {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.25);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .user-avatar svg {
+          width: 16px;
+          height: 16px;
+          fill: white;
+        }
+
+        .username {
+          color: rgba(255,255,255,0.9);
+          font-size: 13px;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+
+        .btn-logout {
+          background: white;
+          color: #C9161C;
+          border: none;
+          border-radius: 6px;
+          padding: 4px 12px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          text-decoration: none;
+          font-family: 'Noto Sans Thai', sans-serif;
+          transition: background 0.15s;
+          white-space: nowrap;
+        }
+
+        .btn-logout:hover {
+          background: #ffe0e0;
+        }
       </style>
 
       <div class="header-full">
-        <span class="header-inside">
-          <div class="logo">
-            <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
+
+        <!-- Logo -->
+        <a class="logo-pill" href="/dashboard/">
+          <div class="logo-circle">
+            <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT">
           </div>
-          <a class="header-text" href="{% url 'dashboard:dashboard' %}">ระบบ AWIS</a>
-          <a class="header-text" href="{% url 'dashboard:statistics' %}">สถิติหมายจับรายปี</a>
-          <a class="header-text" href="{% url 'admin_panel:collections' %}">Admin Page</a>
-          <a class="header-text" style="color: #213259; text-decoration: none;font-weight: 600;"> ชื่อผู้ใช้งาน: <span class="username-value">{{ user.username }}</span> <a class="button-logout" href="{% url 'users:logout' %}" class="button-logout">logout</a> </a>
-        </span>
+          <span class="logo-text">ระบบ AWIS</span>
+        </a>
+
+        <!-- Nav links -->
+        <nav class="nav-links">
+          <a class="nav-link" href="{% url 'dashboard:dashboard' %}" id="nav-dashboard">หน้าหลัก</a>
+          <a class="nav-link" href="{% url 'dashboard:statistics' %}" id="nav-stats">รายงานสถิติ</a>
+          <a class="nav-link" href="{% url 'forms:draft-page' %}" id="nav-draft">ร่างคำร้อง</a>
+          <a class="nav-link" href="{% url 'admin_panel:collections' %}" id="nav-admin">Admin Page</a>
+        </nav>
+
+        <!-- User area -->
+        <div class="user-area">
+          <div class="user-avatar">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
+          </div>
+          <span class="username">{{ user.username }}</span>
+          <a class="btn-logout" href="{% url 'users:logout' %}">logout</a>
+        </div>
+
       </div>
     `;
+
+    // Apply active class based on current path
+    const links = shadow.querySelectorAll('.nav-link');
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && (currentPath === href || currentPath.startsWith(href.replace(/\/$/, '')))) {
+        link.classList.add('active');
+      }
+    });
   </script>
 </header>

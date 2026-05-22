@@ -5,22 +5,7 @@
 {% block style %}
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/draft_main.css' %}">
-<style>
-  .delete-btn {
-    background: #f43a15;
-    color: #000000;
-    border: .5px solid #000000;
-    border-radius: 10px;
 
-    margin-bottom: 4px;
-    padding: 4px 12px;
-
-    font-size: 12px;
-    width: max-content;
-    display: flex;
-    justify-self: flex-end;
-  }
-</style>
 {% endblock %}
 
 {% block content %}
@@ -42,11 +27,13 @@
     <i class="ti ti-clock" aria-hidden="true"></i>
     แก้ไขล่าสุด: {{ draft_container.last_edit }}
   </div>
-
-  <div class="delete-btn">
-    <a style="color: black;" href="{% url 'forms:delete-draft-container' draft_container.pk %}">ลบร่างคำร้อง</a>
+  <div style="margin-bottom: 5px;text-align: right;">
+    <a href="{% url 'forms:delete-draft-container' draft_container.pk %}">
+      <div class="btn btn-del">
+        <i class="ti ti-trash" href="{% url 'forms:delete-draft-container' draft_container.pk %}">ลบร่างคำร้อง</i>
+      </div>
+    </a>
   </div>
-
   <!-- เจ้าของคำร้อง -->
   <div class="card">
     <div class="card-header">
