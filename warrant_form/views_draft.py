@@ -250,6 +250,11 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             **selected_draft.reqform_draft.toRealReqform(),
         )
 
+        if not selected_draft.warrant_drafts.all():
+            return render(request, "errors/400.html", {
+                "reason": "ยังไม่ได้ใส่หมายจับ"
+            }, status=400)
+
         warrrant_wait_list : list[WarrantDataModel] = []
         for draft in selected_draft.warrant_drafts.all():
             warrant = WarrantDataModel(
