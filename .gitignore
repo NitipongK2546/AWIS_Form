@@ -11,6 +11,8 @@ _log_output
 /test_files
 /.test_files
 
+temp
+
 output.docx
 
 /_test_json
