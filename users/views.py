@@ -25,6 +25,67 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+def _login_via_erp(request: HttpRequest, form_data : dict, form : UserAuthForm):
+    def _block_no_user_access():
+        deny_reason = {
+            "message": f"{form_data.get("message")} ({form_data.get("username")})",
+        }
+
+        FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, deny_reason,)
+
+        return render(request, "users/login.html", {
+            "form": form,
+            "error": True,
+            "reason": form_data.get("message")
+        })
+    
+    def _block_wrong_username_password():
+        deny_reason = {
+            "message": f"Wrong username or password? ({form_data.get("username")})",
+        }
+
+        FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, deny_reason,)
+        
+        return render(request, "users/login.html", {
+            "form": form,
+            "error": True,
+            "reason": "ชื่อหรือรหัสผ่านผิด"
+        })
+    
+    try:
+        response_data = login_via_api(request)
+        if response_data.get("status") != 200:
+            return _block_no_user_access()
+        
+        result_user_id = form_data.get("id")
+        if not result_user_id:
+            return _block_wrong_username_password()
+
+        # result_user_id exist
+        user = UserDataModel.objects.get(api_uid=result_user_id)
+        login(request, user)
+
+        FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
+
+        return redirect("dashboard:dashboard")
+    
+    except:
+        return render(request, "users/login.html", {
+            "form": form,
+            "error": True,
+            "reason": "เชื่อมกับระบบ ERP ไม่ได้"
+        })
+    
+def _block_django_non_superuser(request : HttpRequest, form : UserAuthForm):
+    FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, remark="บัญชี Django ไม่มีสิทธิเข้าถึง ยกเว้น Superuser")
+
+    return render(request, "users/login.html", {
+        "form": form,
+        "error": True,
+        "reason": "เชื่อมกับระบบ ERP ไม่ได้"
+    })
+
+
 def user_login(request : HttpRequest):
     if request.user.is_authenticated:
         return redirect("dashboard:dashboard")
@@ -32,70 +93,37 @@ def user_login(request : HttpRequest):
         form = UserAuthForm(request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
-            user : UserDataModel = authenticate(request, username=form_data.get("username"), password=form_data.get("password"))
-            if user is not None:
-                login(request, user)
+            user : UserDataModel | None = authenticate(
+                request, 
+                username=form_data.get("username"), 
+                password=form_data.get("password")
+            )
 
-                FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
+            # User cannot be authenticated via Django Auth.
+            # Login via ERP
+            if not user:
+                return _login_via_erp(request, form_data, form)
+            
+            # User exists in the database itself, but not Superuser.
+            if not user.is_superuser:
+                return _block_django_non_superuser(request, form)
 
-                return redirect("dashboard:dashboard")
-            else:
-                try:
-                    response_data = login_via_api(request)
-                    
-                    if response_data.get("status") != 200:
-                        
-                        deny_reason = {
-                            "message": f"{form_data.get("message")} ({form_data.get("username")})",
-                        }
+            # User is guaranteed to be Django Superuser.
+            login(request, user)
 
-                        FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, deny_reason,)
+            FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
 
-                        return render(request, "users/login.html", {
-                            "form": form,
-                            "error": True,
-                            "reason": form_data.get("message")
-                        })
-                    
-                    result_user_id = form_data.get("id")
+            return redirect("dashboard:dashboard")
 
-                    if result_user_id:
-                        user = UserDataModel.objects.get(api_uid=result_user_id)
-                        login(request, user)
+            # send_email_otp(user)
+            # return redirect("users:verify_otp")
 
-                        FileLogger.createNormalLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE,)
+    form = UserAuthForm()    
+    return render(request, "users/login.html", {
+        "form": form
+    })
 
-                        return redirect("dashboard:dashboard")
-                    
-                    # Fail, No USER ID detected in UserDataModel.
-
-                    deny_reason = {
-                        "message": f"Wrong username or password? ({form_data.get("username")})",
-                    }
-
-                    FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, deny_reason,)
-                    
-                    return render(request, "users/login.html", {
-                        "form": form,
-                        "error": True,
-                        "reason": "ชื่อหรือรหัสผ่านผิด"
-                    })
-                except:
-                    return render(request, "users/login.html", {
-                        "form": form,
-                        "error": True,
-                        "reason": "เชื่อมกับระบบ ERP ไม่ได้"
-                    })
-
-                # # PRODUCTION
-                # send_email_otp(user)
-
-                # return redirect("users:verify_otp")
-    else:
-        form = AuthenticationForm()
-    return render(request, "users/login.html", {"form": form})
-
-# def insert_userID_
+#########################################################################
 
 def send_email_otp(user : UserDataModel):
     otp_obj, created = OTPCollection.objects.get_or_create(user=user)

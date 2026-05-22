@@ -79,6 +79,8 @@ class DefaultPermission(Enum):
             N.USER_ROLE, 
             N.USER_ACCESS,  
             N.LOG_ACCESS,
+            N.API_KEY,
+            N.COURT_LIST,
 
             N.REQFORM_DRAFT, 
             N.REQFORM_AWAIT_APPROVAL,
@@ -87,6 +89,9 @@ class DefaultPermission(Enum):
     ) + perm_str_list(
         [T.VIEW, T.CREATE, T.DELETE], 
         N.REQFORM_SUBMITTED
+    ) + perm_str_list(
+        [T.VIEW,], 
+        N.STATISTICS,
     )
 
 
@@ -98,6 +103,8 @@ class DefaultPermission(Enum):
             N.USER_ACCESS, 
             N.LOG_ACCESS,
             N.ADMIN_ROLE,
+            N.API_KEY,
+            N.COURT_LIST,
         ]
     )
 # for perm in DefaultPermission:

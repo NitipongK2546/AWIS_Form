@@ -181,6 +181,8 @@ def update_status_req_warrant(request : HttpRequest, req_no_plaintiff : str) -> 
             **reqform_update_dict
         )
 
+        form_obj.first().save()
+
         affected_objs = [obj.getLogInfoDict() for obj in form_status_obj]
 
         FileLogger.createNormalLog(request, AccessType.EDIT, PermissionList.REQFORM_SUBMITTED, affected_objs, user_bypass=user, remark="VIA JSON WEB TOKEN")

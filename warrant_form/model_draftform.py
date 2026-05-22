@@ -1,6 +1,5 @@
 from django.db import models
 
-from warrant_form.model_warrant import WarrantDataModel
 from django.forms.models import model_to_dict
 import warrant_form.forms_central as CentralForm
 from users.models import UserDataModel
@@ -162,6 +161,7 @@ class ReqformDraftDataModel(models.Model):
         dict_main_awis.update({
             "req_date": thai_date_now,
             "req_year": thai_date_now.year + 543,
+            "draft_id": self,
         })
 
         return dict_main_awis

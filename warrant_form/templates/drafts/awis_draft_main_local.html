@@ -3,80 +3,160 @@
 {% block title %}Draft Main Page{% endblock %}
 
 {% block style %}
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/draft_main.css' %}">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
 <style>
-div.main-draft-page {
-    margin-bottom: 25px;
-    padding: 15px;
-    border-radius: 6px;
-    background-color: #fafafa;
-}
+  .delete-btn {
+    background: #f43a15;
+    color: #000000;
+    border: .5px solid #000000;
+    border-radius: 10px;
+
+    margin-bottom: 4px;
+    padding: 4px 12px;
+
+    font-size: 12px;
+    width: max-content;
+    display: flex;
+    justify-self: flex-end;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="main-draft-page">
-  <!-- Navigation -->
-  <nav class="top-nav">
-    <a href="{% url 'dashboard:dashboard' %}" class="back-button">กลับ</a>
-  </nav>
+<div class="page-wrapper">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="{% url 'dashboard:dashboard' %}">หน้าหลัก</a>
+    <span class="bc-sep">/</span>
+    {% comment %} 
+    <a href="#">ร่างคำร้อง</a>
+    <span class="bc-sep">/</span> 
+    {% endcomment %}
+    <span class="bc-current">จัดการร่าง</span>
+  </div>
 
   <!-- Last edit -->
-  <header class="page-header">
-    <h2>แก้ครั้งล่าสุด: {{ draft_container.last_edit }}</h2>
-  </header>
+  <div class="last-edit">
+    <i class="ti ti-clock" aria-hidden="true"></i>
+    แก้ไขล่าสุด: {{ draft_container.last_edit }}
+  </div>
 
-  <!-- Owner card -->
-  <section class="card">
-    <h3>ข้อมูลเจ้าของคำร้อง</h3>
-    <form action="" method="post">
-      {% csrf_token %}
-      <p>
-        <strong>เจ้าของคำร้อง:</strong> {{ draft_container.form_owner }} | {{ ownership_form.form_owner }}
-        <button type="submit" class="primary-button" style="margin-left:10px;">เปลี่ยนเจ้าของ</button>
-      </p>
-    </form>
-    <p><strong>ผู้เขียน:</strong> {{ draft_container.form_creator }}</p>
-  </section>
+  <div class="delete-btn">
+    <a style="color: black;" href="{% url 'forms:delete-draft-container' draft_container.pk %}">ลบร่างคำร้อง</a>
+  </div>
 
-  <!-- Reqform card -->
-  <section class="card">
-    <h3>คำร้อง</h3>
-    <p>
-      {{ draft_container.reqform_draft }}
-      <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}" class="edit-button" style="margin-left:10px;">แก้ไข</a>
-    </p>
-  </section>
+  <!-- เจ้าของคำร้อง -->
+  <div class="card">
+    <div class="card-header">
+      <h2><i class="ti ti-user" aria-hidden="true"></i>ข้อมูลเจ้าของคำร้อง</h2>
+    </div>
+    <div class="card-body">
+      <form action="" method="post">
+        {% csrf_token %}
 
-  <!-- Warrant card -->
-  <section class="card">
-    <h3>หมายจับทั้งหมด</h3>
-    <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}" class="add-button">+ เพิ่มหมายจับ</a>
-    {% for warrant in draft_container.warrant_drafts.all %}
-      <p>
-        {{ forloop.counter }}. {{ warrant }}
-        <a href="{% url 'forms:edit-draft-container-warrant' draft_container.pk warrant.pk %}" class="edit-button">แก้ไข</a>
-        <a href="{% url 'forms:delete-draft-container-warrant' draft_container.pk warrant.pk %}" class="delete-button" onclick="return confirm('ต้องการลบจริงหรือไม่')">ลบ</a>
-      </p>
-    {% empty %}
-      <p>ไม่มีหมายจับ</p>
-    {% endfor %}
-  </section>
+        {% if not_owner_error %}
+        <div class="alert-error">
+          <i class="ti ti-alert-circle" aria-hidden="true"></i>
+          ไม่มีสิทธิเปลี่ยนเจ้าของคำร้องและผู้เขียน
+        </div>
+        {% endif %}
 
-  <!-- Create reqform card -->
-  <section class="card">
-    <a href="{% url 'forms:create-reqform' draft_container.pk %}" class="primary-button">
-      สร้างคำร้องจากร่างคำร้องขอ
+        <div class="info-row">
+          <span class="info-label">เจ้าของคำร้อง</span>
+          <span class="info-value">{{ draft_container.form_owner }}</span>
+          {% if is_owner %}
+          <span class="info-action">{{ ownership_form.form_owner }}</span>
+          {% endif %}
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">ผู้เขียน</span>
+          <span class="info-value">{{ draft_container.form_creator }}</span>
+          {% if is_owner %}
+          <span class="info-action">{{ ownership_form.form_creator }}</span>
+          {% endif %}
+        </div>
+
+        {% if is_owner %}
+        <div class="form-actions-inline">
+          <button type="submit" class="btn btn-change">เปลี่ยน</button>
+        </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  <!-- คำร้อง -->
+  <div class="card">
+    <div class="card-header">
+      <h2><i class="ti ti-file-text" aria-hidden="true"></i>คำร้อง</h2>
+    </div>
+    <div class="card-body">
+      <div class="info-row">
+        <span class="info-value">{{ draft_container.reqform_draft }}</span>
+        <span class="info-action">
+          <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}" class="btn btn-edit">
+            <i class="ti ti-edit" aria-hidden="true"></i>แก้ไขคำร้อง
+          </a>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- หมายจับ -->
+  <div class="card">
+    <div class="card-header">
+      <h2><i class="ti ti-file-certificate" aria-hidden="true"></i>หมายจับทั้งหมด</h2>
+      <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}" class="btn btn-add">
+        <i class="ti ti-plus" aria-hidden="true"></i>เพิ่มหมายจับ
+      </a>
+    </div>
+    <div class="card-body">
+      {% for warrant in draft_container.warrant_drafts.all %}
+      <div class="warrant-item">
+        <span class="warrant-num">{{ forloop.counter }}.</span>
+        <span class="warrant-name">{{ warrant }}</span>
+        <div class="warrant-actions">
+          <a href="{% url 'forms:edit-draft-container-warrant' draft_container.pk warrant.pk %}" class="btn btn-edit">
+            <i class="ti ti-edit" aria-hidden="true"></i>แก้ไข
+          </a>
+          <a href="{% url 'forms:delete-draft-container-warrant' draft_container.pk warrant.pk %}"
+             class="btn btn-del"
+             onclick="return confirm('ต้องการลบจริงหรือไม่')">
+            <i class="ti ti-trash" aria-hidden="true"></i>ลบ
+          </a>
+        </div>
+      </div>
+      {% empty %}
+      <div class="empty-state">
+        <i class="ti ti-inbox" aria-hidden="true"></i>
+        <p>ยังไม่มีหมายจับ กรุณาเพิ่มหมายจับก่อนสร้างคำร้อง</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- สร้างคำร้อง -->
+  <div class="submit-card">
+    <div>
+      <div class="submit-title">พร้อมส่งคำร้องแล้วใช่ไหม?</div>
+      <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
+    </div>
+    <a href="{% url 'forms:create-reqform' draft_container.pk %}" class="btn btn-primary">
+      <i class="ti ti-send" aria-hidden="true"></i>
+      สร้างคำร้องจากร่าง
     </a>
-  </section>
+  </div>
+
 </div>
 {% endblock %}
 
 {% block script %}
 <script>
 function confirmWithUser() {
-    return confirm('ต้องการลบจริงหรือไม่')
+  return confirm('ต้องการลบจริงหรือไม่')
 }
 </script>
 {% endblock %}

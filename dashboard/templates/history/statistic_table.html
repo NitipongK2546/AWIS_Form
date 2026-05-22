@@ -1,0 +1,46 @@
+{% load static %}
+{% load thai_locale %}
+
+<div id="body-table">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th colspan="12">สถานะคำร้อง</th>
+            </tr>
+            <tr>
+                <th>#</th>
+                <th>ปีคำร้อง</th>
+                <th>หมายเลขคำร้อง</th>
+                <th>เลขอ้างอิง</th>
+                <th>ผู้ร้อง</th>
+                <th>ผู้ถูกกล่าวหา</th>
+                <th>วันที่คำร้อง</th>
+                <th>วันที่สถานะเปลี่ยนครั้งล่าสุด</th>
+                <th>สถานะ</th>
+                <th>รายละเอียด</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in reqform_infos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ form.req_year }}</td>
+                <td>{{ form.reqno }}</td>
+                <td>{{ form.req_no_plaintiff }}</td>
+                <td>{{ form.req_name }}</td>
+                <td>{{ form.accused }}</td>
+                <td>{{ form.req_date }}</td>
+                <td>{{ form.last_update }}</td>
+                <td>{% include 'module/status_color_module.html' with color=form.status_choice status=form.status %}</td>
+                <td>
+                    <a href="{% url 'dashboard:reqform_info' form.req_no_plaintiff %}">Here</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td>ไม่มีคำร้อง</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

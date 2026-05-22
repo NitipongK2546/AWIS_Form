@@ -72,9 +72,9 @@
                     {% endif %}
                 </td>
                 <td>
-                    {% if form.court_injunction_int == 1 %}
+                    {% comment %} {% if form.court_injunction_int == 1 %} {% endcomment %}
                     <a href="{% url 'dashboard:report_warrant' form.req_no_plaintiff form.woa_refno %}">รายงานผลหมาย</a>
-                    {% endif %}
+                    {% comment %} {% endif %} {% endcomment %}
                 </td>
                 <td>
                     <a href="{% url 'dashboard:download_warrant' form.req_no_plaintiff form.woa_refno %}">Download ไฟล์หมาย</a>

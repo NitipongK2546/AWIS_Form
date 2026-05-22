@@ -37,6 +37,7 @@ def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : User
     # print(is_not_user)
 
     return is_not_user and not_has_approve_perm
+    
 
 #######################################################
 #
@@ -44,7 +45,7 @@ def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : User
 #
 
 @perm_req_log(*ReqformPerm.VIEW_REQFORM)
-def view_form(request : HttpRequest, req_no_plaintiff : int, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
+def view_form(request : HttpRequest, req_no_plaintiff : str, ObjWarrantForm = DisabledWarrantForm, ObjStep1Form = DisabledFormStep1, selected_html : str = "view_all.html"):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
 
@@ -56,8 +57,6 @@ def view_form(request : HttpRequest, req_no_plaintiff : int, ObjWarrantForm = Di
         }, status=403)
 
     reqform = selected_form.form
-
-    print(json.dumps(reqform.toAPICompatibleDict(), ensure_ascii=False, indent=2))
 
     # print(selected_form.prepareTextToSpeech())
 
@@ -105,6 +104,75 @@ def view_form(request : HttpRequest, req_no_plaintiff : int, ObjWarrantForm = Di
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
+@perm_req_log(*ReqformPerm.VIEW_REQFORM)
+def view_reqform_only(request : HttpRequest, req_no_plaintiff : str):
+
+    user_data = UserDataModel.objects.filter(id=request.user.id).first()
+
+    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+
+    if isNotUserAndNotHaveApprovePerm(selected_form, user_data):
+        return render(request, "errors/403.html", {
+            "reason": "ท่านไม่ใช่เจ้าของหรือผู้ร่างแบบฟอร์มดังกล่าว"
+        }, status=403)
+
+    reqform = selected_form.form
+
+    form_data = reqform.convertBacktoFormView()
+    
+    form = DisabledFormStep1(initial=form_data, prefix="main_form")
+
+    FileLogger.createNormalLog(request, AccessType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
+
+    return render(request, f"form_view/view_reqform.html", {
+        "user": request.user,
+        "form": form,
+        "disabled": True,
+
+        "req_province": form_data.get("req_province"),
+        "req_district": form_data.get("req_district"),
+        "req_sub_district": form_data.get("req_sub_district"),
+        "acc_province": form_data.get("acc_province"),
+        "acc_district": form_data.get("acc_district"),
+        "acc_sub_district": form_data.get("acc_sub_district"),
+    })
+
+@perm_req_log(*ReqformPerm.VIEW_REQFORM)
+def view_warrant_only(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
+
+    user_data = UserDataModel.objects.filter(id=request.user.id).first()
+
+    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+
+    if isNotUserAndNotHaveApprovePerm(selected_form, user_data):
+        return render(request, "errors/403.html", {
+            "reason": "ท่านไม่ใช่เจ้าของหรือผู้ร่างแบบฟอร์มดังกล่าว"
+        }, status=403)
+
+    reqform = selected_form.form
+
+    warrant : WarrantDataModel = reqform.warrants.filter(
+        woa_refno=woa_refno
+    ).first()
+    
+    warrant_data = warrant.convertBacktoFormView()
+
+    warrant_form = DisabledWarrantForm(initial=warrant_data, prefix="main_form")
+
+    FileLogger.createNormalLog(request, AccessType.VIEW, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
+
+    return render(request, f"form_view/view_warrant.html", {
+        "user": request.user,
+        "disabled": True,
+        "warrant": warrant_form,
+
+        "acc_province": warrant_data.get("acc_province"),
+        "acc_district": warrant_data.get("acc_district"),
+        "acc_sub_district": warrant_data.get("acc_sub_district"),
+    })
+
+################################################################################
+
 @perm_req_log(*ReqformPerm.EDIT_REQFORM)
 def edit_form(request : HttpRequest, req_no_plaintiff : int):
 
@@ -146,15 +214,16 @@ def edit_form(request : HttpRequest, req_no_plaintiff : int):
                     temp_warrants_store.append(warrant)
 
             old_form = form_await.form
-            old_form.delete()
 
-            reqform : ReqformDataModel = ReqformDataModel.objects.create(**form.cleaned_data)
+            targetted_reqform = ReqformDataModel.objects.filter(pk=old_form.pk)
+            targetted_reqform.update(**form.cleaned_data)
+
+            reqform = targetted_reqform.first()
 
             for item in temp_warrants_store:
                 if reqform:
                     reqform.warrants.add(item)
 
-            form_await.form = reqform
             form_await.approve_status = 1
 
             form_await.save()

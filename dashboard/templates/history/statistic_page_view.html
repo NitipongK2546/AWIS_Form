@@ -1,0 +1,87 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block header_script %}
+<script type="module">
+import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
+</script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block body %}
+    
+<div class="header-bar">
+    <h1 style="text-align: left; margin-left: 100px;">สถิติการส่งคำร้อง</h1>
+</div>
+
+<div class="dashboard-tools" style="display: flex; justify-content: center;">
+
+    <div class="tool-card">
+        <a style="padding:0px;" href="{% url 'forms:draft-page' %}">
+            <h3>ร่างคำร้องที่ยังไม่สำเร็จ: {{ draft_count }} ร่าง</h3>
+        </a>
+    </div>
+    <div class="tool-card">
+        <a style="padding:0px;" href="{% url 'dashboard:accept_table_page' %}">
+            <h3>ร่างคำร้องทั้งหมด: {{ total_count }} ร่าง</h3>
+        </a>
+    </div>
+    <div class="tool-card">
+        <a style="padding:0px;" href="{% url 'dashboard:approve_table_page' %}">
+            <h3>ร่างคำร้องที่รอการอนุมัติ: {{ unsent_form }} ร่าง</h3>
+        </a>
+    </div>
+
+    <div class="tool-card">
+        <a style="padding:0px;" href="{% url 'dashboard:accept_table_page' %}">
+            <h3>ร่างคำร้องที่ส่งถึงศาลสำเร็จ: {{ sent_form }} ร่าง</h3>
+        </a>
+    </div>
+    <div class="tool-card">
+        <a style="padding:0px;" href="{% url 'dashboard:accept_table_page' %}">
+            <h3>ร่างคำร้องที่ศาลอนุมัติ: {{ accepted_form }} ร่าง</h3>
+        </a>
+    </div>
+    
+    {% comment %}
+    <div class="tool-card">
+        <a href="{% url 'dashboard:warrant_status_page' %}">
+            <img src="{% static 'dashboard/images/checking-status.png' %}" alt="Access-List">
+            <h3>ตารางสถานะของหมายศาล</h3>
+        </a>
+    </div>
+    {% endcomment %}
+</div>
+
+<div>
+    <form method="get">
+    {{ filter_form.as_p }}
+    <button type="submit">Filter</button>
+    </form>
+</div>
+
+{% include "history/statistic_table.html" %}
+{% endblock %}
+
+{% block script %}
+<script type="module">
+    import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
+
+    const datetime_elements = document.querySelectorAll(".datetimepicker");
+    flatpickr(datetime_elements, {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i:ss",
+        altInput: true,
+        altFormat: "j F Y H:i น.",
+        locale: Thai,
+    });
+</script>
+{% endblock %}

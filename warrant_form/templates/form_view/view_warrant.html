@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="{% static 'css/step2.css' %}">
 <link rel="stylesheet" href="{% static 'dashboard/css/view_form.css' %}">
 <style>
-    form.main_form input, form.main_form select {
+    form input, form select {
         text-align: center !important;
         color: black;
 
@@ -22,7 +22,7 @@
         -webkit-appearance: none;
         -moz-appearance: none;
     }
-    form.main_form select {
+    select {
         background: none;
         appearance: none; 
         -webkit-appearance: none;
@@ -34,51 +34,22 @@
 {% endblock %}
 
 {% block form %}
-<form method="post" class="main_form">
+<form method="post">
     {% block return %}
     <p class="no-print">
          <a href="javascript:history.back()" class="button" style="margin: 0px;" >กลับ</a> 
     </p>
     {% endblock %}
-    <div>
-        {% include 'module/reqform/reqform.html' %}
-    </div>
 
-    {% for form in warrant_list %}
-        <div class="page-break">
-            <hr class="no-print">
-        </div>
-        <div>
-            {% include 'module/warrant/warrant_form.html' %}
-        </div>
-        {% empty %}
-        <p>No warrant</p>
-    {% endfor %}
+    <div>
+        {% include 'module/warrant/warrant_form.html' with form=warrant %}
+    </div>
 
     {% block step3_special %}
     {% endblock %}
 </form>
-<hr class="no-print">
 {% endblock %}
 
 {% block script %}
-<script src="{% static 'js/printFile.js' %}"></script>
 {% include 'module/view_form_script.html' %}
-{% endblock %}
-
-{% block confirmation %}
-<form method="post" style="text-align: center; padding-bottom: 20rem;">
-{% csrf_token %}
-<div>
-    <p>
-        <span>อนุมัติและส่งให้กับศาล</span>
-        <input id="id_confirm_approve" name="confirm_approve" type="checkbox">
-    </p>
-    <p>
-        <span>ปฎิเสธคำร้อง</span>
-        <input id="id_confirm_reject" name="confirm_reject" type="checkbox">
-    </p>
-</div>
-<button type="submit" class="confirm-button no-print">ยืนยันผล</button>
-</form>
 {% endblock %}

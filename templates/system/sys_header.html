@@ -1,4 +1,5 @@
-<header id="awis-header-container" class="no-print" style="all: unset;">
+{% load static %}
+<header id="awis-header-container" class="no-print" style="all: unset; z-index: 999;">
   <div id="awis-system-header" style="display: block;"></div>
 
   <script>
@@ -12,7 +13,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Sarabun&display=swap');
 
         .header-full {
-          background: linear-gradient(90deg, #0d47a1, #1976d2);
+          background: linear-gradient(90deg, #213259, #C9161C);
           color: white;
           font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
           font-size: 24px;
@@ -30,14 +31,22 @@
           justify-content: center;
           gap: 15px;
 
-          width: 99vw;
-          padding: 20px 0;
+          width: 100vw;
+          padding: 8px 0;
           margin: 0;
         }
 
         .logo {
           display: flex;
           gap: 5px;
+          background-color: white;
+          padding: 10px;
+          border-radius: 10px;
+        }
+        
+        .logo img {
+          max-width: 100px;
+          height: auto;
         }
 
         .hex {
@@ -51,20 +60,49 @@
           cursor: pointer;
           text-decoration: none;
         }
+        
+        .header-inside {
+          display: flex;
+          align-items: center;
+          gap: 20px; /* ระยะห่างระหว่างเมนู */
+        }
+        .header-text {
+          color: white;
+          text-decoration: none;
+          font-weight: 60;
+          font-size: 18px;
+        }
+        .header-text:hover {
+          text-decoration: underline;
+        }
+        
+        .button-logout {
+          margin-left: 10px;
+          background: #ffffff;
+          color: white;
+          padding: 5px 12px;
+          border-radius: 6px;
+          text-decoration: none;
+          font-size: 14px;
+          transition: background 0.3s;
+          color: #C9161C;
+        }
 
-        .hex.red { background-color: #e53935; }
-        .hex.blue { background-color: #1e88e5; }
-        .hex.green { background-color: #43a047; }
+        .button-logout:hover {
+          background: #ee7171;
+        }
+        
       </style>
 
       <div class="header-full">
         <span class="header-inside">
           <div class="logo">
-            <div class="hex red"></div>
-            <div class="hex blue"></div>
-            <div class="hex green"></div>
+            <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
           </div>
           <a class="header-text" href="{% url 'dashboard:dashboard' %}">ระบบ AWIS</a>
+          <a class="header-text" href="{% url 'dashboard:statistics' %}">สถิติหมายจับรายปี</a>
+          <a class="header-text" href="{% url 'admin_panel:collections' %}">Admin Page</a>
+          <a class="header-text" style="color: #213259; text-decoration: none;font-weight: 600;"> ชื่อผู้ใช้งาน: <span class="username-value">{{ user.username }}</span> <a class="button-logout" href="{% url 'users:logout' %}" class="button-logout">logout</a> </a>
         </span>
       </div>
     `;

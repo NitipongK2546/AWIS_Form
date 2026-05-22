@@ -1,19 +1,24 @@
+{% extends 'users/base.html' %}
 {% load static %}
 
 {% block title %}Login{% endblock %}
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/login.css' %}">
+<link rel="stylesheet"
+href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 {% endblock %}
 
 {% block body %}
 <div class="login-container">
     <div class="login-left-container">
-        <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
+        <h1>ระบบการร้องขอหมายจับ</h1>
+        <h2>สำนักงาน กขค</h2>
+        <img src="{% static 'images/COURT.png' %}" alt="court" >
     </div>
     <div class="login-right-container">
-        <h1>ระบบ AWIS</h1>
-        <h1>Login</h1>
+        <img src="{% static 'images/TCCT_LOGO.png' %}" alt="TCCT_Logo" >
+        <h1>เข้าสู่ระบบ (Login)</h1>
         <form method="post">
             {% csrf_token %}
 
@@ -23,16 +28,52 @@
 
             <div class="form-group">
                 <label for="id_username">Username</label>
-                {{ form.username }}
+                <span class="username-container">
+                    {{ form.username }}
+                </span>
             </div>
 
             <div class="form-group">
                 <label for="id_password">Password</label>
-                {{ form.password }}
+                <span class="password-container" style="display: flex; max-height: 43.2px;">
+                    {{ form.password }}
+                    <button type="button" id="toggle-password" style="display: flex; align-items: center;">
+                        <span class="material-symbols-outlined">
+                            visibility_off
+                        </span>
+                    </button>
+                </span>
             </div>
 
             <button type="submit">Login</button>
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+  const password_field = document.getElementById("id_password");
+  const password_btn = document.getElementById("toggle-password");
+
+  const span_icon = document.createElement("span")
+  span_icon.className = "material-symbols-outlined"
+
+  password_btn.addEventListener("click", () => {
+    if (password_field.type === "password") {
+
+      password_field.type = "text";
+      password_btn.textContent = "";
+      span_icon.textContent = "visibility"
+      password_btn.appendChild(span_icon)
+
+    } else {
+
+      password_field.type = "password";
+      password_btn.textContent = "";
+      span_icon.textContent = "visibility_off"
+      password_btn.appendChild(span_icon)
+    }
+  });
+</script>
 {% endblock %}

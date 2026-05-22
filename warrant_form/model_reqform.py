@@ -48,10 +48,17 @@ THAI_MONTHS = {
     12:"มกราคม",
 }
 
+from .model_draftform import ReqformDraftDataModel
+
 class ReqformDataModel(models.Model):
     class ReqCaseTypeIDChoices(models.IntegerChoices):
         GENERAL = (1, "ทั่วไป") # จ.
         DRUGS = (2, "ยาเสพติด") # ยจ.
+
+    # New field added specially because people didn't tell me how it's supposed to be made.
+    # Oh well.
+    draft_id = models.ForeignKey(ReqformDraftDataModel, on_delete=models.PROTECT)
+    last_update_date = models.DateTimeField(blank=True, null=True, auto_now=True)
     
     req_form_number = models.IntegerField(blank=True, null=True)
     
@@ -254,15 +261,14 @@ class ReqformDataModel(models.Model):
         return result_dict
     
 
-    def convertBacktoFormView(self) -> dict[str,]:
+    def convertBacktoFormView(self, month_as_text : bool = False, two_digit_year : bool = False, buddhist_year : bool = False) -> dict[str,]:
         dict_main_awis = model_to_dict(self)
 
-        duped_list = ["accused", "plaintiff", "court_name"]
+        duped_list = ["accused",]
         time_split_list = ["woa_start_date", "woa_end_date", "scene_date", "req_date"]
 
         dict_main_awis = CentralForm.createDupe(duped_list, dict_main_awis)
-        dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis)
-
+        dict_main_awis = CentralForm.splitTime(time_split_list, dict_main_awis, month_as_text=month_as_text, buddhist_year=buddhist_year)
 
         dict_main_awis.update({
             "court_name_1": CentralForm.court_codes.getValueOf(self.court_code),
@@ -273,13 +279,25 @@ class ReqformDataModel(models.Model):
             dict_main_awis.update({f"cause_type_id_{self.cause_type_id}": 1})
             dict_main_awis.update({f"cause_text_{self.cause_type_id}": self.cause_text})
 
+        if self.req_year:
+            dict_main_awis.update({
+                "req_year": str(self.req_year)[-2:]
+            })
+
         if self.have_req:
-            dict_main_awis.update({f"have_req_1": 1})
+            dict_main_awis.update({f"have_req_1": True})
         else:
-            dict_main_awis.update({f"have_req_2": 1})
+            dict_main_awis.update({f"have_req_2": True})
 
         return dict_main_awis
-        
+    
+    def convertToDocumentData(self):
+        data_dict = self.convertBacktoFormView(month_as_text=True, two_digit_year=True, buddhist_year=True)
+
+        data_dict.update({f"cause_type_id_{self.cause_type_id}": True})
+
+        return data_dict
+
 def assemble_cause(cause_id : int, cause_text : str):
     temp = {
         1: f"{cause_text} มาแจ้งความร้องทุกข์ต่อพนักงานสอบสวน",

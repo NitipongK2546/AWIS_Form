@@ -4,6 +4,7 @@
 {% block title %}Draft Reqform{% endblock %}
 
 {% block style %}
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/draft_reqform.css' %}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock %}
@@ -15,112 +16,352 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 {% endblock %}
 
-
 {% block content %}
-<form method="post">
-<button type="button" onclick="window.history.back()" class="back-button">กลับ</button>
+<div class="page-wrapper">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="{% url 'dashboard:dashboard' %}">หน้าหลัก</a>
+    <span class="bc-sep">/</span>
+    <span class="bc-current">สร้างคำร้อง</span>
+  </div>
+
+  <form method="post">
     {% csrf_token %}
 
-    <h1>สร้างคำร้อง </h1>
-    <div>
+    <!-- ข้อมูลคำร้อง -->
+    <div class="card">
+      <div class="card-header">
         <h2>ข้อมูลคำร้อง</h2>
-        <p>UID ผู้สร้างคำร้อง:     {{ draft_form.create_uid }}</p>
-        <p>หมายเลขอ้างอิง:         {{ draft_form.ref_no }}</p>
-        <p>วันที่สร้างคำร้อง: {{ reqform_time }}</p>
-        <p>ประเภทคำร้อง:   {{ draft_form.req_case_type_id }}</p>
-        <!-- <p>หมายเลขโจทก์:   {{ draft_form.req_no_plaintiff }}</p> -->
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">UID ผู้สร้างคำร้อง</label>
+          {{ draft_form.create_uid }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">หมายเลขอ้างอิง</label>
+          {{ draft_form.ref_no }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">วันที่สร้างคำร้อง</label>
+          <div class="static-value">{{ reqform_time }}</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ประเภทคำร้อง</label>
+          {{ draft_form.req_case_type_id }}
+        </div>
+      </div>
     </div>
 
-    <div>
+    <!-- ศาล และตำรวจ -->
+    <div class="card">
+      <div class="card-header">
         <h2>ศาล และตำรวจ</h2>
-        <p>ศาล:         {{ draft_form.court_code }}</p>
-        <p>หมายเลขสถานีตำรวจ:  {{ draft_form.police_station_id }}</p>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">ศาล</label>
+          {{ draft_form.court_code }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">หมายเลขสถานีตำรวจ</label>
+          {{ draft_form.police_station_id }}
+        </div>
+      </div>
     </div>
 
-    <div>
-        <h2>โจทก์ และผู้ต้องหา</h2>
-        <p>ชื่อโจทก์:    {{ draft_form.plaintiff }}</p>
-        <p>ชื่อผู้ต้องหา:            {{ draft_form.accused }}</p>
+    <!-- โจทก์ และผู้ต้องหา -->
+    <div class="card">
+      <div class="card-header">
+        <h2>โจทก์ และผู้ต้องหา</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">ชื่อโจทก์</label>
+          {{ draft_form.plaintiff }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ชื่อผู้ต้องหา</label>
+          {{ draft_form.accused }}
+        </div>
+      </div>
     </div>
 
-    <div>
-        <h2>ข้อมูลผู้กรอกคำร้อง</h2>
-        <p>ผู้กรอกคำร้อง:           {{ draft_form.req_name }}</p>
-        <p>ตำแหน่งผู้กรอกคำร้อง :            {{ draft_form.req_pos }}</p>
-        <p>สถานที่ทำงานของผู้กรอกคำร้อง:         {{ draft_form.req_office }}</p>
-        <p>อายุผู้กรอกคำร้อง:            {{ draft_form.req_age }}</p>
-        <p>
-            <span>จังหวัด: {{ draft_form.req_province }}</span>
-            <span>อำเภอ/เขต: {{ draft_form.req_district }}</span>
-            <span>ตำบล/แขวง: {{ draft_form.req_sub_district }}</span>
-        </p>
-        <p>หมายเลขโทรศัพท์ผู้กรอกคำร้อง:            {{ draft_form.req_tel }}</p>
+    <!-- ข้อมูลผู้กรอกคำร้อง -->
+    <div class="card">
+      <div class="card-header">
+        <h2>ข้อมูลผู้กรอกคำร้อง</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">ผู้กรอกคำร้อง</label>
+          {{ draft_form.req_name }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ตำแหน่ง</label>
+          {{ draft_form.req_pos }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">สถานที่ทำงาน</label>
+          {{ draft_form.req_office }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">อายุ</label>
+          {{ draft_form.req_age }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ที่อยู่</label>
+          <div class="inline-group">
+            <div class="inline-field">
+              <span class="inline-label">จังหวัด</span>
+              {{ draft_form.req_province }}
+            </div>
+            <div class="inline-field">
+              <span class="inline-label">อำเภอ/เขต</span>
+              {{ draft_form.req_district }}
+            </div>
+            <div class="inline-field">
+              <span class="inline-label">ตำบล/แขวง</span>
+              {{ draft_form.req_sub_district }}
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">หมายเลขโทรศัพท์</label>
+          {{ draft_form.req_tel }}
+        </div>
+      </div>
     </div>
 
-    <div>
-        <h2>ข้อมูลผู้ต้องหา</h2>
-        <p>ชื่อเต็มผู้ต้องหา:      {{ draft_form.acc_full_name }}</p>
-        <p>ประเภทบัตรผู้ต้องหา:      {{ draft_form.acc_card_type }}</p>
-        <p>รหัสบัตรประจำตัวผู้ต้องหา:        {{ draft_form.acc_card_id }}</p>
-        <p>อายุผู้ต้องหา:            {{ draft_form.acc_age }}</p>
-        <p>เชื้อชาติผู้ต้องหา:         {{ draft_form.acc_origin }}</p>
-        <p>สัญชาติผู้ต้องหา:         {{ draft_form.acc_nation }}</p>
-        <p>อาชีพผู้ต้องหา:     {{ draft_form.acc_occupation }}</p>
-        <p>บ้านเลขที่ผู้ต้องหา:          {{ draft_form.acc_addno }}</p>
-        <p>หมู่บ้าน:          {{ draft_form.acc_vilno }}</p>
-        <p>ถนน:           {{ draft_form.acc_road }}</p>
-        <p>ซอย:            {{ draft_form.acc_soi }}</p>
-        <p>
-            <span>จังหวัด: {{ draft_form.acc_province }}</span>
-            <span>อำเภอ/เขต: {{ draft_form.acc_district }}</span>
-            <span>ตำบล/แขวง: {{ draft_form.acc_sub_district }}</span>
-        </p>
-        <p>เบอร์โทร:            {{ draft_form.acc_tel }}</p>
+    <!-- ข้อมูลผู้ต้องหา -->
+    <div class="card">
+      <div class="card-header">
+        <h2>ข้อมูลผู้ต้องหา</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">ชื่อเต็ม</label>
+          {{ draft_form.acc_full_name }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ประเภทบัตร</label>
+          {{ draft_form.acc_card_type }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">รหัสบัตรประจำตัว</label>
+          {{ draft_form.acc_card_id }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">อายุ</label>
+          {{ draft_form.acc_age }}
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">เชื้อชาติ</label>
+            {{ draft_form.acc_origin }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">สัญชาติ</label>
+            {{ draft_form.acc_nation }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">อาชีพ</label>
+            {{ draft_form.acc_occupation }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">บ้านเลขที่</label>
+            {{ draft_form.acc_addno }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">หมู่บ้าน</label>
+            {{ draft_form.acc_vilno }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">ถนน</label>
+            {{ draft_form.acc_road }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">ซอย</label>
+            {{ draft_form.acc_soi }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ที่อยู่</label>
+          <div class="inline-group">
+            <div class="inline-field">
+              <span class="inline-label">จังหวัด</span>
+              {{ draft_form.acc_province }}
+            </div>
+            <div class="inline-field">
+              <span class="inline-label">อำเภอ/เขต</span>
+              {{ draft_form.acc_district }}
+            </div>
+            <div class="inline-field">
+              <span class="inline-label">ตำบล/แขวง</span>
+              {{ draft_form.acc_sub_district }}
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">เบอร์โทร</label>
+          {{ draft_form.acc_tel }}
+        </div>
+      </div>
     </div>
 
-    <div>
+    <!-- ประเภทคำร้อง -->
+    <div class="card">
+      <div class="card-header">
         <h2>ประเภทคำร้อง</h2>
-        <p>ประเภท เหตุผลที่จับกุม:      {{ draft_form.cause_type_id }}</p>
-        <p>เหตุผลที่จับกุม:         {{ draft_form.cause_text }}</p>
-        <p>ฐานความผิด:             {{ draft_form.charge }}</p>
-        <p>ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรง </br>
-            ซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี:      {{ draft_form.charge_type_1 }}</p>
-        <p>ได้หรือน่าจะได้กระทำความผิดอาญาและน่าจะหลบหนี </br>
-            หรือจะไปยุ่งเหยิงกับพยานหลักฐานหรือก่ออันตรายประการอื่น:      {{ draft_form.charge_type_2 }}</p>
-        <p>สถานที่เกิดเหตุ:              {{ draft_form.scene }}</p>
-        <p>วัน/เวลาที่เกิดเหตุ:         {{ draft_form.scene_date }}</p>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">ประเภทเหตุผลที่จับกุม</label>
+          {{ draft_form.cause_type_id }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">เหตุผลที่จับกุม</label>
+          {{ draft_form.cause_text }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ฐานความผิด</label>
+          {{ draft_form.charge }}
+        </div>
+        <div class="form-group">
+          <label class="form-label checkbox-label">
+            {{ draft_form.charge_type_1 }}
+            ได้หรือน่าจะได้กระทำความผิดอาญาร้ายแรงซึ่งมีอัตราโทษจำคุกอย่างสูงเกิน 3 ปี
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-label checkbox-label">
+            {{ draft_form.charge_type_2 }}
+            ได้หรือน่าจะได้กระทำความผิดอาญาและน่าจะหลบหนีหรือจะไปยุ่งเหยิงกับพยานหลักฐานหรือก่ออันตรายประการอื่น
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-label">สถานที่เกิดเหตุ</label>
+          {{ draft_form.scene }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">วัน/เวลาที่เกิดเหตุ</label>
+          {{ draft_form.scene_date }}
+        </div>
+      </div>
     </div>
 
-    <div>
+    <!-- ความผิด -->
+    <div class="card">
+      <div class="card-header">
         <h2>ความผิด</h2>
-        <p>การกระทำผิด (มีพฤติการกระทำความผิด) : {{ draft_form.act }}</p>
-        <p>เป็นความผิดตามกฎหมาย:               {{ draft_form.law }}</p>
-        <p>ซึ่งเป็นคดีที่อยู่ในอำนาจศาล:  {{ draft_form.court_owner_code }}</p>
-        <p>มีอายุความ:      {{ draft_form.prescription }}</p>
-        <p>เริ่มนับอายุความตั้งแต่วันที่:    {{ draft_form.woa_start_date }}</p>
-        <p>ไม่เกินวันที่:      {{ draft_form.woa_end_date }}</p>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">การกระทำผิด</label>
+          {{ draft_form.act }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">เป็นความผิดตามกฎหมาย</label>
+          {{ draft_form.law }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ซึ่งเป็นคดีที่อยู่ในอำนาจศาล</label>
+          {{ draft_form.court_owner_code }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">มีอายุความ</label>
+          {{ draft_form.prescription }}
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">เริ่มนับอายุความตั้งแต่วันที่</label>
+            {{ draft_form.woa_start_date }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">ไม่เกินวันที่</label>
+            {{ draft_form.woa_end_date }}
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div>
-        <h2>ผู้มีส่วนร่วม </h2>
-        <p>ผู้ยื่น:         {{ draft_form.agent_name }} </p>
-        <p>ตำแหน่งผู้ยื่น:          {{ draft_form.agent_pos }}</p>
-        <p>ชื่อ ผู้พิมพ์/เขียน:        {{ draft_form.writer_name }}  </p>
-        <p>ตำแหน่ง ผู้พิมพ์/เขียน:     {{ draft_form.write_position }}     </p>
-        <p>ชื่อผู้เรียบเรียง:      {{ draft_form.composer_name }}    </p>
-        <p>ตำแหน่งผู้เรียบเรียง:  {{ draft_form.composer_position }}        </p>
+    <!-- ผู้มีส่วนร่วม -->
+    <div class="card">
+      <div class="card-header">
+        <h2>ผู้มีส่วนร่วม</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">ผู้ยื่น</label>
+            {{ draft_form.agent_name }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">ตำแหน่ง</label>
+            {{ draft_form.agent_pos }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">ชื่อผู้พิมพ์/เขียน</label>
+            {{ draft_form.writer_name }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">ตำแหน่ง</label>
+            {{ draft_form.write_position }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">ชื่อผู้เรียบเรียง</label>
+            {{ draft_form.composer_name }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">ตำแหน่ง</label>
+            {{ draft_form.composer_position }}
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div>
+    <!-- เพิ่มเติม -->
+    <div class="card">
+      <div class="card-header">
         <h2>เพิ่มเติม</h2>
-        <p>ผู้ร้องเคยร้องให้ศาลออกหมายจับบุคคลดังกล่าวหรือไม่:          {{ draft_form.have_req }}</p>
-        <p>ซึ่งเคยยื่นที่ศาล:   {{ draft_form.have_court_code }}</p>
-        <p>ความผิด:          {{ draft_form.have_act }}</p>
-        <p>และศาลสั่ง:       {{ draft_form.have_injunc }}</p>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">ผู้ร้องเคยร้องให้ศาลออกหมายจับบุคคลดังกล่าวหรือไม่</label>
+          {{ draft_form.have_req }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ซึ่งเคยยื่นที่ศาล</label>
+          {{ draft_form.have_court_code }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">ความผิด</label>
+          {{ draft_form.have_act }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">และศาลสั่ง</label>
+          {{ draft_form.have_injunc }}
+        </div>
+      </div>
     </div>
 
-    <button type="submit">บันทึกข้อมูล</button>
-</form>
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" onclick="window.history.back()" class="btn-back">กลับ</button>
+      <button type="submit" class="btn-submit">บันทึกข้อมูล</button>
+    </div>
+
+  </form>
+</div>
 {% endblock %}
 
 {% block script %}
@@ -135,7 +376,6 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 <script src="{% static 'js/draft_reqform/handleDistrict.js' %}"></script>
 <script type="module">
     import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
-
     const datetime_elements = document.querySelectorAll(".datetimepicker");
     flatpickr(datetime_elements, {
         enableTime: true,

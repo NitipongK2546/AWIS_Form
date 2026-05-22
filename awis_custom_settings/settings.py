@@ -13,6 +13,9 @@ class PermissionList(models.TextChoices):
     ADMIN_ROLE              = "adminRole"           # 1410
     USER_ROLE               = "userRole"            # 1420
 
+    COURT_LIST              = "courtList"            # 1500
+    API_KEY                 = "apiKey"               # 1600
+
     # Form => 2000
     REQFORM_DRAFT           = "reqformDraft"        # 2100
     REQFORM_AWAIT_APPROVAL  = "reqformAwaitApproval"# 2200
@@ -23,6 +26,9 @@ class PermissionList(models.TextChoices):
     LOGIN_PAGE              = "loginPage"           # 3100
     JWT_ENDPOINT            = "jwtEndpoint"         # 3200
 
+    # Statistic => 4000
+    STATISTICS              = "statisticsPage"
+
 # class PermissionCode(models.TextChoices):
 PERMISSION_CODE = {
     # Admin => 1000
@@ -31,6 +37,8 @@ PERMISSION_CODE = {
     PermissionList.LOG_ACCESS              : "1120",   
     PermissionList.ADMIN_ROLE              : "1130",   
     PermissionList.USER_ROLE               : "1140",    
+    PermissionList.COURT_LIST              : "1150",   
+    PermissionList.API_KEY                 : "1160",    
 
     # Form => 2000
     PermissionList.REQFORM_DRAFT           : "2100",   
@@ -40,7 +48,10 @@ PERMISSION_CODE = {
     
     # Login => 3000
     PermissionList.LOGIN_PAGE              : "3100",
-    PermissionList.LOGIN_PAGE              : "3200",
+    PermissionList.JWT_ENDPOINT            : "3200",
+
+    # Statistic => 4000
+    PermissionList.STATISTICS              : "4100",
 }
 
 class RoleList(Enum):

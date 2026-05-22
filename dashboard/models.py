@@ -20,9 +20,10 @@ class FormAwaitingApproval(models.Model):
         # ]
 
     class ApprovalStatus(models.IntegerChoices):
-        REJECTED = (0, "ไม่ผ่านการอนุมติ")
+        CANCELED = (-1, "ยกเลิก")
+        REJECTED = (0, "ไม่ผ่านการพิจารณา")
         PENDING = (1, "กำลังรอพิจารณา")
-        APPROVED = (2, "ผ่านการอนุมัติ")
+        APPROVED = (2, "ผ่านการพิจารณา")
     
     form = models.OneToOneField(ReqformDataModel, on_delete=models.CASCADE)
 
@@ -32,7 +33,7 @@ class FormAwaitingApproval(models.Model):
     form_creator = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="created_visual_form")
     form_owner = models.ForeignKey(UserDataModel, on_delete=models.PROTECT, related_name="owned_visual_form")
 
-    approve_status = models.IntegerField(choices=ApprovalStatus)
+    approve_status = models.IntegerField(choices=ApprovalStatus, default=ApprovalStatus.PENDING)
 
     def __str__(self):
         # return json.dumps({
@@ -68,14 +69,14 @@ class VisualReqformData(models.Model):
     class AcceptStatus(models.IntegerChoices):
         DENIED = (0, "ไม่รับ")
         ACCEPTED = (1, "รับ")
-        WAITING = (99, "รอการพิจารณา")
+        WAITING = (99, "รอศาลตอบรับ")
     
     form = models.OneToOneField(ReqformDataModel, on_delete=models.CASCADE, related_name='finalized_form')
 
     # THIS NAME IS CORRECT, DON'T CHANGE THIS, FUTURE READER!!!
     accept_date = models.DateTimeField(blank=True, null=True)
 
-    accept = models.IntegerField(choices=AcceptStatus, blank=True, null=True)
+    accept = models.IntegerField(choices=AcceptStatus, blank=True, null=True, default=AcceptStatus.WAITING)
 
     def __str__(self):
         # return json.dumps({

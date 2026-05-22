@@ -42,35 +42,24 @@ def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : User
 
     return is_not_user and not_has_approve_perm
 
-# Create your views here.
+#######################################################################
+
+color_val_unsent = {
+    1: 10,
+    0: 11,
+    2: 12,
+    -1: 99,
+}
+
+color_val_sent = {
+    99: 20,
+    0: 22,
+    1: 23,
+}
 
 # I will seperate dashboard + index, just in case.
 def index(request : HttpRequest):
     return redirect("dashboard:dashboard")
-
-@login_required
-def dashboard(request : HttpRequest):
-
-    context = {
-        "user": request.user,
-    }
-
-    if request.user.has_perms(
-        perm_str_list([PermissionType.VIEW, PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL)
-    ):
-        context.update({
-            "can_create_form": True,
-        })
-    
-    if request.user.has_perms(
-        perm_str_list([PermissionType.VIEW, PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL)
-    ):
-        context.update({
-            "can_approve_form": True,
-        })
-
-
-    return render(request, "dashboard/dashboard.html", context)
 
 ############################################################################
 
@@ -84,14 +73,13 @@ def approve_table_page(request):
         "forms": form_awaiting_approval,
     })
 
+##############################################################################
+
 from warrant_form.views_reqform import view_form
 
 @perm_req_log(*DashboardPerm.APPROVE_REQFORM)
-def confirm_approve(request : HttpRequest, req_no_plaintiff : str):
-
-    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
-
-    if request.method == "POST":
+def reqform_approve_page(request : HttpRequest, req_no_plaintiff : str):
+    def handle_form_approved():
         try:
             if settings.ENABLE_API:
                 AWISConnectAPI.post_send_req_form("v1.1", request, selected_form.form.toAPICompatibleDict())
@@ -99,6 +87,8 @@ def confirm_approve(request : HttpRequest, req_no_plaintiff : str):
             selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.APPROVED
             selected_form.date_approved = timezone.now()
             selected_form.save()
+
+            selected_form.form.save()
 
             for warrant in selected_form.form.warrants.all():
                 VisualWarrantData.objects.create(
@@ -113,18 +103,40 @@ def confirm_approve(request : HttpRequest, req_no_plaintiff : str):
 
             FileLogger.createNormalLog(request, AccessType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict(),)
 
-            return redirect("dashboard:accept_table_page")
-        except Exception as e:
             return redirect("dashboard:dashboard")
+        except Exception as e:
+            print(str(e))
+            return redirect("dashboard:dashboard")
+
+    def handle_form_rejected():
+        selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.REJECTED
+        selected_form.save()
+
+        FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
+
+        return redirect("dashboard:dashboard")
+        
+    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+
+    if request.method == "POST":
+        if request.POST.get("confirm_approve") and request.POST.get("confirm_reject"):
+            # ไม่ควรเกิดขึ้น หาก Javascript ทำงาน
+            return render(request, "errors/400.html", {
+                "reason": "ท่านเลือกที่จะอนุมัติและปฎิเสธพร้อมกัน"
+            }, status=400)
+
+        if request.POST.get("confirm_approve"):
+            return handle_form_approved()
+        elif request.POST.get("confirm_reject"):
+            return handle_form_rejected()
+
+        else:
+            # ไม่ควรเกิดขึ้น หาก input ยังอยู่
+            return render(request, "errors/400.html", {
+                "reason": "ไม่ได้รับข้อมูลว่าอนุมัติหรือปฏิเสธ"
+            }, status=400)
         
     return view_form(request, req_no_plaintiff, selected_html="approve_form_view.html")
-
-    # return render(request, "dashboard/confirmation_page.html", {
-    #     "user": request.user,
-    #     "action": "Approve",
-    #     "form": selected_form,
-    # })
-    
 
 @perm_req_log(*DashboardPerm.REJECT_REQFORM)
 def confirm_reject(request : HttpRequest, req_no_plaintiff : str):
@@ -179,10 +191,11 @@ def warrant_status_page(request, req_no_plaintiff : str):
         warrant_wrap = VisualWarrantData.objects.filter(warrant=warrant_data).first()
 
         data_dict = {
-            "court_injunction": warrant_wrap.get_court_injunction_display(), 
             "woa_no_and_year": warrant_data.get_woa_no_and_year(),
             "woa_type": f"{warrant_data.get_woa_type_text()} | {warrant_data.get_fault_type_text()}",
             "woa_refno": warrant_data.woa_refno,
+
+            "court_injunction": warrant_wrap.get_court_injunction_display(), 
             "judge_name": warrant_wrap.judge_name,
             "injunction_date": convert_time(warrant_wrap.injunction_date),
             "file_path": warrant_wrap.file_path,
@@ -201,147 +214,46 @@ def warrant_status_page(request, req_no_plaintiff : str):
     })
 
 
-#######################################################3
-#
-# FORM APPROVE SECTION
-#
-
-# @permission_required(perm_str(PermissionType.APPROVE, PermissionList.REQFORM_AWAIT_APPROVAL), raise_exception=True)
-# def approve_form_page(request : HttpRequest):
-
-#     written_form = FormAwaitingApproval.objects.filter(form_creator=request.user)
-#     owned_form = FormAwaitingApproval.objects.filter(form_owner=request.user)
-#     form_awaiting_approval = written_form.union(owned_form)
-
-#     return render(request, "dashboard/approve_page.html", {
-#         "user": request.user,
-#         "forms": form_awaiting_approval,
-#     })
-
 @login_required
 def success_page(request : HttpRequest):
     return render(request, "dashboard/success_page.html", {
         "user": request.user,
     })
 
-################################################################################
-
-from .forms_report_warrant import ReportWarrantForm
-import warrant_form.forms_central as CentralForm
-
-@perm_req_log(*DashboardPerm.CREATE_REPORT_WARRANT_SUBMITTED)
-def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
-    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
-
-    target_warrant : WarrantDataModel = selected_form.form.warrants.filter(woa_refno=woa_refno).first()
-
-    current_user : UserDataModel = request.user
-
-    report_form = ReportWarrantForm()
-
-    if not target_warrant:
-        raise Http404("ไม่พบข้อมูลดังกล่าว")
-    
-    context = {
-        "court_code": CentralForm.court_codes.getValueOf(selected_form.form.court_code),
-        "woa_no": target_warrant.get_woa_no_and_year(),
-        "woa_type": target_warrant.get_woa_type_text(),
-        "req_num_case_type_id": selected_form.form.get_req_case_type_id_display(),
-        "arrest_report_uid": current_user.api_uid
-    }
-
-    api_data = {
-        "court_code": selected_form.form.court_code,
-        "woa_no": target_warrant.woa_no,
-        "woa_type": target_warrant.woa_type,
-        "woa_year": target_warrant.woa_year,
-        "req_num_case_type_id": selected_form.form.req_case_type_id,
-        "arrest_report_date": timezone.now().astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%d %H:%M:%S"),
-        "arrest_report_uid": current_user.api_uid
-    }
-    
-    if request.method == "POST":
-        report_form = ReportWarrantForm(data=request.POST)
-
-        if report_form.is_valid():
-            put_data = report_form.cleaned_data
-            
-            put_data = combine_date(put_data)
-
-            put_data.update(api_data)
-
-            try:
-                if settings.ENABLE_API:
-                    AWISConnectAPI.put_report_warrant_result("v1.1", request, put_data)
-                else:
-                    print(put_data)
-
-                warrant_wrapper = VisualWarrantData.objects.filter(warrant=target_warrant).first()
-
-                # Change status to reported.
-                warrant_wrapper.report_status = 1
-                warrant_wrapper.save()
-
-                return redirect("dashboard:view_reqform_warrants", req_no_plaintiff)
-
-            except:
-                return render(request, "errors/500.html", {
-
-                })
-
-    context.update({
-        "report_form": report_form,
-    })
-    
-    return render(request, "dashboard/report_warrant.html", context)
-
-@perm_req_log(*DashboardPerm.DELETE_REQFORM_SUBMITTED)
-def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
-    sent_form = VisualReqformData.objects.filter(form__req_no_plaintiff=req_no_plaintiff).first()
-
-    unneeded_warrants = sent_form.form.warrants.all()
-
-    warrant_results = VisualWarrantData.objects.filter(warrant__in=unneeded_warrants)
-
-    print(warrant_results)
-
-    if sent_form.accept == 1:
-        return render(request, "errors/400.html", {
-            "reason": "คำร้องดังกล่าวไม่สามารถยกเลิกการส่งได้แล้ว"
-        }, status=403)
-
-    if request.method == "POST":
-        try:
-            if settings.ENABLE_API:
-                AWISConnectAPI.unsend_reqform_from_court("v1.1", request, req_no_plaintiff)
-
-            for warrant in warrant_results.all():
-                warrant.warrant.delete()
-            sent_form.form.delete()
-                
-            return redirect("dashboard:success_page")
-
-        except:
-            return JsonResponse({
-                "status": "Error",
-            })
-        
-    return render(request, "dashboard/confirmation_page.html", {
-        "action": "Unsend Reqform"
-    })
 
 ###############################################################################
 
 from warrant_form import doc_create
 
-def download_warrant(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
-    selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+@perm_req_log(*DashboardPerm.DOWNLOAD_REQFORM)
+def download_reqform(request : HttpRequest, req_no_plaintiff : str):
+    unsent_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+    if request.user not in [unsent_form.form_owner,]:
+        return render(request, "errors/403.html", {
+            "reason": "ผู้ใช้ไม่มีสิทธิดาวน์โหลดคำร้องดังกล่าว"
+        }, status=403)
 
-    target_warrant : WarrantDataModel = selected_form.form.warrants.filter(woa_refno=woa_refno).first()
+    doc_data = unsent_form.form.convertToDocumentData()
+
+    response = doc_create.create_reqform_pdf(doc_data)
+    print(doc_data)
+
+    return response
+
+@perm_req_log(*DashboardPerm.DOWNLOAD_WARRANT)
+def download_warrant(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
+    unsent_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
+    if request.user not in [unsent_form.form_owner,]:
+        return render(request, "errors/403.html", {
+            "reason": "ผู้ใช้ไม่มีสิทธิดาวน์โหลดหมายจับดังกล่าว"
+        }, status=403)
+
+    target_warrant : WarrantDataModel = unsent_form.form.warrants.filter(woa_refno=woa_refno).first()
 
     doc_data = target_warrant.convertToDocumentData()
+    print(doc_data)
 
-    response = doc_create.create_pdf(doc_data)
+    response = doc_create.create_warrant_pdf(doc_data)
 
     return response
 
