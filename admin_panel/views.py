@@ -6,8 +6,6 @@ from awis_custom_settings.settings import RoleChoices, RoleList
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User, Group, Permission
 
-from users.models import UserDataModel
-
 import _log_utils.file_logger as FileLogger
 from _log_utils.file_logger import AccessType
 
@@ -18,7 +16,7 @@ from users.permissions.decorators import perm_req_log
 import requests
 from requests.exceptions import ConnectionError
 
-from users.models import UserAccess
+from users.models import UserAccess, UserDataModel
 import os
 
 FORBIDDEN_MSG = JsonResponse({
@@ -27,13 +25,12 @@ FORBIDDEN_MSG = JsonResponse({
             }, status=403
             )
 
+
+
 # VIEWS
 
 @perm_req_log([PermissionType.VIEW], PermissionList.ADMIN_PANEL, AccessType.VIEW)
 def collections(request : HttpRequest):
-    if not request.user.is_staff:
-        return FORBIDDEN_MSG
-    
     FileLogger.createNormalLog(request, AccessType.VIEW, PermissionList.ADMIN_PANEL,)
 
     return render(request, "admin_panel/collections.html")
