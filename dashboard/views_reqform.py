@@ -124,6 +124,13 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
 
     target_warrant : WarrantDataModel = unsent_form.form.warrants.filter(woa_refno=woa_refno).first()
 
+    warrant_wrapper = VisualWarrantData.objects.filter(warrant=target_warrant).first()
+
+    # if (not warrant_wrapper) or warrant_wrapper.court_injunction != 1:
+    #     return render(request, "errors/400.html", {
+    #         "reason": "ผู้ใช้ไม่สามารถรายงานหมายที่ยังไม่ได้รับการอนุมัติได้"
+    #     }, status=400)
+
     current_user : UserDataModel = request.user
 
     report_form = ReportWarrantForm()
@@ -164,8 +171,6 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
                     AWISConnectAPI.put_report_warrant_result("v1.1", request, put_data)
                 else:
                     print(put_data)
-
-                warrant_wrapper = VisualWarrantData.objects.filter(warrant=target_warrant).first()
 
                 # Change status to reported.
                 warrant_wrapper.report_status = 1
