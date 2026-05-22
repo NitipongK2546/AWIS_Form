@@ -27,7 +27,8 @@
     <i class="ti ti-clock" aria-hidden="true"></i>
     แก้ไขล่าสุด: {{ draft_container.last_edit }}
   </div>
-  <div style="margin-bottom: 5px;text-align: right;">
+  <div style="margin-bottom: 5px; display: flex; justify-content: space-between;align-items: center;">
+    <a href="javascript:history.back()" class="btn btn-back" style="margin-left: 0;">กลับ</a>
     <a href="{% url 'forms:delete-draft-container' draft_container.pk %}">
       <div class="btn btn-del">
         <i class="ti ti-trash" href="{% url 'forms:delete-draft-container' draft_container.pk %}">ลบร่างคำร้อง</i>

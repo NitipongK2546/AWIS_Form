@@ -2,7 +2,8 @@
    draft_main.css  –  AWIS Draft Main Page
    ============================================================ */
 
-body, html {
+body,
+html {
   font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
   background: #f1f3f4;
   margin: 0;
@@ -15,7 +16,9 @@ a {
   color: #9B1C1C;
 }
 
-a:hover { text-decoration: underline; }
+a:hover {
+  text-decoration: underline;
+}
 
 /* ---------- Page ---------- */
 .page-wrapper {
@@ -34,8 +37,13 @@ a:hover { text-decoration: underline; }
   margin-bottom: .75rem;
 }
 
-.bc-sep { color: #ccc; }
-.bc-current { color: #333; }
+.bc-sep {
+  color: #ccc;
+}
+
+.bc-current {
+  color: #333;
+}
 
 /* ---------- Last edit ---------- */
 .last-edit {
@@ -47,18 +55,22 @@ a:hover { text-decoration: underline; }
   margin-bottom: 1.1rem;
 }
 
-.last-edit i { font-size: 14px; }
+.last-edit i {
+  font-size: 14px;
+}
 
 /* ---------- Card ---------- */
 .card {
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 14px;
   overflow: hidden;
 }
 
-.card:last-child { margin-bottom: 0; }
+.card:last-child {
+  margin-bottom: 0;
+}
 
 .card-header {
   background: #1F2937;
@@ -78,7 +90,9 @@ a:hover { text-decoration: underline; }
   gap: 6px;
 }
 
-.card-header h2 i { font-size: 14px; }
+.card-header h2 i {
+  font-size: 14px;
+}
 
 .card-body {
   padding: 1rem 1.1rem;
@@ -94,7 +108,9 @@ a:hover { text-decoration: underline; }
   gap: 10px;
 }
 
-.info-row:last-child { border-bottom: none; }
+.info-row:last-child {
+  border-bottom: none;
+}
 
 .info-label {
   width: 130px;
@@ -109,7 +125,10 @@ a:hover { text-decoration: underline; }
   font-weight: 500;
 }
 
-.info-action { margin-left: auto; flex-shrink: 0; }
+.info-action {
+  margin-left: auto;
+  flex-shrink: 0;
+}
 
 /* ---------- Alert ---------- */
 .alert-error {
@@ -124,7 +143,9 @@ a:hover { text-decoration: underline; }
   margin-bottom: .85rem;
 }
 
-.alert-error i { font-size: 15px; }
+.alert-error i {
+  font-size: 15px;
+}
 
 /* ---------- Warrant list ---------- */
 .warrant-item {
@@ -138,7 +159,9 @@ a:hover { text-decoration: underline; }
   gap: 8px;
 }
 
-.warrant-item:last-child { margin-bottom: 0; }
+.warrant-item:last-child {
+  margin-bottom: 0;
+}
 
 .warrant-num {
   font-size: 12px;
@@ -192,7 +215,7 @@ a:hover { text-decoration: underline; }
 .submit-card {
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   padding: 1rem 1.1rem;
   display: flex;
   align-items: center;
@@ -228,7 +251,9 @@ a:hover { text-decoration: underline; }
   transition: background .15s;
 }
 
-.btn i { font-size: 13px; }
+.btn i {
+  font-size: 13px;
+}
 
 .btn-primary {
   background: #9B1C1C;
@@ -237,7 +262,22 @@ a:hover { text-decoration: underline; }
   font-size: 13px;
 }
 
-.btn-primary:hover { background: #7F1D1D; text-decoration: none; }
+.btn-primary:hover {
+  background: #7F1D1D;
+  text-decoration: none;
+}
+
+.btn-back {
+  background: #3b3636;
+  color: #fff;
+  padding: 8px 18px;
+  font-size: 13px;
+}
+
+.btn-back:hover {
+  background: #554e4e;
+  text-decoration: none;
+}
 
 .btn-edit {
   background: #f1f3f4;
@@ -245,21 +285,30 @@ a:hover { text-decoration: underline; }
   border: .5px solid #dadce0;
 }
 
-.btn-edit:hover { background: #e8eaed; text-decoration: none; }
+.btn-edit:hover {
+  background: #e8eaed;
+  text-decoration: none;
+}
 
 .btn-add {
   background: #D1FAE5;
   color: #065F46;
 }
 
-.btn-add:hover { background: #A7F3D0; text-decoration: none; }
+.btn-add:hover {
+  background: #A7F3D0;
+  text-decoration: none;
+}
 
 .btn-del {
   background: #FEE2E2;
   color: #991B1B;
 }
 
-.btn-del:hover { background: #FECACA; text-decoration: none; }
+.btn-del:hover {
+  background: #FECACA;
+  text-decoration: none;
+}
 
 .btn-change {
   background: #f1f3f4;
@@ -269,7 +318,9 @@ a:hover { text-decoration: underline; }
   font-size: 12px;
 }
 
-.btn-change:hover { background: #e8eaed; }
+.btn-change:hover {
+  background: #e8eaed;
+}
 
 /* ---------- Responsive ---------- */
 @media (max-width: 600px) {
@@ -278,8 +329,16 @@ a:hover { text-decoration: underline; }
     align-items: flex-start;
   }
 
-  .btn-primary { width: 100%; justify-content: center; }
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
 
-  .warrant-item { flex-wrap: wrap; }
-  .warrant-actions { margin-left: 0; }
+  .warrant-item {
+    flex-wrap: wrap;
+  }
+
+  .warrant-actions {
+    margin-left: 0;
+  }
 }
