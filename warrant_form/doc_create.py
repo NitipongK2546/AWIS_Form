@@ -132,6 +132,8 @@ def _create_pdf(doc : DocxTemplate, filename : str):
     result = subprocess.run([
         "soffice",
         "--headless",
+        "--nologo",
+        "--nofirststartwizard",
         "--convert-to", "pdf",
         "--outdir", TEMP_DIR,
         docx_path
