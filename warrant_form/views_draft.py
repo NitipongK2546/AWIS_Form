@@ -215,7 +215,7 @@ def woa_refno_generate():
     last_warrant = WarrantDataModel.objects.last()
     if not last_warrant:
         num = 0
-        return f"TCCT{timezone.now().year + 543}{f"{num + 1}".zfill(4)}"
+        return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-W"
 
     all_same_day_requests = WarrantDataModel.objects.filter(
         woa_date__date=today.date()
