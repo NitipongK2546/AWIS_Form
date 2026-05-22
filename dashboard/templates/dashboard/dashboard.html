@@ -137,4 +137,14 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
     locale: Thai,
   });
 </script>
+<script>
+window.addEventListener("pageshow", function () {
+    if (
+        window.performance &&
+        performance.getEntriesByType("navigation")[0]?.type === "back_forward"
+    ) {
+        window.location.reload();
+    }
+});
+</script>
 {% endblock %}

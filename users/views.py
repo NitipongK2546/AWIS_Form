@@ -57,7 +57,7 @@ def _login_via_erp(request: HttpRequest, form_data : dict, form : UserAuthForm):
         if response_data.get("status") != 200:
             return _block_no_user_access()
         
-        result_user_id = form_data.get("id")
+        result_user_id = response_data.get("id")
         if not result_user_id:
             return _block_wrong_username_password()
 
