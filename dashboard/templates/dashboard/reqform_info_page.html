@@ -290,7 +290,13 @@
                     </div>
                     <div class="card-action-row">
                         <a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}" class="action-btn action-btn-primary">ดูหมายจับ</a>
+                        
+                        {% if warrant_obj.court_injunction == 1 %}
+                        <a class="action-btn action-btn-download file-download" href="#">⬇ ดาวน์โหลดไฟล์จากศาล</a>
+                        {% else %}
                         <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">⬇ ดาวน์โหลดไฟล์</a>
+                        {% endif %}
+
                         {% if warrant_obj.court_injunction == 1 %}
                         <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}" class="action-btn action-btn-success">รายงานผลหมาย</a>
                         {% endif %}

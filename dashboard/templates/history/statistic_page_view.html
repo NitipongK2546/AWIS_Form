@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Statistics{% endblock %}
+{% block title %}สถิติการส่งคำร้อง{% endblock %}
 
 {% block header_script %}
 <script type="module">
@@ -11,77 +11,86 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 {% endblock %}
 
 {% block style %}
-    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
 {% endblock %}
 
 {% block body %}
-    
-<div class="header-bar">
-    <h1 style="text-align: left; margin-left: 100px;">สถิติการส่งคำร้อง</h1>
+<div class="page-wrapper">
+
+  <!-- Page title -->
+  <div class="page-title">สถิติการส่งคำร้อง</div>
+
+  <!-- Stat cards -->
+  <div class="stat-grid" style="grid-template-columns: repeat(5, 1fr);">
+    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card">
+      <div class="stat-label">ร่างคำร้องทั้งหมด</div>
+      <div class="stat-number">{{ total_count }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+    <a href="{% url 'forms:draft-page' %}" class="stat-card" style="background: #7F1D1D;">
+      <div class="stat-label">ร่างคำร้องที่ยังไม่สำเร็จ</div>
+      <div class="stat-number">{{ draft_count }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+    <a href="{% url 'dashboard:approve_table_page' %}" class="stat-card-yellow">
+      <div class="stat-label">รอการอนุมัติ</div>
+      <div class="stat-number">{{ unsent_form }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-green">
+      <div class="stat-label">ส่งถึงศาลสำเร็จ</div>
+      <div class="stat-number">{{ sent_form }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card" style="background: #3f7f1d;">
+      <div class="stat-label">ศาลอนุมัติแล้ว</div>
+      <div class="stat-number">{{ accepted_form }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+  </div>
+
+  <!-- Filter bar -->
+  <form method="get" class="filter-bar">
+    <div class="filter-group">
+      <label class="filter-label">หมายเลขอ้างอิง</label>
+      {{ filter_form.req_no_plaintiff }}
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">ผู้ถูกกล่าวหา</label>
+      {{ filter_form.accused }}
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">วันที่เริ่มต้น</label>
+      {{ filter_form.start_date }}
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">วันที่สิ้นสุด</label>
+      {{ filter_form.end_date }}
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">สถานะ</label>
+      {{ filter_form.status }}
+    </div>
+    <button type="submit" class="filter-btn">ค้นหา</button>
+  </form>
+
+  {% include "history/statistic_table.html" %}
+
 </div>
-
-<div class="dashboard-tools" style="display: flex; justify-content: center;">
-
-    <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'forms:draft-page' %}">
-            <h3>ร่างคำร้องที่ยังไม่สำเร็จ: {{ draft_count }} ร่าง</h3>
-        </a>
-    </div>
-    <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'dashboard:accept_table_page' %}">
-            <h3>ร่างคำร้องทั้งหมด: {{ total_count }} ร่าง</h3>
-        </a>
-    </div>
-    <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'dashboard:approve_table_page' %}">
-            <h3>ร่างคำร้องที่รอการอนุมัติ: {{ unsent_form }} ร่าง</h3>
-        </a>
-    </div>
-
-    <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'dashboard:accept_table_page' %}">
-            <h3>ร่างคำร้องที่ส่งถึงศาลสำเร็จ: {{ sent_form }} ร่าง</h3>
-        </a>
-    </div>
-    <div class="tool-card">
-        <a style="padding:0px;" href="{% url 'dashboard:accept_table_page' %}">
-            <h3>ร่างคำร้องที่ศาลอนุมัติ: {{ accepted_form }} ร่าง</h3>
-        </a>
-    </div>
-    
-    {% comment %}
-    <div class="tool-card">
-        <a href="{% url 'dashboard:warrant_status_page' %}">
-            <img src="{% static 'dashboard/images/checking-status.png' %}" alt="Access-List">
-            <h3>ตารางสถานะของหมายศาล</h3>
-        </a>
-    </div>
-    {% endcomment %}
-</div>
-
-<div>
-    <form method="get">
-    {{ filter_form.as_p }}
-    <button type="submit">Filter</button>
-    </form>
-</div>
-
-{% include "history/statistic_table.html" %}
 {% endblock %}
 
 {% block script %}
 <script type="module">
-    import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
-
-    const datetime_elements = document.querySelectorAll(".datetimepicker");
-    flatpickr(datetime_elements, {
-        enableTime: true,
-        dateFormat: "Y-m-d H:i:ss",
-        altInput: true,
-        altFormat: "j F Y H:i น.",
-        locale: Thai,
-    });
+  import { Thai } from "https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js/+esm"
+  const datetime_elements = document.querySelectorAll(".datetimepicker");
+  flatpickr(datetime_elements, {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i:ss",
+    altInput: true,
+    altFormat: "j F Y H:i น.",
+    locale: Thai,
+  });
 </script>
 {% endblock %}
