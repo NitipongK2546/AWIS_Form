@@ -187,8 +187,8 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
             25: 1,
         }
 
-        written_unsent = FormDraftContainer.objects.filter(form_creator=request.user)
-        owned_unsent = FormDraftContainer.objects.filter(form_owner=request.user)
+        written_unsent = FormAwaitingApproval.objects.filter(form_creator=request.user)
+        owned_unsent = FormAwaitingApproval.objects.filter(form_owner=request.user)
         available_unsent = written_unsent.union(owned_unsent)
 
         filter_data.update({
