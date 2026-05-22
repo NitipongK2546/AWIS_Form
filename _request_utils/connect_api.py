@@ -291,7 +291,6 @@ def get_court_list(version : str) -> dict:
 import json
 
 def login_via_api(request : HttpRequest):
-    response : JsonResponse = erp_login_authorize("", request)
-    data : dict = response.json()
+    result : dict[str,] = erp_login_authorize("", request)
 
-    return data
+    return result
