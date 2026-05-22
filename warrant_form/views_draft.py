@@ -29,7 +29,7 @@ def view_draft_creation_page(request : HttpRequest):
     owned_draft = FormDraftContainer.objects.filter(form_owner=request.user)
     all_drafts = written_draft.union(owned_draft)
     
-    return render(request, "dashboard/draft_creation_page.html", {
+    return render(request, "drafts/draft_creation_page.html", {
         "drafts": all_drafts
     })
 

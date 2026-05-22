@@ -19,6 +19,12 @@ REJECT_REQFORM = (
     AccessType.REJECT
 )
 
+CANCEL_REQFORM = (
+    [PermissionType.DELETE], 
+    PermissionList.REQFORM_AWAIT_APPROVAL, 
+    AccessType.DELETE
+)
+
 ##########################################################################
 
 REQFORM_SUBMITTED_PAGE = (
@@ -51,4 +57,32 @@ CREATE_REPORT_WARRANT_SUBMITTED = (
     ], 
     PermissionList.REPORT_WARRANT_ARREST, 
     AccessType.CREATE
+)
+
+VIEW_REQFORM_DETAILS = (
+    [PermissionType.VIEW], 
+    PermissionList.REQFORM_AWAIT_APPROVAL,
+    AccessType.VIEW
+)
+
+##########################################################################
+
+DOWNLOAD_REQFORM = (
+    [PermissionType.CREATE], 
+    PermissionList.REQFORM_SUBMITTED,
+    AccessType.DOWNLOAD
+)
+
+DOWNLOAD_WARRANT = (
+    [PermissionType.CREATE], 
+    PermissionList.REQFORM_SUBMITTED,
+    AccessType.DOWNLOAD
+)
+
+##########################################################################
+
+VIEW_STATISTIC_PAGE = (
+    [PermissionType.VIEW], 
+    PermissionList.STATISTICS,
+    AccessType.VIEW
 )

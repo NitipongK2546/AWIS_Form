@@ -26,6 +26,9 @@ class PermissionList(models.TextChoices):
     LOGIN_PAGE              = "loginPage"           # 3100
     JWT_ENDPOINT            = "jwtEndpoint"         # 3200
 
+    # Statistic => 4000
+    STATISTICS              = "statisticsPage"
+
 # class PermissionCode(models.TextChoices):
 PERMISSION_CODE = {
     # Admin => 1000
@@ -46,6 +49,9 @@ PERMISSION_CODE = {
     # Login => 3000
     PermissionList.LOGIN_PAGE              : "3100",
     PermissionList.JWT_ENDPOINT            : "3200",
+
+    # Statistic => 4000
+    PermissionList.STATISTICS              : "4100",
 }
 
 class RoleList(Enum):

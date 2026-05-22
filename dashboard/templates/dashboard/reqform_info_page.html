@@ -294,7 +294,10 @@
                         {% if warrant_obj.court_injunction == 1 %}
                         <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}" class="action-btn action-btn-success">รายงานผลหมาย</a>
                         {% endif %}
+                        # Bypass
+                        <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">รายงานผลหมาย</a>
                     </div>
+                    
                 </div>
 
                 {% elif action == "approve" %}

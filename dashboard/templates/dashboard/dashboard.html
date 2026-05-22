@@ -25,17 +25,17 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 
   <!-- Stat cards -->
   <div class="stat-grid">
-    <a href="{% url 'forms:draft-page' %}" class="stat-card">
+    <a href="?status=1" class="stat-card">
       <div class="stat-label">ร่างคำร้องปัจจุบัน</div>
       <div class="stat-number">{{ draft_count }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'dashboard:approve_table_page' %}" class="stat-card-yellow">
+    <a href="?status=10" class="stat-card-yellow">
       <div class="stat-label">รอการอนุมัติ</div>
       <div class="stat-number">{{ approve_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-green">
+    <a href="?status=20" class="stat-card-green">
       <div class="stat-label">ส่งถึงศาลสำเร็จ</div>
       <div class="stat-number">{{ accept_form }}</div>
       <div class="stat-unit">ร่าง</div>
@@ -99,10 +99,14 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
             <td class="td-center td-muted">{{ form.req_date }}</td>
             <td class="td-center td-muted">{{ form.last_update }}</td>
             <td class="td-center">
-              {% include 'module/status_color_module.html' with color=form.status_choice %}
+                {% include 'module/status_color_module.html' with color=form.status_choice status=form.status %}
             </td>
             <td class="td-center">
-              <a href="{% url 'dashboard:reqform_info' form.req_no_plaintiff %}" class="detail-btn">ดูข้อมูล</a>
+                {% if form.action == "draft" %}
+                <a href="{% url 'forms:view-draft-container' form.container_id %}" class="detail-btn">แก้ไข</a>
+                {% else %}
+                <a href="{% url 'dashboard:reqform_info' form.req_no_plaintiff %}" class="detail-btn">ดูข้อมูล</a>
+                {% endif %}
             </td>
           </tr>
           {% empty %}

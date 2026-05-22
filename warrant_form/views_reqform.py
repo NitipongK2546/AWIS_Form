@@ -37,6 +37,7 @@ def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : User
     # print(is_not_user)
 
     return is_not_user and not_has_approve_perm
+    
 
 #######################################################
 #
@@ -103,6 +104,7 @@ def view_form(request : HttpRequest, req_no_plaintiff : str, ObjWarrantForm = Di
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
+@perm_req_log(*ReqformPerm.VIEW_REQFORM)
 def view_reqform_only(request : HttpRequest, req_no_plaintiff : str):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
@@ -135,6 +137,7 @@ def view_reqform_only(request : HttpRequest, req_no_plaintiff : str):
         "acc_sub_district": form_data.get("acc_sub_district"),
     })
 
+@perm_req_log(*ReqformPerm.VIEW_REQFORM)
 def view_warrant_only(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
 
     user_data = UserDataModel.objects.filter(id=request.user.id).first()
