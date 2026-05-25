@@ -36,11 +36,11 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">UID ผู้สร้างคำร้อง</label>
+          <label class="form-label">UID ผู้สร้างคำร้อง *</label>
           {{ draft_form.create_uid }}
-        </div>
+        </div> 
         <div class="form-group">
-          <label class="form-label">หมายเลขอ้างอิง</label>
+          <label class="form-label">หมายเลขอ้างอิง (ยังไม่แน่ใจว่าต้องใส่อะไร)</label>
           {{ draft_form.ref_no }}
         </div>
         <div class="form-group">
@@ -64,10 +64,12 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
           <label class="form-label">ศาล</label>
           {{ draft_form.court_code }}
         </div>
+        {% comment %} 
         <div class="form-group">
           <label class="form-label">หมายเลขสถานีตำรวจ</label>
           {{ draft_form.police_station_id }}
-        </div>
+        </div> 
+        {% endcomment %}
       </div>
     </div>
 
@@ -78,11 +80,11 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">ชื่อโจทก์</label>
+          <label class="form-label">ชื่อผู้ร้อง *</label>
           {{ draft_form.plaintiff }}
         </div>
         <div class="form-group">
-          <label class="form-label">ชื่อผู้ต้องหา</label>
+          <label class="form-label">ชื่อผู้ต้องหา *</label>
           {{ draft_form.accused }}
         </div>
       </div>
@@ -95,40 +97,40 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">ผู้กรอกคำร้อง</label>
+          <label class="form-label">ผู้กรอกคำร้อง *</label>
           {{ draft_form.req_name }}
         </div>
         <div class="form-group">
-          <label class="form-label">ตำแหน่ง</label>
+          <label class="form-label">ตำแหน่ง *</label>
           {{ draft_form.req_pos }}
         </div>
         <div class="form-group">
-          <label class="form-label">สถานที่ทำงาน</label>
+          <label class="form-label">สถานที่ทำงาน *</label>
           {{ draft_form.req_office }}
         </div>
         <div class="form-group">
-          <label class="form-label">อายุ</label>
+          <label class="form-label">อายุ *</label>
           {{ draft_form.req_age }}
         </div>
         <div class="form-group">
-          <label class="form-label">ที่อยู่</label>
+          <label class="form-label">ที่อยู่ *</label>
           <div class="inline-group">
             <div class="inline-field">
-              <span class="inline-label">จังหวัด</span>
+              <span class="inline-label">จังหวัด *</span>
               {{ draft_form.req_province }}
             </div>
             <div class="inline-field">
-              <span class="inline-label">อำเภอ/เขต</span>
+              <span class="inline-label">อำเภอ/เขต *</span>
               {{ draft_form.req_district }}
             </div>
             <div class="inline-field">
-              <span class="inline-label">ตำบล/แขวง</span>
+              <span class="inline-label">ตำบล/แขวง *</span>
               {{ draft_form.req_sub_district }}
             </div>
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">หมายเลขโทรศัพท์</label>
+          <label class="form-label">หมายเลขโทรศัพท์ *</label>
           {{ draft_form.req_tel }}
         </div>
       </div>

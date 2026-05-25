@@ -4,73 +4,76 @@
 {% block title %}Admin Tools Collections{% endblock %}
 
 {% block style %}
-    <link rel="stylesheet" href="{% static 'admin_panel/css/admin_collection.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="{% static 'admin_panel/css/admin_collection.css' %}">
 {% endblock %}
 
 {% block content %}
+<div class="page-wrapper">
 
-<div class="header">
-    <h1>Admin Tools Collections</h1>
-</div>
-<div class="admin-tools">
-    {% comment %} 
-    <div class="tool-card">
-        <a href="/admin/">
-            <img src="{% static 'admin_panel/images/admin-built-in.png' %}" alt="Admin-Build-in">
-            <h3>Django Built-in Admin Site</h3>
-        </a>
-    </div> 
-    {% endcomment %}
+  <div class="page-header">
+    <div class="page-title">Admin Tools</div>
+    <div class="page-sub">จัดการระบบและตรวจสอบข้อมูลภายใน</div>
+  </div>
 
-    {% comment %} 
-    <h3><a href="{% url 'admin_panel:signup' %}">Easy User Signup</a></h3>
-    {% endcomment %}
+  <!-- การจัดการผู้ใช้ -->
+  <div class="section-label">การจัดการผู้ใช้</div>
+  <div class="tool-grid">
 
-    {% comment %} <div class="tool-card">
-        <a href="{% url 'admin_panel:user_list' %}">
-            <img src="{% static 'admin_panel/images/permission.png' %}" alt="Permission-Check">
-            <h3>ตรวจสอบผู้ใช้และสิทธิ์ของผู้ใช้</h3> On the first part of the journey. I was looking all of life
-        </a>
-    </div> {% endcomment %}
+    <a href="{% url 'admin_panel:access_list' %}" class="tool-card">
+      <div class="tool-icon red">
+        <i class="ti ti-shield-check" aria-hidden="true"></i>
+      </div>
+      <div class="tool-info">
+        <div class="tool-name">ตรวจสอบรายชื่อผู้มีสิทธิ์</div>
+        <div class="tool-desc">ดูและจัดการสิทธิ์การเข้าถึงระบบ</div>
+      </div>
+    </a>
 
-    {% comment %} <div class="tool-card">
-        <a href="{% url 'admin_panel:select_users' %}">
-            <img src="{% static 'admin_panel/images/ERP.png' %}" alt="Select-User">
-            <h3>เลือกผู้ใช้งาน ERP</h3>
-        </a>
-    </div> {% endcomment %}
+  </div>
 
-    <div class="tool-card">
-        <a href="{% url 'admin_panel:access_list' %}">
-            <img src="{% static 'admin_panel/images/user-permission.png' %}" alt="Access-List">
-            <h3>ตรวจสอบรายชื่อผู้มีสิทธิ์</h3>
-        </a>
-    </div>
+  <!-- ระบบและ Logs -->
+  <div class="section-label">ระบบและ Logs</div>
+  <div class="tool-grid">
 
-    <div class="tool-card">
-        <a href="{% url 'admin_panel:view_logs' %}">
-            <img src="{% static 'admin_panel/images/Log.png' %}" alt="Logs">
-            <h3>View Logs</h3>
-        </a>
-    </div>
+    <a href="{% url 'admin_panel:view_logs' %}" class="tool-card">
+      <div class="tool-icon amber">
+        <i class="ti ti-file-description" aria-hidden="true"></i>
+      </div>
+      <div class="tool-info">
+        <div class="tool-name">View Logs</div>
+        <div class="tool-desc">ตรวจสอบ log การใช้งานและข้อผิดพลาด</div>
+      </div>
+    </a>
 
-    <div class="tool-card">
-        <a href="{% url 'admin_panel:view_courts' %}">
-            <h3>View Courts</h3>
-        </a>
-    </div>
+  </div>
 
-    <div class="tool-card">
-        <a href="{% url 'admin_panel:view_api_page' %}">
-            <h3>API Secrets</h3>
-        </a>
-    </div>
+  <!-- การจัดการข้อมูล static และ secret key -->
+  <div class="section-label">การจัดการข้อมูล static และ secret key ภายในระบบ</div>
+  <div class="tool-grid">
 
-    <div class="tool-card">
-        <a href="{% url 'dashboard:dashboard' %}">
-            <img src="{% static 'admin_panel/images/dashboard.png' %}" alt="Dashboard">
-            <h3>ไปหน้า Dashboard</h3>
-        </a>
-    </div>
+    <a href="{% url 'admin_panel:view_courts' %}" class="tool-card">
+      <div class="tool-icon green">
+        <i class="ti ti-building-bank" aria-hidden="true"></i>
+      </div>
+      <div class="tool-info">
+        <div class="tool-name">View Courts</div>
+        <div class="tool-desc">ดูข้อมูลศาลที่เชื่อมต่อกับระบบ</div>
+      </div>
+    </a>
+
+    <a href="{% url 'admin_panel:view_api_page' %}" class="tool-card">
+      <div class="tool-icon gray">
+        <i class="ti ti-key" aria-hidden="true"></i>
+      </div>
+      <div class="tool-info">
+        <div class="tool-name">API Secrets</div>
+        <div class="tool-desc">จัดการ API key และ secret ของระบบ</div>
+      </div>
+    </a>
+
+  </div>
+
 </div>
 {% endblock %}

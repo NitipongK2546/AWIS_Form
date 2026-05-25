@@ -328,7 +328,7 @@
             <div class="card-action-row" style="margin-top: 0; padding-top: 0; border-top: none;">
                 {% if action == "report" %}
                     {% if status_int == 99 %}
-                    <a href="{% url 'dashboard:delete_sent_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger">ยกเลิกการส่งคำร้อง</a>
+                    <a href="{% url 'dashboard:delete_sent_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger">ยกเลิกคำร้องที่ส่งศาล</a>
                     {% elif status_int == 0 %}
                     <span class="status-badge" style="background: #9B1C1C;">ไม่รับ</span>
                     {% elif status_int == 1 %}
@@ -342,10 +342,10 @@
                     <a href="{% url 'forms:edit_form' reqform.req_no_plaintiff %}" class="action-btn action-btn-primary">แก้ไขคำร้อง</a>
                     {% else %}
                     <a href="{% url 'dashboard:confirm_approve' reqform.req_no_plaintiff %}" class="action-btn action-btn-success">พิจารณาคำร้อง</a>
+                    <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger">ยกเลิกคำร้อง</a>
                     {% endif %}
                 {% endif %}
 
-                <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger">ยกเลิกการส่งคำร้อง</a>
             </div>
         </div>
     </div>

@@ -38,7 +38,7 @@
   <!-- เจ้าของคำร้อง -->
   <div class="card">
     <div class="card-header">
-      <h2><i class="ti ti-user" aria-hidden="true"></i>ข้อมูลเจ้าของคำร้อง</h2>
+      <h2><i class="ti ti-user" aria-hidden="true"></i>ข้อมูลเจ้าร่างคำร้อง</h2>
     </div>
     <div class="card-body">
       <form action="" method="post">
@@ -52,7 +52,7 @@
         {% endif %}
 
         <div class="info-row">
-          <span class="info-label">เจ้าของคำร้อง</span>
+          <span class="info-label">เจ้าของร่างคำร้อง</span>
           <span class="info-value">{{ draft_container.form_owner }}</span>
           {% if is_owner %}
           <span class="info-action">{{ ownership_form.form_owner }}</span>
@@ -60,7 +60,7 @@
         </div>
 
         <div class="info-row">
-          <span class="info-label">ผู้เขียน</span>
+          <span class="info-label">ผู้เขียนร่าง</span>
           <span class="info-value">{{ draft_container.form_creator }}</span>
           {% if is_owner %}
           <span class="info-action">{{ ownership_form.form_creator }}</span>
@@ -132,6 +132,10 @@
       <div class="submit-title">พร้อมส่งคำร้องแล้วใช่ไหม?</div>
       <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
     </div>
+    <a href="{% url 'forms:create-reqform' draft_container.pk %}" class="btn btn-primary">
+      <i class="ti ti-send" aria-hidden="true"></i>
+      บันทึกร่างคำร้อง
+    </a>
     <a href="{% url 'forms:create-reqform' draft_container.pk %}" class="btn btn-primary">
       <i class="ti ti-send" aria-hidden="true"></i>
       สร้างคำร้องจากร่าง

@@ -1,77 +1,159 @@
-body {
-    background-color: rgb(234, 234, 234);
+/* ============================================================
+   admin_collection.css  –  AWIS Admin Tools Page
+   ============================================================ */
+
+body,
+html {
     font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    background: #f1f3f4;
     margin: 0;
+    padding: 0;
+    color: #202124;
 }
 
-.header {
-    background-color: rgb(255, 149, 0);
-    margin-top: 30px;
-    width: 100%;
-    height: 50px;
-    text-align: center;
-    font-family: 'Noto Sans Thai', sans-serif;
-}
-
-.admin-tools {
-    max-width: 800px;
-    margin: 50px auto;
-    font-family: 'Noto Sans Thai', sans-serif;
-}
-
-.admin-tools h1 {
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-.admin-tools h3 a {
+a {
     text-decoration: none;
-    color: #007bff;
 }
 
-.admin-tools h3 a:hover {
-    text-decoration: underline;
+/* ---------- Page ---------- */
+.page-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1.25rem 1.5rem 2.5rem;
 }
 
-.admin-tools {
-    max-width: 1000px;
-    margin: 40px auto;
+/* ---------- Page header ---------- */
+.page-header {
+    margin-bottom: 1.25rem;
+}
+
+.page-title {
+    font-size: 30px;
+    font-weight: 800;
+    color: #202124;
+}
+
+.page-sub {
+    font-size: 13px;
+    color: #666;
+    margin-top: 3px;
+}
+
+/* ---------- Section label ---------- */
+.section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin: 1.25rem 0 .75rem;
+}
+
+/* ---------- Tool grid ---------- */
+.tool-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    font-family: 'Noto Sans Thai', sans-serif;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
 }
 
+/* ---------- Tool card ---------- */
 .tool-card {
-    background: #ffffff;
-    border: 1px solid #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    width: 250px;
+    background: #fff;
+    border: .5px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.1rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color .15s, background .15s;
 }
 
 .tool-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.tool-card img {
-    width: 80%;
-    object-fit: cover;
-}
-
-.tool-card h3 {
-    margin: 15px 0;
-    font-size: 18px;
-    color: #007bff;
-}
-
-.tool-card a {
-    display: block;
+    border-color: #bbb;
+    background: #fafafa;
     text-decoration: none;
-    color: inherit;
-    padding: 15px;
+}
+
+/* ---------- Tool icon ---------- */
+.tool-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tool-icon i {
+    font-size: 20px;
+}
+
+.tool-icon.red {
+    background: #FEE2E2;
+}
+
+.tool-icon.red i {
+    color: #991B1B;
+}
+
+.tool-icon.blue {
+    background: #DBEAFE;
+}
+
+.tool-icon.blue i {
+    color: #1E40AF;
+}
+
+.tool-icon.green {
+    background: #D1FAE5;
+}
+
+.tool-icon.green i {
+    color: #065F46;
+}
+
+.tool-icon.amber {
+    background: #FEF3C7;
+}
+
+.tool-icon.amber i {
+    color: #92400E;
+}
+
+.tool-icon.gray {
+    background: #F3F4F6;
+}
+
+.tool-icon.gray i {
+    color: #4B5563;
+}
+
+/* ---------- Tool text ---------- */
+.tool-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.tool-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #202124;
+    line-height: 1.4;
+}
+
+.tool-desc {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+    .tool-grid {
+        grid-template-columns: 1fr;
+    }
 }
