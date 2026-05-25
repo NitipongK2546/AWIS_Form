@@ -1,0 +1,25 @@
+<script>
+function attachConfirmEvent(link_url) {
+    e.preventDefault();
+
+    dialog.showModal();
+
+    document.getElementById('dialog-confirm').onclick = (() => {
+        window.location.href = link_url;
+        dialog_element.close();
+    });
+    document.getElementById('dialog-cancel').onclick = (() => {
+        dialog_element.close();
+    });
+}
+
+function ahrefDialog(link_url, custom_msg = null) {
+    attachConfirmEvent(link_url)
+
+    const DEFAULT_MSG = `ยังไม่ได้บันทึก จะย้อนกลับจริงหรือไม่`;
+
+    text_label.textContent = custom_msg || DEFAULT_MSG;
+
+    dialog_element.showModal();
+}
+</script>
