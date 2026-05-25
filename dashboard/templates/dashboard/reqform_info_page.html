@@ -351,7 +351,9 @@
                     {% endif %}
                 {% endif %}
 
-                <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger">ยกเลิกการส่งคำร้อง</a>
+                <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger"
+                onclick="ahrefDialog(event, this, true, {}, 'ต้องการยกเลิกการส่งคำร้องจริงหรือไม่')"
+                >ยกเลิกการส่งคำร้อง</a>
             </div>
         </div>
     </div>

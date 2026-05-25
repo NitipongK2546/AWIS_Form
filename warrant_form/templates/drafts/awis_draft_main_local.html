@@ -28,10 +28,12 @@
     แก้ไขล่าสุด: {{ draft_container.last_edit }}
   </div>
   <div style="margin-bottom: 5px; display: flex; justify-content: space-between;align-items: center;">
-    <a href="javascript:history.back()" class="btn btn-back" style="margin-left: 0;">กลับ</a>
-    <a href="{% url 'forms:delete-draft-container' draft_container.pk %}">
+    <a href="javascript:history.back()" onclick="ahrefDialog(event, this)" class="btn btn-back" style="margin-left: 0;">กลับ</a>
+    <a href="{% url 'forms:delete-draft-container' draft_container.pk %}" onclick="ahrefDialog(event, this, true, {
+      container_id: '{{ draft_container.pk }}'
+    }, 'ต้องการลบร่างคำร้องจริงหรือไม่')">
       <div class="btn btn-del">
-        <i class="ti ti-trash" href="{% url 'forms:delete-draft-container' draft_container.pk %}">ลบร่างคำร้อง</i>
+        <i class="ti ti-trash">ลบร่างคำร้อง</i>
       </div>
     </a>
   </div>
@@ -112,7 +114,10 @@
           </a>
           <a href="{% url 'forms:delete-draft-container-warrant' draft_container.pk warrant.pk %}"
              class="btn btn-del"
-             onclick="return confirm('ต้องการลบจริงหรือไม่')">
+             onclick="ahrefDialog(event, this, true, {
+              container_id: '{{ draft_container.pk }}',
+              warrant_id: '{{ warrant.pk }}'
+            }, 'ต้องการลบร่างหมายจับจริงหรือไม่')">
             <i class="ti ti-trash" aria-hidden="true"></i>ลบ
           </a>
         </div>

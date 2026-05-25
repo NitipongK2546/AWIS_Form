@@ -1,5 +1,5 @@
 <script>
-function attachConfirmEvent() {
+function attachConfirmEventGoBack() {
     document.getElementById('dialog-confirm').onclick = (() => {
         window.history.back()
         dialog_element.close();
@@ -10,7 +10,7 @@ function attachConfirmEvent() {
 }
 
 function goBackDialog(custom_msg = null) {
-    attachConfirmEvent()
+    attachConfirmEventGoBack()
 
     const DEFAULT_MSG = `ยังไม่ได้บันทึก จะย้อนกลับจริงหรือไม่`;
 

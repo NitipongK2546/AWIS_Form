@@ -10,7 +10,13 @@ from warrant_form.model_draftform import FormDraftContainer
 from django.forms import Form
 from django.utils import timezone
 
-def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dict : dict, id : str):
+def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dict : dict, id : str, banned_id_list : list[str]):
+    if id in banned_id_list:
+        return
+    
+    print(id_list)
+    print(target_list)
+
     if id not in id_list:
         id_list.append(id)
         target_list.append(incoming_dict)
@@ -18,7 +24,7 @@ def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dic
         # If ID is in ID_list
         target_obj_index = id_list.index(id)
         target_list.pop(target_obj_index)
-        id_list.pop(target_obj_index)
+        # id_list.pop(target_obj_index)
         target_list.append(incoming_dict)
 
 
@@ -74,8 +80,9 @@ def _format_filter(incoming_dict : dict):
         
     return filter
 
-def append_draft_data(target_list : list[dict], id_list : list[str], form_unsent : list[FormDraftContainer]):
+def append_draft_data(target_list : list[dict], id_list : list[str], form_unsent : list[FormDraftContainer], banned_id_list : list[str]):
     for draft in form_unsent:
+        chosen_id = draft.reqform_draft.req_no_plaintiff if draft.reqform_draft.req_no_plaintiff else draft.pk
         append_replace_id(
             target_list=target_list,
             id_list=id_list,
@@ -83,20 +90,21 @@ def append_draft_data(target_list : list[dict], id_list : list[str], form_unsent
                 "reqno": "-",
                 "req_year": "-",
                 "last_update": draft.last_edit,
-                "req_no_plaintiff": "-",
+                "req_no_plaintiff": draft.reqform_draft.req_no_plaintiff if draft.reqform_draft.req_no_plaintiff else "กำลังร่าง",
                 "container_id": draft.pk,
-                "req_name": draft.reqform_draft.req_name,
-                "accused": draft.reqform_draft.accused,
+                "req_name": draft.reqform_draft.req_name if draft.reqform_draft.req_name else "กำลังร่าง",
+                "accused": draft.reqform_draft.accused if draft.reqform_draft.accused else "กำลังร่าง",
                 "req_date": "-",            
                 "status": "ร่างคำร้อง",
                 "status_int": 1,
                 "status_choice": 1,
                 "action": "draft",
             },
-            id=draft.pk,
+            id=chosen_id,
+            banned_id_list=banned_id_list,
         )
 
-def append_unsent_form_data(target_list : list[dict], id_list : list[str], form_unsent : list[FormAwaitingApproval]):
+def append_unsent_form_data(target_list : list[dict], id_list : list[str], form_unsent : list[FormAwaitingApproval], banned_id_list : list[str]):
     for reqform in form_unsent:
         append_replace_id(
             target_list=target_list,
@@ -115,9 +123,10 @@ def append_unsent_form_data(target_list : list[dict], id_list : list[str], form_
                 "action": "approve"
             },
             id=reqform.form.req_no_plaintiff,
+            banned_id_list=banned_id_list,
         )
 
-def append_sent_form_data(target_list : list[dict], id_list : list[str], form_already_sent : list[VisualReqformData]):
+def append_sent_form_data(target_list : list[dict], id_list : list[str], form_already_sent : list[VisualReqformData], banned_id_list : list[str]):
     for reqform in form_already_sent:  
         append_replace_id(
             target_list=target_list,
@@ -136,6 +145,7 @@ def append_sent_form_data(target_list : list[dict], id_list : list[str], form_al
                 "action": "report"
             },
             id=reqform.form.req_no_plaintiff,
+            banned_id_list=banned_id_list,
         )
 
 def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):

@@ -1,7 +1,5 @@
 <script>
-function attachConfirmEvent(form) {
-    e.preventDefault();
-
+function attachConfirmEventForm(form) {
     document.getElementById('dialog-confirm').onclick = (() => {
         form.submit()
         dialog_element.close();
@@ -11,8 +9,10 @@ function attachConfirmEvent(form) {
     });
 }
 
-function formDialog(form, custom_msg = null) {
-    attachConfirmEvent(form)
+function formDialog(event, form, custom_msg = null) {
+    e.preventDefault();
+
+    attachConfirmEventForm(form)
 
     const DEFAULT_MSG = `ยังไม่ได้บันทึก จะย้อนกลับจริงหรือไม่`;
 

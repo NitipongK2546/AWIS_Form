@@ -90,16 +90,19 @@ def delete_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
     if draft_container:
+        print("found")
         if request.method == "POST":
+
+            print("success")
+            
             draft_container.delete()
 
-            return redirect("dashboard:dashboard")
+            print(draft_container)
 
-        return render(request, "dashboard/confirmation_page.html", {
-            "action": "Delete Draft",
-        })
+            return redirect("dashboard:dashboard")
     
-    raise Http404()
+    print("lmao nah")
+    raise Http404
 
 
 #####################################################################
@@ -179,7 +182,6 @@ def delete_warrant_draft(request : HttpRequest, container_id : int, warrant_id :
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
     if draft_container:
-
         warrant_form = WarrantDraftDataModel.objects.get(pk=warrant_id)
         warrant_form.delete()
 
@@ -268,7 +270,8 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                 }, status=400)
 
         try:
-            reqform_obj.req_no_plaintiff = req_no_plaintiff_generate()
+            new_req_no_plaintiff = req_no_plaintiff_generate()
+            reqform_obj.req_no_plaintiff = new_req_no_plaintiff
             reqform_obj.save()
 
             for warrant in warrrant_wait_list:
@@ -282,6 +285,9 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                 form_creator=selected_draft.form_creator, 
                 approve_status=1
             )
+
+            selected_draft.reqform_draft.req_no_plaintiff = new_req_no_plaintiff
+            selected_draft.reqform_draft.save()
 
             return redirect("dashboard:dashboard")
         except Exception as e:

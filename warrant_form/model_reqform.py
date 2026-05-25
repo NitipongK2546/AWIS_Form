@@ -57,7 +57,7 @@ class ReqformDataModel(models.Model):
 
     # New field added specially because people didn't tell me how it's supposed to be made.
     # Oh well.
-    draft_id = models.ForeignKey(ReqformDraftDataModel, on_delete=models.PROTECT)
+    draft_id = models.OneToOneField(ReqformDraftDataModel, on_delete=models.PROTECT)
     last_update_date = models.DateTimeField(blank=True, null=True, auto_now=True)
     
     req_form_number = models.IntegerField(blank=True, null=True)

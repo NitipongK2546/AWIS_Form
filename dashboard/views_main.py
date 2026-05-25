@@ -21,9 +21,6 @@ from . import views_main_utils as utils
 
 @login_required
 def dashboard(request : HttpRequest):
-
-    drafts = FormDraftContainer.objects.all()
-    draft_count = drafts.count()
     approved = FormAwaitingApproval.objects.filter(
         approve_status=1
     ).count()
@@ -34,12 +31,22 @@ def dashboard(request : HttpRequest):
     dashboard_list = []
     req_no_plaintiff_list = []
 
+    result1 = FormAwaitingApproval.objects.filter(
+        approve_status=-1
+    ).values_list("form__req_no_plaintiff", flat=True)
+    result2 = VisualReqformData.objects.filter(
+        accept=0
+    ).values("form__req_no_plaintiff")
+
+    banned_id_list = list(result1.union(result2))
+
     filter_form = DashboardFilterForm(request.GET)
     drafts, form_unsent, form_already_sent = utils.get_dashboard_objs(request, filter_form)
 
-    utils.append_draft_data(dashboard_list, req_no_plaintiff_list, drafts)  
-    utils.append_unsent_form_data(dashboard_list, req_no_plaintiff_list, form_unsent)
-    utils.append_sent_form_data(dashboard_list, req_no_plaintiff_list, form_already_sent)
+    utils.append_draft_data(dashboard_list, req_no_plaintiff_list, drafts, banned_id_list)  
+    utils.append_unsent_form_data(dashboard_list, req_no_plaintiff_list, form_unsent, banned_id_list)
+    
+    utils.append_sent_form_data(dashboard_list, req_no_plaintiff_list, form_already_sent, banned_id_list)
 
     # dashboard_list.reverse()
     dashboard_list.sort(
@@ -54,7 +61,7 @@ def dashboard(request : HttpRequest):
 
         ############################################
 
-        "draft_count": draft_count,
+        "draft_count": len(dashboard_list),
         "approve_form": approved,
         "accept_form": accepted,
     }
@@ -91,12 +98,13 @@ def statistic_page_view(request : HttpRequest):
 
     dashboard_list = []
     req_no_plaintiff_list = []
+    banned_id_list = []
 
     filter_form = StatisticFilterForm(request.GET)
     form_unsent, form_already_sent = utils.get_statistics_objs(request, filter_form)
 
-    utils.append_unsent_form_data(dashboard_list, req_no_plaintiff_list, form_unsent)
-    utils.append_sent_form_data(dashboard_list, req_no_plaintiff_list, form_already_sent)
+    utils.append_unsent_form_data(dashboard_list, req_no_plaintiff_list, form_unsent, banned_id_list)
+    utils.append_sent_form_data(dashboard_list, req_no_plaintiff_list, form_already_sent, banned_id_list)
 
     dashboard_list.sort(
         key=lambda x: x["last_update"],

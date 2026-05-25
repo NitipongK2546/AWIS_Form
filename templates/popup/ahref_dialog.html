@@ -1,20 +1,41 @@
 <script>
-function attachConfirmEvent(link_url) {
-    e.preventDefault();
+function attachConfirmEventHref(link_elem, post, data) {
 
-    dialog.showModal();
+    if (post) {
+        console.log(data.container_id)
 
-    document.getElementById('dialog-confirm').onclick = (() => {
-        window.location.href = link_url;
-        dialog_element.close();
-    });
+        document.getElementById('dialog-confirm').onclick = (async () => {
+            const response = await fetch(link_elem.href, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                },
+            });
+
+            console.log(await response.text())
+
+            if (response.redirected) {
+                window.location.href = response.url;
+                dialog_element.close();
+            }
+        })
+    }
+    else {
+        document.getElementById('dialog-confirm').onclick = (() => {
+            window.location.href = link_elem.href;
+            dialog_element.close();
+        });
+    }
+
     document.getElementById('dialog-cancel').onclick = (() => {
         dialog_element.close();
     });
 }
 
-function ahrefDialog(link_url, custom_msg = null) {
-    attachConfirmEvent(link_url)
+function ahrefDialog(event, link_elem, post = false, data = {}, custom_msg = null) {
+    event.preventDefault();
+
+    attachConfirmEventHref(link_elem, post, data);
 
     const DEFAULT_MSG = `ยังไม่ได้บันทึก จะย้อนกลับจริงหรือไม่`;
 
