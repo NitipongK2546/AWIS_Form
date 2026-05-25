@@ -333,7 +333,9 @@
         <div class="info-card-body">
             <div class="card-action-row" style="margin-top: 0; padding-top: 0; border-top: none;">
                 {% if action == "report" %}
-                    {% if status_int == 99 %}
+                    {% if status_choice == 25 %}
+                    <div>สิ้นสุดการส่งคำร้อง</div>
+                    {% elif status_int == 99 %}
                     <a href="{% url 'dashboard:delete_sent_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger"
                     onclick="ahrefDialog(event, this, true, {}, 'ต้องการหยุดการส่งคำร้องให้กับศาลจริงหรือไม่')">ยกเลิกการส่งคำร้อง</a>
                     {% elif status_int == 0 %}
@@ -345,8 +347,10 @@
                     {% endif %}
 
                 {% elif action == "approve" %}
-                    {% if status_int == 0 %}
-                    <a href="{% url 'forms:edit_form' reqform.req_no_plaintiff %}" class="action-btn action-btn-primary">แก้ไขคำร้อง</a>
+                    {% if status_int == -1 %}
+                    <div>สิ้นสุดการส่งคำร้อง</div>
+                    {% elif status_int == 0 %}
+                    <a href="{% url 'forms:view-draft-container' draft %}" class="action-btn action-btn-primary">แก้ไขคำร้อง</a>
                     {% else %}
                     <a href="{% url 'dashboard:confirm_approve' reqform.req_no_plaintiff %}" class="action-btn action-btn-success">พิจารณาคำร้อง</a>
                     {% endif %}

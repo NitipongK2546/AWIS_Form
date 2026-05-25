@@ -156,6 +156,7 @@ def append_sent_form_data(target_list : list[dict], id_list : list[str], form_al
         if all_reported:
             data_dict.update({
                 "status": "รายงานหมายจับทั้งหมดแล้ว",
+                # "status_int": 
                 "status_choice": 25,
             })
 
@@ -203,7 +204,9 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
         })
 
         written_unsent = FormAwaitingApproval.objects.filter(form_creator=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
+
         owned_unsent = FormAwaitingApproval.objects.filter(form_owner=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
+
         available_unsent = written_unsent.union(owned_unsent)
 
         form_unsent = available_unsent
@@ -234,7 +237,9 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
         drafts = written_draft.union(owned_draft)
         
         written_unsent = FormAwaitingApproval.objects.filter(form_creator=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
+
         owned_unsent = FormAwaitingApproval.objects.filter(form_owner=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
+        
         available_unsent = written_unsent.union(owned_unsent)
         form_unsent = available_unsent
 

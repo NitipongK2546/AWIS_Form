@@ -106,6 +106,7 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
         status = "ร่าง"
 
     return render(request, "dashboard/reqform_info_page.html", {
+        "draft": reqform.draft_id.pk,
         "reqform": reqform,
         "warrants": warrants,
         "status": status,
