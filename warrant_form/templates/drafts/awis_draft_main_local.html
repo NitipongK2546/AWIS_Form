@@ -137,7 +137,13 @@
       <div class="submit-title">พร้อมส่งคำร้องแล้วใช่ไหม?</div>
       <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
     </div>
-    <a href="{% url 'forms:create-reqform' draft_container.pk %}" class="btn btn-primary">
+    <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary">
+      บันทึกคำร้อง
+    </a>
+    <a id="create-btn" href="{% url 'forms:create-reqform' draft_container.pk %}" class="btn btn-primary"
+    onclick="ahrefDialog(event, this, true, {
+      container_id: '{{ draft_container.pk }}',
+    }, 'ต้องการสร้างคำร้องเลยหรือไม่')">
       <i class="ti ti-send" aria-hidden="true"></i>
       สร้างคำร้องจากร่าง
     </a>
@@ -148,8 +154,21 @@
 
 {% block script %}
 <script>
-function confirmWithUser() {
-  return confirm('ต้องการลบจริงหรือไม่')
-}
+let allowLeave = false;
+
+window.addEventListener("beforeunload", (e) => {
+    if (!allowLeave) {
+        e.preventDefault();
+
+        e.returnValue = "";
+    }
+});
+
+document.getElementById("save-btn").addEventListener("click", () => {
+    allowLeave = true;
+});
+document.getElementById("create-btn").addEventListener("click", () => {
+    allowLeave = true;
+});
 </script>
 {% endblock %}

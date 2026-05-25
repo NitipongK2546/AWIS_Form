@@ -31,14 +31,16 @@ def dashboard(request : HttpRequest):
     dashboard_list = []
     req_no_plaintiff_list = []
 
-    result1 = FormAwaitingApproval.objects.filter(
-        approve_status=-1
-    ).values_list("form__req_no_plaintiff", flat=True)
-    result2 = VisualReqformData.objects.filter(
-        accept=0
-    ).values("form__req_no_plaintiff")
+    # result1 = FormAwaitingApproval.objects.filter(
+    #     approve_status=-1
+    # ).values_list("form__req_no_plaintiff", flat=True)
+    # result2 = VisualReqformData.objects.filter(
+    #     accept=0
+    # ).values("form__req_no_plaintiff")
 
-    banned_id_list = list(result1.union(result2))
+    # banned_id_list = list(result1.union(result2))
+
+    banned_id_list = []
 
     filter_form = DashboardFilterForm(request.GET)
     drafts, form_unsent, form_already_sent = utils.get_dashboard_objs(request, filter_form)

@@ -281,7 +281,7 @@
                 {% if action == "report" %}
                 <div class="warrant-item">
                     <div class="warrant-number">หมายที่ {{ forloop.counter }}</div>
-                    {% include 'module/warrant_info.html' with warrant=warrant_obj.warrant num=forloop.counter %}
+                    {% include 'module/warrant_info.html' with warrant=warrant_obj.warrant num=forloop.counter report_status=warrant_obj.report_status %}
                     <div class="field-grid" style="margin-top: 8px;">
                         <div class="field-item">
                             <span class="field-label">สถานะ</span>
@@ -334,7 +334,8 @@
             <div class="card-action-row" style="margin-top: 0; padding-top: 0; border-top: none;">
                 {% if action == "report" %}
                     {% if status_int == 99 %}
-                    <a href="{% url 'dashboard:delete_sent_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger">ยกเลิกการส่งคำร้อง</a>
+                    <a href="{% url 'dashboard:delete_sent_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger"
+                    onclick="ahrefDialog(event, this, true, {}, 'ต้องการหยุดการส่งคำร้องให้กับศาลจริงหรือไม่')">ยกเลิกการส่งคำร้อง</a>
                     {% elif status_int == 0 %}
                     <span class="status-badge" style="background: #9B1C1C;">ไม่รับ</span>
                     {% elif status_int == 1 %}
