@@ -104,12 +104,31 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
             if value is None or value == "":
                 missing_fields.append(label)
 
+    # ---- เช็ค field สำคัญของหมายจับที่ยังกรอกไม่ครบ ----
+    WARRANT_REQUIRED_FIELDS = {
+        "acc_full_name": "ชื่อ-นามสกุล",
+        "acc_card_id":   "เลขบัตร",
+        "charge":        "ฐานความผิด",
+        "cause_text":    "ด้วย (เหตุผลกล่าวหา)",
+        "send_to_name":  "ส่งหมายถึง",
+    }
+
+    # list of (warrant, [missing_label, ...]) — missing list is empty if all good
+    warrant_with_missing = []
+    for warrant in draft_container.warrant_drafts.all():
+        missing = [
+            label for field, label in WARRANT_REQUIRED_FIELDS.items()
+            if not getattr(warrant, field, None)
+        ]
+        warrant_with_missing.append((warrant, missing))
+
     return render(request, "drafts/awis_draft_main_local.html", {
         "draft_container": draft_container,
         "ownership_form": ownership_form,
         "is_owner": is_owner,
         "not_owner_error": not_owner_error,
         "missing_fields": missing_fields,
+        "warrant_with_missing": warrant_with_missing,
     })
     
     

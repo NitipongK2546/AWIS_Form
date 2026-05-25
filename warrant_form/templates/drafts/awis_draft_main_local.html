@@ -119,7 +119,7 @@
       </a>
     </div>
     <div class="card-body">
-      {% for warrant in draft_container.warrant_drafts.all %}
+      {% for warrant, warrant_missing in warrant_with_missing %}
       <div class="warrant-item">
         <span class="warrant-num">{{ forloop.counter }}.</span>
         <span class="warrant-name">{{ warrant }}</span>
@@ -137,6 +137,19 @@
           </a>
         </div>
       </div>
+      {% if warrant_missing %}
+      <div class="alert-missing">
+        <div class="alert-missing-header">
+          <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+          หมายจับที่ {{ forloop.counter }} — ข้อมูลสำคัญที่ยังกรอกไม่ครบ
+        </div>
+        <ul class="alert-missing-list">
+          {% for field in warrant_missing %}
+          <li>{{ field }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
       {% empty %}
       <div class="empty-state">
         <i class="ti ti-inbox" aria-hidden="true"></i>
@@ -153,14 +166,14 @@
       <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
     </div>
     <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary">
-      บันทึกคำร้อง
+      บันทึกร่างคำร้อง
     </a>
     <a id="create-btn" href="{% url 'forms:create-reqform' draft_container.pk %}" class="btn btn-primary"
     onclick="ahrefDialog(event, this, true, {
       container_id: '{{ draft_container.pk }}',
     }, 'ต้องการสร้างคำร้องเลยหรือไม่')">
       <i class="ti ti-send" aria-hidden="true"></i>
-      บันทึกร่างคำร้อง
+      สร้างคำร้อง
     </a>
     <a href="{% url 'forms:create-reqform' draft_container.pk %}" class="btn btn-primary">
       <i class="ti ti-send" aria-hidden="true"></i>
