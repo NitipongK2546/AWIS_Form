@@ -95,6 +95,21 @@
     </div>
   </div>
 
+  <!-- แจ้งเตือน field ที่ยังกรอกไม่ครบ -->
+  {% if missing_fields %}
+  <div class="alert-missing">
+    <div class="alert-missing-header">
+      <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+      ข้อมูลสำคัญที่ยังกรอกไม่ครบ — กรุณาแก้ไขก่อนสร้างคำร้อง
+    </div>
+    <ul class="alert-missing-list">
+      {% for field in missing_fields %}
+      <li>{{ field }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
   <!-- หมายจับ -->
   <div class="card">
     <div class="card-header">
