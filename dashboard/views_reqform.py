@@ -72,14 +72,27 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
         }, status=403)
 
     if form_already_sent:
-        status = form_already_sent.get_accept_display()
-        status_int = form_already_sent.accept
         action = "report"
 
+        # So if every warrant is 1, excluding all 1s, should return None.
+        # Which therefore, exists = False.
+        # Which proves every warrant is 1, and then we negate it.
         warrants = VisualWarrantData.objects.filter(
             warrant__in=reqform.warrants.all()
         )
-        status_choice = color_val_sent.get(status_int)
+
+        all_reported = not warrants.exclude(report_status=1).exists()
+
+        if all_reported:
+            status = "รายงานหมายจับทั้งหมดแล้ว"
+            status_int = form_already_sent.accept
+
+            status_choice = 25
+        else:
+            status = form_already_sent.get_accept_display()
+            status_int = form_already_sent.accept
+
+            status_choice = color_val_sent.get(status_int)
 
     elif form_not_sent:
         status = form_not_sent.get_approve_status_display()
@@ -124,6 +137,13 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
 
     target_warrant : WarrantDataModel = unsent_form.form.warrants.filter(woa_refno=woa_refno).first()
 
+    warrant_wrapper = VisualWarrantData.objects.filter(warrant=target_warrant).first()
+
+    # if (not warrant_wrapper) or warrant_wrapper.court_injunction != 1:
+    #     return render(request, "errors/400.html", {
+    #         "reason": "ผู้ใช้ไม่สามารถรายงานหมายที่ยังไม่ได้รับการอนุมัติได้"
+    #     }, status=400)
+
     current_user : UserDataModel = request.user
 
     report_form = ReportWarrantForm()
@@ -165,13 +185,11 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
                 else:
                     print(put_data)
 
-                warrant_wrapper = VisualWarrantData.objects.filter(warrant=target_warrant).first()
-
                 # Change status to reported.
                 warrant_wrapper.report_status = 1
                 warrant_wrapper.save()
 
-                return redirect("dashboard:view_reqform_warrants", req_no_plaintiff)
+                return redirect("dashboard:dashboard")
 
             except:
                 return render(request, "errors/500.html", {
@@ -207,7 +225,7 @@ def cancel_reqform(request : HttpRequest, req_no_plaintiff : str):
             unsent_form.save()
             unsent_form.form.save()
 
-            return redirect("dashboard:success_page")
+            return redirect("dashboard:dashboard")
 
         except:
             return JsonResponse({
@@ -260,7 +278,7 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
             sent_form.delete()
             warrant_results.delete()
                 
-            return redirect("dashboard:success_page")
+            return redirect("dashboard:dashboard")
 
         except:
             return render(request, "errors/400.html", {

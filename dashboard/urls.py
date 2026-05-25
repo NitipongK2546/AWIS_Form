@@ -6,7 +6,7 @@ app_name = "dashboard"
 old_stuff = [
     path("", views.index, name="index"),
     path("dashboard/", views_main.dashboard, name="dashboard"),
-    path("success/", views.success_page, name="success_page"),
+    # path("success/", views., name="success_page"),
 
     path("dashboard/approve_table/", views.approve_table_page, name="approve_table_page"),
     path("dashboard/approve/<str:req_no_plaintiff>/confirm_approve/", views.reqform_approve_page, name="confirm_approve"),

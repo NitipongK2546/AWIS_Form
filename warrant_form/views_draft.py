@@ -90,16 +90,19 @@ def delete_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
     if draft_container:
+        print("found")
         if request.method == "POST":
+
+            print("success")
+            
             draft_container.delete()
 
-            return redirect("dashboard:dashboard")
+            print(draft_container)
 
-        return render(request, "dashboard/confirmation_page.html", {
-            "action": "Delete Draft",
-        })
+            return redirect("dashboard:dashboard")
     
-    raise Http404()
+    print("lmao nah")
+    raise Http404
 
 
 #####################################################################
@@ -179,7 +182,6 @@ def delete_warrant_draft(request : HttpRequest, container_id : int, warrant_id :
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
     if draft_container:
-
         warrant_form = WarrantDraftDataModel.objects.get(pk=warrant_id)
         warrant_form.delete()
 
@@ -215,7 +217,7 @@ def woa_refno_generate():
     last_warrant = WarrantDataModel.objects.last()
     if not last_warrant:
         num = 0
-        return f"TCCT{timezone.now().year + 543}{f"{num + 1}".zfill(4)}"
+        return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-W"
 
     all_same_day_requests = WarrantDataModel.objects.filter(
         woa_date__date=today.date()
@@ -250,6 +252,11 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             **selected_draft.reqform_draft.toRealReqform(),
         )
 
+        if not selected_draft.warrant_drafts.all():
+            return render(request, "errors/400.html", {
+                "reason": "ยังไม่ได้ใส่หมายจับ"
+            }, status=400)
+
         warrrant_wait_list : list[WarrantDataModel] = []
         for draft in selected_draft.warrant_drafts.all():
             warrant = WarrantDataModel(
@@ -263,7 +270,8 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                 }, status=400)
 
         try:
-            reqform_obj.req_no_plaintiff = req_no_plaintiff_generate()
+            new_req_no_plaintiff = req_no_plaintiff_generate()
+            reqform_obj.req_no_plaintiff = new_req_no_plaintiff
             reqform_obj.save()
 
             for warrant in warrrant_wait_list:
@@ -277,6 +285,9 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                 form_creator=selected_draft.form_creator, 
                 approve_status=1
             )
+
+            selected_draft.reqform_draft.req_no_plaintiff = new_req_no_plaintiff
+            selected_draft.reqform_draft.save()
 
             return redirect("dashboard:dashboard")
         except Exception as e:

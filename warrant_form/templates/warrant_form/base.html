@@ -18,6 +18,10 @@
     <script src="{% static 'js/fetchDistrict.js' %}"></script>
 </head>
 <body>
+    {% include 'popup/popup_element.html' %}
+    {% include 'popup/ahref_dialog.html' %}
+    {% include 'popup/form_dialog.html' %}
+    {% include 'popup/go_back_dialog.html' %}
     {% include 'system/sys_header.html' %}
     {% block progress_bar %}
     {% endblock %}

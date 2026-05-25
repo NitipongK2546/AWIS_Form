@@ -6,20 +6,29 @@ from django.conf import settings
 
 from dashboard.models import FormAwaitingApproval, VisualReqformData
 from warrant_form.model_draftform import FormDraftContainer
+from dashboard.warrant_wrapper import VisualWarrantData
 
 from django.forms import Form
 from django.utils import timezone
 
-def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dict : dict, id : str):
+def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dict : dict, id : str, banned_id_list : list[str]):
+    if id in banned_id_list:
+        return
+    
+    print(id_list)
+    # print()
+
     if id not in id_list:
         id_list.append(id)
         target_list.append(incoming_dict)
     else:
         # If ID is in ID_list
         target_obj_index = id_list.index(id)
-        target_list.pop(target_obj_index)
-        id_list.pop(target_obj_index)
-        target_list.append(incoming_dict)
+        target_list[target_obj_index] = incoming_dict
+
+        # target_list.pop(target_obj_index)
+        # # id_list.pop(target_obj_index)
+        # target_list.append(incoming_dict)
 
 
 ########################################################################
@@ -74,8 +83,9 @@ def _format_filter(incoming_dict : dict):
         
     return filter
 
-def append_draft_data(target_list : list[dict], id_list : list[str], form_unsent : list[FormDraftContainer]):
+def append_draft_data(target_list : list[dict], id_list : list[str], form_unsent : list[FormDraftContainer], banned_id_list : list[str]):
     for draft in form_unsent:
+        chosen_id = draft.reqform_draft.req_no_plaintiff if draft.reqform_draft.req_no_plaintiff else draft.pk
         append_replace_id(
             target_list=target_list,
             id_list=id_list,
@@ -83,20 +93,21 @@ def append_draft_data(target_list : list[dict], id_list : list[str], form_unsent
                 "reqno": "-",
                 "req_year": "-",
                 "last_update": draft.last_edit,
-                "req_no_plaintiff": "-",
+                "req_no_plaintiff": draft.reqform_draft.req_no_plaintiff if draft.reqform_draft.req_no_plaintiff else "กำลังร่าง",
                 "container_id": draft.pk,
-                "req_name": draft.reqform_draft.req_name,
-                "accused": draft.reqform_draft.accused,
+                "req_name": draft.reqform_draft.req_name if draft.reqform_draft.req_name else "กำลังร่าง",
+                "accused": draft.reqform_draft.accused if draft.reqform_draft.accused else "กำลังร่าง",
                 "req_date": "-",            
                 "status": "ร่างคำร้อง",
                 "status_int": 1,
                 "status_choice": 1,
                 "action": "draft",
             },
-            id=draft.pk,
+            id=chosen_id,
+            banned_id_list=banned_id_list,
         )
 
-def append_unsent_form_data(target_list : list[dict], id_list : list[str], form_unsent : list[FormAwaitingApproval]):
+def append_unsent_form_data(target_list : list[dict], id_list : list[str], form_unsent : list[FormAwaitingApproval], banned_id_list : list[str]):
     for reqform in form_unsent:
         append_replace_id(
             target_list=target_list,
@@ -115,27 +126,45 @@ def append_unsent_form_data(target_list : list[dict], id_list : list[str], form_
                 "action": "approve"
             },
             id=reqform.form.req_no_plaintiff,
+            banned_id_list=banned_id_list,
         )
 
-def append_sent_form_data(target_list : list[dict], id_list : list[str], form_already_sent : list[VisualReqformData]):
-    for reqform in form_already_sent:  
+def append_sent_form_data(target_list : list[dict], id_list : list[str], form_already_sent : list[VisualReqformData], banned_id_list : list[str]):
+    for visual_form in form_already_sent:  
+
+        reqform = visual_form.form
+        warrants = VisualWarrantData.objects.filter(
+            warrant__in=reqform.warrants.all()
+        )
+
+        all_reported = not warrants.exclude(report_status=1).exists()
+
+        data_dict = {
+            "reqno": visual_form.form.getReqno(),
+            "req_year": visual_form.form.req_year,
+            "last_update": visual_form.form.last_update_date,
+            "req_no_plaintiff": visual_form.form.req_no_plaintiff,
+            "req_name": visual_form.form.req_name,
+            "accused": visual_form.form.accused,
+            "req_date": visual_form.form.req_date,            
+            "status": visual_form.get_accept_display(),
+            "status_int":  visual_form.accept,
+            "status_choice": color_val_sent.get(visual_form.accept),
+            "action": "report"
+        }
+
+        if all_reported:
+            data_dict.update({
+                "status": "รายงานหมายจับทั้งหมดแล้ว",
+                "status_choice": 25,
+            })
+
         append_replace_id(
             target_list=target_list,
             id_list=id_list,
-            incoming_dict = {
-                "reqno": reqform.form.getReqno(),
-                "req_year": reqform.form.req_year,
-                "last_update": reqform.form.last_update_date,
-                "req_no_plaintiff": reqform.form.req_no_plaintiff,
-                "req_name": reqform.form.req_name,
-                "accused": reqform.form.accused,
-                "req_date": reqform.form.req_date,            
-                "status": reqform.get_accept_display(),
-                "status_int":  reqform.accept,
-                "status_choice": color_val_sent.get(reqform.accept),
-                "action": "report"
-            },
-            id=reqform.form.req_no_plaintiff,
+            incoming_dict = data_dict,
+            id=visual_form.form.req_no_plaintiff,
+            banned_id_list=banned_id_list,
         )
 
 def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
@@ -153,6 +182,10 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
     if isinstance(wanted_status, str):
         wanted_status = int(wanted_status)
 
+    ##########################################################
+
+    seven_days_ago = timezone.now() - timezone.timedelta(days=7)
+
     if wanted_status in [1, ]:
         written_draft = FormDraftContainer.objects.filter(form_creator=request.user)
         owned_draft = FormDraftContainer.objects.filter(form_owner=request.user)
@@ -168,8 +201,13 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
         filter_data.update({
             "approve_status": compare_val.get(wanted_status)
         })
-        form_unsent = FormAwaitingApproval.objects.filter(**filter_data).exclude(approve_status=-1)
-    
+
+        written_unsent = FormAwaitingApproval.objects.filter(form_creator=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
+        owned_unsent = FormAwaitingApproval.objects.filter(form_owner=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
+        available_unsent = written_unsent.union(owned_unsent)
+
+        form_unsent = available_unsent
+
     elif wanted_status in [20, 21, 22, 23, 24, 25]:
         compare_val = {
             20: 99,
@@ -180,18 +218,28 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
             25: 1,
         }
 
+        written_unsent = FormAwaitingApproval.objects.filter(form_creator=request.user)
+        owned_unsent = FormAwaitingApproval.objects.filter(form_owner=request.user)
+        available_unsent = written_unsent.union(owned_unsent)
+
         filter_data.update({
             "accept": compare_val.get(wanted_status)
         })
-        form_already_sent = VisualReqformData.objects.filter(**filter_data)
+
+        available_sent = VisualReqformData.objects.filter(form__in=available_unsent.values("form"))
+        form_already_sent = available_sent.filter(**filter_data)
     else:
         written_draft = FormDraftContainer.objects.filter(form_creator=request.user)
         owned_draft = FormDraftContainer.objects.filter(form_owner=request.user)
-        owned_draft = FormDraftContainer.objects.filter(form_owner=request.user)
         drafts = written_draft.union(owned_draft)
         
-        form_unsent = FormAwaitingApproval.objects.filter(**filter_data).exclude(approve_status=-1)
-        form_already_sent = VisualReqformData.objects.filter(**filter_data)
+        written_unsent = FormAwaitingApproval.objects.filter(form_creator=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
+        owned_unsent = FormAwaitingApproval.objects.filter(form_owner=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
+        available_unsent = written_unsent.union(owned_unsent)
+        form_unsent = available_unsent
+
+        available_sent = VisualReqformData.objects.filter(form__in=available_unsent.values("form"))
+        form_already_sent = available_sent.filter(**filter_data)
 
     return drafts, form_unsent, form_already_sent
 

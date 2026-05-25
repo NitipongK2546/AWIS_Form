@@ -251,7 +251,7 @@ def delete_form(request : HttpRequest, req_no_plaintiff : str):
 
         selected_form.delete()
   
-        return redirect(reverse("dashboard:success_page"))
+        return redirect(reverse("dashboard:dashboard"))
     
     return render(request, "dashboard/confirmation_page.html", {
         "user": request.user,

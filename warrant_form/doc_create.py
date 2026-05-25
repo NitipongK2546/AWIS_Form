@@ -117,26 +117,38 @@ import os
 
 from django.http import FileResponse
 from docxtpl import DocxTemplate
+from pathlib import Path
+
+TEMP_DIR = "temp/"
 
 def _create_pdf(doc : DocxTemplate, filename : str):
-    with tempfile.TemporaryDirectory() as tmpdir:
-        docx_path = os.path.join(tmpdir, "output.docx")
-        pdf_path = os.path.join(tmpdir, "output.pdf")
+    os.makedirs(TEMP_DIR, exist_ok=True)
 
-        doc.save(docx_path)
+    docx_path = TEMP_DIR + "output.docx"
+    pdf_path = TEMP_DIR + "output.pdf"
 
-        subprocess.run([
-            "soffice",
-            "--headless",
-            "--convert-to", "pdf",
-            "--outdir", tmpdir,
-            docx_path
-        ], check=True)
+    doc.save(str(docx_path))
 
-        with open(pdf_path, "rb") as f:
-            pdf_bytes = BytesIO(f.read())
+    result = subprocess.run([
+        "soffice",
+        "--headless",
+        "--nologo",
+        "--nofirststartwizard",
+        "--convert-to", "pdf",
+        "--outdir", TEMP_DIR,
+        docx_path
+    ],
+        capture_output=True, 
+        check=True
+    )
+
+    with open(pdf_path, "rb") as f:
+        pdf_bytes = BytesIO(f.read())
 
     pdf_bytes.seek(0)
+
+    Path(docx_path).unlink(missing_ok=True) 
+    Path(pdf_path).unlink(missing_ok=True) 
 
     return FileResponse(
         pdf_bytes,

@@ -147,7 +147,7 @@ def confirm_reject(request : HttpRequest, req_no_plaintiff : str):
 
         FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
   
-        return redirect(reverse("dashboard:success_page"))
+        return redirect(reverse("dashboard:dashboard"))
     
     return render(request, "dashboard/confirmation_page.html", {
         "user": request.user,
@@ -214,11 +214,11 @@ def warrant_status_page(request, req_no_plaintiff : str):
     })
 
 
-@login_required
-def success_page(request : HttpRequest):
-    return render(request, "dashboard/success_page.html", {
-        "user": request.user,
-    })
+# @login_required
+# def dashboard(request : HttpRequest):
+#     return render(request, "dashboard/dashboard.html", {
+#         "user": request.user,
+#     })
 
 
 ###############################################################################
