@@ -119,15 +119,11 @@ def reqform_approve_page(request : HttpRequest, req_no_plaintiff : str):
     selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
 
     if request.method == "POST":
-        if request.POST.get("confirm_approve") and request.POST.get("confirm_reject"):
-            # ไม่ควรเกิดขึ้น หาก Javascript ทำงาน
-            return render(request, "errors/400.html", {
-                "reason": "ท่านเลือกที่จะอนุมัติและปฎิเสธพร้อมกัน"
-            }, status=400)
+        confirm_approve = request.POST.get("confirm") == "true"
 
-        if request.POST.get("confirm_approve"):
+        if confirm_approve:
             return handle_form_approved()
-        elif request.POST.get("confirm_reject"):
+        elif not confirm_approve:
             return handle_form_rejected()
 
         else:
@@ -251,7 +247,6 @@ def download_warrant(request : HttpRequest, req_no_plaintiff : str, woa_refno : 
     target_warrant : WarrantDataModel = unsent_form.form.warrants.filter(woa_refno=woa_refno).first()
 
     doc_data = target_warrant.convertToDocumentData()
-    print(doc_data)
 
     response = doc_create.create_warrant_pdf(doc_data)
 

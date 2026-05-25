@@ -15,7 +15,7 @@ def append_replace_id(target_list : list[dict], id_list : list[str],incoming_dic
     if id in banned_id_list:
         return
     
-    print(id_list)
+    # print(id_list)
     # print()
 
     if id not in id_list:
