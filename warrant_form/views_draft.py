@@ -285,50 +285,35 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                 "reason": "ข้อมูลที่ใส่ลงไปในร่างไม่เพียงพอ"
             }, status=400)
         
-    # def update_old_reqform():
-    #     old_unsent_form = FormAwaitingApproval.objects.filter(
-    #         form=existing_reqform
-    #     ).first()
+    def update_old_reqform():
+        old_unsent_form = FormAwaitingApproval.objects.filter(
+            form=existing_reqform
+        ).first()
 
-    #     selected_draft.reqform_draft.toRealReqform()
+        if not selected_draft.warrant_drafts.all():
+            return render(request, "errors/400.html", {
+                "reason": "ยังไม่ได้ใส่หมายจับ"
+            }, status=400)
 
-    #     if not selected_draft.warrant_drafts.all():
-    #         return render(request, "errors/400.html", {
-    #             "reason": "ยังไม่ได้ใส่หมายจับ"
-    #         }, status=400)
-
-    #     warrrant_wait_list : list[WarrantDataModel] = []
-    #     for draft in selected_draft.warrant_drafts.all():
-    #         warrant = WarrantDataModel(
-    #             **draft.toRealWarrant()
-    #         )
-    #         warrrant_wait_list.append(warrant)
-
-    #         if WarrantDataModel.objects.filter(woa_refno=warrant.woa_refno).first():
-    #             return render(request, "errors/400.html", {
-    #                 "reason": "เลขอ้างอิงของหมายซ้ำกับหมายที่เคยสร้างขึ้น"
-    #             }, status=400)
-
-    #     try:
-    #         existing_reqform.update()
-
-    #         for warrant in warrrant_wait_list:
-    #             warrant.woa_refno = woa_refno_generate()
-    #             warrant.save()
-    #             reqform_obj.warrants.add(warrant)
-
-    #         FormAwaitingApproval.objects.update(
-    #             form=reqform_obj, 
-    #             form_owner=selected_draft.form_owner, 
-    #             form_creator=selected_draft.form_creator, 
-    #             approve_status=1
-    #         )
-
-    #         selected_draft.reqform_draft.req_no_plaintiff = new_req_no_plaintiff
-    #         selected_draft.reqform_draft.save()
-
-    #         return redirect("dashboard:dashboard")
+        warrrant_wait_list : list[WarrantDataModel] = []
+        for draft in selected_draft.warrant_drafts.all():
+            warrant_data =  draft.toRealWarrant()
+            warrrant_wait_list.append(warrant_data)
         
+        for key, value in selected_draft.reqform_draft.toRealReqform(no_draft=True):
+           setattr(existing_reqform, key, value)
+
+        existing_reqform.save()
+
+        for index, warrant in enumerate(existing_reqform.first().warrants.all()):
+            warrant.update(
+                **warrrant_wait_list[index]
+            )
+
+        old_unsent_form.approve_status = 1
+        old_unsent_form.save()
+
+        return redirect("dashboard:dashboard")
     
     ##########################################################################3
 
@@ -340,11 +325,9 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
     if request.method == "POST":          
         existing_reqform = ReqformDataModel.objects.filter(
             req_no_plaintiff=selected_draft.reqform_draft.req_no_plaintiff
-        ).union(
-            ReqformDataModel.objects.filter(
-                req_no_plaintiff=selected_draft.reqform_draft.req_no_plaintiff
-            )
         ).first()
+
+        print(selected_draft.reqform_draft.req_no_plaintiff)
 
         if existing_reqform:
             # return update_old_reqform()

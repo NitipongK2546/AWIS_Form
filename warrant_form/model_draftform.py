@@ -152,7 +152,7 @@ class ReqformDraftDataModel(models.Model):
     def __str__(self):
         return f"(ผู้ต้องสงสัย: {self.accused or '---'})"
     
-    def toRealReqform(self) -> dict[str,]:
+    def toRealReqform(self, no_draft : bool = False) -> dict[str,]:
         
         dict_main_awis = model_to_dict(self, exclude=["id", "draft_container"])
 
@@ -161,8 +161,12 @@ class ReqformDraftDataModel(models.Model):
         dict_main_awis.update({
             "req_date": thai_date_now,
             "req_year": thai_date_now.year + 543,
-            "draft_id": self,
         })
+
+        if not no_draft:
+            dict_main_awis.update({
+                "draft_id": self
+            })
 
         return dict_main_awis
     
