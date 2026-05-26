@@ -29,7 +29,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       <div class="stat-number">{{ total_count }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'forms:draft-page' %}" class="stat-card" style="background: #7F1D1D;">
+    <a href="{% url 'forms:draft-page' %}" class="stat-card-red">
       <div class="stat-label">ร่างคำร้องที่ยังไม่สำเร็จ</div>
       <div class="stat-number">{{ draft_count }}</div>
       <div class="stat-unit">ร่าง</div>
@@ -39,12 +39,12 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       <div class="stat-number">{{ unsent_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-green">
+    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-blue">
       <div class="stat-label">ส่งถึงศาลสำเร็จ</div>
       <div class="stat-number">{{ sent_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card" style="background: #3f7f1d;">
+    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-green">
       <div class="stat-label">ศาลอนุมัติแล้ว</div>
       <div class="stat-number">{{ accepted_form }}</div>
       <div class="stat-unit">ร่าง</div>
