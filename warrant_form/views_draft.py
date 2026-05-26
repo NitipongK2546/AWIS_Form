@@ -268,12 +268,12 @@ def req_no_plaintiff_generate():
 
     return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}"
 
-def woa_refno_generate():
+def woa_refno_generate(count : int):
     today = timezone.now()
     last_warrant = WarrantDataModel.objects.last()
     if not last_warrant:
         num = 0
-        return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-W"
+        return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-{f"W{count + 1}".zfill(3)}"
 
     all_same_day_requests = WarrantDataModel.objects.filter(
         woa_date__date=today.date()
@@ -281,7 +281,7 @@ def woa_refno_generate():
 
     num = all_same_day_requests.count()
 
-    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-W"
+    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-{f"W{count + 1}".zfill(3)}"
 
 @perm_req_log(*ReqformPerm.CREATE_REQFORM)
 def create_reqform_from_draft(request : HttpRequest, container_id : int):
@@ -300,7 +300,9 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             warrant = WarrantDataModel(
                 **draft.toRealWarrant()
             )
-            warrrant_wait_list.append(warrant)
+            warrrant_wait_list.append(
+                warrant
+            )
 
             if WarrantDataModel.objects.filter(woa_refno=warrant.woa_refno).first():
                 return render(request, "errors/400.html", {
@@ -312,8 +314,8 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             reqform_obj.req_no_plaintiff = new_req_no_plaintiff
             reqform_obj.save()
 
-            for warrant in warrrant_wait_list:
-                warrant.woa_refno = woa_refno_generate()
+            for count, warrant in enumerate(warrrant_wait_list):
+                warrant.woa_refno = woa_refno_generate(count)
                 warrant.save()
                 reqform_obj.warrants.add(warrant)
 
@@ -342,32 +344,42 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             }, status=400)
         
     def update_old_reqform():
-        old_unsent_form = FormAwaitingApproval.objects.filter(
-            form=existing_reqform
-        ).first()
+        try:
+            old_unsent_form = FormAwaitingApproval.objects.filter(
+                form=existing_reqform
+            ).first()
 
-        if not selected_draft.warrant_drafts.all():
-            return render(request, "errors/400.html", {
-                "reason": "ยังไม่ได้ใส่หมายจับ"
-            }, status=400)
+            if not selected_draft.warrant_drafts.all():
+                return render(request, "errors/400.html", {
+                    "reason": "ยังไม่ได้ใส่หมายจับ"
+                }, status=400)
+            
+            draft_warrants = selected_draft.warrant_drafts.all()
+            existing_warrants = existing_reqform.warrants.all()
 
-        warrrant_wait_list : list[WarrantDataModel] = []
-        for draft in selected_draft.warrant_drafts.all():
-            warrant_data =  draft.toRealWarrant()
-            warrrant_wait_list.append(warrant_data)
-        
-        for key, value in selected_draft.reqform_draft.toRealReqform(no_draft=True):
-           setattr(existing_reqform, key, value)
+            if draft_warrants.count() > existing_warrants.count():
+                pass
 
-        existing_reqform.save()
+            warrrant_wait_list : list[dict] = []
+            for draft in draft_warrants:
+                warrant_data =  draft.toRealWarrant()
+                warrrant_wait_list.append(warrant_data)
 
-        for index, warrant in enumerate(existing_reqform.first().warrants.all()):
-            warrant.update(
-                **warrrant_wait_list[index]
-            )
+            for key, value in selected_draft.reqform_draft.toRealReqform(no_draft=True).items():
+                setattr(existing_reqform, key, value)
 
-        old_unsent_form.approve_status = 1
-        old_unsent_form.save()
+            for index, warrant in enumerate(existing_warrants):
+                for key, value in warrrant_wait_list[index].items():
+                    setattr(warrant, key, value)
+
+                warrant.save()
+
+            existing_reqform.save()
+
+            old_unsent_form.approve_status = 1
+            old_unsent_form.save()
+        except Exception as e:
+            print(str(e))
 
         return redirect("dashboard:dashboard")
     
@@ -383,11 +395,11 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             req_no_plaintiff=selected_draft.reqform_draft.req_no_plaintiff
         ).first()
 
-        print(selected_draft.reqform_draft.req_no_plaintiff)
+        # print(selected_draft.reqform_draft.req_no_plaintiff)
 
         if existing_reqform:
-            # return update_old_reqform()
-            return HttpResponseBadRequest("OOOFFFF")
+            return update_old_reqform()
+            # return HttpResponseBadRequest("OOOFFFF")
         else:
             return create_new_reqform()
         
