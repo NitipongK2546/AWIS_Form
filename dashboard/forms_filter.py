@@ -17,7 +17,7 @@ status_choices = [
     (22, "ไม่รับ"),                # Visual Form
     (23, "รอรายงานผลหมายจับ"),    # Visual Form (Accepted)
     (24, "จับไม่สำเร็จ"),            # Visual Form (Failed)
-    (25, "รายงานผลสำเจ็จ"),        # Visual Form (All Warrant Success)
+    (25, "รายงานผลสำเร็จ"),        # Visual Form (All Warrant Success)
 
     # (99, "ยกเลิกคำร้อง"),           # Cancel during Form Await
 ]
@@ -94,7 +94,7 @@ stats_status_choices = [
     (22, "ไม่รับ"),                # Visual Form
     (23, "รอรายงานผลหมายจับ"),    # Visual Form (Accepted)
     (24, "จับไม่สำเร็จ"),            # Visual Form (Failed)
-    (25, "รายงานผลสำเจ็จ"),        # Visual Form (All Warrant Success)
+    (25, "รายงานผลสำเร็จ"),        # Visual Form (All Warrant Success)
 
     (99, "ยกเลิกคำร้อง"),           # Cancel during Form Await
 ]

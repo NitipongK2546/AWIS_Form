@@ -76,11 +76,59 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
                 return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
     ownership_form = OwnershipForm()
+
+    # ---- เช็ค field สำคัญที่ยังกรอกไม่ครบ ----
+    # map: field name -> label ที่แสดงในหน้า
+    REQUIRED_FIELDS = {
+        "court_code":       "ศาล",
+        "plaintiff":        "ชื่อผู้ร้อง",
+        "accused":          "ชื่อผู้ต้องหา",
+        "req_name":         "ผู้กรอกคำร้อง",
+        "req_pos":          "ตำแหน่งผู้กรอกคำร้อง",
+        "req_office":       "สถานที่ทำงาน",
+        "req_age":          "อายุผู้กรอกคำร้อง",
+        "req_province":     "จังหวัด (ผู้กรอก)",
+        "req_district":     "อำเภอ/เขต (ผู้กรอก)",
+        "req_sub_district": "ตำบล/แขวง (ผู้กรอก)",
+        "req_tel":          "หมายเลขโทรศัพท์",
+        "acc_full_name":    "ชื่อเต็มผู้ต้องหา",
+        "acc_card_id":      "รหัสบัตรประจำตัวผู้ต้องหา",
+    }
+
+    missing_fields = []
+    reqform_draft = getattr(draft_container, "reqform_draft", None)
+    if reqform_draft:
+        for field, label in REQUIRED_FIELDS.items():
+            value = getattr(reqform_draft, field, None)
+            # ถือว่าว่างถ้าเป็น None หรือ string ว่าง
+            if value is None or value == "":
+                missing_fields.append(label)
+
+    # ---- เช็ค field สำคัญของหมายจับที่ยังกรอกไม่ครบ ----
+    WARRANT_REQUIRED_FIELDS = {
+        "acc_full_name": "ชื่อ-นามสกุล",
+        "acc_card_id":   "เลขบัตร",
+        "charge":        "ฐานความผิด",
+        "cause_text":    "ด้วย (เหตุผลกล่าวหา)",
+        "send_to_name":  "ส่งหมายถึง",
+    }
+
+    # list of (warrant, [missing_label, ...]) — missing list is empty if all good
+    warrant_with_missing = []
+    for warrant in draft_container.warrant_drafts.all():
+        missing = [
+            label for field, label in WARRANT_REQUIRED_FIELDS.items()
+            if not getattr(warrant, field, None)
+        ]
+        warrant_with_missing.append((warrant, missing))
+
     return render(request, "drafts/awis_draft_main_local.html", {
         "draft_container": draft_container,
         "ownership_form": ownership_form,
         "is_owner": is_owner,
         "not_owner_error": not_owner_error,
+        "missing_fields": missing_fields,
+        "warrant_with_missing": warrant_with_missing,
     })
     
     

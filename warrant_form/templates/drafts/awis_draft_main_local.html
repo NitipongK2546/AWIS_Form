@@ -40,7 +40,7 @@
   <!-- เจ้าของคำร้อง -->
   <div class="card">
     <div class="card-header">
-      <h2><i class="ti ti-user" aria-hidden="true"></i>ข้อมูลเจ้าของคำร้อง</h2>
+      <h2><i class="ti ti-user" aria-hidden="true"></i>ข้อมูลเจ้าร่างคำร้อง</h2>
     </div>
     <div class="card-body">
       <form action="" method="post">
@@ -54,7 +54,7 @@
         {% endif %}
 
         <div class="info-row">
-          <span class="info-label">เจ้าของคำร้อง</span>
+          <span class="info-label">เจ้าของร่างคำร้อง</span>
           <span class="info-value">{{ draft_container.form_owner }}</span>
           {% if is_owner %}
           <span class="info-action">{{ ownership_form.form_owner }}</span>
@@ -62,7 +62,7 @@
         </div>
 
         <div class="info-row">
-          <span class="info-label">ผู้เขียน</span>
+          <span class="info-label">ผู้เขียนร่าง</span>
           <span class="info-value">{{ draft_container.form_creator }}</span>
           {% if is_owner %}
           <span class="info-action">{{ ownership_form.form_creator }}</span>
@@ -95,6 +95,21 @@
     </div>
   </div>
 
+  <!-- แจ้งเตือน field ที่ยังกรอกไม่ครบ -->
+  {% if missing_fields %}
+  <div class="alert-missing">
+    <div class="alert-missing-header">
+      <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+      ข้อมูลสำคัญที่ยังกรอกไม่ครบ — กรุณาแก้ไขก่อนสร้างคำร้อง
+    </div>
+    <ul class="alert-missing-list">
+      {% for field in missing_fields %}
+      <li>{{ field }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
   <!-- หมายจับ -->
   <div class="card">
     <div class="card-header">
@@ -104,7 +119,7 @@
       </a>
     </div>
     <div class="card-body">
-      {% for warrant in draft_container.warrant_drafts.all %}
+      {% for warrant, warrant_missing in warrant_with_missing %}
       <div class="warrant-item">
         <span class="warrant-num">{{ forloop.counter }}.</span>
         <span class="warrant-name">{{ warrant }}</span>
@@ -122,6 +137,19 @@
           </a>
         </div>
       </div>
+      {% if warrant_missing %}
+      <div class="alert-missing">
+        <div class="alert-missing-header">
+          <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+          หมายจับที่ {{ forloop.counter }} — ข้อมูลสำคัญที่ยังกรอกไม่ครบ
+        </div>
+        <ul class="alert-missing-list">
+          {% for field in warrant_missing %}
+          <li>{{ field }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
       {% empty %}
       <div class="empty-state">
         <i class="ti ti-inbox" aria-hidden="true"></i>
@@ -137,8 +165,8 @@
       <div class="submit-title">พร้อมส่งคำร้องแล้วใช่ไหม?</div>
       <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
     </div>
-    <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary bypass-btn">
-      บันทึกคำร้อง
+    <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary bypass-btn" style="background-color: #2832ad;">
+      บันทึกร่างคำร้อง
     </a>
     <a id="create-btn" href="{% url 'forms:create-reqform' draft_container.pk %}" class="btn btn-primary bypass-btn"
     onclick="ahrefDialog(event, this, true, {

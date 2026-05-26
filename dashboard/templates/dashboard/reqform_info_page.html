@@ -353,12 +353,11 @@
                     <a href="{% url 'forms:view-draft-container' draft %}" class="action-btn action-btn-primary">แก้ไขคำร้อง</a>
                     {% else %}
                     <a href="{% url 'dashboard:confirm_approve' reqform.req_no_plaintiff %}" class="action-btn action-btn-success">พิจารณาคำร้อง</a>
+                    <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger"
+                    onclick="ahrefDialog(event, this, true, {}, 'ต้องการยกเลิกการส่งคำร้องจริงหรือไม่')"
+                    >ยกเลิกคำร้อง</a>
                     {% endif %}
                 {% endif %}
-
-                <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger"
-                onclick="ahrefDialog(event, this, true, {}, 'ต้องการยกเลิกการส่งคำร้องจริงหรือไม่')"
-                >ยกเลิกการส่งคำร้อง</a>
             </div>
         </div>
     </div>
