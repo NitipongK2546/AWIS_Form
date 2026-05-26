@@ -270,18 +270,18 @@ def req_no_plaintiff_generate():
 
 def woa_refno_generate(count : int):
     today = timezone.now()
-    last_warrant = WarrantDataModel.objects.last()
-    if not last_warrant:
+    last_request = ReqformDataModel.objects.last()
+    if not last_request:
         num = 0
-        return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-{f"W{count + 1}".zfill(3)}"
+        return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-W{f"{count + 1}".zfill(3)}"
 
-    all_same_day_requests = WarrantDataModel.objects.filter(
-        woa_date__date=today.date()
+    all_same_day_requests = ReqformDataModel.objects.filter(
+        req_date__date=today.date()
     )
 
     num = all_same_day_requests.count()
 
-    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-{f"W{count + 1}".zfill(3)}"
+    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-W{f"{count + 1}".zfill(3)}"
 
 @perm_req_log(*ReqformPerm.CREATE_REQFORM)
 def create_reqform_from_draft(request : HttpRequest, container_id : int):
@@ -295,13 +295,13 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                 "reason": "ยังไม่ได้ใส่หมายจับ"
             }, status=400)
 
-        warrrant_wait_list : list[WarrantDataModel] = []
+        warrrant_wait_list : list[tuple] = []
         for draft in selected_draft.warrant_drafts.all():
             warrant = WarrantDataModel(
                 **draft.toRealWarrant()
             )
             warrrant_wait_list.append(
-                warrant
+                (warrant, draft)
             )
 
             if WarrantDataModel.objects.filter(woa_refno=warrant.woa_refno).first():
@@ -315,9 +315,13 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             reqform_obj.save()
 
             for count, warrant in enumerate(warrrant_wait_list):
-                warrant.woa_refno = woa_refno_generate(count)
-                warrant.save()
-                reqform_obj.warrants.add(warrant)
+                new_woa_refno = woa_refno_generate(count)
+                warrant[0].woa_refno = new_woa_refno
+                warrant[1].woa_refno = new_woa_refno
+
+                warrant[0].save()
+                warrant[1].save()
+                reqform_obj.warrants.add(warrant[0])
 
             FormAwaitingApproval.objects.create(
                 form=reqform_obj, 
@@ -357,22 +361,40 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             draft_warrants = selected_draft.warrant_drafts.all()
             existing_warrants = existing_reqform.warrants.all()
 
-            if draft_warrants.count() > existing_warrants.count():
-                pass
-
             warrrant_wait_list : list[dict] = []
-            for draft in draft_warrants:
-                warrant_data =  draft.toRealWarrant()
-                warrrant_wait_list.append(warrant_data)
 
-            for key, value in selected_draft.reqform_draft.toRealReqform(no_draft=True).items():
-                setattr(existing_reqform, key, value)
+            if draft_warrants.count() != existing_warrants.count():
+                existing_reqform.warrants.all().delete()
 
-            for index, warrant in enumerate(existing_warrants):
-                for key, value in warrrant_wait_list[index].items():
-                    setattr(warrant, key, value)
+                for draft in draft_warrants:
+                    warrant = WarrantDataModel(
+                        **draft.toRealWarrant()
+                    )
+                    warrrant_wait_list.append(
+                        (warrant, draft)
+                    )
+                
+                for count, warrant in enumerate(warrrant_wait_list):
+                    new_woa_refno = woa_refno_generate(count)
+                    warrant[0].woa_refno = new_woa_refno
+                    warrant[1].woa_refno = new_woa_refno
 
-                warrant.save()
+                    warrant[0].save()
+                    warrant[1].save()
+                    existing_reqform.warrants.add(warrant[0])
+            else:            
+                for draft in draft_warrants:
+                    warrant_data =  draft.toRealWarrant()
+                    warrrant_wait_list.append(warrant_data)
+
+                for key, value in selected_draft.reqform_draft.toRealReqform(no_draft=True).items():
+                    setattr(existing_reqform, key, value)
+
+                for index, warrant in enumerate(existing_warrants):
+                    for key, value in warrrant_wait_list[index].items():
+                        setattr(warrant, key, value)
+
+                    warrant.save()
 
             existing_reqform.save()
 
