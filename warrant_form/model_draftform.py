@@ -52,7 +52,7 @@ class ReqformDraftDataModel(models.Model):
         GENERAL = (1, "ทั่วไป") # จ.
         DRUGS = (2, "ยาเสพติด") # ยจ.
 
-    req_case_type_id = models.IntegerField(blank=True, null=True,) 
+    req_case_type_id = models.IntegerField(blank=True, null=True, default=ReqCaseTypeIDChoices.GENERAL) 
 
     court_code = models.CharField(blank=True, max_length=8)
 
@@ -229,10 +229,10 @@ class WarrantDraftDataModel(models.Model):
 
     draft_container = models.ForeignKey(FormDraftContainer, on_delete=models.CASCADE, related_name="warrant_drafts")
 
-    woa_type = models.IntegerField(blank=True, null=True)
+    woa_type = models.IntegerField(blank=True, null=True, default=2)
     woa_date = models.DateTimeField(blank=True, null=True)
 
-    fault_type_id = models.IntegerField(blank=True, null=True) #(อาญา.แพ่ง)
+    fault_type_id = models.IntegerField(blank=True, null=True, default=2) #(อาญา.แพ่ง)
     send_to_name = models.CharField(max_length=250, blank=True) # ส่งหมายถึงใคร
     cause_text = models.CharField(max_length=400, blank=True) # ด้วย
 

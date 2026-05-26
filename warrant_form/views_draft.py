@@ -122,6 +122,13 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
         ]
         warrant_with_missing.append((warrant, missing))
 
+    warrants_unfinished_list = (sublist[1] for sublist in warrant_with_missing)
+
+    all_filled = (
+        (len(missing_fields) == 0) and
+        (all(not warrant for warrant in warrants_unfinished_list))
+    )
+
     return render(request, "drafts/awis_draft_main_local.html", {
         "draft_container": draft_container,
         "ownership_form": ownership_form,
@@ -129,6 +136,7 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
         "not_owner_error": not_owner_error,
         "missing_fields": missing_fields,
         "warrant_with_missing": warrant_with_missing,
+        "all_fields_filled": all_filled
     })
     
     

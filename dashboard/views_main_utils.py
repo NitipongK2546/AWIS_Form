@@ -187,11 +187,28 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
 
     seven_days_ago = timezone.now() - timezone.timedelta(days=7)
 
-    if wanted_status in [1, ]:
-        written_draft = FormDraftContainer.objects.filter(form_creator=request.user)
-        owned_draft = FormDraftContainer.objects.filter(form_owner=request.user)
-        drafts = written_draft.union(owned_draft)
+    written_draft = FormDraftContainer.objects.filter(**filter_data).filter(form_creator=request.user, reqform_draft__reqformdatamodel__isnull=True)
+    owned_draft = FormDraftContainer.objects.filter(**filter_data).filter(form_owner=request.user, reqform_draft__reqformdatamodel__isnull=True)
+    available_drafts = written_draft.union(owned_draft)
+    available_drafts_count = len(available_drafts)
 
+    written_unsent = FormAwaitingApproval.objects.filter(form_creator=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
+    owned_unsent = FormAwaitingApproval.objects.filter(form_owner=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
+
+    written_unsent_without_approved = FormAwaitingApproval.objects.filter(form_creator=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago).exclude(approve_status=2)
+    owned_unsent_without_approved = FormAwaitingApproval.objects.filter(form_owner=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago).exclude(approve_status=2)
+
+    existing_approved_form = written_unsent.union(owned_unsent)
+    
+    available_unsent = written_unsent_without_approved.union(owned_unsent_without_approved)
+    available_unsent_count = len(available_unsent)
+
+    available_sent = VisualReqformData.objects.filter(**filter_data).filter(form__in=existing_approved_form.values("form"))
+    available_sent_count = len(available_sent)
+
+    if wanted_status in [1, ]:
+        drafts = available_drafts
+        
     elif wanted_status in [10, 11, 12]:
         compare_val = {
             10: 1,
@@ -202,12 +219,6 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
         filter_data.update({
             "approve_status": compare_val.get(wanted_status)
         })
-
-        written_unsent = FormAwaitingApproval.objects.filter(form_creator=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
-
-        owned_unsent = FormAwaitingApproval.objects.filter(form_owner=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
-
-        available_unsent = written_unsent.union(owned_unsent)
 
         form_unsent = available_unsent
 
@@ -221,32 +232,22 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
             25: 1,
         }
 
-        written_unsent = FormAwaitingApproval.objects.filter(form_creator=request.user)
-        owned_unsent = FormAwaitingApproval.objects.filter(form_owner=request.user)
-        available_unsent = written_unsent.union(owned_unsent)
-
         filter_data.update({
             "accept": compare_val.get(wanted_status)
         })
 
-        available_sent = VisualReqformData.objects.filter(form__in=available_unsent.values("form"))
         form_already_sent = available_sent.filter(**filter_data)
     else:
-        written_draft = FormDraftContainer.objects.filter(form_creator=request.user)
-        owned_draft = FormDraftContainer.objects.filter(form_owner=request.user)
-        drafts = written_draft.union(owned_draft)
-        
-        written_unsent = FormAwaitingApproval.objects.filter(form_creator=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
-
-        owned_unsent = FormAwaitingApproval.objects.filter(form_owner=request.user).filter(**filter_data).exclude(form__last_update_date__lt=seven_days_ago)
-        
-        available_unsent = written_unsent.union(owned_unsent)
+        drafts = available_drafts
         form_unsent = available_unsent
+        
+        form_already_sent = available_sent
 
-        available_sent = VisualReqformData.objects.filter(form__in=available_unsent.values("form"))
-        form_already_sent = available_sent.filter(**filter_data)
-
-    return drafts, form_unsent, form_already_sent
+    return (
+        (drafts, available_drafts_count), 
+        (form_unsent, available_unsent_count), 
+        (form_already_sent, available_sent_count)
+    )
 
 def get_statistics_objs(request : HttpRequest, form_used_for_filter : Form):
     form_unsent = []

@@ -29,12 +29,17 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
   <form method="post">
     {% csrf_token %}
 
+    {{ draft_form.ref_no.as_hidden }}
+    {{ draft_form.create_uid.as_hidden }}
+    {{ draft_form.police_station_id.as_hidden }}
+
     <!-- ข้อมูลคำร้อง -->
     <div class="card">
       <div class="card-header">
         <h2>ข้อมูลคำร้อง</h2>
       </div>
       <div class="card-body">
+        {% comment %}
         <div class="form-group">
           <label class="form-label">UID ผู้สร้างคำร้อง *</label>
           {{ draft_form.create_uid }}
@@ -43,6 +48,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
           <label class="form-label">หมายเลขอ้างอิง (ยังไม่แน่ใจว่าต้องใส่อะไร)</label>
           {{ draft_form.ref_no }}
         </div>
+        {% endcomment %}
         <div class="form-group">
           <label class="form-label">วันที่สร้างคำร้อง</label>
           <div class="static-value">{{ reqform_time }}</div>
@@ -50,6 +56,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
         <div class="form-group">
           <label class="form-label">ประเภทคำร้อง</label>
           {{ draft_form.req_case_type_id }}
+          {{ draft_form.req_case_type_id.as_hidden }}
         </div>
       </div>
     </div>

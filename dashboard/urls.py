@@ -18,7 +18,7 @@ old_stuff = [
 
 new_stuff = [
 
-    path("dashboard/statistics/", views_main.statistic_page_view, name="statistics"),
+    path("statistics/", views_main.statistic_page_view, name="statistics"),
 
     ####################################################################
 

@@ -6,6 +6,7 @@ from django.conf import settings
 
 from dashboard.models import FormAwaitingApproval 
 from dashboard.models import VisualReqformData
+from dashboard.warrant_wrapper import VisualWarrantData
 from warrant_form.model_draftform import FormDraftContainer
 
 import _log_utils.file_logger as FileLogger
@@ -21,34 +22,41 @@ from . import views_main_utils as utils
 
 @login_required
 def dashboard(request : HttpRequest):
-    approved = FormAwaitingApproval.objects.filter(
+    unsent_count = FormAwaitingApproval.objects.filter(
         approve_status=1
     ).count()
-    accepted = VisualReqformData.objects.filter(
+    sent_count = VisualReqformData.objects.filter(
         accept=99
     ).count()
+
+    all_accepted = VisualReqformData.objects.filter(
+        accept=1
+    )
+
+    unreported_count = 0
+
+    for visual_form in all_accepted:
+        reqform = visual_form.form
+        warrants = VisualWarrantData.objects.filter(
+            warrant__in=reqform.warrants.all()
+        )
+        all_reported = not warrants.exclude(report_status=1).exists()
+        if all_reported:
+            unreported_count += 1
 
     dashboard_list = []
     req_no_plaintiff_list = []
 
-    # result1 = FormAwaitingApproval.objects.filter(
-    #     approve_status=-1
-    # ).values_list("form__req_no_plaintiff", flat=True)
-    # result2 = VisualReqformData.objects.filter(
-    #     accept=0
-    # ).values("form__req_no_plaintiff")
-
-    # banned_id_list = list(result1.union(result2))
 
     banned_id_list = []
 
     filter_form = DashboardFilterForm(request.GET)
     drafts, form_unsent, form_already_sent = utils.get_dashboard_objs(request, filter_form)
 
-    utils.append_draft_data(dashboard_list, req_no_plaintiff_list, drafts, banned_id_list)  
-    utils.append_unsent_form_data(dashboard_list, req_no_plaintiff_list, form_unsent, banned_id_list)
+    utils.append_draft_data(dashboard_list, req_no_plaintiff_list, drafts[0], banned_id_list)  
+    utils.append_unsent_form_data(dashboard_list, req_no_plaintiff_list, form_unsent[0], banned_id_list)
     
-    utils.append_sent_form_data(dashboard_list, req_no_plaintiff_list, form_already_sent, banned_id_list)
+    utils.append_sent_form_data(dashboard_list, req_no_plaintiff_list, form_already_sent[0], banned_id_list)
 
     # dashboard_list.reverse()
     dashboard_list.sort(
@@ -63,9 +71,10 @@ def dashboard(request : HttpRequest):
 
         ############################################
 
-        "draft_count": len(dashboard_list),
-        "approve_form": approved,
-        "accept_form": accepted,
+        "draft_count": drafts[1],
+        "unsent_count": unsent_count,
+        "sent_count": sent_count,
+        "unreported_count": unreported_count
     }
 
     if request.user.has_perms(
