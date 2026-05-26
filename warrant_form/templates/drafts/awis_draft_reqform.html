@@ -36,7 +36,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">UID ผู้สร้างคำร้อง *</label>
+          <label class="form-label">UID ผู้สร้างคำร้อง <span style="color:red;">*</span></label>
           {{ draft_form.create_uid }}
         </div> 
         <div class="form-group">
@@ -61,7 +61,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">ศาล *</label>
+          <label class="form-label">ศาล <span style="color:red;">*</span></label>
           {{ draft_form.court_code }}
         </div>
         {% comment %} 
@@ -80,11 +80,11 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">ชื่อผู้ร้อง *</label>
+          <label class="form-label">ชื่อผู้ร้อง <span style="color:red;">*</span></label>
           {{ draft_form.plaintiff }}
         </div>
         <div class="form-group">
-          <label class="form-label">ชื่อผู้ต้องหา *</label>
+          <label class="form-label">ชื่อผู้ต้องหา <span style="color:red;">*</span></label>
           {{ draft_form.accused }}
         </div>
       </div>
@@ -97,40 +97,40 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">ผู้กรอกคำร้อง *</label>
+          <label class="form-label">ผู้กรอกคำร้อง <span style="color:red;">*</span></label>
           {{ draft_form.req_name }}
         </div>
         <div class="form-group">
-          <label class="form-label">ตำแหน่ง *</label>
+          <label class="form-label">ตำแหน่ง <span style="color:red;">*</span></label>
           {{ draft_form.req_pos }}
         </div>
         <div class="form-group">
-          <label class="form-label">สถานที่ทำงาน *</label>
+          <label class="form-label">สถานที่ทำงาน <span style="color:red;">*</span></label>
           {{ draft_form.req_office }}
         </div>
         <div class="form-group">
-          <label class="form-label">อายุ *</label>
+          <label class="form-label">อายุ <span style="color:red;">*</span></label>
           {{ draft_form.req_age }}
         </div>
         <div class="form-group">
-          <label class="form-label">ที่อยู่ *</label>
+          <label class="form-label">ที่อยู่ <span style="color:red;">*</span></label>
           <div class="inline-group">
             <div class="inline-field">
-              <span class="inline-label">จังหวัด *</span>
+              <span class="inline-label">จังหวัด <span style="color:red;">*</span></span>
               {{ draft_form.req_province }}
             </div>
             <div class="inline-field">
-              <span class="inline-label">อำเภอ/เขต *</span>
+              <span class="inline-label">อำเภอ/เขต <span style="color:red;">*</span></span>
               {{ draft_form.req_district }}
             </div>
             <div class="inline-field">
-              <span class="inline-label">ตำบล/แขวง *</span>
+              <span class="inline-label">ตำบล/แขวง <span style="color:red;">*</span></span>
               {{ draft_form.req_sub_district }}
             </div>
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">หมายเลขโทรศัพท์ *</label>
+          <label class="form-label">หมายเลขโทรศัพท์ <span style="color:red;">*</span></label>
           {{ draft_form.req_tel }}
         </div>
       </div>
@@ -143,15 +143,15 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">ชื่อเต็ม</label>
+          <label class="form-label">ชื่อเต็ม <span style="color:red;">*</span></label>
           {{ draft_form.acc_full_name }}
         </div>
         <div class="form-group">
-          <label class="form-label">ประเภทบัตร</label>
+          <label class="form-label">ประเภทบัตร <span style="color:red;">*</span></label>
           {{ draft_form.acc_card_type }}
         </div>
         <div class="form-group">
-          <label class="form-label">รหัสบัตรประจำตัว</label>
+          <label class="form-label">รหัสบัตรประจำตัว <span style="color:red;">*</span></label>
           {{ draft_form.acc_card_id }}
         </div>
         <div class="form-group">
