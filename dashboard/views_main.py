@@ -40,8 +40,8 @@ def dashboard(request : HttpRequest):
         warrants = VisualWarrantData.objects.filter(
             warrant__in=reqform.warrants.all()
         )
-        all_reported = not warrants.exclude(report_status=1).exists()
-        if all_reported:
+        not_all_reported = warrants.filter(report_status=0).exists()
+        if not_all_reported:
             unreported_count += 1
 
     dashboard_list = []

@@ -24,18 +24,13 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 
   <!-- Stat cards -->
   <div class="stat-grid" style="grid-template-columns: repeat(5, 1fr);">
-    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card">
-      <div class="stat-label">ร่างคำร้องทั้งหมด</div>
-      <div class="stat-number">{{ total_count }}</div>
-      <div class="stat-unit">ร่าง</div>
-    </a>
     <a href="{% url 'forms:draft-page' %}" class="stat-card-red">
-      <div class="stat-label">ร่างคำร้องที่ยังไม่สำเร็จ</div>
+      <div class="stat-label">ร่างคำร้องทั้งหมด</div>
       <div class="stat-number">{{ draft_count }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
     <a href="{% url 'dashboard:approve_table_page' %}" class="stat-card-yellow">
-      <div class="stat-label">รอการอนุมัติ</div>
+      <div class="stat-label">รอการพิจารณา</div>
       <div class="stat-number">{{ unsent_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
@@ -47,6 +42,11 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
     <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-green">
       <div class="stat-label">ศาลอนุมัติแล้ว</div>
       <div class="stat-number">{{ accepted_form }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+    <a href="?status=23" class="stat-card" style="background-color: rgb(51, 71, 0);">
+      <div class="stat-label">รอรายงานผลหมายจับ</div>
+      <div class="stat-number">{{ unreported_count }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
   </div>
