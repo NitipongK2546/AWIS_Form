@@ -66,7 +66,6 @@ body {
 }
 
 .button {
-    display: inline-block;
     padding: 8px 12px;
     font-size: 14px;
     font-weight: 600;
@@ -115,6 +114,27 @@ body {
 .button-logout:active {
     background: #96281b;
     transform: translateY(0);
+}
+
+.btn-del {
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    text-decoration: none;
+    transition: background .15s;
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.btn-del:hover {
+    background: #FECACA;
+    text-decoration: none;
 }
 
 .username-value {
@@ -590,8 +610,35 @@ span.colored-status {
     color: #fff;
 }
 
+/* ---------- Breadcrumb ---------- */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: .75rem;
+}
+
+.breadcrumb a {
+    color: #9B1C1C;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.bc-sep {
+    color: #ccc;
+}
+
+.bc-current {
+    color: #333;
+}
+
 /* ---------- Responsive ---------- */
-@media (max-width: 768px) {
+@media (max-width: 700px) {
     .stat-grid {
         grid-template-columns: 1fr;
     }

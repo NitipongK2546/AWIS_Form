@@ -18,7 +18,7 @@
     <div class="breadcrumb">
       <a href="{% url 'dashboard:dashboard' %}">หน้าหลัก</a>
       <span class="bc-sep">/</span>
-      <a>รายการหมาย</a>
+      <a href="javascript:history.back()">รายการหมาย</a>
       <span class="bc-sep">/</span>
       <span class="bc-current">รายงานการจับกุม</span>
     </div>
@@ -92,7 +92,7 @@
                 {{ report_form.arrest_officer_name }}
               </div>
 
-              <div class="form-actions">
+              <div class="form-actions" style="text-align: right;">
                 <button type="submit" class="btn-submit"
                         onclick="return confirm('ยืนยันการส่งข้อมูลไปยังศาล?');">
                   ส่งข้อมูลไปยังศาล

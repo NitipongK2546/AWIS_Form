@@ -4,7 +4,7 @@
 {% block title %}รายละเอียดคำร้อง{% endblock %}
 
 {% block style %}
-<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/css/report_warrant.css' %}">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
     /* ── Info cards ────────────────────────────────────────────── */
@@ -214,155 +214,228 @@
         margin-bottom: 0;
     }
 
-    @media (max-width: 768px) {
-        .field-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .top-grid {
-            grid-template-columns: 1fr;
-        }
-    }
 </style>
 {% endblock %}
 
 {% block body %}
 <div class="page-wrapper">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="{% url 'dashboard:dashboard' %}">หน้าหลัก</a>
+      <span class="bc-sep">/</span>
+      <span class="bc-current">รายงานผลหมาย</span>
+    </div>
 
     <!-- Back button -->
     <div class="back-row">
-        <a href="javascript:history.back()" class="button" style="margin-left: 0;">← กลับหน้าหลัก</a>
+        <a href="javascript:history.back()" class="btn btn-del" style="margin-left: 0;">กลับ</a>
     </div>
 
-    <!-- ── Top row: คำร้อง + หมายจับ ──────────────────────────── -->
-    <div class="top-grid">
-
-    <!-- คำร้อง -->
-    <div class="info-card">
-        <div class="info-card-header">
-            <span class="info-card-header-title">คำร้อง</span>
-        </div>
-        <div class="info-card-body">
-            <div class="field-grid">
-                <div class="field-item">
-                    <span class="field-label">สถานะ</span>
-                    <span class="field-value">
-                        {% include 'module/status_color_module.html' with color=status %}
-                    </span>
+    <div class="layout">
+    
+        <div class="col-main">
+        
+            <!-- คำร้อง -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="info-card-header-title">คำร้อง</span>
                 </div>
-                <div class="field-item">
-                    <span class="field-label">รหัสอ้างอิง</span>
-                    <span class="field-value">{{ reqform.req_no_plaintiff }}</span>
-                </div>
-                <div class="field-item">
-                    <span class="field-label">ผู้ร้อง</span>
-                    <span class="field-value">{{ reqform.req_name }}</span>
-                </div>
-                <div class="field-item">
-                    <span class="field-label">ผู้ถูกกล่าวหา</span>
-                    <span class="field-value">{{ reqform.accused }}</span>
-                </div>
-            </div>
-
-            <div class="card-action-row">
-                <a href="{% url 'forms:view_single_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-primary">ดูคำร้อง</a>
-                <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_reqform' reqform.req_no_plaintiff %}">⬇ ดาวน์โหลดไฟล์</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- หมายจับ -->
-    <div class="info-card">
-        <div class="info-card-header">
-            <span class="info-card-header-title">หมายจับ</span>
-        </div>
-        <div class="info-card-body">
-            {% for warrant_obj in warrants %}
-                {% if action == "report" %}
-                <div class="warrant-item">
-                    <div class="warrant-number">หมายที่ {{ forloop.counter }}</div>
-                    {% include 'module/warrant_info.html' with warrant=warrant_obj.warrant num=forloop.counter report_status=warrant_obj.report_status %}
-                    <div class="field-grid" style="margin-top: 8px;">
+                <div class="card-body">
+                    <div class="field-grid">
                         <div class="field-item">
                             <span class="field-label">สถานะ</span>
-                            <span class="field-value">{{ warrant_obj.get_court_injunction_display }}</span>
+                            <span class="field-value">
+                                {% include 'module/status_color_module.html' with color=status %}
+                            </span>
+                        </div>
+                        <div class="field-item">
+                            <span class="field-label">รหัสอ้างอิง</span>
+                            <span class="field-value">{{ reqform.req_no_plaintiff }}</span>
+                        </div>
+                        <div class="field-item">
+                            <span class="field-label">ผู้ร้อง</span>
+                            <span class="field-value">{{ reqform.req_name }}</span>
+                        </div>
+                        <div class="field-item">
+                            <span class="field-label">ผู้ถูกกล่าวหา</span>
+                            <span class="field-value">{{ reqform.accused }}</span>
                         </div>
                     </div>
+                
                     <div class="card-action-row">
-                        <a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}" class="action-btn action-btn-primary">ดูหมายจับ</a>
-                        
-                        {% if warrant_obj.court_injunction == 1 %}
-                        <a class="action-btn action-btn-download file-download" href="#">⬇ ดาวน์โหลดไฟล์จากศาล</a>
-                        {% else %}
-                        <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">⬇ ดาวน์โหลดไฟล์</a>
-                        {% endif %}
-
-                        {% if warrant_obj.court_injunction == 1 %}
-                        <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}" class="action-btn action-btn-success">รายงานผลหมาย</a>
-                        {% endif %}
-                        # Bypass
-                        <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">รายงานผลหมาย</a>
-                    </div>
-                    
-                </div>
-
-                {% elif action == "approve" %}
-                <div class="warrant-item">
-                    <div class="warrant-number">หมายที่ {{ forloop.counter }}</div>
-                    {% include 'module/warrant_info.html' with warrant=warrant_obj num=forloop.counter %}
-                    <div class="card-action-row">
-                        <a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.woa_refno %}" class="action-btn action-btn-primary">ดูหมายจับ</a>
-                        <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.woa_refno %}">⬇ ดาวน์โหลดไฟล์</a>
+                        <a href="{% url 'forms:view_single_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-primary">ดูคำร้อง</a>
+                        <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_reqform' reqform.req_no_plaintiff %}">⬇ ดาวน์โหลดไฟล์</a>
                     </div>
                 </div>
-                {% endif %}
-
-            {% empty %}
-            <div class="empty-state">ไม่มีหมายจับ</div>
-            {% endfor %}
-        </div>
-    </div>
-
-    </div><!-- /.top-grid -->
-
-    <!-- ── การดำเนินการ ────────────────────────────────────────── -->
-    <div class="info-card">
-        <div class="info-card-header">
-            <span class="info-card-header-title">การดำเนินการ</span>
-        </div>
-        <div class="info-card-body">
-            <div class="card-action-row" style="margin-top: 0; padding-top: 0; border-top: none;">
-                {% if action == "report" %}
-                    {% if status_choice == 25 %}
-                    <div>สิ้นสุดการส่งคำร้อง</div>
-                    {% elif status_int == 99 %}
-                    <a href="{% url 'dashboard:delete_sent_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger"
-                    onclick="ahrefDialog(event, this, true, {}, 'ต้องการหยุดการส่งคำร้องให้กับศาลจริงหรือไม่')">ยกเลิกการส่งคำร้อง</a>
-                    {% elif status_int == 0 %}
-                    <span class="status-badge" style="background: #9B1C1C;">ไม่รับ</span>
-                    {% elif status_int == 1 %}
-                    <span class="status-badge" style="background: #1b5e20;">รับแล้ว</span>
-                    {% else %}
-                    <span class="status-badge" style="background: #888;">ERROR</span>
-                    {% endif %}
-
-                {% elif action == "approve" %}
-                    {% if status_int == -1 %}
-                    <div>สิ้นสุดการส่งคำร้อง</div>
-                    {% elif status_int == 0 %}
-                    <a href="{% url 'forms:view-draft-container' draft %}" class="action-btn action-btn-primary">แก้ไขคำร้อง</a>
-                    {% else %}
-                    <a href="{% url 'dashboard:confirm_approve' reqform.req_no_plaintiff %}" class="action-btn action-btn-success">พิจารณาคำร้อง</a>
-                    <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger"
-                    onclick="ahrefDialog(event, this, true, {}, 'ต้องการยกเลิกการส่งคำร้องจริงหรือไม่')"
-                    >ยกเลิกคำร้อง</a>
-                    {% endif %}
-                {% endif %}
             </div>
-        </div>
-    </div>
+        
+            <!-- หมายจับ -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="info-card-header-title">หมายจับ</span>
+                </div>
+                <div class="card-body">
+                    {% for warrant_obj in warrants %}
+                        {% if action == "report" %}
+                        <div class="warrant-item">
+                            <div class="warrant-number">หมายที่ {{ forloop.counter }}</div>
+                            {% include 'module/warrant_info.html' with warrant=warrant_obj.warrant num=forloop.counter report_status=warrant_obj.report_status %}
+                            <div class="field-grid" style="margin-top: 8px;">
+                                <div class="field-item">
+                                    <span class="field-label">สถานะ</span>
+                                    <span class="field-value">{{ warrant_obj.get_court_injunction_display }}</span>
+                                </div>
+                            </div>
+                            <div class="card-action-row">
+                                <a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}" class="action-btn action-btn-primary">ดูหมายจับ</a>
 
-</div><!-- /.page-wrapper -->
+                                {% if warrant_obj.court_injunction == 1 %}
+                                <a class="action-btn action-btn-download file-download" href="#">⬇ ดาวน์โหลดไฟล์จากศาล</a>
+                                {% else %}
+                                <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">⬇ ดาวน์โหลดไฟล์</a>
+                                {% endif %}
+                            
+                                {% if warrant_obj.court_injunction == 1 %}
+                                <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}" class="action-btn action-btn-success">รายงานผลหมาย</a>
+                                {% endif %}
+                                # Bypass
+                                <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">รายงานผลหมาย</a>
+                            </div>
+
+                        </div>
+                    
+                        {% elif action == "approve" %}
+                        <div class="warrant-item">
+                            <div class="warrant-number">หมายที่ {{ forloop.counter }}</div>
+                            {% include 'module/warrant_info.html' with warrant=warrant_obj num=forloop.counter %}
+                            <div class="card-action-row">
+                                <a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.woa_refno %}" class="action-btn action-btn-primary">ดูหมายจับ</a>
+                                <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.woa_refno %}">⬇ ดาวน์โหลดไฟล์</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    
+                    {% empty %}
+                    <div class="empty-state">ไม่มีหมายจับ</div>
+                    {% endfor %}
+                </div>
+            </div>
+        
+            <!-- ── การดำเนินการ ────────────────────────────────────────── -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="info-card-header-title">การดำเนินการ</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-action-row" style="display: flex;justify-content: flex-end;gap: 10px; margin-top: 0; padding-top: 0; border-top: none;">
+                        {% if action == "report" %}
+                            {% if status_choice == 25 %}
+                            <div>สิ้นสุดการส่งคำร้อง</div>
+                            {% elif status_int == 99 %}
+                            <a href="{% url 'dashboard:delete_sent_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger"
+                            onclick="ahrefDialog(event, this, true, {}, 'ต้องการหยุดการส่งคำร้องให้กับศาลจริงหรือไม่')">ยกเลิกการส่งคำร้อง</a>
+                            {% elif status_int == 0 %}
+                            <span class="status-badge" style="background: #9B1C1C;">ไม่รับ</span>
+                            {% elif status_int == 1 %}
+                            <span class="status-badge" style="background: #1b5e20;">รับแล้ว</span>
+                            {% else %}
+                            <span class="status-badge" style="background: #888;">ERROR</span>
+                            {% endif %}
+                    
+                        {% elif action == "approve" %}
+                            {% if status_int == -1 %}
+                            <div>สิ้นสุดการส่งคำร้อง</div>
+                            {% elif status_int == 0 %}
+                            <a href="{% url 'forms:view-draft-container' draft %}" class="action-btn action-btn-primary">แก้ไขคำร้อง</a>
+                            {% else %}
+                            <a href="{% url 'dashboard:confirm_approve' reqform.req_no_plaintiff %}" class="action-btn action-btn-success">พิจารณาคำร้อง</a>
+                            <a href="{% url 'dashboard:cancel_reqform' reqform.req_no_plaintiff %}" class="action-btn action-btn-danger"
+                            onclick="ahrefDialog(event, this, true, {}, 'ต้องการยกเลิกการส่งคำร้องจริงหรือไม่')"
+                            >ยกเลิกคำร้อง</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div><!-- /LEFT: main content-->
+
+        <div class="col-side">
+          <div class="card">
+            <div class="card-header">
+              <h2>ความคืบหน้า</h2>
+            </div>
+            <div class="card-body">
+              <ul class="timeline">
+
+                {% with s=timeline_step %}
+
+                <li class="tl-item {% if s > 1 %}done{% elif s == 1 %}pending{% else %}upcoming{% endif %}">
+                  <div class="tl-dot"></div>
+                  <div class="tl-content">
+                    <div class="tl-title">สร้างคำร้อง</div>
+                    <div class="tl-date">{% if s > 1 %}เสร็จสิ้น{% elif s == 1 %}รอดำเนินการ{% else %}ยังไม่ถึง{% endif %}</div>
+                  </div>
+                </li>
+
+                <li class="tl-item {% if s > 2 %}done{% elif s == 2 %}pending{% else %}upcoming{% endif %}">
+                  <div class="tl-dot"></div>
+                  <div class="tl-content">
+                    <div class="tl-title">พิจารณาคำร้องก่อนส่งไปศาล</div>
+                    <div class="tl-date">
+                      {% if s > 2 %}เสร็จสิ้น
+                      {% elif s == 2 %}
+                        {% if status_choice == 11 %}ไม่ผ่านการพิจารณา
+                        {% else %}รอดำเนินการ{% endif %}
+                      {% else %}ยังไม่ถึง{% endif %}
+                    </div>
+                  </div>
+                </li>
+
+                <li class="tl-item {% if s > 3 %}done{% elif s == 3 %}pending{% else %}upcoming{% endif %}">
+                  <div class="tl-dot"></div>
+                  <div class="tl-content">
+                    <div class="tl-title">รอศาลอนุมัติคำร้อง</div>
+                    <div class="tl-date">{% if s > 3 %}เสร็จสิ้น{% elif s == 3 %}รอดำเนินการ{% else %}ยังไม่ถึง{% endif %}</div>
+                  </div>
+                </li>
+
+                <li class="tl-item {% if s > 4 %}done{% elif s == 4 %}pending{% else %}upcoming{% endif %}">
+                  <div class="tl-dot"></div>
+                  <div class="tl-content">
+                    <div class="tl-title">ศาลรับคำร้อง</div>
+                    <div class="tl-date">
+                      {% if s > 4 %}เสร็จสิ้น
+                      {% elif s == 4 %}
+                        {% if status_choice == 22 %}ไม่รับ
+                        {% else %}รอดำเนินการ{% endif %}
+                      {% else %}ยังไม่ถึง{% endif %}
+                    </div>
+                  </div>
+                </li>
+
+                <li class="tl-item {% if s > 5 %}done{% elif s == 5 %}pending{% else %}upcoming{% endif %}">
+                  <div class="tl-dot"></div>
+                  <div class="tl-content">
+                    <div class="tl-title">รายงานผลการจับกุม</div>
+                    <div class="tl-date">
+                      {% if s == 5 %}
+                        {% if status_choice == 25 %}รายงานผลสำเร็จ
+                        {% elif status_choice == 24 %}จับไม่สำเร็จ
+                        {% elif status_choice == 99 %}ยกเลิกคำร้อง
+                        {% else %}รอดำเนินการ{% endif %}
+                      {% else %}ยังไม่ถึง{% endif %}
+                    </div>
+                  </div>
+                </li>
+
+                {% endwith %}
+
+              </ul>
+            </div>
+          </div>
+        </div> <!-- /col-side-->
+    </div> <!-- /layout-->
+</div> <!-- /.page-wrapper -->
 
 <div id="overlay"></div>
 <div id="wait-popup">⏳ โปรดรอสักครู่...</div>
