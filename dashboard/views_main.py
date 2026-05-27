@@ -77,19 +77,19 @@ def dashboard(request : HttpRequest):
         "unreported_count": unreported_count
     }
 
-    if request.user.has_perms(
-        perm_str_list([PermissionType.VIEW, PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL)
-    ):
-        context.update({
-            "can_create_form": True,
-        })
+    # if request.user.has_perms(
+    #     perm_str_list([PermissionType.VIEW, PermissionType.CREATE], PermissionList.REQFORM_AWAIT_APPROVAL)
+    # ):
+    #     context.update({
+    #         "can_create_form": True,
+    #     })
     
-    if request.user.has_perms(
-        perm_str_list([PermissionType.VIEW, PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL)
-    ):
-        context.update({
-            "can_approve_form": True,
-        })
+    # if request.user.has_perms(
+    #     perm_str_list([PermissionType.VIEW, PermissionType.APPROVE], PermissionList.REQFORM_AWAIT_APPROVAL)
+    # ):
+    #     context.update({
+    #         "can_approve_form": True,
+    #     })
 
 
     return render(request, "dashboard/dashboard.html", context)

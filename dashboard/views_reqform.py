@@ -104,8 +104,8 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
 
     else:
         status = "ร่าง"
-
-    return render(request, "dashboard/reqform_info_page.html", {
+    
+    context = {
         "draft": reqform.draft_id.pk,
         "reqform": reqform,
         "warrants": warrants,
@@ -113,7 +113,19 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
         "status_int": status_int,
         "action": action,
         "status_choice": status_choice,
-    })
+    }
+
+    if request.user == form_not_sent.form_creator:
+        context.update({
+            "is_creator": True,
+        })
+
+    if request.user == form_not_sent.form_owner:
+        context.update({
+            "is_owner": True,
+        })
+
+    return render(request, "dashboard/reqform_info_page.html", context)
 
 ####################################################################
 

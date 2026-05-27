@@ -126,7 +126,8 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
 
     all_filled = (
         (len(missing_fields) == 0) and
-        (all(not warrant for warrant in warrants_unfinished_list))
+        (all(not warrant for warrant in warrants_unfinished_list)) and
+        (draft_container.warrant_drafts.count() > 0)
     )
 
     return render(request, "drafts/awis_draft_main_local.html", {
@@ -199,12 +200,20 @@ def create_warrant_draft(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 
     if draft_container:
-        WarrantDraftDataModel.objects.create(
-            draft_container=draft_container,
-            **draft_container.reqform_draft.getAccusedInfo(),
-            woa_type=2,
-            fault_type_id=2,
-        )
+        if draft_container.warrant_drafts.count() < 1:
+            WarrantDraftDataModel.objects.create(
+                draft_container=draft_container,
+                **draft_container.reqform_draft.getAccusedInfo(),
+                woa_type=2,
+                fault_type_id=2,
+            )
+        else:
+            WarrantDraftDataModel.objects.create(
+                draft_container=draft_container,
+                woa_type=2,
+                fault_type_id=2,
+            )
+
         draft_container.save()
 
         return redirect("forms:view-draft-container", container_id=draft_container.pk)
@@ -268,12 +277,12 @@ def req_no_plaintiff_generate():
 
     return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}"
 
-def woa_refno_generate(count : int):
+def woa_refno_generate(req_no_plaintiff : str, count : int):
     today = timezone.now()
     last_request = ReqformDataModel.objects.last()
     if not last_request:
         num = 0
-        return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-W{f"{count + 1}".zfill(3)}"
+        return f"{req_no_plaintiff}-W{f"{count + 1}".zfill(3)}"
 
     all_same_day_requests = ReqformDataModel.objects.filter(
         req_date__date=today.date()
@@ -281,7 +290,7 @@ def woa_refno_generate(count : int):
 
     num = all_same_day_requests.count()
 
-    return f"TCCT{today.year + 543}{f"{today.month}".zfill(2)}{f"{today.day}".zfill(2)}{f"{num + 1}".zfill(4)}-W{f"{count + 1}".zfill(3)}"
+    return f"{req_no_plaintiff}-W{f"{count + 1}".zfill(3)}"
 
 @perm_req_log(*ReqformPerm.CREATE_REQFORM)
 def create_reqform_from_draft(request : HttpRequest, container_id : int):
@@ -315,7 +324,7 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             reqform_obj.save()
 
             for count, warrant in enumerate(warrrant_wait_list):
-                new_woa_refno = woa_refno_generate(count)
+                new_woa_refno = woa_refno_generate(new_req_no_plaintiff, count)
                 warrant[0].woa_refno = new_woa_refno
                 warrant[1].woa_refno = new_woa_refno
 
@@ -375,7 +384,9 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                     )
                 
                 for count, warrant in enumerate(warrrant_wait_list):
-                    new_woa_refno = woa_refno_generate(count)
+                    new_woa_refno = woa_refno_generate(
+                        existing_reqform.req_no_plaintiff, count
+                    )
                     warrant[0].woa_refno = new_woa_refno
                     warrant[1].woa_refno = new_woa_refno
 
