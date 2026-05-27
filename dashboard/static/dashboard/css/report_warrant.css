@@ -190,6 +190,10 @@ form textarea {
     background: #7F1D1D;
 }
 
+.btn-submit:disabled {
+    background: #8a8a8a;
+}
+
 /* ---------- Timeline ---------- */
 .timeline {
     list-style: none;

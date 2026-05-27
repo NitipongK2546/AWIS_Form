@@ -52,6 +52,11 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 {% endblock %}
 
 {% block script %}
+{% if error %}
+<Script>
+    alert("{{ reason }}")
+</Script>
+{% endif %}
 <script>
   const password_field = document.getElementById("id_password");
   const password_btn = document.getElementById("toggle-password");

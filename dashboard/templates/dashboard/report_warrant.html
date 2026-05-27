@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="{% static 'dashboard/css/report_warrant.css' %}">
 </head>
 <body>
-
+  {% include 'popup/popup_element.html' %}
+  {% include 'popup/form_dialog.html' %}
   {% include 'system/sys_header.html' %}
-
   <div class="page-wrapper">
 
     <!-- Breadcrumb -->
@@ -63,7 +63,7 @@
             <h2>รายงานการจับกุม</h2>
           </div>
           <div class="card-body">
-            <form method="post">
+            <form method="post" id="report-warrant-form">
               {% csrf_token %}
 
               <div class="form-group">
@@ -93,8 +93,8 @@
               </div>
 
               <div class="form-actions">
-                <button type="submit" class="btn-submit"
-                        onclick="return confirm('ยืนยันการส่งข้อมูลไปยังศาล?');">
+                <button id="report-btn" type="button" class="btn-submit"
+                        onclick="formDialog(event, report_warrant_form, 'ยืนยันการรายงานหมายจับตามข้อมูลที่กรอกไว้หรือไม่')">
                   ส่งข้อมูลไปยังศาล
                 </button>
               </div>
@@ -155,5 +155,24 @@
 
   </div><!-- /page-wrapper -->
 
+  <script>
+    const report_warrant_form = document.getElementById("report-warrant-form");
+    const report_button = document.getElementById("report-btn");
+
+    const arrest_result_other_text = document.getElementById("id_arrest_result_other_text")
+    const arrest_officer_name = document.getElementById("id_arrest_officer_name")
+
+    function checkInput() {
+        const other_text_filled = arrest_result_other_text.value.trim() !== "";
+        const officer_name_filled = arrest_officer_name.value.trim() !== "";
+
+        report_button.disabled = !(other_text_filled && officer_name_filled);
+    }
+
+    arrest_result_other_text.addEventListener("input", checkInput);
+    arrest_officer_name.addEventListener("input", checkInput);
+
+    checkInput();
+  </script>
 </body>
 </html>

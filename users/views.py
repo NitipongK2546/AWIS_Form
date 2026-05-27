@@ -28,7 +28,7 @@ load_dotenv()
 def _login_via_erp(request: HttpRequest, form_data : dict, form : UserAuthForm):
     def _block_no_user_access():
         deny_reason = {
-            "message": f"{form_data.get("message")} ({form_data.get("username")})",
+            "message": f"{response_data.get("message")} ({form_data.get("username")})",
         }
 
         FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, deny_reason,)
@@ -36,7 +36,7 @@ def _login_via_erp(request: HttpRequest, form_data : dict, form : UserAuthForm):
         return render(request, "users/login.html", {
             "form": form,
             "error": True,
-            "reason": form_data.get("message")
+            "reason": response_data.get("message")
         })
     
     def _block_wrong_username_password():
@@ -82,7 +82,7 @@ def _block_django_non_superuser(request : HttpRequest, form : UserAuthForm):
     return render(request, "users/login.html", {
         "form": form,
         "error": True,
-        "reason": "เชื่อมกับระบบ ERP ไม่ได้"
+        "reason": "บัญชีนี้ไม่มีสิทธิเข้าถึงระบบ AWIS แบบนี้ได้"
     })
 
 
