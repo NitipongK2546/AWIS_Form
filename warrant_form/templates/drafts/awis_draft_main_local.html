@@ -170,22 +170,28 @@
       <div class="submit-title">พร้อมส่งคำร้องแล้วใช่ไหม?</div>
       <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
     </div>
-    <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary bypass-btn" style="background-color: #2832ad;">
-      บันทึกร่างคำร้อง
-    </a>
-    <a id="create-btn" href="{% url 'forms:create-reqform' draft_container.pk %}" 
-    {% if not all_fields_filled %}
-    class="btn btn-primary bypass-btn disabled-link"
-    {% else %}
-    class="btn btn-primary bypass-btn"
-    {% endif %}
-    onclick="ahrefDialog(event, this, true, {
-      container_id: '{{ draft_container.pk }}',
-    }, 'ต้องการสร้างคำร้องเลยหรือไม่')">
-      <i class="ti ti-send" aria-hidden="true"></i>
-      สร้างคำร้อง
-    </a>
-     
+    <div style="
+        justify-content: center;
+        display: flex;
+        gap: 12px;">
+      <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary bypass-btn" style="background-color: #2832ad;"
+      onclick="ahrefDialog(event, this, false, {},
+      'ต้องการบันทึกและออกจากหน้านี้หรือไม่')">
+        บันทึกร่างและออก
+      </a>
+      <a id="create-btn" href="{% url 'forms:create-reqform' draft_container.pk %}" 
+      {% if not all_fields_filled %}
+      class="btn btn-primary bypass-btn disabled-link"
+      {% else %}
+      class="btn btn-primary bypass-btn"
+      {% endif %}
+      onclick="ahrefDialog(event, this, true, {
+        container_id: '{{ draft_container.pk }}',
+      }, 'ต้องการสร้างคำร้องเลยหรือไม่')">
+        <i class="ti ti-send" aria-hidden="true"></i>
+        สร้างคำร้อง
+      </a>
+    </div>
   </div>
 
 </div>
