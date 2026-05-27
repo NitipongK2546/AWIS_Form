@@ -32,163 +32,215 @@
     <i class="ti ti-clock" aria-hidden="true"></i>
     แก้ไขล่าสุด: {{ draft_container.last_edit }}
   </div>
-  <div style="margin-bottom: 5px; display: flex; justify-content: space-between;align-items: center;">
-    <a href="javascript:history.back()" onclick="ahrefDialog(event, this)" class="btn btn-back bypass-btn" style="margin-left: 0;">กลับ</a>
-    <a class="bypass-btn" href="{% url 'forms:delete-draft-container' draft_container.pk %}" onclick="ahrefDialog(event, this, true, {
-      container_id: '{{ draft_container.pk }}'
-    }, 'ต้องการลบร่างคำร้องจริงหรือไม่')">
-      <div class="btn btn-del">
-        <i class="ti ti-trash">ลบร่างคำร้อง</i>
-      </div>
-    </a>
-  </div>
+
   <!-- เจ้าของคำร้อง -->
-  <div class="card">
-    <div class="card-header">
-      <h2><i class="ti ti-user" aria-hidden="true"></i>ข้อมูลเจ้าร่างคำร้อง</h2>
-    </div>
-    <div class="card-body">
-      <form action="" method="post">
-        {% csrf_token %}
-
-        {% if not_owner_error %}
-        <div class="alert-error">
-          <i class="ti ti-alert-circle" aria-hidden="true"></i>
-          ไม่มีสิทธิเปลี่ยนเจ้าของคำร้องและผู้เขียน
-        </div>
-        {% endif %}
-
-        <div class="info-row">
-          <span class="info-label">เจ้าของร่างคำร้อง</span>
-          <span class="info-value">{{ draft_container.form_owner }}</span>
-          {% if is_owner %}
-          <span class="info-action">{{ ownership_form.form_owner }}</span>
-          {% endif %}
-        </div>
-
-        <div class="info-row">
-          <span class="info-label">ผู้เขียนร่าง</span>
-          <span class="info-value">{{ draft_container.form_creator }}</span>
-          {% if is_owner %}
-          <span class="info-action">{{ ownership_form.form_creator }}</span>
-          {% endif %}
-        </div>
-
-        {% if is_owner %}
-        <div class="form-actions-inline">
-          <button type="submit" class="btn btn-change bypass-btn">เปลี่ยน</button>
-        </div>
-        {% endif %}
-      </form>
-    </div>
-  </div>
-
-  <!-- คำร้อง -->
-  <div class="card">
-    <div class="card-header">
-      <h2><i class="ti ti-file-text" aria-hidden="true"></i>คำร้อง</h2>
-    </div>
-    <div class="card-body">
-      <div class="info-row">
-        <span class="info-value">{{ draft_container.reqform_draft }}</span>
-        <span class="info-action">
-          <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}" class="btn btn-edit bypass-btn">
-            <i class="ti ti-edit" aria-hidden="true"></i>แก้ไขคำร้อง
-          </a>
-        </span>
+  <div  class="layout">
+    <!-- ===== LEFT: main content ===== -->
+    <div class="col-main">
+      <div style="margin-bottom: 5px; display: flex; justify-content: space-between;align-items: center;">
+        <a href="javascript:history.back()" onclick="ahrefDialog(event, this)" class="btn btn-back bypass-btn" style="margin-left: 0;">กลับ</a>
+        <a class="bypass-btn" href="{% url 'forms:delete-draft-container' draft_container.pk %}" onclick="ahrefDialog(event, this, true, {
+          container_id: '{{ draft_container.pk }}'
+        }, 'ต้องการลบร่างคำร้องจริงหรือไม่')">
+          <div class="btn btn-del">
+            <i class="ti ti-trash">ลบร่างคำร้อง</i>
+          </div>
+        </a>
       </div>
-    </div>
-  </div>
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="ti ti-user" aria-hidden="true"></i>ข้อมูลเจ้าร่างคำร้อง</h2>
+        </div>
+        <div class="card-body">
+          <form action="" method="post">
+            {% csrf_token %}
 
-  <!-- แจ้งเตือน field ที่ยังกรอกไม่ครบ -->
-  {% if missing_fields %}
-  <div class="alert-missing">
-    <div class="alert-missing-header">
-      <i class="ti ti-alert-triangle" aria-hidden="true"></i>
-      ข้อมูลสำคัญที่ยังกรอกไม่ครบ — กรุณาแก้ไขก่อนสร้างคำร้อง
-    </div>
-    <ul class="alert-missing-list">
-      {% for field in missing_fields %}
-      <li>{{ field }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
+            {% if not_owner_error %}
+            <div class="alert-error">
+              <i class="ti ti-alert-circle" aria-hidden="true"></i>
+              ไม่มีสิทธิเปลี่ยนเจ้าของคำร้องและผู้เขียน
+            </div>
+            {% endif %}
 
-  <!-- หมายจับ -->
-  <div class="card">
-    <div class="card-header">
-      <h2><i class="ti ti-file-certificate" aria-hidden="true"></i>หมายจับทั้งหมด</h2>
-      <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}" class="btn btn-add bypass-btn">
-        <i class="ti ti-plus" aria-hidden="true"></i>เพิ่มหมายจับ
-      </a>
-    </div>
-    <div class="card-body">
-      {% for warrant, warrant_missing in warrant_with_missing %}
-      <div class="warrant-item">
-        <span class="warrant-num">{{ forloop.counter }}.</span>
-        <span class="warrant-name">{{ warrant }}</span>
-        <div class="warrant-actions">
-          <a href="{% url 'forms:edit-draft-container-warrant' draft_container.pk warrant.pk %}" class="btn btn-edit bypass-btn">
-            <i class="ti ti-edit" aria-hidden="true"></i>แก้ไข
-          </a>
-          <a href="{% url 'forms:delete-draft-container-warrant' draft_container.pk warrant.pk %}"
-             class="btn btn-del bypass-btn"
-             onclick="ahrefDialog(event, this, true, {
-              container_id: '{{ draft_container.pk }}',
-              warrant_id: '{{ warrant.pk }}'
-            }, 'ต้องการลบร่างหมายจับจริงหรือไม่')">
-            <i class="ti ti-trash" aria-hidden="true"></i>ลบ
-          </a>
+            <div class="info-row">
+              <span class="info-label">เจ้าของร่างคำร้อง</span>
+              <span class="info-value">{{ draft_container.form_owner }}</span>
+              {% if is_owner %}
+              <span class="info-action">{{ ownership_form.form_owner }}</span>
+              {% endif %}
+            </div>
+
+            <div class="info-row">
+              <span class="info-label">ผู้เขียนร่าง</span>
+              <span class="info-value">{{ draft_container.form_creator }}</span>
+              {% if is_owner %}
+              <span class="info-action">{{ ownership_form.form_creator }}</span>
+              {% endif %}
+            </div>
+
+            {% if is_owner %}
+            <div class="form-actions-inline">
+              <button type="submit" class="btn btn-change bypass-btn">เปลี่ยน</button>
+            </div>
+            {% endif %}
+          </form>
         </div>
       </div>
-      {% if warrant_missing %}
+
+      <!-- คำร้อง -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="ti ti-file-text" aria-hidden="true"></i>คำร้อง</h2>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-value">{{ draft_container.reqform_draft }}</span>
+            <span class="info-action">
+              <a href="{% url 'forms:edit-draft-container-reqform' draft_container.pk %}" class="btn btn-edit bypass-btn">
+                <i class="ti ti-edit" aria-hidden="true"></i>แก้ไขคำร้อง
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- แจ้งเตือน field ที่ยังกรอกไม่ครบ -->
+      {% if missing_fields %}
       <div class="alert-missing">
         <div class="alert-missing-header">
           <i class="ti ti-alert-triangle" aria-hidden="true"></i>
-          หมายจับที่ {{ forloop.counter }} — ข้อมูลสำคัญที่ยังกรอกไม่ครบ
+          ข้อมูลสำคัญที่ยังกรอกไม่ครบ — กรุณาแก้ไขก่อนสร้างคำร้อง
         </div>
         <ul class="alert-missing-list">
-          {% for field in warrant_missing %}
+          {% for field in missing_fields %}
           <li>{{ field }}</li>
           {% endfor %}
         </ul>
       </div>
       {% endif %}
-      {% empty %}
-      <div class="empty-state">
-        <i class="ti ti-inbox" aria-hidden="true"></i>
-        <p>ยังไม่มีหมายจับ กรุณาเพิ่มหมายจับก่อนสร้างคำร้อง</p>
+
+      <!-- หมายจับ -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="ti ti-file-certificate" aria-hidden="true"></i>หมายจับทั้งหมด</h2>
+          <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}" class="btn btn-add bypass-btn">
+            <i class="ti ti-plus" aria-hidden="true"></i>เพิ่มหมายจับ
+          </a>
+        </div>
+        <div class="card-body">
+          {% for warrant, warrant_missing in warrant_with_missing %}
+          <div class="warrant-item">
+            <span class="warrant-num">{{ forloop.counter }}.</span>
+            <span class="warrant-name">{{ warrant }}</span>
+            <div class="warrant-actions">
+              <a href="{% url 'forms:edit-draft-container-warrant' draft_container.pk warrant.pk %}" class="btn btn-edit bypass-btn">
+                <i class="ti ti-edit" aria-hidden="true"></i>แก้ไข
+              </a>
+              <a href="{% url 'forms:delete-draft-container-warrant' draft_container.pk warrant.pk %}"
+                 class="btn btn-del bypass-btn"
+                 onclick="ahrefDialog(event, this, true, {
+                  container_id: '{{ draft_container.pk }}',
+                  warrant_id: '{{ warrant.pk }}'
+                }, 'ต้องการลบร่างหมายจับจริงหรือไม่')">
+                <i class="ti ti-trash" aria-hidden="true"></i>ลบ
+              </a>
+            </div>
+          </div>
+          {% if warrant_missing %}
+          <div class="alert-missing">
+            <div class="alert-missing-header">
+              <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+              หมายจับที่ {{ forloop.counter }} — ข้อมูลสำคัญที่ยังกรอกไม่ครบ
+            </div>
+            <ul class="alert-missing-list">
+              {% for field in warrant_missing %}
+              <li>{{ field }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+          {% empty %}
+          <div class="empty-state">
+            <i class="ti ti-inbox" aria-hidden="true"></i>
+            <p>ยังไม่มีหมายจับ กรุณาเพิ่มหมายจับก่อนสร้างคำร้อง</p>
+          </div>
+          {% endfor %}
+        </div>
       </div>
-      {% endfor %}
+    
+      <!-- สร้างคำร้อง -->
+      <div class="submit-card">
+        <div>
+          <div class="submit-title">พร้อมส่งคำร้องแล้วใช่ไหม?</div>
+          <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
+        </div>
+        <div style="align-item:right;">
+          <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary-green">
+            บันทึกร่างคำร้อง
+          </a>
+          <a id="create-btn" href="{% url 'forms:create-reqform' draft_container.pk %}" 
+          {% if not all_fields_filled %}
+          class="btn btn-primary bypass-btn disabled-link" 
+          {% else %}
+          class="btn btn-primary bypass-btn"
+          {% endif %}
+          onclick="ahrefDialog(event, this, true, {
+            container_id: '{{ draft_container.pk }}',
+          }, 'ต้องการสร้างคำร้องเลยหรือไม่')">
+            <i class="ti ti-send" aria-hidden="true"></i>
+            สร้างคำร้อง
+          </a>
+        </div> 
+      </div>
+    </div>
+
+    <div class="col-side">
+      <div class="card">
+        <div class="card-header">
+          <h2>ความคืบหน้า</h2>
+        </div>
+        <div class="card-body">
+          <ul class="timeline">
+            <li class="tl-item pending">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-title">สร้างคำร้อง</div>
+                <div class="tl-date">รอดำเนินการ</div>
+              </div>
+            </li>
+            <li class="tl-item upcoming">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-title">พิจารณาคำร้องก่อนส่งไปศาล</div>
+                <div class="tl-date">ยังไม่ถึง</div>
+              </div>
+            </li>
+            <li class="tl-item upcoming">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-title">รอศาลอนุมัติคำร้อง</div>
+                <div class="tl-date">ยังไม่ถึง</div>
+              </div>
+            </li>
+            <li class="tl-item upcoming">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-title">ศาลรับคำร้อง</div>
+                <div class="tl-date">ยังไม่ถึง</div>
+              </div>
+            </li>
+            <li class="tl-item upcoming">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-title">รายงานผลการจับกุม</div>
+                <div class="tl-date">ยังไม่ถึง</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
-
-  <!-- สร้างคำร้อง -->
-  <div class="submit-card">
-    <div>
-      <div class="submit-title">พร้อมส่งคำร้องแล้วใช่ไหม?</div>
-      <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
-    </div>
-    <div style="align-item:right;">
-      <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary-green">
-        บันทึกร่างคำร้อง
-      </a>
-      <a id="create-btn" href="{% url 'forms:create-reqform' draft_container.pk %}" 
-      {% if not all_fields_filled %}
-      class="btn btn-primary bypass-btn disabled-link" 
-      {% else %}
-      class="btn btn-primary bypass-btn"
-      {% endif %}
-      onclick="ahrefDialog(event, this, true, {
-        container_id: '{{ draft_container.pk }}',
-      }, 'ต้องการสร้างคำร้องเลยหรือไม่')">
-        <i class="ti ti-send" aria-hidden="true"></i>
-        สร้างคำร้อง
-      </a>
-    </div> 
-  </div>
-
 </div>
 {% endblock %}
 
