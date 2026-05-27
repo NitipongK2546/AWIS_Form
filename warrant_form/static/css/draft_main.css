@@ -237,7 +237,6 @@ a:hover {
 
 /* ---------- Buttons ---------- */
 .btn {
-  display: inline-flex;
   align-items: center;
   gap: 5px;
   padding: 5px 12px;
@@ -264,6 +263,19 @@ a:hover {
 
 .btn-primary:hover {
   background: #7F1D1D;
+  text-decoration: none;
+}
+
+.btn-primary-green {
+  background: #4a9250;
+  color: #fff;
+  padding: 8px 18px;
+  font-size: 13px;
+  margin-right: 10px;
+}
+
+.btn-primary-green:hover {
+  background: #346638;
   text-decoration: none;
 }
 
