@@ -11,8 +11,8 @@ old_stuff = [
     path("dashboard/approve_table/", views.approve_table_page, name="approve_table_page"),
     path("dashboard/approve/<str:req_no_plaintiff>/confirm_approve/", views.reqform_approve_page, name="confirm_approve"),
 
-    # path("dashboard/accept_table/", views.accept_table_page, name="accept_table_page"),
-    # path("dashboard/accept_table/<str:req_no_plaintiff>/warrants/", views.warrant_status_page, name="view_reqform_warrants"),
+    path("dashboard/accept_table/", views.accept_table_page, name="accept_table_page"),
+    path("dashboard/accept_table/<str:req_no_plaintiff>/warrants/", views.warrant_status_page, name="view_reqform_warrants"),
 
 ]
 
