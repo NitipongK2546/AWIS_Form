@@ -30,17 +30,17 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       <div class="stat-number">{{ draft_count }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="?status=10" class="stat-card" style="background-color: rgb(220, 85, 85);">
+    <a href="?status=10" class="stat-card-yellow" >
       <div class="stat-label">รอการอนุมัติ</div>
       <div class="stat-number">{{ unsent_count }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="?status=20" class="stat-card-green">
+    <a href="?status=20" class="stat-card-blue">
       <div class="stat-label">ส่งถึงศาลสำเร็จ</div>
       <div class="stat-number">{{ sent_count }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="?status=23" class="stat-card" style="background-color: rgb(51, 71, 0);">
+    <a href="?status=23" class="stat-card-green">
       <div class="stat-label">รอรายงานผลหมายจับ</div>
       <div class="stat-number">{{ unreported_count }}</div>
       <div class="stat-unit">ร่าง</div>
