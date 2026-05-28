@@ -1,4 +1,12 @@
-<p>#: {{ num }}</p>
+<p>#: {{ num }} 
+    {% if report_status == 0 %}
+    <span>ยังไม่ได้รายงาน</span>
+    {% elif report_status == 1 %}
+    <span>รายงานแล้ว</span>
+    {% else %}
+    <span></span>
+    {% endif %}
+</p>
 <p>รหัสอ้างอิง: {{ warrant.woa_refno }}</p>
 <p>ประเภท: {{ warrant.get_woa_type_text }}</p>
 <p>เลขหมาย: {{ warrant.get_woa_no_and_year }}</p>

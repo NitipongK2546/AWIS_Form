@@ -5,6 +5,10 @@ from django.db import models
 # เพิ่มตามที่ต้องการ
 class PermissionList(models.TextChoices):
 
+    # Initial => 0000
+
+    DASHBOARD               = "dashboardPage"
+
     # Admin => 1000
     ADMIN_PANEL             = "adminPanel"          # 1100
     USER_ACCESS             = "userAccess"          # 1200
@@ -31,6 +35,7 @@ class PermissionList(models.TextChoices):
 
 # class PermissionCode(models.TextChoices):
 PERMISSION_CODE = {
+    PermissionList.DASHBOARD               : "0000",
     # Admin => 1000
     PermissionList.ADMIN_PANEL             : "1100",
     PermissionList.USER_ACCESS             : "1110",  

@@ -66,7 +66,6 @@ body {
 }
 
 .button {
-    display: inline-block;
     padding: 8px 12px;
     font-size: 14px;
     font-weight: 600;
@@ -115,6 +114,27 @@ body {
 .button-logout:active {
     background: #96281b;
     transform: translateY(0);
+}
+
+.btn-del {
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    text-decoration: none;
+    transition: background .15s;
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.btn-del:hover {
+    background: #FECACA;
+    text-decoration: none;
 }
 
 .username-value {
@@ -285,13 +305,13 @@ html {
 /* ---------- Stat cards ---------- */
 .stat-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     margin-bottom: 1.25rem;
 }
 
 .stat-card {
-    background: #213259;
+    background: #5F5E5A;
     border-radius: 10px;
     padding: 1rem 1.25rem;
     text-decoration: none;
@@ -302,13 +322,28 @@ html {
 }
 
 .stat-card:hover {
-    background: #2f477e;
-    opacity: .9;
+    opacity: .85;
+    text-decoration: none;
+}
+
+.stat-card-red {
+    background: #5F2120;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    display: block;
+    transition: opacity .15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-red:hover {
+    opacity: .85;
     text-decoration: none;
 }
 
 .stat-card-yellow {
-    background: #cdc00e;
+    background: #7A5800;
     border-radius: 10px;
     padding: 1rem 1.25rem;
     text-decoration: none;
@@ -319,13 +354,28 @@ html {
 }
 
 .stat-card-yellow:hover {
-    background: #dbcd0f;
-    opacity: .9;
+    opacity: .85;
+    text-decoration: none;
+}
+
+.stat-card-blue {
+    background: #185FA5;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    display: block;
+    transition: opacity .15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-blue:hover {
+    opacity: .85;
     text-decoration: none;
 }
 
 .stat-card-green {
-    background: #35a80c;
+    background: #256025;
     border-radius: 10px;
     padding: 1rem 1.25rem;
     text-decoration: none;
@@ -336,8 +386,7 @@ html {
 }
 
 .stat-card-green:hover {
-    background: #45dc0f;
-    opacity: .9;
+    opacity: .85;
     text-decoration: none;
 }
 
@@ -561,8 +610,35 @@ span.colored-status {
     color: #fff;
 }
 
+/* ---------- Breadcrumb ---------- */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: .75rem;
+}
+
+.breadcrumb a {
+    color: #9B1C1C;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.bc-sep {
+    color: #ccc;
+}
+
+.bc-current {
+    color: #333;
+}
+
 /* ---------- Responsive ---------- */
-@media (max-width: 768px) {
+@media (max-width: 700px) {
     .stat-grid {
         grid-template-columns: 1fr;
     }

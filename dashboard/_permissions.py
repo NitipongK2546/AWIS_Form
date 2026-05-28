@@ -1,6 +1,12 @@
 from users.permissions import PermissionList, PermissionType
 from _log_utils.file_logger import AccessType
 
+DASHBOARD_PAGE = (
+    [PermissionType.VIEW,], 
+    PermissionList.DASHBOARD, 
+    AccessType.VIEW
+)
+
 REQFORM_AWAIT_APPROVAL_PAGE = (
     [PermissionType.VIEW, PermissionType.APPROVE], 
     PermissionList.REQFORM_AWAIT_APPROVAL, 
@@ -68,13 +74,13 @@ VIEW_REQFORM_DETAILS = (
 ##########################################################################
 
 DOWNLOAD_REQFORM = (
-    [PermissionType.CREATE], 
+    [PermissionType.VIEW], 
     PermissionList.REQFORM_SUBMITTED,
     AccessType.DOWNLOAD
 )
 
 DOWNLOAD_WARRANT = (
-    [PermissionType.CREATE], 
+    [PermissionType.VIEW], 
     PermissionList.REQFORM_SUBMITTED,
     AccessType.DOWNLOAD
 )

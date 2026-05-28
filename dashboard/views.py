@@ -118,16 +118,17 @@ def reqform_approve_page(request : HttpRequest, req_no_plaintiff : str):
         
     selected_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
 
-    if request.method == "POST":
-        if request.POST.get("confirm_approve") and request.POST.get("confirm_reject"):
-            # ไม่ควรเกิดขึ้น หาก Javascript ทำงาน
-            return render(request, "errors/400.html", {
-                "reason": "ท่านเลือกที่จะอนุมัติและปฎิเสธพร้อมกัน"
-            }, status=400)
+    if request.user not in [selected_form.form_owner,]:
+        return render(request, "errors/403.html", {
+            "reason": "ผู้ใช้ไม่มีสิทธิรายงานหมายในคำร้องดังกล่าว"
+        }, status=403)
 
-        if request.POST.get("confirm_approve"):
+    if request.method == "POST":
+        confirm_approve = request.POST.get("confirm") == "true"
+
+        if confirm_approve:
             return handle_form_approved()
-        elif request.POST.get("confirm_reject"):
+        elif not confirm_approve:
             return handle_form_rejected()
 
         else:
@@ -147,7 +148,7 @@ def confirm_reject(request : HttpRequest, req_no_plaintiff : str):
 
         FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
   
-        return redirect(reverse("dashboard:success_page"))
+        return redirect(reverse("dashboard:dashboard"))
     
     return render(request, "dashboard/confirmation_page.html", {
         "user": request.user,
@@ -214,11 +215,11 @@ def warrant_status_page(request, req_no_plaintiff : str):
     })
 
 
-@login_required
-def success_page(request : HttpRequest):
-    return render(request, "dashboard/success_page.html", {
-        "user": request.user,
-    })
+# @login_required
+# def dashboard(request : HttpRequest):
+#     return render(request, "dashboard/dashboard.html", {
+#         "user": request.user,
+#     })
 
 
 ###############################################################################
@@ -228,7 +229,7 @@ from warrant_form import doc_create
 @perm_req_log(*DashboardPerm.DOWNLOAD_REQFORM)
 def download_reqform(request : HttpRequest, req_no_plaintiff : str):
     unsent_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
-    if request.user not in [unsent_form.form_owner,]:
+    if request.user not in [unsent_form.form_owner, unsent_form.form_creator]:
         return render(request, "errors/403.html", {
             "reason": "ผู้ใช้ไม่มีสิทธิดาวน์โหลดคำร้องดังกล่าว"
         }, status=403)
@@ -243,7 +244,7 @@ def download_reqform(request : HttpRequest, req_no_plaintiff : str):
 @perm_req_log(*DashboardPerm.DOWNLOAD_WARRANT)
 def download_warrant(request : HttpRequest, req_no_plaintiff : str, woa_refno : str):
     unsent_form = getFormAwaitViaPlaintiff(req_no_plaintiff)
-    if request.user not in [unsent_form.form_owner,]:
+    if request.user not in [unsent_form.form_owner, unsent_form.form_creator]:
         return render(request, "errors/403.html", {
             "reason": "ผู้ใช้ไม่มีสิทธิดาวน์โหลดหมายจับดังกล่าว"
         }, status=403)
@@ -251,7 +252,6 @@ def download_warrant(request : HttpRequest, req_no_plaintiff : str, woa_refno : 
     target_warrant : WarrantDataModel = unsent_form.form.warrants.filter(woa_refno=woa_refno).first()
 
     doc_data = target_warrant.convertToDocumentData()
-    print(doc_data)
 
     response = doc_create.create_warrant_pdf(doc_data)
 

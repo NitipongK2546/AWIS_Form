@@ -67,18 +67,21 @@
 {% endblock %}
 
 {% block confirmation %}
-<form method="post" style="text-align: center; padding-bottom: 20rem;">
+<form id="confirm-form" method="post" style="text-align: center; padding-bottom: 20rem;">
 {% csrf_token %}
 <div>
     <p>
         <span>อนุมัติและส่งให้กับศาล</span>
-        <input id="id_confirm_approve" name="confirm_approve" type="checkbox">
+        <input id="id_confirm_approve" name="confirm" type="radio" value="true">
     </p>
     <p>
         <span>ปฎิเสธคำร้อง</span>
-        <input id="id_confirm_reject" name="confirm_reject" type="checkbox">
+        <input id="id_confirm_reject" name="confirm" type="radio" value="false" checked>
     </p>
 </div>
-<button type="submit" class="confirm-button no-print">ยืนยันผล</button>
+<button type="button" class="confirm-button no-print" onclick="formDialog(event, confirm_form, 'ยืนยันการพิจาณาคำร้องดังกล่าวหรือไม่')">ยืนยันผล</button>
 </form>
+<script>
+const confirm_form = document.getElementById("confirm-form")
+</script>
 {% endblock %}

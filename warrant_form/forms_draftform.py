@@ -24,6 +24,8 @@ class ReqformDraftModelForm(forms.ModelForm):
         model = ReqformDraftDataModel
         exclude = ["draft_container",]
         widgets = {
+    "create_uid": forms.HiddenInput(),
+    "ref_no": forms.HiddenInput(),
     "cause_text": forms.Textarea(attrs={
         "rows": 5,
         "cols": 60,
@@ -59,7 +61,12 @@ class ReqformDraftModelForm(forms.ModelForm):
         'class': 'datehalf year',
         'onchange': 'changeDate(req_day, req_month, req_year)'
     }),
-    "req_case_type_id": forms.Select(choices=req_case_type_id_choices),
+    "req_case_type_id": forms.Select(
+        attrs={
+            "disabled": True,
+        },
+        choices=req_case_type_id_choices
+    ),
     "scene_date": forms.DateTimeInput(attrs={
         'class': 'datetimepicker',
         'placeholder': "เลือกวันที่และเวลา"
@@ -169,9 +176,15 @@ class WarrantDraftDataModelForm(forms.ModelForm):
         'placeholder': "เลือกวันที่และเวลา"
     }),
     "woa_type": forms.Select(
+        attrs={
+            "disabled": True,
+        },
         choices=WOA_TYPE_CHOICES,
     ),
     "fault_type_id": forms.Select(
+        attrs={
+            "disabled": True,
+        },
         choices=FAULT_TYPE_ID_CHOICES
     ),
     "appointment_type": forms.Select(

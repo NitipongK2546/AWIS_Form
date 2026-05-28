@@ -2,7 +2,7 @@ from django import forms
 import warrant_form.forms_central as CentralForm
 
 arrest_result_choices = (
-    (0, "ยังไม่ได้รายงานผล"),
+    # (0, "ยังไม่ได้รายงานผล"),
     (1, "จับได้"),
     (2, "อื่น ๆ")
 )
@@ -26,5 +26,17 @@ class ReportWarrantForm(forms.Form):
         'onchange': 'changeDate(arrest_date_day, arrest_date_month, arrest_date_year)'
     }))
 
-    arrest_result_other_text = forms.CharField(required=False, max_length=300)
+    arrest_result_other_text = forms.CharField(
+        required=False,
+        max_length=300,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 5,
+                "cols": 80,
+                "style": "resize: vertical; width:95%;",
+                "placeholder": "รายละเอียดเพิ่มเติม...",
+            }
+        )
+    )
+    
     arrest_officer_name = forms.CharField(required=False, max_length=250)

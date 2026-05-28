@@ -1,0 +1,23 @@
+<script>
+function attachConfirmEventForm(form) {
+    document.getElementById('dialog-confirm').onclick = (() => {
+        form.submit()
+        dialog_element.close();
+    });
+    document.getElementById('dialog-cancel').onclick = (() => {
+        dialog_element.close();
+    });
+}
+
+function formDialog(event, form, custom_msg = null) {
+    event.preventDefault();
+
+    attachConfirmEventForm(form)
+
+    const DEFAULT_MSG = `ยังไม่ได้บันทึก จะย้อนกลับจริงหรือไม่`;
+
+    text_label.textContent = custom_msg || DEFAULT_MSG;
+
+    dialog_element.showModal();
+}
+</script>

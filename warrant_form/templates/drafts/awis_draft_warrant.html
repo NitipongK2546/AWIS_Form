@@ -37,14 +37,16 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       <div class="card-body">
         <div class="form-group">
           <label class="form-label">ประเภทหมายจับ</label>
+          {{ draft_form.woa_type.as_hidden }}
           {{ draft_form.woa_type }}
         </div>
         <div class="form-group">
-          <label class="form-label">ประเภทความผิด</label>
+          <label class="form-label">ประเภทความผิด <span style="color:red;">*</span></label>
+          {{ draft_form.fault_type_id.as_hidden }}
           {{ draft_form.fault_type_id }}
         </div>
         <div class="form-group">
-          <label class="form-label">ส่งหมายถึง</label>
+          <label class="form-label">ส่งหมายถึง <span style="color:red;">*</span></label>
           {{ draft_form.send_to_name }}
         </div>
       </div>
@@ -57,11 +59,11 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">ด้วย</label>
+          <label class="form-label">ด้วย <span style="color:red;">*</span></label>
           {{ draft_form.cause_text }}
         </div>
         <div class="form-group">
-          <label class="form-label">ซึ่งต้องหาว่ากระทำความผิดฐาน</label>
+          <label class="form-label">ซึ่งต้องหาว่ากระทำความผิดฐาน <span style="color:red;">*</span></label>
           {{ draft_form.charge }}
         </div>
         <div class="form-group">
@@ -103,7 +105,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
-          <label class="form-label">ชื่อ-นามสกุล</label>
+          <label class="form-label">ชื่อ-นามสกุล <span style="color:red;">*</span></label>
           {{ draft_form.acc_full_name }}
         </div>
         <div class="form-row">
@@ -112,7 +114,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
             {{ draft_form.acc_card_type }}
           </div>
           <div class="form-group">
-            <label class="form-label">เลขบัตร</label>
+            <label class="form-label">เลขบัตร <span style="color:red;">*</span></label>
             {{ draft_form.acc_card_id }}
           </div>
         </div>
@@ -222,5 +224,14 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
         altFormat: "j F Y H:i น.",
         locale: Thai,
     });
+</script>
+<script>
+  window.addEventListener("beforeunload", (e) => {
+    if (!allowLeave) {
+        e.preventDefault();
+
+        e.returnValue = "";
+    }
+});
 </script>
 {% endblock %}

@@ -35,6 +35,20 @@ color_val_sent = {
     1: 23,
 }
 
+# status_choice → timeline step index (1-based)
+# 1=สร้างคำร้อง, 2=พิจารณาฯ, 3=รอศาลอนุมัติ, 4=ศาลรับ, 5=รายงานผล
+TIMELINE_STEP_MAP = {
+    10: 2,   # กำลังรอการพิจารณา
+    11: 2,   # ไม่ผ่านการพิจารณา
+    20: 3,   # รอศาลตอบรับ
+    22: 4,   # ไม่รับ
+    23: 5,   # รอรายงานผลหมายจับ
+    24: 5,   # จับไม่สำเร็จ
+    25: 6,   # รายงานผลสำเร็จ
+
+    99: 2,   # ยกเลิกคำร้อง
+}
+
 def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : UserDataModel):
 
     is_not_user = not (user_data in (form.form_creator, form.form_owner))
@@ -72,14 +86,27 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
         }, status=403)
 
     if form_already_sent:
-        status = form_already_sent.get_accept_display()
-        status_int = form_already_sent.accept
         action = "report"
 
+        # So if every warrant is 1, excluding all 1s, should return None.
+        # Which therefore, exists = False.
+        # Which proves every warrant is 1, and then we negate it.
         warrants = VisualWarrantData.objects.filter(
             warrant__in=reqform.warrants.all()
         )
-        status_choice = color_val_sent.get(status_int)
+
+        all_reported = not warrants.exclude(report_status=1).exists()
+
+        if all_reported:
+            status = "รายงานหมายจับทั้งหมดแล้ว"
+            status_int = form_already_sent.accept
+
+            status_choice = 25
+        else:
+            status = form_already_sent.get_accept_display()
+            status_int = form_already_sent.accept
+
+            status_choice = color_val_sent.get(status_int)
 
     elif form_not_sent:
         status = form_not_sent.get_approve_status_display()
@@ -91,15 +118,29 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
 
     else:
         status = "ร่าง"
-
-    return render(request, "dashboard/reqform_info_page.html", {
+    
+    context = {
+        "draft": reqform.draft_id.pk,
         "reqform": reqform,
         "warrants": warrants,
         "status": status,
         "status_int": status_int,
         "action": action,
         "status_choice": status_choice,
-    })
+        "timeline_step": TIMELINE_STEP_MAP.get(status_choice, 1),
+    }
+
+    if request.user == form_not_sent.form_creator:
+        context.update({
+            "is_creator": True,
+        })
+
+    if request.user == form_not_sent.form_owner:
+        context.update({
+            "is_owner": True,
+        })
+
+    return render(request, "dashboard/reqform_info_page.html", context)
 
 ####################################################################
 
@@ -176,7 +217,7 @@ def report_update_warrant_arrest_yet(request : HttpRequest, req_no_plaintiff : s
                 warrant_wrapper.report_status = 1
                 warrant_wrapper.save()
 
-                return redirect("dashboard:view_reqform_warrants", req_no_plaintiff)
+                return redirect("dashboard:dashboard")
 
             except:
                 return render(request, "errors/500.html", {
@@ -212,7 +253,7 @@ def cancel_reqform(request : HttpRequest, req_no_plaintiff : str):
             unsent_form.save()
             unsent_form.form.save()
 
-            return redirect("dashboard:success_page")
+            return redirect("dashboard:dashboard")
 
         except:
             return JsonResponse({
@@ -265,7 +306,7 @@ def unsend_reqform(request : HttpRequest, req_no_plaintiff : str):
             sent_form.delete()
             warrant_results.delete()
                 
-            return redirect("dashboard:success_page")
+            return redirect("dashboard:dashboard")
 
         except:
             return render(request, "errors/400.html", {

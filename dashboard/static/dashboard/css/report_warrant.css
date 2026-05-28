@@ -190,6 +190,31 @@ form textarea {
     background: #7F1D1D;
 }
 
+.btn-submit:disabled {
+    background: #8a8a8a;
+}
+
+.btn-del {
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    text-decoration: none;
+    transition: background .15s;
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.btn-del:hover {
+    background: #FECACA;
+    text-decoration: none;
+}
+
 /* ---------- Timeline ---------- */
 .timeline {
     list-style: none;
@@ -248,6 +273,11 @@ form textarea {
     font-weight: 500;
     color: #202124;
     line-height: 1.4;
+}
+
+.tl-item.canceled .tl-dot {
+    background: #000000;
+    border-color: #000000;
 }
 
 .tl-item.pending .tl-title {

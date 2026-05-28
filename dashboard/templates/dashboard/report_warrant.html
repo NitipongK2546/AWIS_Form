@@ -7,18 +7,46 @@
   <title>Report Warrant</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'dashboard/css/report_warrant.css' %}">
+  <style>
+    /* override Django widget to be textarea-like */
+    #id_arrest_result_other_text,
+    [name="arrest_result_other_text"] {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    .textarea-wrapper {
+      position: relative;
+    }
+
+    .char-counter {
+      display: block;
+      text-align: right;
+      font-size: 11px;
+      color: #888;
+      margin-top: 4px;
+      transition: color .15s;
+    }
+
+    .char-counter.over {
+      color: #9B1C1C;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
-
+  {% include 'popup/popup_element.html' %}
+  {% include 'popup/form_dialog.html' %}
   {% include 'system/sys_header.html' %}
-
   <div class="page-wrapper">
 
     <!-- Breadcrumb -->
     <div class="breadcrumb">
       <a href="{% url 'dashboard:dashboard' %}">หน้าหลัก</a>
       <span class="bc-sep">/</span>
-      <a>รายการหมาย</a>
+      <a href="javascript:history.back()">รายการหมาย</a>
       <span class="bc-sep">/</span>
       <span class="bc-current">รายงานการจับกุม</span>
     </div>
@@ -47,11 +75,11 @@
               <span class="info-value">{{ woa_no }}</span>
             </div>
             <div class="info-row">
-              <span class="info-label">Req num case type id</span>
+              <span class="info-label">ประเภทหมายจับ</span>
               <span class="info-value">{{ req_num_case_type_id }}</span>
             </div>
             <div class="info-row">
-              <span class="info-label">Arrest report uid</span>
+              <span class="info-label">เจ้าหน้าที่ผู้รายงาน</span>
               <span class="info-value">{{ arrest_report_uid }}</span>
             </div>
           </div>
@@ -63,7 +91,7 @@
             <h2>รายงานการจับกุม</h2>
           </div>
           <div class="card-body">
-            <form method="post">
+            <form method="post" id="report-warrant-form">
               {% csrf_token %}
 
               <div class="form-group">
@@ -82,9 +110,12 @@
                 </div>
               </div>
 
-              <div class="form-group">
+              <div class="form-group" id="other_text_container">
                 <label class="form-label">รายละเอียดเพิ่มเติม</label>
-                {{ report_form.arrest_result_other_text }}
+                <div class="textarea-wrapper">
+                  {{ report_form.arrest_result_other_text }}
+                  <span class="char-counter"><span id="char-count">0</span> / 300</span>
+                </div>
               </div>
 
               <div class="form-group">
@@ -93,8 +124,8 @@
               </div>
 
               <div class="form-actions">
-                <button type="submit" class="btn-submit"
-                        onclick="return confirm('ยืนยันการส่งข้อมูลไปยังศาล?');">
+                <button id="report-btn" type="button" class="btn-submit"
+                        onclick="formDialog(event, report_warrant_form, 'ยืนยันการรายงานหมายจับตามข้อมูลที่กรอกไว้หรือไม่')">
                   ส่งข้อมูลไปยังศาล
                 </button>
               </div>
@@ -117,7 +148,7 @@
               <li class="tl-item done">
                 <div class="tl-dot"></div>
                 <div class="tl-content">
-                  <div class="tl-title">ยื่นคำร้องขอหมาย</div>
+                  <div class="tl-title">สร้างคำร้อง</div>
                   <div class="tl-date">—</div>
                 </div>
               </li>
@@ -125,7 +156,7 @@
               <li class="tl-item done">
                 <div class="tl-dot"></div>
                 <div class="tl-content">
-                  <div class="tl-title">อนุมัติคำร้อง</div>
+                  <div class="tl-title">พิจารณาคำร้องก่อนส่งไปศาล</div>
                   <div class="tl-date">—</div>
                 </div>
               </li>
@@ -133,7 +164,15 @@
               <li class="tl-item done">
                 <div class="tl-dot"></div>
                 <div class="tl-content">
-                  <div class="tl-title">ออกหมายจับโดยศาล</div>
+                  <div class="tl-title">รอศาลอนุมัติคำร้อง</div>
+                  <div class="tl-date">—</div>
+                </div>
+              </li>
+
+              <li class="tl-item done">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <div class="tl-title">ศาลรับคำร้อง</div>
                   <div class="tl-date">—</div>
                 </div>
               </li>
@@ -155,5 +194,61 @@
 
   </div><!-- /page-wrapper -->
 
+  <script>
+    const arrest_result_selector = document.getElementById("id_arrest_result")
+    const other_text_container = document.getElementById("other_text_container")
+
+    const report_warrant_form = document.getElementById("report-warrant-form");
+    const report_button = document.getElementById("report-btn");
+
+    const arrest_result_other_text = document.getElementById("id_arrest_result_other_text")
+    const arrest_officer_name = document.getElementById("id_arrest_officer_name")
+
+    function checkInput() {
+      const other_text_filled = arrest_result_other_text.value.trim() !== "";
+      const officer_name_filled = arrest_officer_name.value.trim() !== "";
+
+      if (arrest_result_selector.value == 1) {
+        arrest_result_other_text.disabled = true
+        other_text_container.style = "display: none;"
+        
+        report_button.disabled = !(officer_name_filled);
+      }
+      else {
+        other_text_container.style = "display: block;"
+        arrest_result_other_text.disabled = false
+
+        report_button.disabled = !(other_text_filled && officer_name_filled);
+      }
+    }
+
+    arrest_result_selector.addEventListener("change", checkInput);
+
+    arrest_result_other_text.addEventListener("input", checkInput);
+    arrest_officer_name.addEventListener("input", checkInput);
+
+    checkInput();
+    
+    const textarea = arrest_result_other_text
+
+    const counter = document.getElementById('char-count');
+    const counterEl = counter.closest('.char-counter');
+    const MAX = 300;
+
+    function updateCount() {
+      const len = textarea.value.length;
+      counter.textContent = len;
+      if (len > MAX) {
+        counterEl.classList.add('over');
+        textarea.value = textarea.value.slice(0, MAX);
+        counter.textContent = MAX;
+      } else {
+        counterEl.classList.remove('over');
+      }
+    }
+
+    textarea.addEventListener('input', updateCount);
+    updateCount();
+  </script>
 </body>
 </html>
