@@ -275,6 +275,11 @@ form textarea {
     line-height: 1.4;
 }
 
+.tl-item.canceled .tl-dot {
+    background: #000000;
+    border-color: #000000;
+}
+
 .tl-item.pending .tl-title {
     color: #9B1C1C;
 }

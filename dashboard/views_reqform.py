@@ -45,7 +45,8 @@ TIMELINE_STEP_MAP = {
     23: 5,   # รอรายงานผลหมายจับ
     24: 5,   # จับไม่สำเร็จ
     25: 5,   # รายงานผลสำเร็จ
-    99: 5,   # ยกเลิกคำร้อง
+    
+    99: 2,   # ยกเลิกคำร้อง
 }
 
 def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : UserDataModel):

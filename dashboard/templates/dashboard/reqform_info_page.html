@@ -290,7 +290,7 @@
                                 <a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}" class="action-btn action-btn-primary">ดูหมายจับ</a>
 
                                 {% if warrant_obj.court_injunction == 1 %}
-                                <a class="action-btn action-btn-download file-download" href="#">⬇ ดาวน์โหลดไฟล์จากศาล</a>
+                                <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno  %}">⬇ ดาวน์โหลดไฟล์จากศาล</a>
                                 {% else %}
                                 <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">⬇ ดาวน์โหลดไฟล์</a>
                                 {% endif %}
@@ -377,7 +377,7 @@
                   </div>
                 </li>
 
-                <li class="tl-item {% if s > 2 %}done{% elif s == 2 %}pending{% else %}upcoming{% endif %}">
+                <li class="tl-item {% if status_choice == 99 %}canceled{% elif s > 2 %}done{% elif s == 2 %}pending{% else %}upcoming{% endif %}">
                   <div class="tl-dot"></div>
                   <div class="tl-content">
                     <div class="tl-title">พิจารณาคำร้องก่อนส่งไปศาล</div>
@@ -385,6 +385,7 @@
                       {% if s > 2 %}เสร็จสิ้น
                       {% elif s == 2 %}
                         {% if status_choice == 11 %}ไม่ผ่านการพิจารณา
+                        {% elif status_choice == 99 %}ยกเลิกคำร้อง
                         {% else %}รอดำเนินการ{% endif %}
                       {% else %}ยังไม่ถึง{% endif %}
                     </div>
@@ -421,7 +422,6 @@
                       {% if s == 5 %}
                         {% if status_choice == 25 %}รายงานผลสำเร็จ
                         {% elif status_choice == 24 %}จับไม่สำเร็จ
-                        {% elif status_choice == 99 %}ยกเลิกคำร้อง
                         {% else %}รอดำเนินการ{% endif %}
                       {% else %}ยังไม่ถึง{% endif %}
                     </div>

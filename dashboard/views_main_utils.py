@@ -209,18 +209,22 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
     if wanted_status in [1, ]:
         drafts = available_drafts
         
-    elif wanted_status in [10, 11, 12]:
+    elif wanted_status in [10, 11, 12, 99]:
         compare_val = {
             10: 1,
             11: 0,
             12: 2,
+            99: -1,
         }
 
         filter_data.update({
             "approve_status": compare_val.get(wanted_status)
         })
 
-        form_unsent = available_unsent
+        a = written_unsent_without_approved.filter(**filter_data)
+        b = owned_unsent_without_approved.filter(**filter_data)
+
+        form_unsent = a.union(b)
 
     elif wanted_status in [20, 21, 22, 23, 24, 25]:
         compare_val = {
@@ -233,10 +237,30 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
         }
 
         filter_data.update({
-            "accept": compare_val.get(wanted_status)
+            "accept": compare_val.get(wanted_status),
         })
 
         form_already_sent = available_sent.filter(**filter_data)
+
+        if wanted_status in [23, 24, 25]:
+            unreported = []
+            full_reported = []
+            for visual_form in form_already_sent:
+                reqform = visual_form.form
+                warrants = VisualWarrantData.objects.filter(
+                    warrant__in=reqform.warrants.all()
+                )
+                not_all_reported = warrants.filter(report_status=0).exists()
+                if not_all_reported:
+                    unreported.append(visual_form)
+                else:
+                    full_reported.append(visual_form)
+
+            if wanted_status in [23, 24]:
+                form_already_sent = unreported
+            else:
+                form_already_sent = full_reported
+
     else:
         drafts = available_drafts
         form_unsent = available_unsent
@@ -263,11 +287,12 @@ def get_statistics_objs(request : HttpRequest, form_used_for_filter : Form):
     if isinstance(wanted_status, str):
         wanted_status = int(wanted_status)
 
-    if wanted_status in [10, 11, 12]:
+    if wanted_status in [10, 11, 12, 99]:
         compare_val = {
             10: 1,
             11: 0,
             12: 2,
+            99: -1,
         }
 
         filter_data.update({
@@ -289,6 +314,26 @@ def get_statistics_objs(request : HttpRequest, form_used_for_filter : Form):
             "accept": compare_val.get(wanted_status)
         })
         form_already_sent = VisualReqformData.objects.filter(**filter_data)
+
+        if wanted_status in [23, 24, 25]:
+            unreported = []
+            full_reported = []
+            for visual_form in form_already_sent:
+                reqform = visual_form.form
+                warrants = VisualWarrantData.objects.filter(
+                    warrant__in=reqform.warrants.all()
+                )
+                not_all_reported = warrants.filter(report_status=0).exists()
+                if not_all_reported:
+                    unreported.append(visual_form)
+                else:
+                    full_reported.append(visual_form)
+
+            if wanted_status in [23, 24]:
+                form_already_sent = unreported
+            else:
+                form_already_sent = full_reported
+
     elif wanted_status in [99,]:
         compare_val = {
             99: -1,

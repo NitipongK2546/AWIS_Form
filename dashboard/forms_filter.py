@@ -19,7 +19,7 @@ status_choices = [
     (24, "จับไม่สำเร็จ"),            # Visual Form (Failed)
     (25, "รายงานผลสำเร็จ"),        # Visual Form (All Warrant Success)
 
-    # (99, "ยกเลิกคำร้อง"),           # Cancel during Form Await
+    (99, "ยกเลิกคำร้อง"),           # Cancel during Form Await
 ]
 
 def get_reqno_choices():
