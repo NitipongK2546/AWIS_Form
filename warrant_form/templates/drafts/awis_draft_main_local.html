@@ -175,7 +175,7 @@
           <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
         </div>
         <div style="align-items:right;">
-          <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary-green" 
+          <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary-blue" 
           onclick="ahrefDialog(event, this, false, {},
           'ต้องการบันทึกและออกจากหน้านี้หรือไม่')"
           >
@@ -183,9 +183,9 @@
           </a>
           <a id="create-btn" href="{% url 'forms:create-reqform' draft_container.pk %}" 
           {% if not all_fields_filled %}
-          class="btn btn-primary bypass-btn disabled-link" 
+          class="btn btn-primary-green disabled-link" 
           {% else %}
-          class="btn btn-primary bypass-btn"
+          class="btn btn-primary-green"
           {% endif %}
           onclick="ahrefDialog(event, this, true, {
             container_id: '{{ draft_container.pk }}',

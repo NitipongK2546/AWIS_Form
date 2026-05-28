@@ -14,6 +14,16 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+<style>
+  .stat-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 6px;
+  }
+</style>
 {% endblock %}
 
 {% block body %}
@@ -23,24 +33,13 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
   <div class="page-title">สถิติการส่งคำร้อง</div>
 
   <!-- Stat cards -->
-  <div class="stat-grid" style="grid-template-columns: repeat(5, 1fr);">
-    <a href="{% url 'forms:draft-page' %}" class="stat-card-red">
-      <div class="stat-label">ร่างคำร้องทั้งหมด</div>
+  <div class="stat-section-label">อยู่ในกระบวนการ</div>
+  <div class="stat-grid" style="grid-template-columns: repeat(5, 1fr); margin-bottom: 1rem;">
+    <a href="{% url 'forms:draft-page' %}" class="stat-card">
+      <div class="stat-label">คำร้องทั้งหมด</div>
       <div class="stat-number">{{ total_count }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'forms:draft-page' %}" class="stat-card-red">
-      <div class="stat-label">ถูกยกเลิก</div>
-      <div class="stat-number">{{ canceled_form }}</div>
-      <div class="stat-unit">ร่าง</div>
-    </a>
-    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-green">
-      <div class="stat-label">ศาลไม่รับ</div>
-      <div class="stat-number">{{ unaccepted_form }}</div>
-      <div class="stat-unit">ร่าง</div>
-    </a>
-  </div>
-  <div class="stat-grid" style="grid-template-columns: repeat(4, 1fr);">
     <a href="{% url 'dashboard:approve_table_page' %}" class="stat-card-yellow">
       <div class="stat-label">รอการพิจารณา</div>
       <div class="stat-number">{{ unsent_form }}</div>
@@ -52,13 +51,27 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       <div class="stat-unit">ร่าง</div>
     </a>
     <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-green">
-      <div class="stat-label">รอรายงานผลหมายจับ</div>
+      <div class="stat-label">รอรายงานหมายจับ</div>
       <div class="stat-number">{{ unreported_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-        <a href="?status=23" class="stat-card" style="background-color: rgb(51, 71, 0);">
-      <div class="stat-label">เสร็จสมบูรณ์แล้ว</div>
+    <a href="?status=25" class="stat-card" style="background: #334700;">
+      <div class="stat-label">เสร็จสิ้น</div>
       <div class="stat-number">{{ all_reported_form }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+  </div>
+
+  <div class="stat-section-label">คำร้องที่มีปัญหา</div>
+  <div class="stat-grid" style="grid-template-columns: repeat(2, minmax(0, 200px)); margin-bottom: 1.25rem;">
+    <a href="?status=99" class="stat-card" style="background: #2C2C2A;">
+      <div class="stat-label">ถูกยกเลิก</div>
+      <div class="stat-number">{{ canceled_form }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
+    <a href="?status=22" class="stat-card-red">
+      <div class="stat-label">ศาลไม่รับ</div>
+      <div class="stat-number">{{ unaccepted_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
   </div>
