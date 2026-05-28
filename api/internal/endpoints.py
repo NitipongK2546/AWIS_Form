@@ -44,18 +44,17 @@ def fetch_health_check(request : HttpRequest) -> JsonResponse:
             result = False
 
         latest_check = HealthCheckStatus.objects.last()
-        
-        if timezone.now() >= latest_check.last_date + timedelta(minutes=30):
+        if not latest_check:
+            HealthCheckStatus.updateStatus(result)
+        elif timezone.now() >= latest_check.last_date + timedelta(minutes=30):
             HealthCheckStatus.updateStatus(result)
 
         return JsonResponse({
             "status": 200,
-            "status_list": HealthCheckStatus.objects.all(),
         })
     except:
         return JsonResponse({
             "status": 500,
-            "status_list": [],
             "message": "เชื่อมต่อกับ API ไม่ได้"
         })
 
