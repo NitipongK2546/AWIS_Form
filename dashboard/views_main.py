@@ -97,15 +97,44 @@ def dashboard(request : HttpRequest):
 @perm_req_log(*DashboardPerm.VIEW_STATISTIC_PAGE)
 def statistic_page_view(request : HttpRequest):
 
+
+    form_failed_approval_count = FormAwaitingApproval.objects.filter(
+        approve_status=0
+    ).count()
+    form_canceled_count = FormAwaitingApproval.objects.filter(
+        approve_status=-1
+    ).count()
     form_unsent_count = FormAwaitingApproval.objects.filter(
         approve_status=1
     ).count()
     form_sent_count = VisualReqformData.objects.filter(
         accept=99
     ).count()
-    form_accepted_count = VisualReqformData.objects.filter(
-        accept=1
+    form_unaccepted_count = VisualReqformData.objects.filter(
+        accept=0
     ).count()
+
+
+    form_accepted = VisualReqformData.objects.filter(
+        accept=1
+    )
+
+    unreported_count = 0
+    all_reported_count = 0
+
+    for visual_form in form_accepted:
+        reqform = visual_form.form
+        warrants = VisualWarrantData.objects.filter(
+            warrant__in=reqform.warrants.all()
+        )
+        not_all_reported = warrants.filter(report_status=0).exists()
+        if not_all_reported:
+            unreported_count += 1
+        else:
+            all_reported_count += 1
+
+    dashboard_list = []
+    req_no_plaintiff_list = []
 
     dashboard_list = []
     req_no_plaintiff_list = []
@@ -129,10 +158,14 @@ def statistic_page_view(request : HttpRequest):
 
         ############################################
 
+        "canceled_form": form_canceled_count,
         "unsent_form": form_unsent_count,
         "sent_form": form_sent_count,
-        "accepted_form": form_accepted_count,
-        "total_count": form_sent_count + form_unsent_count + form_accepted_count,
+        "unaccepted_form": form_unaccepted_count,
+        "unreported_form": unreported_count,
+        "all_reported_form": all_reported_count,
+
+        "total_count": form_sent_count + form_unsent_count + form_failed_approval_count + form_canceled_count + form_unaccepted_count + unreported_count + all_reported_count
     }
 
     return render(request, "history/statistic_page_view.html", context)
