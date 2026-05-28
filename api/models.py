@@ -2,7 +2,34 @@ from django.db import models
 
 import hashlib
 import secrets
-import os
+
+class HealthCheckStatus(models.Model):
+    status = models.BooleanField()
+    last_date = models.DateTimeField(auto_now=True)
+
+    @staticmethod
+    def updateStatus(current_status : bool):
+        if HealthCheckStatus.objects.count() < 3:
+            HealthCheckStatus.objects.create(
+                status=current_status
+            )
+        else:
+            HealthCheckStatus.objects.first(
+                status=current_status
+            ).delete()
+            HealthCheckStatus.objects.create(
+                status=current_status
+            )
+
+    @staticmethod
+    def isHealthOK():
+        latest_check = HealthCheckStatus.objects.last()
+
+        if latest_check.status:
+            return True
+        
+        return False
+
 
 class ExternalSelectorData(models.Model):
     name = models.CharField(max_length=64)

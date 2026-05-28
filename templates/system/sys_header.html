@@ -170,6 +170,9 @@
 
         <!-- User area -->
         <div class="user-area">
+          <div id="server-status" style="padding: 4px; border-radius: 8px; min-width: 250px; text-align: center; background-color: grey; color: white; border: 2px solid white;">
+            กำลังตรวจสอบการเชื่อมต่อ
+          </div>
           <div class="user-avatar">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
@@ -190,5 +193,29 @@
         link.classList.add('active');
       }
     });
+  </script>
+  <script>
+    const statusDiv = shadow.getElementById("server-status");
+
+    async function checkServerStatus() {
+
+      const response = await fetch("/api/internal/api_health_check/", {
+          cache: "no-store"
+      });
+
+      const data = await response.json();
+
+      if (data.status == 200) {
+          statusDiv.textContent = "เชื่อมต่อกับศาลแล้ว";
+          statusDiv.style.background_color = "green";
+      } else {
+          statusDiv.textContent = "เกิดปัญญาในการเชื่อมต่อกับศาล";
+          statusDiv.style.backgroundColor = "red";
+      }
+  }
+
+  checkServerStatus();
+
+  setInterval(checkServerStatus, 60_000);
   </script>
 </header>

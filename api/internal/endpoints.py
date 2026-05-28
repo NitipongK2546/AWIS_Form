@@ -2,12 +2,15 @@ from django.http import HttpRequest, JsonResponse
 from warrant_form.forms_central import thai_codes
 
 from users.models import UserDataModel
-import json
+from api.models import HealthCheckStatus
 
 from api.selector.court import checkCourtDifferent
+import _request_utils.connect_api as AWISConnect
 
-# import requests
 # import os
+
+from django.utils import timezone
+from datetime import timedelta
 
 sub_district_select = thai_codes.getSubDistrictChoices()
 district_select = thai_codes.getDistrictChoices()
@@ -27,6 +30,35 @@ def get_province(request : HttpRequest) -> JsonResponse:
     return JsonResponse({
         "data": province_select
     }, json_dumps_params={'ensure_ascii': False})
+
+def fetch_health_check(request : HttpRequest) -> JsonResponse:
+    
+    try:
+        data = AWISConnect.get_health_check("v1")
+
+        result = False
+
+        if data.get("status") == "ok":
+            result = True
+        else:
+            result = False
+
+        latest_check = HealthCheckStatus.objects.last()
+        
+        if timezone.now() >= latest_check.last_date + timedelta(minutes=30):
+            HealthCheckStatus.updateStatus(result)
+
+        return JsonResponse({
+            "status": 200,
+            "status_list": HealthCheckStatus.objects.all(),
+        })
+    except:
+        return JsonResponse({
+            "status": 500,
+            "status_list": [],
+            "message": "เชื่อมต่อกับ API ไม่ได้"
+        })
+
 
 def fetch_court_check(request : HttpRequest) ->JsonResponse:
     is_different = checkCourtDifferent()

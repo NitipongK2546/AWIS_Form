@@ -9,4 +9,7 @@ urlpatterns = [
     path("get-province/", endpoints.get_province, name="get_province"),
 
     path("check-court-difference/", endpoints.fetch_court_check, name="check_court"),
+
+    path("api_health_check/", endpoints.fetch_health_check,
+    name="api_health_check"),
 ]
