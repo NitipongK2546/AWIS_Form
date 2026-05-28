@@ -175,7 +175,7 @@
           <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
         </div>
         <div style="align-items:right;">
-          <a id="save-btn" href="{% url 'dashboard:dashboard' %}" class="btn btn-primary-green" 
+          <a id="save-btn" href="{% url 'forms:save-draft-container' draft_container.pk %}" class="btn btn-primary-green bypass-btn" 
           onclick="ahrefDialog(event, this, false, {},
           'ต้องการบันทึกและออกจากหน้านี้หรือไม่')"
           >

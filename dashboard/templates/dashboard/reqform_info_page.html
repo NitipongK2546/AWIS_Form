@@ -419,7 +419,7 @@
                   <div class="tl-content">
                     <div class="tl-title">รายงานผลการจับกุม</div>
                     <div class="tl-date">
-                      {% if s == 5 %}
+                      {% if s >= 5 %}
                         {% if status_choice == 25 %}รายงานผลสำเร็จ
                         {% elif status_choice == 24 %}จับไม่สำเร็จ
                         {% else %}รอดำเนินการ{% endif %}
