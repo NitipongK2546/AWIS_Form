@@ -26,10 +26,17 @@ class ReportWarrantForm(forms.Form):
         'onchange': 'changeDate(arrest_date_day, arrest_date_month, arrest_date_year)'
     }))
 
-    arrest_result_other_text = forms.CharField(required=False, max_length=300, widget=forms.Textarea(attrs={
-        "rows": 5,
-        "cols": 30,
-        "style": "resize:none; width: 95%;",
-        "placeholder": "รายละเอียด"
-    }))
+    arrest_result_other_text = forms.CharField(
+        required=False,
+        max_length=300,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 5,
+                "cols": 80,
+                "style": "resize: vertical; width:95%;",
+                "placeholder": "รายละเอียดเพิ่มเติม...",
+            }
+        )
+    )
+    
     arrest_officer_name = forms.CharField(required=False, max_length=250)

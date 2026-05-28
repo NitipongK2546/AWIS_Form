@@ -35,6 +35,19 @@ color_val_sent = {
     1: 23,
 }
 
+# status_choice → timeline step index (1-based)
+# 1=สร้างคำร้อง, 2=พิจารณาฯ, 3=รอศาลอนุมัติ, 4=ศาลรับ, 5=รายงานผล
+TIMELINE_STEP_MAP = {
+    10: 2,   # กำลังรอการพิจารณา
+    11: 2,   # ไม่ผ่านการพิจารณา
+    20: 3,   # รอศาลตอบรับ
+    22: 4,   # ไม่รับ
+    23: 5,   # รอรายงานผลหมายจับ
+    24: 5,   # จับไม่สำเร็จ
+    25: 5,   # รายงานผลสำเร็จ
+    99: 5,   # ยกเลิกคำร้อง
+}
+
 def isNotUserAndNotHaveApprovePerm(form : FormAwaitingApproval, user_data : UserDataModel):
 
     is_not_user = not (user_data in (form.form_creator, form.form_owner))
@@ -113,6 +126,7 @@ def reqform_info(request : HttpRequest, req_no_plaintiff : str):
         "status_int": status_int,
         "action": action,
         "status_choice": status_choice,
+        "timeline_step": TIMELINE_STEP_MAP.get(status_choice, 1),
     }
 
     if request.user == form_not_sent.form_creator:

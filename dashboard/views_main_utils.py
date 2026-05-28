@@ -225,8 +225,8 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
     elif wanted_status in [20, 21, 22, 23, 24, 25]:
         compare_val = {
             20: 99,
-            21: 0,
-            22: 1,
+            21: 1,
+            22: 0,
             23: 1,
             24: 1,
             25: 1,
@@ -278,8 +278,8 @@ def get_statistics_objs(request : HttpRequest, form_used_for_filter : Form):
     elif wanted_status in [20, 21, 22, 23, 24, 25]:
         compare_val = {
             20: 99,
-            21: 0,
-            22: 1,
+            21: 1,
+            22: 0,
             23: 1,
             24: 1,
             25: 1,
