@@ -159,7 +159,7 @@ def statistic_page_view(request : HttpRequest):
         ############################################
 
         "canceled_form": form_canceled_count,
-        "unsent_form": form_unsent_count,
+        "unsent_form": form_unsent_count + form_failed_approval_count,
         "sent_form": form_sent_count,
         "unaccepted_form": form_unaccepted_count,
         "unreported_form": unreported_count,
