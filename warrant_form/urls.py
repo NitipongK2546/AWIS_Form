@@ -22,6 +22,8 @@ draft_urls = [
 
     path("reqform-draft/create-reqform/<int:container_id>/", views_draft.create_reqform_from_draft, name="create-reqform"),
 
+    path("reqform-draft/save/<int:container_id>/", views_draft.save_draft_main_local_page, name="save-draft-container"),
+
     # path('reqform-draft/create-reqform/<int:container_id>/confirm', views.step3_confirm_form, name="confirm-create-reqform"),
 ]
 

@@ -20,7 +20,7 @@ from .forms_filter import DashboardFilterForm, StatisticFilterForm
 
 from . import views_main_utils as utils
 
-@login_required
+@perm_req_log(*DashboardPerm.DASHBOARD_PAGE)
 def dashboard(request : HttpRequest):
     unsent_count = FormAwaitingApproval.objects.filter(
         approve_status=1
@@ -159,7 +159,8 @@ def statistic_page_view(request : HttpRequest):
         ############################################
 
         "canceled_form": form_canceled_count,
-        "unsent_form": form_unsent_count + form_failed_approval_count,
+        "unsent_form": form_unsent_count,
+        "unapproved_form": form_failed_approval_count,
         "sent_form": form_sent_count,
         "unaccepted_form": form_unaccepted_count,
         "unreported_form": unreported_count,

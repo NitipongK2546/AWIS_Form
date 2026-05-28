@@ -50,6 +50,13 @@ def create_draft_main_local_page(request : HttpRequest):
     return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
 @perm_req_log(*ReqformPerm.VIEW_DRAFT)
+def save_draft_main_local_page(request : HttpRequest, container_id : int):
+    
+    draft_container = FormDraftContainer.objects.filter(pk=container_id).first().save()
+
+    return redirect("dashboard:dashboard")
+
+@perm_req_log(*ReqformPerm.VIEW_DRAFT)
 def view_draft_main_local_page(request : HttpRequest, container_id : int):
     draft_container = FormDraftContainer.objects.filter(pk=container_id).first()
 

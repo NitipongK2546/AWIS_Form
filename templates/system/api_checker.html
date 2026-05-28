@@ -1,0 +1,24 @@
+<script>
+const statusDiv = document.getElementById("server-status");
+
+async function checkServerStatus() {
+
+    const response = await fetch("/api/internal/api_health_check/", {
+        cache: "no-store"
+    });
+
+    const data = await response.json();
+
+    if (data.status == 200) {
+        statusDiv.textContent = "เชื่อมต่อกับศาลแล้ว";
+        statusDiv.style.color = "green";
+    } else {
+        statusDiv.textContent = data.message;
+        statusDiv.style.color = "red";
+    }
+}
+
+checkServerStatus();
+
+setInterval(checkServerStatus, 60_000);
+</script>

@@ -119,7 +119,7 @@ def splitTime(time_split_list : list[str], target_dict : dict, month_as_text : b
             else:
                 target_dict.update({f"{item}_year" : current_year})
 
-            target_dict.update({f"{item}_timehalf" : datetime_obj.time().isoformat()})
+            target_dict.update({f"{item}_timehalf" : datetime_obj.time().isoformat("minutes")})
         else:
             target_dict.update({f"{item}_day" : 1})
 
@@ -129,10 +129,10 @@ def splitTime(time_split_list : list[str], target_dict : dict, month_as_text : b
                 target_dict.update({f"{item}_month" : 1})
 
             if two_digit_year:
-                target_dict.update({f"{item}_year" : 70})
+                target_dict.update({f"{item}_year" : 13})
             else:
-                target_dict.update({f"{item}_year" : 1970})
+                target_dict.update({f"{item}_year" : 2513})
 
-            target_dict.update({f"{item}_timehalf" : "07:00:00"})
+            target_dict.update({f"{item}_timehalf" : "07:00"})
 
     return target_dict

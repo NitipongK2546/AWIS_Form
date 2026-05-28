@@ -2,7 +2,7 @@ from django import forms
 import warrant_form.forms_central as CentralForm
 
 arrest_result_choices = (
-    (0, "ยังไม่ได้รายงานผล"),
+    # (0, "ยังไม่ได้รายงานผล"),
     (1, "จับได้"),
     (2, "อื่น ๆ")
 )

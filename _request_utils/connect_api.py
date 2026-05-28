@@ -34,7 +34,7 @@ def toDjangoJsonResponse(response : Response) -> JsonResponse:
 # API REQUEST
 
 # 1.
-def get_health_check(version : str) -> bool:
+def get_health_check(version : str):
     base_url = RequestUtils.get_full_url_from_env()
     parameter = [version, "healthcheck"]
     

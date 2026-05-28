@@ -33,37 +33,42 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
   <div class="page-title">สถิติการส่งคำร้อง</div>
 
   <!-- Stat cards -->
-  <div class="stat-section-label">อยู่ในกระบวนการ</div>
-  <div class="stat-grid" style="grid-template-columns: repeat(5, 1fr); margin-bottom: 1rem;">
-    <a href="{% url 'forms:draft-page' %}" class="stat-card">
-      <div class="stat-label">คำร้องทั้งหมด</div>
+  <div class="stat-section-label">คำร้องที่อยู่ระหว่างกระบวนการ</div>
+  <div class="stat-grid" style="grid-template-columns: repeat(5, 1fr);">
+    <a href="?" class="stat-card-red">
+      <div class="stat-label">ร่างคำร้องทั้งหมด</div>
       <div class="stat-number">{{ total_count }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'dashboard:approve_table_page' %}" class="stat-card-yellow">
+    <a href="?status=10" class="stat-card-yellow">
       <div class="stat-label">รอการพิจารณา</div>
       <div class="stat-number">{{ unsent_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-blue">
+    <a href="?status=20" class="stat-card-blue">
       <div class="stat-label">รอศาลตอบรับ</div>
       <div class="stat-number">{{ sent_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="{% url 'dashboard:accept_table_page' %}" class="stat-card-green">
-      <div class="stat-label">รอรายงานหมายจับ</div>
+    <a href="?status=23" class="stat-card-green">
+      <div class="stat-label">รอรายงานผลหมายจับ</div>
       <div class="stat-number">{{ unreported_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
-    <a href="?status=25" class="stat-card" style="background: #334700;">
-      <div class="stat-label">เสร็จสิ้น</div>
+    <a href="?status=25" class="stat-card" style="background-color: rgb(51, 71, 0);">
+      <div class="stat-label">เสร็จสมบูรณ์แล้ว</div>
       <div class="stat-number">{{ all_reported_form }}</div>
       <div class="stat-unit">ร่าง</div>
     </a>
   </div>
 
   <div class="stat-section-label">คำร้องที่มีปัญหา</div>
-  <div class="stat-grid" style="grid-template-columns: repeat(2, minmax(0, 200px)); margin-bottom: 1.25rem;">
+  <div class="stat-grid" style="grid-template-columns: repeat(3, minmax(0, 200px)); margin-bottom: 1.25rem;">
+    <a href="?status=11" class="stat-card-yellow">
+      <div class="stat-label">ไม่ผ่านการพิจารณา</div>
+      <div class="stat-number">{{ unapproved_form }}</div>
+      <div class="stat-unit">ร่าง</div>
+    </a>
     <a href="?status=99" class="stat-card" style="background: #2C2C2A;">
       <div class="stat-label">ถูกยกเลิก</div>
       <div class="stat-number">{{ canceled_form }}</div>

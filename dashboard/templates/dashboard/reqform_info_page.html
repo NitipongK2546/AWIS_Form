@@ -290,16 +290,19 @@
                                 <a href="{% url 'forms:view_single_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}" class="action-btn action-btn-primary">ดูหมายจับ</a>
 
                                 {% if warrant_obj.court_injunction == 1 %}
-                                <a class="action-btn action-btn-download file-download" href="#">⬇ ดาวน์โหลดไฟล์จากศาล</a>
+                                <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno  %}">⬇ ดาวน์โหลดไฟล์จากศาล</a>
                                 {% else %}
                                 <a class="action-btn action-btn-download file-download" href="{% url 'dashboard:download_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">⬇ ดาวน์โหลดไฟล์</a>
                                 {% endif %}
-                            
+                                
+                                {% if user_role == "ผู้อนุมัติ" %}
                                 {% if warrant_obj.court_injunction == 1 %}
                                 <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}" class="action-btn action-btn-success">รายงานผลหมาย</a>
                                 {% endif %}
+                                {% endif %}
                                 # Bypass
                                 <a href="{% url 'dashboard:report_warrant' reqform.req_no_plaintiff warrant_obj.warrant.woa_refno %}">รายงานผลหมาย</a>
+                                
                             </div>
 
                         </div>
@@ -322,10 +325,12 @@
             </div>
         
             <!-- ── การดำเนินการ ────────────────────────────────────────── -->
+            
             <div class="card">
                 <div class="card-header">
                     <span class="info-card-header-title">การดำเนินการ</span>
                 </div>
+                {% if user_role == "ผู้อนุมัติ" %}
                 <div class="card-body">
                     <div class="card-action-row" style="display: flex;justify-content: flex-end;gap: 10px; margin-top: 0; padding-top: 0; border-top: none;">
                         {% if action == "report" %}
@@ -356,6 +361,17 @@
                         {% endif %}
                     </div>
                 </div>
+                {% else %}
+                <div class="card-body">
+                    {% if status_choice == 25 %}
+                    <div>สิ้นสุดการส่งคำร้อง</div>
+                    {% elif status_choice == 11 %}
+                    <a href="{% url 'forms:view-draft-container' draft %}" class="action-btn action-btn-primary">แก้ไขคำร้อง</a>
+                    {% else %}
+                    <div>รอผู้ร้องจัดการต่อ</div>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
         </div><!-- /LEFT: main content-->
 
@@ -377,7 +393,7 @@
                   </div>
                 </li>
 
-                <li class="tl-item {% if s > 2 %}done{% elif s == 2 %}pending{% else %}upcoming{% endif %}">
+                <li class="tl-item {% if status_choice == 99 %}canceled{% elif s > 2 %}done{% elif s == 2 %}pending{% else %}upcoming{% endif %}">
                   <div class="tl-dot"></div>
                   <div class="tl-content">
                     <div class="tl-title">พิจารณาคำร้องก่อนส่งไปศาล</div>
@@ -385,6 +401,7 @@
                       {% if s > 2 %}เสร็จสิ้น
                       {% elif s == 2 %}
                         {% if status_choice == 11 %}ไม่ผ่านการพิจารณา
+                        {% elif status_choice == 99 %}ยกเลิกคำร้อง
                         {% else %}รอดำเนินการ{% endif %}
                       {% else %}ยังไม่ถึง{% endif %}
                     </div>
@@ -418,10 +435,9 @@
                   <div class="tl-content">
                     <div class="tl-title">รายงานผลการจับกุม</div>
                     <div class="tl-date">
-                      {% if s == 5 %}
+                      {% if s >= 5 %}
                         {% if status_choice == 25 %}รายงานผลสำเร็จ
                         {% elif status_choice == 24 %}จับไม่สำเร็จ
-                        {% elif status_choice == 99 %}ยกเลิกคำร้อง
                         {% else %}รอดำเนินการ{% endif %}
                       {% else %}ยังไม่ถึง{% endif %}
                     </div>
