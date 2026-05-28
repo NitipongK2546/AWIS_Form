@@ -110,7 +110,7 @@
                 </div>
               </div>
 
-              <div class="form-group">
+              <div class="form-group" id="other_text_container">
                 <label class="form-label">รายละเอียดเพิ่มเติม</label>
                 <div class="textarea-wrapper">
                   {{ report_form.arrest_result_other_text }}
@@ -195,6 +195,9 @@
   </div><!-- /page-wrapper -->
 
   <script>
+    const arrest_result_selector = document.getElementById("id_arrest_result")
+    const other_text_container = document.getElementById("other_text_container")
+
     const report_warrant_form = document.getElementById("report-warrant-form");
     const report_button = document.getElementById("report-btn");
 
@@ -202,11 +205,24 @@
     const arrest_officer_name = document.getElementById("id_arrest_officer_name")
 
     function checkInput() {
-        const other_text_filled = arrest_result_other_text.value.trim() !== "";
-        const officer_name_filled = arrest_officer_name.value.trim() !== "";
+      const other_text_filled = arrest_result_other_text.value.trim() !== "";
+      const officer_name_filled = arrest_officer_name.value.trim() !== "";
+
+      if (arrest_result_selector.value == 1) {
+        arrest_result_other_text.disabled = true
+        other_text_container.style = "display: none;"
+        
+        report_button.disabled = !(officer_name_filled);
+      }
+      else {
+        other_text_container.style = "display: block;"
+        arrest_result_other_text.disabled = false
 
         report_button.disabled = !(other_text_filled && officer_name_filled);
+      }
     }
+
+    arrest_result_selector.addEventListener("change", checkInput);
 
     arrest_result_other_text.addEventListener("input", checkInput);
     arrest_officer_name.addEventListener("input", checkInput);
