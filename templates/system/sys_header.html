@@ -145,9 +145,31 @@
           white-space: nowrap;
         }
 
-        .btn-logout:hover {
-          background: #ffe0e0;
+        .status-pill {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          background: rgba(255,255,255,0.12);
+          border-radius: 999px;
+          padding: 4px 10px;
+          font-size: 12px;
+          color: rgba(255,255,255,0.85);
+          white-space: nowrap;
+          border: 1px solid rgba(255,255,255,0.2);
+          transition: background 0.2s;
         }
+
+        .status-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: #aaa;
+          flex-shrink: 0;
+          transition: background 0.3s;
+        }
+
+        .status-dot.ok   { background: #4ade80; box-shadow: 0 0 5px rgba(74,222,128,0.7); }
+        .status-dot.err  { background: #f87171; box-shadow: 0 0 5px rgba(248,113,113,0.7); }
       </style>
 
       <div class="header-full">
@@ -170,8 +192,9 @@
 
         <!-- User area -->
         <div class="user-area">
-          <div id="server-status" style="padding: 4px; border-radius: 8px; min-width: 250px; text-align: center; background-color: grey; color: white; border: 2px solid white;">
-            กำลังตรวจสอบการเชื่อมต่อ
+          <div id="server-status" class="status-pill">
+            <span class="status-dot" id="status-dot"></span>
+            <span id="status-text">กำลังตรวจสอบ...</span>
           </div>
           <div class="user-avatar">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -195,24 +218,26 @@
     });
   </script>
   <script>
-    const statusDiv = shadow.getElementById("server-status");
+    const statusDot  = shadow.getElementById("status-dot");
+    const statusText = shadow.getElementById("status-text");
 
     async function checkServerStatus() {
+      try {
+        const response = await fetch("/api/internal/api_health_check/", { cache: "no-store" });
+        const data = await response.json();
 
-      const response = await fetch("/api/internal/api_health_check/", {
-          cache: "no-store"
-      });
-
-      const data = await response.json();
-
-      if (data.status == 200) {
-          statusDiv.textContent = "เชื่อมต่อกับศาลแล้ว";
-          statusDiv.style.backgroundColor = "green";
-      } else {
-          statusDiv.textContent = "เกิดปัญญาในการเชื่อมต่อกับศาล";
-          statusDiv.style.backgroundColor = "red";
+        if (data.status == 200) {
+          statusDot.className  = "status-dot ok";
+          statusText.textContent = "เชื่อมต่อกับศาลแล้ว";
+        } else {
+          statusDot.className  = "status-dot err";
+          statusText.textContent = "เชื่อมต่อกับศาลไม่ได้";
+        }
+      } catch {
+        statusDot.className  = "status-dot err";
+        statusText.textContent = "เชื่อมต่อกับศาลไม่ได้";
       }
-  }
+    }
 
   checkServerStatus();
 
