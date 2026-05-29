@@ -123,7 +123,15 @@
       <div class="card">
         <div class="card-header">
           <h2><i class="ti ti-file-certificate" aria-hidden="true"></i>หมายจับทั้งหมด</h2>
-          <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}" class="btn btn-add bypass-btn">
+          <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}"
+          {% if is_reqform_filled %}
+          class="btn btn-add bypass-btn"
+          {% else %}
+          class="btn btn-add bypass-btn disabled-link"
+          {% endif %}
+          onclick="ahrefDialog(event, this, false, {},
+          'ต้องการเพิ่มหมายจับหรือไม่ จะมีหมายจับเท่านั้นอันแรกเท่านั้น ที่จะดึงข้อมูลจากคำร้อง')"
+          >
             <i class="ti ti-plus" aria-hidden="true"></i>เพิ่มหมายจับ
           </a>
         </div>
@@ -162,7 +170,7 @@
           {% empty %}
           <div class="empty-state">
             <i class="ti ti-inbox" aria-hidden="true"></i>
-            <p>ยังไม่มีหมายจับ กรุณาเพิ่มหมายจับก่อนสร้างคำร้อง</p>
+            <p>ยังไม่มีหมายจับ กรุณากรอกคำร้องก่อนเพิ่มหมายจับ</p>
           </div>
           {% endfor %}
         </div>

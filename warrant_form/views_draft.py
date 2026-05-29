@@ -102,14 +102,14 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
         "acc_card_id":      "รหัสบัตรประจำตัวผู้ต้องหา",
     }
 
-    missing_fields = []
+    reqform_missing_fields = []
     reqform_draft = getattr(draft_container, "reqform_draft", None)
     if reqform_draft:
         for field, label in REQUIRED_FIELDS.items():
             value = getattr(reqform_draft, field, None)
             # ถือว่าว่างถ้าเป็น None หรือ string ว่าง
             if value is None or value == "":
-                missing_fields.append(label)
+                reqform_missing_fields.append(label)
 
     # ---- เช็ค field สำคัญของหมายจับที่ยังกรอกไม่ครบ ----
     WARRANT_REQUIRED_FIELDS = {
@@ -132,7 +132,7 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
     warrants_unfinished_list = (sublist[1] for sublist in warrant_with_missing)
 
     all_filled = (
-        (len(missing_fields) == 0) and
+        (len(reqform_missing_fields) == 0) and
         (all(not warrant for warrant in warrants_unfinished_list)) and
         (draft_container.warrant_drafts.count() > 0)
     )
@@ -142,7 +142,8 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
         "ownership_form": ownership_form,
         "is_owner": is_owner,
         "not_owner_error": not_owner_error,
-        "missing_fields": missing_fields,
+        "missing_fields": reqform_missing_fields,
+        "is_reqform_filled": (len(reqform_missing_fields) == 0),
         "warrant_with_missing": warrant_with_missing,
         "all_fields_filled": all_filled
     })
@@ -379,40 +380,26 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
 
             warrrant_wait_list : list[dict] = []
 
-            if draft_warrants.count() != existing_warrants.count():
-                existing_reqform.warrants.all().delete()
+            existing_reqform.warrants.all().delete()
 
-                for draft in draft_warrants:
-                    warrant = WarrantDataModel(
-                        **draft.toRealWarrant()
-                    )
-                    warrrant_wait_list.append(
-                        (warrant, draft)
-                    )
-                
-                for count, warrant in enumerate(warrrant_wait_list):
-                    new_woa_refno = woa_refno_generate(
-                        existing_reqform.req_no_plaintiff, count
-                    )
-                    warrant[0].woa_refno = new_woa_refno
-                    warrant[1].woa_refno = new_woa_refno
+            for draft in draft_warrants:
+                warrant = WarrantDataModel(
+                    **draft.toRealWarrant()
+                )
+                warrrant_wait_list.append(
+                    (warrant, draft)
+                )
+            
+            for count, warrant in enumerate(warrrant_wait_list):
+                new_woa_refno = woa_refno_generate(
+                    existing_reqform.req_no_plaintiff, count
+                )
+                warrant[0].woa_refno = new_woa_refno
+                warrant[1].woa_refno = new_woa_refno
 
-                    warrant[0].save()
-                    warrant[1].save()
-                    existing_reqform.warrants.add(warrant[0])
-            else:            
-                for draft in draft_warrants:
-                    warrant_data =  draft.toRealWarrant()
-                    warrrant_wait_list.append(warrant_data)
-
-                for key, value in selected_draft.reqform_draft.toRealReqform(no_draft=True).items():
-                    setattr(existing_reqform, key, value)
-
-                for index, warrant in enumerate(existing_warrants):
-                    for key, value in warrrant_wait_list[index].items():
-                        setattr(warrant, key, value)
-
-                    warrant.save()
+                warrant[0].save()
+                warrant[1].save()
+                existing_reqform.warrants.add(warrant[0])
 
             existing_reqform.save()
 
