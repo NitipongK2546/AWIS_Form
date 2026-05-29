@@ -102,14 +102,14 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
         "acc_card_id":      "รหัสบัตรประจำตัวผู้ต้องหา",
     }
 
-    missing_fields = []
+    reqform_missing_fields = []
     reqform_draft = getattr(draft_container, "reqform_draft", None)
     if reqform_draft:
         for field, label in REQUIRED_FIELDS.items():
             value = getattr(reqform_draft, field, None)
             # ถือว่าว่างถ้าเป็น None หรือ string ว่าง
             if value is None or value == "":
-                missing_fields.append(label)
+                reqform_missing_fields.append(label)
 
     # ---- เช็ค field สำคัญของหมายจับที่ยังกรอกไม่ครบ ----
     WARRANT_REQUIRED_FIELDS = {
@@ -132,7 +132,7 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
     warrants_unfinished_list = (sublist[1] for sublist in warrant_with_missing)
 
     all_filled = (
-        (len(missing_fields) == 0) and
+        (len(reqform_missing_fields) == 0) and
         (all(not warrant for warrant in warrants_unfinished_list)) and
         (draft_container.warrant_drafts.count() > 0)
     )
@@ -142,7 +142,8 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
         "ownership_form": ownership_form,
         "is_owner": is_owner,
         "not_owner_error": not_owner_error,
-        "missing_fields": missing_fields,
+        "missing_fields": reqform_missing_fields,
+        "is_reqform_filled": (len(reqform_missing_fields) == 0),
         "warrant_with_missing": warrant_with_missing,
         "all_fields_filled": all_filled
     })
