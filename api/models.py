@@ -14,9 +14,7 @@ class HealthCheckStatus(models.Model):
                 status=current_status
             )
         else:
-            HealthCheckStatus.objects.first(
-                status=current_status
-            ).delete()
+            HealthCheckStatus.objects.first().delete()
             HealthCheckStatus.objects.create(
                 status=current_status
             )
