@@ -379,40 +379,26 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
 
             warrrant_wait_list : list[dict] = []
 
-            if draft_warrants.count() != existing_warrants.count():
-                existing_reqform.warrants.all().delete()
+            existing_reqform.warrants.all().delete()
 
-                for draft in draft_warrants:
-                    warrant = WarrantDataModel(
-                        **draft.toRealWarrant()
-                    )
-                    warrrant_wait_list.append(
-                        (warrant, draft)
-                    )
-                
-                for count, warrant in enumerate(warrrant_wait_list):
-                    new_woa_refno = woa_refno_generate(
-                        existing_reqform.req_no_plaintiff, count
-                    )
-                    warrant[0].woa_refno = new_woa_refno
-                    warrant[1].woa_refno = new_woa_refno
+            for draft in draft_warrants:
+                warrant = WarrantDataModel(
+                    **draft.toRealWarrant()
+                )
+                warrrant_wait_list.append(
+                    (warrant, draft)
+                )
+            
+            for count, warrant in enumerate(warrrant_wait_list):
+                new_woa_refno = woa_refno_generate(
+                    existing_reqform.req_no_plaintiff, count
+                )
+                warrant[0].woa_refno = new_woa_refno
+                warrant[1].woa_refno = new_woa_refno
 
-                    warrant[0].save()
-                    warrant[1].save()
-                    existing_reqform.warrants.add(warrant[0])
-            else:            
-                for draft in draft_warrants:
-                    warrant_data =  draft.toRealWarrant()
-                    warrrant_wait_list.append(warrant_data)
-
-                for key, value in selected_draft.reqform_draft.toRealReqform(no_draft=True).items():
-                    setattr(existing_reqform, key, value)
-
-                for index, warrant in enumerate(existing_warrants):
-                    for key, value in warrrant_wait_list[index].items():
-                        setattr(warrant, key, value)
-
-                    warrant.save()
+                warrant[0].save()
+                warrant[1].save()
+                existing_reqform.warrants.add(warrant[0])
 
             existing_reqform.save()
 

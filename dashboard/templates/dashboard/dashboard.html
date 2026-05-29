@@ -19,10 +19,10 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 
 {% block body %}
 <div class="page-wrapper">
-
   <!-- Page title -->
   <div class="page-title">หน้าหลัก</div>
 
+  {% if user_role != "ผู้ดูแลระบบ" %}
   <!-- Stat cards -->
   <div class="stat-grid">
     <a href="?status=1" class="stat-card">
@@ -126,6 +126,11 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </table>
     </div>
   </div>
+  {% else %}
+  <div>
+    ไม่ได้รับอนุญาตให้สร้างคำร้อง
+  </div>
+  {% endif %}
 
 </div>
 {% endblock %}
