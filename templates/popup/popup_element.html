@@ -1,9 +1,57 @@
 <dialog id="dialog-box">
     <p id="text-label"></p>
-    <button id="dialog-confirm">ใช่</button>
-    <button id="dialog-cancel">ไม่ใช่</button>
+    <div id="dialog-choices">
+        <button id="dialog-confirm" class="dialog-btn">ใช่</button>
+        <button id="dialog-cancel" class="dialog-btn">ไม่ใช่</button>
+    </div>
 </dialog>
+<style>
+    #dialog-box {
+        border: none;
+        border-radius: 12px;
+        padding: 20px;
+        width: 400px;
 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+        background: white;
+        color: black;
+    }
+    p#text-label {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    div#dialog-choices {
+        justify-content: center;
+        display: flex;
+        gap: 48px;
+    }
+
+    div button.dialog-btn {
+        text-align: center;
+        width: 80px;
+        padding: 8px 16px;
+        border: 2px solid black;
+        border-radius: 7px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+        text-decoration: none;
+        transition: background .15s;
+    }
+
+    button#dialog-confirm {
+        background-color: green;
+        color: white;
+    }
+
+    button#dialog-cancel {
+        background-color: red;
+        color: white;
+    }
+</style>
 <script>
 const dialog_element = document.getElementById('dialog-box');
 const text_label = document.getElementById('text-label');

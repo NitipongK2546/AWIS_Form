@@ -34,24 +34,43 @@ def get_province(request : HttpRequest) -> JsonResponse:
 def fetch_health_check(request : HttpRequest) -> JsonResponse:
     
     try:
-        data = AWISConnect.get_health_check("v1")
-
         result = False
 
-        if data.get("status") == "ok":
-            result = True
-        else:
-            result = False
-
         latest_check = HealthCheckStatus.objects.last()
-        if not latest_check:
-            HealthCheckStatus.updateStatus(result)
-        elif timezone.now() >= latest_check.last_date + timedelta(minutes=30):
-            HealthCheckStatus.updateStatus(result)
 
-        return JsonResponse({
+        # If check has never been performed.
+        # Or if check was 5 minutes old.
+        if not latest_check:
+            data = AWISConnect.get_health_check("v1")
+
+            if data.get("status") == "ok":
+                result = True
+            else:
+                result = False
+
+            HealthCheckStatus.updateStatus(result)
+        elif timezone.now() >= latest_check.last_date + timedelta(minutes=5):
+            data = AWISConnect.get_health_check("v1")
+
+            if data.get("status") == "ok":
+                result = True
+            else:
+                result = False
+
+            HealthCheckStatus.updateStatus(result)
+        else:
+            result = HealthCheckStatus.isHealthOK()
+        
+        if result:
+            return JsonResponse({
             "status": 200,
         })
+        
+        # Not true, API down.
+        return JsonResponse({
+            "status": 500,
+        })
+    
     except:
         return JsonResponse({
             "status": 500,
