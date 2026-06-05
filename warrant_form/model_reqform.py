@@ -77,6 +77,7 @@ class ReqformDataModel(models.Model):
     plaintiff = models.CharField(max_length=400)
     accused = models.CharField(max_length=400)
     
+    req_title = models.CharField(blank=True, max_length=20)
     req_name = models.CharField(max_length=300)
     req_pos = models.CharField(max_length=400)
     req_age = models.PositiveIntegerField()
@@ -152,6 +153,7 @@ class ReqformDataModel(models.Model):
 
     #####################################################################3
     # WARRANTS AUTO-FILL SECTION
+    acc_title = models.CharField(blank=True, max_length=20)
     acc_full_name = models.CharField(max_length=250)
     acc_card_type = models.IntegerField(blank=True, null=True)
     acc_card_id = models.CharField(max_length=20)
