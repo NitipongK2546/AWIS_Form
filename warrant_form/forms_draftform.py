@@ -32,6 +32,15 @@ class ReqformDraftModelForm(forms.ModelForm):
         "style": "resize:none; width: 100%;",
         "placeholder": "เหตุผลที่จับกุม"
     }),
+
+    "cause_text_piece_1": forms.Select(
+        choices=[
+            ("นาย", "นาย"),
+            ("นาง", "นาง"),
+            ("นางสาว", "นางสาว"),
+        ]
+    ),
+    "cause_text_piece_3": forms.Select(),
     "charge": forms.Textarea(attrs={
         "rows": 5,
         "cols": 60,

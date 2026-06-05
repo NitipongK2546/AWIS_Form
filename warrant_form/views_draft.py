@@ -44,6 +44,7 @@ def create_draft_main_local_page(request : HttpRequest):
         draft_container=draft_container,
         create_uid=1000010,
         police_station_id="TCCT0001",
+        cause_text_piece_4 = "สำนักงานคณะกรรมการการแข่งขันทางการค้า",
     )
 
     # return redirect("dashboard:dashboard")
@@ -82,7 +83,10 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
 
                 return redirect("forms:view-draft-container", container_id=draft_container.pk)
 
-    ownership_form = OwnershipForm()
+    ownership_form = OwnershipForm(initial={
+        "form_creator": draft_container.form_creator,
+        "form_owner": draft_container.form_owner,
+    })
 
     # ---- เช็ค field สำคัญที่ยังกรอกไม่ครบ ----
     # map: field name -> label ที่แสดงในหน้า
@@ -145,7 +149,8 @@ def view_draft_main_local_page(request : HttpRequest, container_id : int):
         "missing_fields": reqform_missing_fields,
         "is_reqform_filled": (len(reqform_missing_fields) == 0),
         "warrant_with_missing": warrant_with_missing,
-        "all_fields_filled": all_filled
+        "all_fields_filled": all_filled,
+        "warrant_is_zero": (draft_container.warrant_drafts.count() == 0)
     })
     
     

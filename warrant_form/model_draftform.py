@@ -78,6 +78,11 @@ class ReqformDraftDataModel(models.Model):
     cause_type_id = models.IntegerField(blank=True, null=True,  )
     cause_text = models.CharField(blank=True, max_length=500, )
 
+    cause_text_piece_1 = models.CharField(blank=True, max_length=20)  # คำนำหน้า
+    cause_text_piece_2 = models.CharField(blank=True, max_length=200) # ชื่อสกุล
+    cause_text_piece_3 = models.CharField(blank=True, max_length=200) # ฝ่าย
+    cause_text_piece_4 = models.CharField(blank=True, max_length=200) # สังกัด
+
     charge = models.CharField(blank=True, max_length=50, )
     charge_type_1 = models.BooleanField(default=False) 
     charge_type_2 = models.BooleanField(default=False)
