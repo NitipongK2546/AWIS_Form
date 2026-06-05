@@ -23,7 +23,10 @@ from . import views_main_utils as utils
 @login_required
 def dashboard(request : HttpRequest):
     # If user can't access Dashboard page.
-    if not request.user.has_perms(*DashboardPerm.DASHBOARD_PAGE):
+    if not request.user.has_perms(
+        perm_str_list([PermissionType.VIEW,], 
+                PermissionList.DASHBOARD,)
+    ):
         return redirect("dashboard:statistics")
 
     unsent_count = FormAwaitingApproval.objects.filter(
