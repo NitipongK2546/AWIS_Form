@@ -316,7 +316,7 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             return render(request, "errors/400.html", {
                 "reason": "ยังไม่ได้ใส่หมายจับ"
             }, status=400)
-
+        
         warrrant_wait_list : list[tuple] = []
         for draft in selected_draft.warrant_drafts.all():
             warrant = WarrantDataModel(
@@ -327,6 +327,7 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
             )
 
             if WarrantDataModel.objects.filter(woa_refno=warrant.woa_refno).first():
+                print("เลขอ้างอิงของหมายซ้ำกับหมายที่เคยสร้างขึ้น")
                 return render(request, "errors/400.html", {
                     "reason": "เลขอ้างอิงของหมายซ้ำกับหมายที่เคยสร้างขึ้น"
                 }, status=400)
@@ -357,14 +358,13 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
 
             return redirect("dashboard:dashboard")
         except Exception as e:
+            print(str(e))
             if reqform_obj.pk:
                 reqform_obj.delete()
             for warrant in warrrant_wait_list:
-                if warrant.pk:
-                    warrant.delete()
+                if warrant[0].pk:
+                    warrant[0].delete()
 
-            print(str(e))
-            
             return render(request, "errors/400.html", {
                 "reason": "ข้อมูลที่ใส่ลงไปในร่างไม่เพียงพอ"
             }, status=400)
@@ -381,7 +381,6 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                 }, status=400)
             
             draft_warrants = selected_draft.warrant_drafts.all()
-            existing_warrants = existing_reqform.warrants.all()
 
             warrrant_wait_list : list[dict] = []
 
@@ -422,18 +421,19 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
     if not selected_draft:
         raise Http404()
     
-    if request.method == "POST":          
-        existing_reqform = ReqformDataModel.objects.filter(
-            req_no_plaintiff=selected_draft.reqform_draft.req_no_plaintiff
-        ).first()
+    if request.method == "POST":
+        try: 
+            existing_reqform = ReqformDataModel.objects.filter(
+                req_no_plaintiff=selected_draft.reqform_draft.req_no_plaintiff
+            ).first()
 
-        # print(selected_draft.reqform_draft.req_no_plaintiff)
-
-        if existing_reqform:
-            return update_old_reqform()
-            # return HttpResponseBadRequest("OOOFFFF")
-        else:
-            return create_new_reqform()
+            if existing_reqform:
+                return update_old_reqform()
+                # return HttpResponseBadRequest("OOOFFFF")
+            else:
+                return create_new_reqform()
+        except Exception as e:
+            print(str(e))
         
         
     return render(request, "dashboard/confirmation_page.html", {

@@ -254,7 +254,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
             <label class="form-label">ชื่อ-นามสกุล</label>
             {{ draft_form.cause_text_piece_2 }}
           </div>
-          <div id="cause-section-type-two" style="display: none;">
+          <div id="cause-section-type-two">
             <div class="form-group">
               <label class="form-label">ชื่อฝ่าย</label>
               {{ draft_form.cause_text_piece_3 }}
@@ -414,7 +414,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
   const cause_title = document.getElementById("cause-section-title")
   const cause_section_type_2 = document.getElementById("cause-section-type-two")
 
-  cause_type_selector.addEventListener("change", () => {
+  function checkCauseType() {
     if (cause_type_selector.value == 1) {
       cause_title.textContent = "...มาแจ้งความร้องทุกข์ต่อพนักงานสอบสวน"
       cause_section_type_2.style.display = "none"
@@ -423,7 +423,11 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       cause_title.textContent = "ปรากฏจากการสืบสวน/สอบสวนของ..."
       cause_section_type_2.style.display = "block"
     }
-  })
+  }
+
+  cause_type_selector.addEventListener("change", checkCauseType)
+
+  checkCauseType()
 
 </script>
 <script>

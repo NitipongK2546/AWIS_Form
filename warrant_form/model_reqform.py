@@ -97,7 +97,7 @@ class ReqformDataModel(models.Model):
     cause_text_piece_1 = models.CharField(blank=True, max_length=20)  # คำนำหน้า
     cause_text_piece_2 = models.CharField(blank=True, max_length=200) # ชื่อสกุล
     cause_text_piece_3 = models.CharField(blank=True, max_length=200) # ฝ่าย
-    cause_text_piece_4 = models.CharField(blank=True, max_length=200), # สังกัด
+    cause_text_piece_4 = models.CharField(blank=True, max_length=200) # สังกัด
 
     charge = models.CharField(max_length=50, blank=True)
     charge_type_1 = models.BooleanField() 
@@ -302,6 +302,18 @@ class ReqformDataModel(models.Model):
         data_dict = self.convertBacktoFormView(month_as_text=True, two_digit_year=True, buddhist_year=True)
 
         data_dict.update({f"cause_type_id_{self.cause_type_id}": True})
+
+        if self.cause_type_id == 1:
+            assembled_text = self.cause_text_piece_2
+            data_dict.update({f"cause_text_{self.cause_type_id}": assembled_text})
+
+        elif self.cause_type_id == 2:
+            assembled_text = self.cause_text_piece_1 + self.cause_text_piece_2
+
+            org_name = self.cause_text_piece_4
+
+            data_dict.update({f"cause_text_{self.cause_type_id}_1": assembled_text})
+            data_dict.update({f"cause_text_{self.cause_type_id}_2": org_name})
 
         return data_dict
 
