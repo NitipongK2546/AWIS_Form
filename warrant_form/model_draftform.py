@@ -62,6 +62,7 @@ class ReqformDraftDataModel(models.Model):
     plaintiff = models.CharField(blank=True, max_length=400)
     accused = models.CharField(blank=True, max_length=400)
     
+    req_title = models.CharField(blank=True, max_length=20)
     req_name = models.CharField(blank=True, max_length=300)
     req_pos = models.CharField(blank=True, max_length=400)
     req_age = models.PositiveIntegerField(blank=True, null=True, )
@@ -77,6 +78,11 @@ class ReqformDraftDataModel(models.Model):
     # cause_type_id 
     cause_type_id = models.IntegerField(blank=True, null=True,  )
     cause_text = models.CharField(blank=True, max_length=500, )
+
+    cause_text_piece_1 = models.CharField(blank=True, max_length=20)  # คำนำหน้า
+    cause_text_piece_2 = models.CharField(blank=True, max_length=200) # ชื่อสกุล
+    cause_text_piece_3 = models.CharField(blank=True, max_length=200) # ฝ่าย
+    cause_text_piece_4 = models.CharField(blank=True, max_length=200) # สังกัด
 
     charge = models.CharField(blank=True, max_length=50, )
     charge_type_1 = models.BooleanField(default=False) 
@@ -132,6 +138,7 @@ class ReqformDraftDataModel(models.Model):
 
     #####################################################################3
     # WARRANTS AUTO-FILL SECTION
+    acc_title = models.CharField(blank=True, max_length=20)
     acc_full_name = models.CharField(blank=True, max_length=250)
     acc_card_type = models.IntegerField(blank=True, null=True, choices=AccountCardTypeChoices)
     acc_card_id = models.CharField(blank=True, max_length=20)
@@ -168,6 +175,14 @@ class ReqformDraftDataModel(models.Model):
                 "draft_id": self
             })
 
+        if self.cause_type_id == 1:
+            assembled_text = self.cause_text_piece_2
+            dict_main_awis.update({f"cause_text": assembled_text})
+
+        elif self.cause_type_id == 2:
+            assembled_text = self.cause_text_piece_1 + self.cause_text_piece_2
+
+            dict_main_awis.update({f"cause_text": assembled_text})
         return dict_main_awis
     
     def getAccusedInfo(self) -> dict[str]:

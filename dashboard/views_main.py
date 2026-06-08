@@ -20,8 +20,15 @@ from .forms_filter import DashboardFilterForm, StatisticFilterForm
 
 from . import views_main_utils as utils
 
-@perm_req_log(*DashboardPerm.DASHBOARD_PAGE)
+@login_required
 def dashboard(request : HttpRequest):
+    # If user can't access Dashboard page.
+    if not request.user.has_perms(
+        perm_str_list([PermissionType.VIEW,], 
+                PermissionList.DASHBOARD,)
+    ):
+        return redirect("dashboard:statistics")
+
     unsent_count = FormAwaitingApproval.objects.filter(
         approve_status=1
     ).count()

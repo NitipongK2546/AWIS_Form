@@ -104,6 +104,10 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
+          <label class="form-label">คำนำหน้า <span style="color:red;">*</span></label>
+          {{ draft_form.req_title }}
+        </div>
+        <div class="form-group">
           <label class="form-label">ผู้กรอกคำร้อง <span style="color:red;">*</span></label>
           {{ draft_form.req_name }}
         </div>
@@ -150,6 +154,10 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
       </div>
       <div class="card-body">
         <div class="form-group">
+          <label class="form-label">คำนำหน้า <span style="color:red;">*</span></label>
+          {{ draft_form.acc_title }}
+        </div>
+        <div class="form-group">
           <label class="form-label">ชื่อเต็ม <span style="color:red;">*</span></label>
           {{ draft_form.acc_full_name }}
         </div>
@@ -185,7 +193,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
             {{ draft_form.acc_addno }}
           </div>
           <div class="form-group">
-            <label class="form-label">หมู่บ้าน</label>
+            <label class="form-label">หมู่ที่</label>
             {{ draft_form.acc_vilno }}
           </div>
         </div>
@@ -233,7 +241,33 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
           <label class="form-label">ประเภทเหตุผลที่จับกุม</label>
           {{ draft_form.cause_type_id }}
         </div>
-        <div class="form-group">
+        
+        <div id="cause-special-section">
+          <p id="cause-section-title" style="background-color: #587297; border-radius: 8px; color: white; padding: 6px; text-align: center;">
+            ...มาแจ้งความร้องทุกข์ต่อพนักงานสอบสวน
+          </p>
+          <div class="form-group">
+            <label class="form-label">คำนำหน้า</label>
+            {{ draft_form.cause_text_piece_1 }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">ชื่อ-นามสกุล</label>
+            {{ draft_form.cause_text_piece_2 }}
+          </div>
+          <div id="cause-section-type-two">
+            <div class="form-group">
+              <label class="form-label">ชื่อฝ่าย</label>
+              {{ draft_form.cause_text_piece_3 }}
+            </div>
+            <div class="form-group">
+              <label class="form-label">สังกัด</label>
+              {{ draft_form.cause_text_piece_4 }}
+            </div>
+          </div>
+        </div>
+        
+        <hr>
+        <div class="form-group" style="display: none;">
           <label class="form-label">เหตุผลที่จับกุม</label>
           {{ draft_form.cause_text }}
         </div>
@@ -374,6 +408,28 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 {% endblock %}
 
 {% block script %}
+<script>
+  const cause_type_selector = document.getElementById("id_cause_type_id")
+  const cause_section = document.getElementById("cause-special-section")
+  const cause_title = document.getElementById("cause-section-title")
+  const cause_section_type_2 = document.getElementById("cause-section-type-two")
+
+  function checkCauseType() {
+    if (cause_type_selector.value == 1) {
+      cause_title.textContent = "...มาแจ้งความร้องทุกข์ต่อพนักงานสอบสวน"
+      cause_section_type_2.style.display = "none"
+    } 
+    else {
+      cause_title.textContent = "ปรากฏจากการสืบสวน/สอบสวนของ..."
+      cause_section_type_2.style.display = "block"
+    }
+  }
+
+  cause_type_selector.addEventListener("change", checkCauseType)
+
+  checkCauseType()
+
+</script>
 <script>
     const req_province = "{{ req_province|escapejs|default:10 }}"
     const req_district = "{{ req_district|escapejs|default:1001 }}"

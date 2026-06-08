@@ -123,19 +123,28 @@
       <div class="card">
         <div class="card-header">
           <h2><i class="ti ti-file-certificate" aria-hidden="true"></i>หมายจับทั้งหมด</h2>
-          <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}"
-          {% if is_reqform_filled %}
-          class="btn btn-add bypass-btn"
-          {% else %}
-          class="btn btn-add bypass-btn disabled-link"
-          {% endif %}
-          onclick="ahrefDialog(event, this, false, {},
-          'ต้องการเพิ่มหมายจับหรือไม่ จะมีหมายจับเท่านั้นอันแรกเท่านั้น ที่จะดึงข้อมูลจากคำร้อง')"
-          >
-            <i class="ti ti-plus" aria-hidden="true"></i>เพิ่มหมายจับ
-          </a>
+            <a href="{% url 'forms:create-draft-container-warrant' draft_container.pk %}"
+            {% if is_reqform_filled %}
+            class="btn btn-add bypass-btn"
+            {% else %}
+            class="btn btn-add bypass-btn disabled-link"
+            {% endif %}
+
+            {% if warrant_is_zero %}
+            onclick="ahrefDialog(event, this, false, {},
+            'ต้องการเพิ่มหมายจับหรือไม่ จะมีหมายจับเท่านั้นอันแรกเท่านั้น ที่จะดึงข้อมูลจากคำร้อง')"
+            {% endif %}
+            >
+              <i class="ti ti-plus" aria-hidden="true"></i>เพิ่มหมายจับ
+            </a>
         </div>
         <div class="card-body">
+          {% if missing_fields %}
+          <div class="warrant-lock-hint">
+            <i class="ti ti-lock" aria-hidden="true"></i>
+            
+          </div>
+          {% endif %}
           {% for warrant, warrant_missing in warrant_with_missing %}
           <div class="warrant-item">
             <span class="warrant-num">{{ forloop.counter }}.</span>
@@ -170,7 +179,7 @@
           {% empty %}
           <div class="empty-state">
             <i class="ti ti-inbox" aria-hidden="true"></i>
-            <p>ยังไม่มีหมายจับ กรุณากรอกคำร้องก่อนเพิ่มหมายจับ</p>
+            <p>ยังไม่มีหมายจับ กรุณาสร้างร่างคำร้องให้สมบูรณ์ก่อนเพิ่มหมายจับ</p>
           </div>
           {% endfor %}
         </div>
@@ -183,7 +192,7 @@
           <div class="submit-hint">ตรวจสอบข้อมูลให้ครบถ้วนก่อนสร้างคำร้องจริง</div>
         </div>
         <div style="align-items:right;">
-          <a id="save-btn" href="{% url 'forms:save-draft-container' draft_container.pk %}" class="btn btn-primary-blue" 
+          <a id="save-btn" href="{% url 'forms:save-draft-container' draft_container.pk %}" class="btn btn-primary-blue bypass-btn" 
           onclick="ahrefDialog(event, this, false, {},
           'ต้องการบันทึกและออกจากหน้านี้หรือไม่')"
           >
@@ -193,7 +202,7 @@
           {% if not all_fields_filled %}
           class="btn btn-primary-green disabled-link" 
           {% else %}
-          class="btn btn-primary-green"
+          class="btn btn-primary-green bypass-btn"
           {% endif %}
           onclick="ahrefDialog(event, this, true, {
             container_id: '{{ draft_container.pk }}',

@@ -77,6 +77,7 @@ class ReqformDataModel(models.Model):
     plaintiff = models.CharField(max_length=400)
     accused = models.CharField(max_length=400)
     
+    req_title = models.CharField(blank=True, max_length=20)
     req_name = models.CharField(max_length=300)
     req_pos = models.CharField(max_length=400)
     req_age = models.PositiveIntegerField()
@@ -92,6 +93,11 @@ class ReqformDataModel(models.Model):
     # cause_type_id 
     cause_type_id = models.IntegerField(blank=True, null=True)
     cause_text = models.CharField(max_length=500, blank=True)
+
+    cause_text_piece_1 = models.CharField(blank=True, max_length=20)  # คำนำหน้า
+    cause_text_piece_2 = models.CharField(blank=True, max_length=200) # ชื่อสกุล
+    cause_text_piece_3 = models.CharField(blank=True, max_length=200) # ฝ่าย
+    cause_text_piece_4 = models.CharField(blank=True, max_length=200) # สังกัด
 
     charge = models.CharField(max_length=50, blank=True)
     charge_type_1 = models.BooleanField() 
@@ -147,6 +153,7 @@ class ReqformDataModel(models.Model):
 
     #####################################################################3
     # WARRANTS AUTO-FILL SECTION
+    acc_title = models.CharField(blank=True, max_length=20)
     acc_full_name = models.CharField(max_length=250)
     acc_card_type = models.IntegerField(blank=True, null=True)
     acc_card_id = models.CharField(max_length=20)
@@ -295,6 +302,18 @@ class ReqformDataModel(models.Model):
         data_dict = self.convertBacktoFormView(month_as_text=True, two_digit_year=True, buddhist_year=True)
 
         data_dict.update({f"cause_type_id_{self.cause_type_id}": True})
+
+        if self.cause_type_id == 1:
+            assembled_text = self.cause_text_piece_2
+            data_dict.update({f"cause_text_{self.cause_type_id}": assembled_text})
+
+        elif self.cause_type_id == 2:
+            assembled_text = self.cause_text_piece_1 + self.cause_text_piece_2
+
+            org_name = self.cause_text_piece_4
+
+            data_dict.update({f"cause_text_{self.cause_type_id}_1": assembled_text})
+            data_dict.update({f"cause_text_{self.cause_type_id}_2": org_name})
 
         return data_dict
 

@@ -41,7 +41,7 @@ def _login_via_erp(request: HttpRequest, form_data : dict, form : UserAuthForm):
     
     def _block_wrong_username_password():
         deny_reason = {
-            "message": f"Wrong username or password? ({form_data.get("username")})",
+            "message": f"ชื่อหรือรหัสผ่านผิด? ({form_data.get("username")})",
         }
 
         FileLogger.createAccessDeniedLog(request, AccessType.LOGIN, PermissionList.LOGIN_PAGE, deny_reason,)

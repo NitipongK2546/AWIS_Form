@@ -14,6 +14,12 @@ req_case_type_id_choices = [
     (2, "ยาเสพติด"),
 ]
 
+name_title = [
+    ("นาย", "นาย"),
+    ("นาง", "นาง"),
+    ("นางสาว", "นางสาว"),
+]
+
 class FormDraftContainerModelForm(forms.ModelForm):
     class Meta:
         model = FormDraftContainer
@@ -32,6 +38,17 @@ class ReqformDraftModelForm(forms.ModelForm):
         "style": "resize:none; width: 100%;",
         "placeholder": "เหตุผลที่จับกุม"
     }),
+
+    "cause_text_piece_1": forms.Select(
+        choices=name_title
+    ),
+    "acc_title": forms.Select(
+        choices=name_title
+    ),
+    "req_title": forms.Select(
+        choices=name_title
+    ),
+    "cause_text_piece_3": forms.Select(),
     "charge": forms.Textarea(attrs={
         "rows": 5,
         "cols": 60,

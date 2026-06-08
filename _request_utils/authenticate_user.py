@@ -54,7 +54,7 @@ def erp_login_authorize(version : str, request : HttpRequest, storage : str = "c
     if not data.get("authenticated"):
         return {
             "status": 400,
-            "message": "Authentication Failed"
+            "message": "ชื่อหรือรหัสผ่านผิด"
         }
     
     ##############################################################
@@ -71,12 +71,12 @@ def erp_login_authorize(version : str, request : HttpRequest, storage : str = "c
     if not status:
         return {
             "status": 403,
-            "message": "ผู้ใช้ไม่ได้รับอนุญาตให้เข้าใน User Access"
+            "message": "ผู้ใช้ไม่ได้รับอนุญาตให้เข้าใช้งานระบบ AWIS"
         }
     
     return {
         "status": 200,
-        "message": "Success",
+        "message": "สำเร็จ",
         "id": status.user_id,
     }
 

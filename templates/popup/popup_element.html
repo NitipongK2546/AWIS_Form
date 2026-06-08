@@ -1,55 +1,95 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont/tabler-icons.min.css">
 <dialog id="dialog-box">
+
+    <div id="dialog-icon">
+        <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+    </div>
+    
     <p id="text-label"></p>
     <div id="dialog-choices">
-        <button id="dialog-confirm" class="dialog-btn">ใช่</button>
-        <button id="dialog-cancel" class="dialog-btn">ไม่ใช่</button>
+        <button id="dialog-cancel" class="dialog-btn dialog-btn-cancel">ไม่ใช่</button>
+        <button id="dialog-confirm" class="dialog-btn dialog-btn-confirm">ใช่</button>
     </div>
 </dialog>
 <style>
     #dialog-box {
-        border: none;
+        border: 0.5px solid rgba(0,0,0,0.12);
         border-radius: 12px;
-        padding: 20px;
-        width: 400px;
-
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-
+        padding: 1.75rem 1.5rem 1.25rem;
+        width: 340px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
         background: white;
-        color: black;
+        color: #202124;
+        font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
     }
+
+    #dialog-box::backdrop {
+        background: rgba(0,0,0,0.4);
+    }
+
+    #dialog-icon {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 12px;
+    }
+
+    #dialog-icon i {
+        font-size: 28px;
+        color: #B45309; /* สีน้ำตาลทองเข้มสำหรับเส้นไอคอน */
+        background: #FEF3C7; /* พื้นหลังเหลืองอ่อน */
+        border-radius: 50%;
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     p#text-label {
         text-align: center;
-        font-size: 18px;
-        font-weight: bold;
-    }
-    div#dialog-choices {
-        justify-content: center;
-        display: flex;
-        gap: 48px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #202124;
+        margin: 0 0 1.25rem;
+        line-height: 1.5;
     }
 
-    div button.dialog-btn {
-        text-align: center;
-        width: 80px;
-        padding: 8px 16px;
-        border: 2px solid black;
+    div#dialog-choices {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        border-top: 0.5px solid #f0f0f0;
+        padding-top: 1rem;
+    }
+
+    .dialog-btn {
+        padding: 7px 20px;
         border-radius: 7px;
-        font-size: 16px;
+        font-size: 13px;
         font-weight: 500;
         cursor: pointer;
         font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
-        text-decoration: none;
-        transition: background .15s;
+        transition: background .15s, opacity .15s;
     }
 
-    button#dialog-confirm {
-        background-color: green;
-        color: white;
+    .dialog-btn-cancel {
+        background: #fff;
+        color: #444;
+        border: 0.5px solid #dadce0;
     }
 
-    button#dialog-cancel {
-        background-color: red;
-        color: white;
+    .dialog-btn-cancel:hover {
+        background: #f1f3f4;
+    }
+
+    .dialog-btn-confirm {
+        background: #9B1C1C;
+        color: #fff;
+        border: none;
+    }
+
+    .dialog-btn-confirm:hover {
+        background: #7F1D1D;
     }
 </style>
 <script>

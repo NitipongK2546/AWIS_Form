@@ -92,11 +92,8 @@ class DefaultPermission(Enum):
     ) + perm_str_list(
         [T.VIEW,], 
         N.STATISTICS,
-    ) + perm_str_list(
-        [T.VIEW,], 
-        N.DASHBOARD
     )
-
+    
     SYSTEM_SUPERADMIN = perm_str_list_of_all(
         [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE],
         [
