@@ -175,6 +175,14 @@ class ReqformDraftDataModel(models.Model):
                 "draft_id": self
             })
 
+        if self.cause_type_id == 1:
+            assembled_text = self.cause_text_piece_2
+            dict_main_awis.update({f"cause_text": assembled_text})
+
+        elif self.cause_type_id == 2:
+            assembled_text = self.cause_text_piece_1 + self.cause_text_piece_2
+
+            dict_main_awis.update({f"cause_text": assembled_text})
         return dict_main_awis
     
     def getAccusedInfo(self) -> dict[str]:

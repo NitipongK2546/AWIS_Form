@@ -22,7 +22,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
   <!-- Page title -->
   <div class="page-title">หน้าหลัก</div>
 
-  {% if user_role != "ผู้ดูแลระบบ" %}
+  {% if user_role != "ผู้ดูแลระบบ" or user_role != "ผู้ดูแลระดับฝ่าย" %}
   <!-- Stat cards -->
   <div class="stat-grid">
     <a href="?status=1" class="stat-card">
