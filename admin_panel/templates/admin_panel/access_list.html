@@ -1,146 +1,138 @@
 {% extends "admin_panel/base.html" %}
 {% load static %}
 
-
 {% block title %}Access List{% endblock %}
 
 {% block style %}
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'admin_panel/css/select_users.css' %}">
-<style>
-.popup {
-display: none;
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: rgba(0,0,0,0.6);
-}
-
-.popup-content {
-position: relative;
-width: 80%;
-height: 80%;
-margin: 5% auto;
-background: white;
-border-radius: 10px;
-overflow: hidden;
-}
-
-.popup iframe {
-width: 100%;
-height: 100%;
-}
-
-.close {
-position: absolute;
-right: 10px;
-top: 5px;
-font-size: 24px;
-cursor: pointer;
-}
-</style>
 {% endblock %}
 
 {% block content %}
-<div style="display: flexbox; margin: 8px;">
-  <div>
-    <h1>Granted Access Users</h1>
-    <a class="btn_red" href="{% url 'admin_panel:collections' %}">Back</a>
-    <table border="1" style="margin: 10 10px">
-      <tr>
-        <th>#</th>
-        <th>User ID</th>
-        <th>Full Name</th>
-        <th>Department</th>
-        <th>Role</th>
-        <th>Actions</th>
-      </tr>
-      {% for user in allowed_users %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ user.user_id }}</td>
-        <td>{{ user.fullname }}</td>
-        <td>{{ user.department }}</td>
-        <td>
-          <span class="btn"
-          {% if user.role == 10 %}
-          style="background-color: #3498db;">
-          {% elif user.role == 11 %}
-          style="background-color: #21cc0a;">
-          {% elif user.role == 12 %}
-          style="background-color: #dbb732;">
-          {% elif user.role == 99 %}
-          style="background-color: #32cddb;">
-          {% endif %}
-          {{ user.get_role_display }}</span>
-        </td>
-        <td>
-          {% if user.role == 12 or user.role == 99 %}
-          {% include 'module/access_action_admin_user.html' with role_value=user_access.role is_superuser=user_model.is_superuser %}
-          {% else %}
-          {% include 'module/access_action.html' %}
-          {% endif %}
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="5">ไม่มีผู้ที่มีสิทธิเข้าถึงระบบได้</td>
-      </tr>
-      {% endfor %}
-    </table>
+<div class="page-wrapper">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="{% url 'admin_panel:collections' %}">Admin Tools</a>
+    <span class="bc-sep">/</span>
+    <span class="bc-current">ตรวจสอบรายชื่อผู้มีสิทธิ์</span>
   </div>
 
-  <div id="popup" class="popup" style="display: none;">
-    <div class="popup-content">
-      <span class="close" onclick="closePopup()">&times;</span>
-      <div id="loading" style="display: none; text-align: center; align-content: center;">
-      </div>
-      <iframe id="popup-frame" src="" frameborder="0">
-        Waiting...
-      </iframe>
+  <!-- Granted Access Users -->
+  <div class="card">
+    <div class="card-header">
+      <h2>ผู้ใช้ที่มีสิทธิ์เข้าถึงระบบ</h2>
+      <button onclick="openPopup()" class="btn btn-add">
+        <i class="ti ti-plus"></i> เพิ่มสิทธิ์ผู้ใช้
+      </button>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>User ID</th>
+            <th>ชื่อ-นามสกุล</th>
+            <th>แผนก</th>
+            <th>บทบาท</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in allowed_users %}
+          <tr>
+            <td class="td-center td-muted">{{ forloop.counter }}</td>
+            <td class="td-muted">{{ user.user_id }}</td>
+            <td class="td-bold">{{ user.fullname }}</td>
+            <td>{{ user.department }}</td>
+            <td>
+              <span class="role-badge
+                {% if user.role == 10 %}role-officer
+                {% elif user.role == 11 %}role-approver
+                {% elif user.role == 12 %}role-dept-admin
+                {% elif user.role == 99 %}role-superadmin
+                {% endif %}">
+                {{ user.get_role_display }}
+              </span>
+            </td>
+            <td>
+              {% if user.role == 12 or user.role == 99 %}
+                {% include 'module/access_action_admin_user.html' with role_value=user_access.role is_superuser=user_model.is_superuser %}
+              {% else %}
+                {% include 'module/access_action.html' %}
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="td-empty">ไม่มีผู้ที่มีสิทธิ์เข้าถึงระบบ</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
-  <button onclick="openPopup()" style="margin: 10px;">Add Access List</button>
 
-  <div>
-    <h2>บัญชีศาลทั้งหมด</h2>
-    <table border="1" style="margin: 10 10px">
-      <tr>
-        <th>#</th>
-        <th>UID</th>
-        <th>Username</th>
-        <th>Action</th>
-      </tr>
-      {% for user in court_accounts %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ user.api_uid }}</td>
-        <td>{{ user.username }}</td>
-        <td>
-          <a href="{% url 'admin_panel:delete_court_user' user.api_uid %}">ลบบัญชี</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="5">ไม่มีผู้ที่มีสิทธิส่งข้อมูลมาอัพเดตคำร้องได้</td>
-      </tr>
-      {% endfor %}
-    </table>
+  <!-- Court Accounts -->
+  <div class="card">
+    <div class="card-header">
+      <h2>บัญชีศาลทั้งหมด</h2>
+      <button onclick="openCourtPopup()" class="btn btn-add">
+        <i class="ti ti-plus"></i> เพิ่มผู้ใช้ให้กับศาล
+      </button>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>UID</th>
+            <th>Username</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in court_accounts %}
+          <tr>
+            <td class="td-center td-muted">{{ forloop.counter }}</td>
+            <td class="td-muted">{{ user.api_uid }}</td>
+            <td class="td-bold">{{ user.username }}</td>
+            <td>
+              <a href="{% url 'admin_panel:delete_court_user' user.api_uid %}"
+                 class="btn btn-del"
+                 onclick="return confirm('ต้องการลบบัญชีศาลนี้จริงหรือไม่?')">
+                <i class="ti ti-trash"></i> ลบบัญชี
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="td-empty">ไม่มีบัญชีศาลในระบบ</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <div id="court-popup" class="popup" style="display: none;">
-      <div class="popup-content">
-          <span class="close" onclick="closeCourtPopup()">&times;</span>
-          <div id="court-loading" style="display: none; text-align: center; align-content: center;">
-          </div>
-          <iframe id="court-popup-frame" src="" frameborder="0">
-          Waiting...
-          </iframe>
-      </div>
-  </div>
-  <button onclick="openCourtPopup()" style="margin: 10px;">เพิ่มผู้ใช้ให้กับศาล</button>
 </div>
+
+<!-- Popup: Add User -->
+<div id="popup" class="popup-overlay" style="display:none;">
+  <div class="popup-content">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <iframe id="popup-frame" src="" frameborder="0"></iframe>
+  </div>
+</div>
+
+<!-- Popup: Add Court User -->
+<div id="court-popup" class="popup-overlay" style="display:none;">
+  <div class="popup-content">
+    <button class="popup-close" onclick="closeCourtPopup()">&times;</button>
+    <iframe id="court-popup-frame" src="" frameborder="0"></iframe>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block script %}
@@ -148,27 +140,20 @@ cursor: pointer;
 function closePopup() {
   document.getElementById("popup").style.display = "none";
   document.getElementById("popup-frame").src = "";
-  document.getElementById("loading").style.display = "none";
   window.location.reload();
 }
-
 function closeCourtPopup() {
   document.getElementById("court-popup").style.display = "none";
   document.getElementById("court-popup-frame").src = "";
-  document.getElementById("court-loading").style.display = "none";
   window.location.reload();
 }
-
 function openPopup() {
-  document.getElementById("popup").style.display = "block";
+  document.getElementById("popup").style.display = "flex";
   document.getElementById("popup-frame").src = "{% url 'admin_panel:select_users' %}";
-  document.getElementById("loading").style.display = "block";
 }
-
 function openCourtPopup() {
-  document.getElementById("court-popup").style.display = "block";
+  document.getElementById("court-popup").style.display = "flex";
   document.getElementById("court-popup-frame").src = "{% url 'admin_panel:select_court_users' %}";
-  document.getElementById("court-loading").style.display = "block";
 }
 </script>
 {% endblock %}

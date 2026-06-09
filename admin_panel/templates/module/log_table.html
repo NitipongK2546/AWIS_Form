@@ -1,47 +1,52 @@
 {% load static %}
 {% load thai_locale %}
 
-<div id="body-table">
+<div class="table-card">
+  <div class="table-header">
+    <span class="table-header-title">{{ title }}</span>
+    <span style="color:rgba(255,255,255,.5); font-size:12px;">{{ page_obj.paginator.count }} รายการ</span>
+  </div>
+  <div class="table-scroll">
     <table class="styled-table">
-        <thead>
-            <tr>
-                <th>เวลา (UTC+07:00)</th>
-                <th>User ID</th>
-                <th>Username</th>
-                <th>ชื่อเต็ม</th>
-                <th>Action</th>
-                <th>System</th>
-                <th>ข้อมูลที่เกี่ยวข้อง</th>
-                <th>URL</th>
-                <th>หมายเหตุ</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for log in page_obj %}
-            <tr>
-                <td>{{ log.time_logged|buddhist_date }}</td>
-                <td>{{ log.user_id }}</td>
-                <td>{{ log.username }}</td>
-                <td>{{ log.fullname }}</td>
-                <td>{{ log.action }}</td>
-                <td>{{ log.system }}</td>
-                <td>{{ log.relevant_info|default_if_none:"---" }}</td>
-                <td>{{ log.url_path }}</td>
-                <td>{{ log.remark|default_if_none:"---" }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="9">No Log.</td></tr>
-            {% endfor %}
-        </tbody>
+      <thead>
+        <tr>
+          <th>เวลา (UTC+07:00)</th>
+          <th>User ID</th>
+          <th>Username</th>
+          <th>ชื่อเต็ม</th>
+          <th>Action</th>
+          <th>System</th>
+          <th>ข้อมูลที่เกี่ยวข้อง</th>
+          <th>URL</th>
+          <th>หมายเหตุ</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in page_obj %}
+        <tr>
+          <td class="td-muted">{{ log.time_logged|buddhist_date }}</td>
+          <td class="td-muted">{{ log.user_id }}</td>
+          <td>{{ log.username }}</td>
+          <td>{{ log.fullname }}</td>
+          <td>{{ log.action }}</td>
+          <td class="td-muted">{{ log.system }}</td>
+          <td class="td-muted">{{ log.relevant_info|default_if_none:"—" }}</td>
+          <td class="td-muted">{{ log.url_path }}</td>
+          <td class="td-muted">{{ log.remark|default_if_none:"—" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9" class="td-empty">ไม่มี Log</td></tr>
+        {% endfor %}
+      </tbody>
     </table>
-
-    <div class="pagination">
-        {% if page_obj.has_previous %}
-            <a href="?{{ page_param }}={{ page_obj.previous_page_number }}">previous</a>
-        {% endif %}
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        {% if page_obj.has_next %}
-            <a href="?{{ page_param }}={{ page_obj.next_page_number }}">next</a>
-        {% endif %}
-    </div>
+  </div>
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?{{ page_param }}={{ page_obj.previous_page_number }}">← ก่อนหน้า</a>
+    {% endif %}
+    หน้า {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+      <a href="?{{ page_param }}={{ page_obj.next_page_number }}">ถัดไป →</a>
+    {% endif %}
+  </div>
 </div>
