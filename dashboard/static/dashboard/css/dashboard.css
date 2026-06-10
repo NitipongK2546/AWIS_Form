@@ -311,7 +311,7 @@ html {
 }
 
 .stat-card {
-    background: #5F5E5A;
+    background: #D3D1C7;
     border-radius: 10px;
     padding: 1rem 1.25rem;
     text-decoration: none;
@@ -327,7 +327,7 @@ html {
 }
 
 .stat-card-red {
-    background: #5F2120;
+    background: #F7C1C1;
     border-radius: 10px;
     padding: 1rem 1.25rem;
     text-decoration: none;
@@ -343,7 +343,7 @@ html {
 }
 
 .stat-card-yellow {
-    background: #7A5800;
+    background: #FAC775;
     border-radius: 10px;
     padding: 1rem 1.25rem;
     text-decoration: none;
@@ -359,7 +359,7 @@ html {
 }
 
 .stat-card-blue {
-    background: #185FA5;
+    background: #B5D4F4;
     border-radius: 10px;
     padding: 1rem 1.25rem;
     text-decoration: none;
@@ -375,7 +375,7 @@ html {
 }
 
 .stat-card-green {
-    background: #256025;
+    background: #C0DD97;
     border-radius: 10px;
     padding: 1rem 1.25rem;
     text-decoration: none;
@@ -392,20 +392,20 @@ html {
 
 .stat-label {
     font-size: 12px;
-    color: rgba(255, 255, 255, .7);
+    color: inherit;
+    opacity: .75;
     margin-bottom: 6px;
 }
 
 .stat-number {
     font-size: 30px;
-    font-weight: 600;
-    color: #fff;
+    font-weight: 500;
     line-height: 1;
 }
 
 .stat-unit {
     font-size: 12px;
-    color: rgba(255, 255, 255, .6);
+    opacity: .65;
     margin-top: 4px;
 }
 
