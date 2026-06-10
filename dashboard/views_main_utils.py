@@ -49,15 +49,43 @@ color_val_sent = {
 
 def _format_filter(incoming_dict : dict):
     filter = {}
+    draft_filter = {}
 
     if incoming_dict.get("status"):
         filter.update({
             "status": incoming_dict.get("status")
         })
 
+    if incoming_dict.get("req_year"):
+        filter.update({
+            "form__req_year": incoming_dict.get("req_year")
+        })
+        draft_filter.update({
+            "reqform_draft__req_year": incoming_dict.get("req_year")
+        })
+
+    if incoming_dict.get("accused"):
+        filter.update({
+            "form__accused": incoming_dict.get("accused")
+        })
+        draft_filter.update({
+            "reqform_draft__accused": incoming_dict.get("accused")
+        })
+
+    if incoming_dict.get("req_name"):
+        filter.update({
+            "form__req_name": incoming_dict.get("req_name")
+        })
+        draft_filter.update({
+            "reqform_draft__req_name": incoming_dict.get("req_name")
+        })
+
     if incoming_dict.get("req_no_plaintiff"):
         filter.update({
             "form__req_no_plaintiff": incoming_dict.get("req_no_plaintiff"),
+        })
+        draft_filter.update({
+            "reqform_draft__req_no_plaintiff": "IMPOSSIBLE_VALUE_TO_EXCLUDE_DRAFT"
         })
 
     start_date = incoming_dict.get("start_date")
@@ -80,8 +108,11 @@ def _format_filter(incoming_dict : dict):
         filter.update({
             "form__req_date__range": (start_obj, end_obj),
         })
+        draft_filter.update({
+            "last_edit__range": (start_obj, end_obj),
+        })
         
-    return filter
+    return filter, draft_filter
 
 def append_draft_data(target_list : list[dict], id_list : list[str], form_unsent : list[FormDraftContainer], banned_id_list : list[str]):
     for draft in form_unsent:
@@ -175,9 +206,9 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
 
     if form_used_for_filter.is_valid():
         data = form_used_for_filter.cleaned_data
-        filter_data = _format_filter(data)
+        filter_data, draft_filter = _format_filter(data)
     else:
-        filter_data = {}
+        filter_data, draft_filter = {}
 
     wanted_status = filter_data.pop("status", None)
     if isinstance(wanted_status, str):
@@ -187,8 +218,8 @@ def get_dashboard_objs(request : HttpRequest , form_used_for_filter : Form):
 
     seven_days_ago = timezone.now() - timezone.timedelta(days=7)
 
-    written_draft = FormDraftContainer.objects.filter(**filter_data).filter(form_creator=request.user, reqform_draft__reqformdatamodel__isnull=True)
-    owned_draft = FormDraftContainer.objects.filter(**filter_data).filter(form_owner=request.user, reqform_draft__reqformdatamodel__isnull=True)
+    written_draft = FormDraftContainer.objects.filter(**draft_filter).filter(form_creator=request.user, reqform_draft__reqformdatamodel__isnull=True)
+    owned_draft = FormDraftContainer.objects.filter(**draft_filter).filter(form_owner=request.user, reqform_draft__reqformdatamodel__isnull=True)
     available_drafts = written_draft.union(owned_draft)
     available_drafts_count = len(available_drafts)
 
@@ -279,9 +310,9 @@ def get_statistics_objs(request : HttpRequest, form_used_for_filter : Form):
 
     if form_used_for_filter.is_valid():
         data = form_used_for_filter.cleaned_data
-        filter_data = _format_filter(data)
+        filter_data, draft_filter_unused = _format_filter(data)
     else:
-        filter_data = {}
+        filter_data, draft_filter_unused = {}
 
     wanted_status = filter_data.pop("status", None)
     if isinstance(wanted_status, str):
