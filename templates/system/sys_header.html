@@ -184,9 +184,13 @@
 
         <!-- Nav links -->
         <nav class="nav-links">
+        {% if user_role == "ผู้อนุมัติ" or user_role == "เจ้าหน้าที่" or request.user.is_superuser %}
           <a class="nav-link" href="{% url 'dashboard:dashboard' %}" id="nav-dashboard">หน้าหลัก</a>
+        {% endif %}
+        {% if user_role == "ผู้ดูแลระดับฝ่าย" or user_role == "ผู้ดูแลระบบ" or request.user.is_superuser  %}
           <a class="nav-link" href="{% url 'dashboard:statistics' %}" id="nav-stats">รายงานสถิติ</a>
-          {% comment %} <a class="nav-link" href="{% url 'forms:draft-page' %}" id="nav-draft">ร่างคำร้อง</a> {% endcomment %}
+
+          {% endif %}
           <a class="nav-link" href="{% url 'admin_panel:collections' %}" id="nav-admin">Admin Page</a>
         </nav>
 
