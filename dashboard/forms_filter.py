@@ -78,16 +78,16 @@ def get_req_name_choices():
     return [("", "-----")] + list(choices)
 
 class DashboardFilterForm(forms.Form):
-    req_no_plaintiff = forms.ChoiceField(
-        choices=get_req_no_plaintiff_choices,
+    req_no_plaintiff = forms.CharField(
+        max_length=200,
         required=False,
     )
-    req_name = forms.ChoiceField(
-        choices=get_req_name_choices,
+    req_name = forms.CharField(
+        max_length=200,
         required=False,
     )
-    accused = forms.ChoiceField(
-        choices=get_accused_choices,
+    accused = forms.CharField(
+        max_length=200,
         required=False,
     )
 
@@ -135,16 +135,16 @@ class StatisticFilterForm(forms.Form):
         required=False,
     )
 
-    req_no_plaintiff = forms.ChoiceField(
-        choices=get_req_no_plaintiff_choices,
+    req_no_plaintiff = forms.CharField(
+        max_length=200,
         required=False,
     )
-    req_name = forms.ChoiceField(
-        choices=get_req_name_choices,
+    req_name = forms.CharField(
+        max_length=200,
         required=False,
     )
-    accused = forms.ChoiceField(
-        choices=get_accused_choices,
+    accused = forms.CharField(
+        max_length=200,
         required=False,
     )
 

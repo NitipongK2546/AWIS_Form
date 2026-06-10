@@ -66,23 +66,23 @@ def _format_filter(incoming_dict : dict):
 
     if incoming_dict.get("accused"):
         filter.update({
-            "form__accused": incoming_dict.get("accused")
+            "form__accused__contains": incoming_dict.get("accused")
         })
         draft_filter.update({
-            "reqform_draft__accused": incoming_dict.get("accused")
+            "reqform_draft__accused__contains": incoming_dict.get("accused")
         })
 
     if incoming_dict.get("req_name"):
         filter.update({
-            "form__req_name": incoming_dict.get("req_name")
+            "form__req_name__contains": incoming_dict.get("req_name")
         })
         draft_filter.update({
-            "reqform_draft__req_name": incoming_dict.get("req_name")
+            "reqform_draft__req_name__contains": incoming_dict.get("req_name")
         })
 
     if incoming_dict.get("req_no_plaintiff"):
         filter.update({
-            "form__req_no_plaintiff": incoming_dict.get("req_no_plaintiff"),
+            "form__req_no_plaintiff__contains": incoming_dict.get("req_no_plaintiff"),
         })
         draft_filter.update({
             "reqform_draft__req_no_plaintiff": "IMPOSSIBLE_VALUE_TO_EXCLUDE_DRAFT"
