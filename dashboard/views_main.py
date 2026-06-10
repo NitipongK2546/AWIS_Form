@@ -29,27 +29,16 @@ def dashboard(request : HttpRequest):
     ):
         return redirect("dashboard:statistics")
 
-    unsent_count = FormAwaitingApproval.objects.filter(
-        approve_status=1
-    ).count()
-    sent_count = VisualReqformData.objects.filter(
-        accept=99
-    ).count()
+    # unsent_count = FormAwaitingApproval.objects.filter(
+    #     approve_status=1
+    # ).count()
+    # sent_count = VisualReqformData.objects.filter(
+    #     accept=99
+    # ).count()
 
-    all_accepted = VisualReqformData.objects.filter(
-        accept=1
-    )
-
-    unreported_count = 0
-
-    for visual_form in all_accepted:
-        reqform = visual_form.form
-        warrants = VisualWarrantData.objects.filter(
-            warrant__in=reqform.warrants.all()
-        )
-        not_all_reported = warrants.filter(report_status=0).exists()
-        if not_all_reported:
-            unreported_count += 1
+    # all_accepted = VisualReqformData.objects.filter(
+    #     accept=1
+    # )
 
     dashboard_list = []
     req_no_plaintiff_list = []
@@ -59,6 +48,17 @@ def dashboard(request : HttpRequest):
 
     filter_form = DashboardFilterForm(request.GET)
     drafts, form_unsent, form_already_sent = utils.get_dashboard_objs(request, filter_form)
+
+    unreported_count = 0
+
+    for visual_form in form_already_sent[0]:
+        reqform = visual_form.form
+        warrants = VisualWarrantData.objects.filter(
+            warrant__in=reqform.warrants.all()
+        )
+        not_all_reported = warrants.filter(report_status=0).exists()
+        if not_all_reported:
+            unreported_count += 1
 
     utils.append_draft_data(dashboard_list, req_no_plaintiff_list, drafts[0], banned_id_list)  
     utils.append_unsent_form_data(dashboard_list, req_no_plaintiff_list, form_unsent[0], banned_id_list)
@@ -79,8 +79,8 @@ def dashboard(request : HttpRequest):
         ############################################
 
         "draft_count": drafts[1],
-        "unsent_count": unsent_count,
-        "sent_count": sent_count,
+        "unsent_count": form_unsent[1],
+        "sent_count": form_already_sent[1],
         "unreported_count": unreported_count
     }
 
