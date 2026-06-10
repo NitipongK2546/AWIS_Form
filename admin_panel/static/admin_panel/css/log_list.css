@@ -304,22 +304,18 @@ html {
     padding: 8px 0 2px;
 }
 
-/* Django CheckboxSelectMultiple renders <ul> > <li> > <label> */
-.action-type-group ul,
-.action-type-group ol {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+/* Django CheckboxSelectMultiple renders <div id="id_action"> > <div> > <label> */
+#id_action {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
 }
 
-.action-type-group li {
-    display: flex;
+#id_action>div {
+    display: inline-flex;
 }
 
-.action-type-group label {
+#id_action>div>label {
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -335,12 +331,12 @@ html {
     white-space: nowrap;
 }
 
-.action-type-group label:hover {
+#id_action>div>label:hover {
     background: #f1f3f4;
     border-color: #bbb;
 }
 
-.action-type-group input[type="checkbox"] {
+#id_action>div>label input[type="checkbox"] {
     accent-color: #9B1C1C;
     width: 13px;
     height: 13px;

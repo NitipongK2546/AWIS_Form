@@ -16,10 +16,10 @@
     <span class="bc-sep">/</span>
     <span class="bc-current">View Logs</span>
   </div>
-  <!-- Top bar -->
+  {% comment %} <!-- Top bar -->
   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
     <div class="page-title" style="margin-bottom:0;">Log ระบบ AWIS</div>
-  </div>
+  </div> {% endcomment %}
 
   <!-- Filter card -->
   <div class="filter-card">
@@ -51,8 +51,8 @@
       </div>
 
       <!-- Row 2: Action Type — wrap inline -->
-      <div class="form-group" style="margin-bottom:.75rem;">
-        <label>Action Type</label>
+      <div class="form-group" >
+        <label >Action Type</label>
         <div class="action-type-group">
           {{ query.action }}
         </div>
