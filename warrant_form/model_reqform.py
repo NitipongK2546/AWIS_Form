@@ -305,15 +305,21 @@ class ReqformDataModel(models.Model):
 
         if self.cause_type_id == 1:
             title_dict = {
-                "นาย": (1, "__"),
-                "นาง": (2, "__"),
-                "นางสาว": (3, "______"),
+                "นาย": ("__", "---", "------"),
+                "นาง": ("---", "__", "------"),
+                "นางสาว": ("---", "---", "______"),
             }
 
             assembled_text = self.cause_text_piece_2
-            result = title_dict.get(self.cause_text_piece_1)
+            cause_result = title_dict.get(self.cause_text_piece_1)
+            acc_result = title_dict.get(self.acc_title)
             data_dict.update({
-                f"cause_title_{result[0]}": result[1],
+                f"cause_title_1": cause_result[0],
+                f"cause_title_2": cause_result[1],
+                f"cause_title_3": cause_result[2],
+                f"acc_title_1": acc_result[0],
+                f"acc_title_2": acc_result[1],
+                f"acc_title_3": acc_result[2],
                 f"cause_text_{self.cause_type_id}": assembled_text
             })
 
