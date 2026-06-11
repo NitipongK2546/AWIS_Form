@@ -22,6 +22,17 @@ status_choices = [
     (99, "ยกเลิกคำร้อง"),           # Cancel during Form Await
 ]
 
+def get_req_year_choices():
+    choices = set()
+    for reqform in ReqformDataModel.objects.all():
+        if reqform.req_year == "-":
+            continue
+        choices.add(
+            (reqform.req_year, reqform.req_year)
+        )
+
+    return [("", "-----")] + list(choices)
+
 def get_reqno_choices():
     choices = set()
     for reqform in ReqformDataModel.objects.all():
@@ -55,13 +66,28 @@ def get_accused_choices():
 
     return [("", "-----")] + list(choices)
 
+def get_req_name_choices():
+    choices = set()
+    for reqform in ReqformDataModel.objects.all():
+        if not reqform.req_name:
+            continue
+        choices.add(
+            (reqform.req_name, reqform.req_name)
+        )
+
+    return [("", "-----")] + list(choices)
+
 class DashboardFilterForm(forms.Form):
-    req_no_plaintiff = forms.ChoiceField(
-        choices=get_req_no_plaintiff_choices,
+    req_no_plaintiff = forms.CharField(
+        max_length=200,
         required=False,
     )
-    accused = forms.ChoiceField(
-        choices=get_accused_choices,
+    req_name = forms.CharField(
+        max_length=200,
+        required=False,
+    )
+    accused = forms.CharField(
+        max_length=200,
         required=False,
     )
 
@@ -100,12 +126,25 @@ stats_status_choices = [
 ]
 
 class StatisticFilterForm(forms.Form):
-    req_no_plaintiff = forms.ChoiceField(
-        choices=get_req_no_plaintiff_choices,
+    req_year = forms.ChoiceField(
+        choices=get_req_year_choices,
         required=False,
     )
-    accused = forms.ChoiceField(
-        choices=get_accused_choices,
+    reqno = forms.ChoiceField(
+        choices=get_reqno_choices,
+        required=False,
+    )
+
+    req_no_plaintiff = forms.CharField(
+        max_length=200,
+        required=False,
+    )
+    req_name = forms.CharField(
+        max_length=200,
+        required=False,
+    )
+    accused = forms.CharField(
+        max_length=200,
         required=False,
     )
 

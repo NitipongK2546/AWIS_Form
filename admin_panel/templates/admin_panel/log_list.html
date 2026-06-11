@@ -4,74 +4,97 @@
 {% block title %}ดู Log ระบบ AWIS{% endblock %}
 
 {% block style %}
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'admin_panel/css/log_list.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="filter-section" style="margin: 8px;">
-    <a href="{% url 'admin_panel:collections' %}" class="btn-red">กลับ</a>
-    <h2>Filter Logs</h2>
+<div class="page-wrapper">
+
+  <div class="breadcrumb">
+    <a href="{% url 'admin_panel:collections' %}">Admin Tools</a>
+    <span class="bc-sep">/</span>
+    <span class="bc-current">View Logs</span>
+  </div>
+  {% comment %} <!-- Top bar -->
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+    <div class="page-title" style="margin-bottom:0;">Log ระบบ AWIS</div>
+  </div> {% endcomment %}
+
+  <!-- Filter card -->
+  <div class="filter-card">
+    <h2><i class="ti ti-filter" style="margin-right:4px;"></i>ค้นหา Log</h2>
     <form method="get">
-        <div class="form-row">
-            <div class="form-group">
-                <label>Start date:</label>
-                {{ query.start_day }}{{ query.start_month }}{{ query.start_year }}
-            </div>
-            <div class="form-group">
-                <label>End date:</label>
-                {{ query.end_day }}{{ query.end_month }}{{ query.end_year }}
-            </div>
-            <div class="form-group">
-                <label>User ID:</label>
-                {{ query.user_id }}
-            </div>
+
+      <!-- Row 1: dates + user id + reqno -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>วันที่เริ่มต้น</label>
+          <div style="display:flex; gap:4px; align-items:center;">
+            {{ query.start_day }}{{ query.start_month }}{{ query.start_year }}
+          </div>
         </div>
-    
-        <div class="form-row">
-            <div class="form-group">
-                <label>Action Type:</label>
-                {{ query.action }}
-            </div>
-            <div>
-                <label>ค้นหาหมายเลขคำขอ:</label>
-                {{ query.reqno }}
-            </div>
+        <div class="form-group">
+          <label>วันที่สิ้นสุด</label>
+          <div style="display:flex; gap:4px; align-items:center;">
+            {{ query.end_day }}{{ query.end_month }}{{ query.end_year }}
+          </div>
         </div>
-    
-        <div class="form-actions">
-            <button type="submit" class="btn-primary">ค้นหา</button>
-            <a href="{% url 'admin_panel:view_logs' %}" class="btn-secondary">รีเซ็ต</a>
+        <div class="form-group">
+          <label>User ID</label>
+          {{ query.user_id }}
         </div>
+        <div class="form-group">
+          <label>หมายเลขคำขอ</label>
+          {{ query.reqno }}
+        </div>
+      </div>
+
+      <!-- Row 2: Action Type — wrap inline -->
+      <div class="form-group" >
+        <label >Action Type</label>
+        <div class="action-type-group">
+          {{ query.action }}
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">
+          <i class="ti ti-search"></i>ค้นหา
+        </button>
+        <a href="{% url 'admin_panel:view_logs' %}" class="btn-secondary">
+          <i class="ti ti-refresh"></i>รีเซ็ต
+        </a>
+      </div>
     </form>
+  </div>
+
+  <!-- Action bar -->
+  <div class="action-bar">
+    <a href="{% url 'admin_panel:export_logs' %}" class="btn-secondary">
+      <i class="ti ti-download"></i>Export Log
+    </a>
+    <a href="{% url 'admin_panel:delete_logs' %}?{{ request.GET.urlencode }}" class="btn-secondary">
+      <i class="ti ti-trash"></i>Delete Log
+    </a>
+  </div>
+
+  <!-- Normal Log -->
+  <div class="log-section">
+    {% include 'module/log_table.html' with page_obj=normal_page_obj page_param="normal_page" title="Normal Log" %}
+  </div>
+
+  <!-- Errors Log -->
+  <div class="log-section">
+    {% include 'module/log_table.html' with page_obj=errors_page_obj page_param="errors_page" title="Errors Log" %}
+  </div>
+
+  <!-- Denied Log -->
+  <div class="log-section">
+    {% include 'module/log_table.html' with page_obj=denied_page_obj page_param="denied_page" title="Denied Log" %}
+  </div>
+
 </div>
-
-<section>
-    <div class="log-table">
-        <a href="{% url 'admin_panel:export_logs' %}" class="btn-secondary">Export Log</a>
-        <a href="{% url 'admin_panel:delete_logs' %}?{{ request.GET.urlencode }}" class="btn-secondary">Delete Log</a>
-    </div>
-</section>
-
-<section>
-    <div class="log-table">
-        <h1>Normal Log</h1>
-        {% include 'module/log_table.html' with page_obj=normal_page_obj page_param="normal_page" %}
-    </div>
-</section>
-
-<section>
-    <div class="log-table">
-        <h1>Errors Log</h1>
-        {% include 'module/log_table.html' with page_obj=errors_page_obj page_param="errors_page" %}
-    </div>
-</section>
-
-<section>
-    <div class="log-table">
-        <h1>Denied Log</h1>
-        {% include 'module/log_table.html' with page_obj=denied_page_obj page_param="denied_page" %}
-    </div>
-</section>
 {% endblock %}
 
 {% block script %}

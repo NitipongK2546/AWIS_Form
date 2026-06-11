@@ -1,18 +1,12 @@
-{% if role_value == 99 or is_superuser  %}
-<a class="btn" style="background-color: #3498db;" href="{% url 'admin_panel:update_role_admin' user.user_id 10 %}">
-เจ้าหน้าที่
-</a> |
-<a class="btn" style="background-color: #21cc0a;" href="{% url 'admin_panel:update_role_admin' user.user_id 11 %}">
-ผู้อนุมัติ
-</a> |
-<a class="btn" style="background-color: #dbb732;" href="{% url 'admin_panel:update_role_admin' user.user_id 12 %}">
-ผู้ดูแลระดับฝ่าย
-</a> |
-<a class="btn" style="background-color: #32cddb;" href="{% url 'admin_panel:update_role_admin' user.user_id 99 %}">
-ผู้ดูแลระบบ
-</a> |
-<a class="btn" style="background-color: #e01717;" href="{% url 'admin_panel:delete_access' user.user_id %}" 
-onclick="return confirm('Are you sure you want to remove access for {{ user.fullname }}?');">
-ลบสิทธิ์การเข้าถึงระบบ AWIS
-</a>
+{% if role_value == 99 or is_superuser %}
+<div class="action-group">
+  <a class="btn btn-role role-officer" href="{% url 'admin_panel:update_role_admin' user.user_id 10 %}">เจ้าหน้าที่</a>
+  <a class="btn btn-role role-approver" href="{% url 'admin_panel:update_role_admin' user.user_id 11 %}">ผู้อนุมัติ</a>
+  <a class="btn btn-role role-dept-admin" href="{% url 'admin_panel:update_role_admin' user.user_id 12 %}">ผู้ดูแลระดับฝ่าย</a>
+  <a class="btn btn-role role-superadmin" href="{% url 'admin_panel:update_role_admin' user.user_id 99 %}">ผู้ดูแลระบบ</a>
+  <a class="btn btn-del" href="{% url 'admin_panel:delete_access' user.user_id %}"
+     onclick="return confirm('ต้องการลบสิทธิ์ของ {{ user.fullname }} จริงหรือไม่?')">
+    <i class="ti ti-trash"></i> ลบสิทธิ์
+  </a>
+</div>
 {% endif %}

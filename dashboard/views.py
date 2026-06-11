@@ -111,6 +111,7 @@ def reqform_approve_page(request : HttpRequest, req_no_plaintiff : str):
     def handle_form_rejected():
         selected_form.approve_status = FormAwaitingApproval.ApprovalStatus.REJECTED
         selected_form.save()
+        selected_form.form.save()
 
         FileLogger.createNormalLog(request, AccessType.REJECT, PermissionList.REQFORM_AWAIT_APPROVAL, selected_form.getLogInfoDict())
 

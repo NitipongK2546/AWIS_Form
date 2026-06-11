@@ -1,157 +1,355 @@
-body {
-    font-family: 'Noto Sans Thai', sans-serif;
-    background-color: #f8f9fa;
-    margin: 20px;
+/* ============================================================
+   log_list.css  –  AWIS Admin Log Page
+   ============================================================ */
+
+body,
+html {
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    background: #f1f3f4;
+    margin: 0;
+    padding: 0;
+    color: #202124;
 }
 
-h1 {
-    color: #343a40;
-    margin-bottom: 15px;
+/* ---------- Page ---------- */
+.page-wrapper {
+    padding: 1.25rem 1.5rem 2.5rem;
 }
 
-.filter-section {
+.page-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #202124;
+    margin-bottom: 1.1rem;
+}
+
+/* ---------- Filter card ---------- */
+.filter-card {
     background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    padding: .9rem 1.1rem;
+    margin-bottom: 14px;
 }
 
-.filter-section h2 {
-    margin-bottom: 15px;
-    color: #343a40;
-}
-
-.filter-section label {
-    font-weight: 600;
-    margin-right: 10px;
-    color: #333;
-    align-items: center;
-    display: flex;
-}
-
-.filter-section input,
-.filter-section select {
-    padding: 6px 10px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    width: auto;
+.filter-card h2 {
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    margin: 0 0 .75rem;
 }
 
 .form-row {
     display: flex;
-    gap: 40px;
-    margin-bottom: 20px;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: .75rem;
 }
 
 .form-group {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    gap: 4px;
 }
 
-button.btn-primary {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
+.form-group label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
 }
 
-button.btn-primary:hover {
-    background-color: #0056b3;
-}
-
-a.btn-red {
-    background-color: #c61d1d;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 15px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-a.btn-red:hover {
-    background-color: #f02424;
-}
-
-a.btn-secondary {
-    margin-left: 15px;
-    color: #6c757d;
-    text-decoration: none;
-    padding: 8px 16px;
-    border: 1px solid #6c757d;
-    border-radius: 4px;
-}
-
-a.btn-secondary:hover {
-    background-color: #f1f1f1;
-}
-
-.log-table {
+.form-group input,
+.form-group select,
+.filter-card input,
+.filter-card select {
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid #dadce0;
+    border-radius: 7px;
+    font-size: 13px;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    color: #202124;
     background: #fff;
-    padding: 15px;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    outline: none;
+    transition: border .15s, box-shadow .15s;
 }
 
-/* --- This is for the the log table --- */
+.form-group input:focus,
+.form-group select:focus,
+.filter-card input:focus,
+.filter-card select:focus {
+    border-color: #9B1C1C;
+    box-shadow: 0 0 0 2px rgba(155, 28, 28, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: .5rem;
+    border-top: .5px solid #f0f0f0;
+    margin-top: .5rem;
+}
+
+/* ---------- Breadcrumb ---------- */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 1.1rem;
+}
+
+.breadcrumb a {
+    color: #9B1C1C;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.bc-sep {
+    color: #ccc;
+}
+
+.bc-current {
+    color: #333;
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+    height: 34px;
+    padding: 0 18px;
+    background: #9B1C1C;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    transition: background .15s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-primary:hover {
+    background: #7F1D1D;
+}
+
+.btn-secondary {
+    height: 34px;
+    padding: 0 14px;
+    background: #fff;
+    color: #444;
+    border: .5px solid #dadce0;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background .15s;
+}
+
+.btn-secondary:hover {
+    background: #f1f3f4;
+    text-decoration: none;
+}
+
+.btn-back {
+    height: 34px;
+    padding: 0 14px;
+    background: #FEE2E2;
+    color: #991B1B;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background .15s;
+}
+
+.btn-back:hover {
+    background: #FECACA;
+    text-decoration: none;
+}
+
+/* ---------- Action bar ---------- */
+.action-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+/* ---------- Log section ---------- */
+.log-section {
+    margin-bottom: 14px;
+}
+
+/* ---------- Table card ---------- */
+.table-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.table-header {
+    background: #213259;
+    padding: .65rem 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.table-header-title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
 
 .styled-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 14px;
-    font-family: 'Noto Sans Thai', sans-serif;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
+    font-size: 13px;
+    font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
 }
 
-.styled-table thead tr {
-    background-color: #007bff;
-    color: #ffffff;
+.styled-table thead th {
+    background: #f8f9fa;
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+    padding: .6rem .9rem;
     text-align: left;
-    font-weight: bold;
+    border-bottom: 1px solid #e8e8e8;
+    white-space: nowrap;
 }
 
-.styled-table th,
-.styled-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #dee2e6;
+.styled-table tbody td {
+    padding: .6rem .9rem;
+    border-bottom: .5px solid #f0f0f0;
+    color: #202124;
+    vertical-align: middle;
+    font-size: 12px;
 }
 
-.styled-table tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
+.styled-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
-.styled-table tbody tr:hover {
-    background-color: #e9ecef;
-    cursor: pointer;
+.styled-table tbody tr:hover td {
+    background: #fafafa;
 }
 
-.styled-table th[colspan="9"] {
+.td-muted {
+    color: #888;
+}
+
+.td-empty {
     text-align: center;
-    font-size: 16px;
-    background-color: #343a40;
-    color: #fff;
+    padding: 2rem;
+    color: #888;
+    font-size: 13px;
 }
 
+/* ---------- Pagination ---------- */
 .pagination {
-    margin-top: 15px;
-    text-align: center;
-    font-family: 'Noto Sans Thai', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: .75rem 1rem;
+    font-size: 12px;
+    color: #666;
+    border-top: .5px solid #f0f0f0;
 }
 
 .pagination a {
-    margin: 0 10px;
+    color: #9B1C1C;
     text-decoration: none;
-    color: #007bff;
-    font-weight: bold;
+    font-weight: 500;
+    padding: 3px 10px;
+    border: .5px solid #dadce0;
+    border-radius: 6px;
+    background: #fff;
+    transition: background .15s;
 }
 
 .pagination a:hover {
-    text-decoration: underline;
+    background: #f1f3f4;
+}
+
+/* ---------- Action type checkbox group ---------- */
+.action-type-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 0 2px;
+}
+
+/* Django CheckboxSelectMultiple renders <div id="id_action"> > <div> > <label> */
+#id_action {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+#id_action>div {
+    display: inline-flex;
+}
+
+#id_action>div>label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border: .5px solid #dadce0;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #444;
+    background: #fff;
+    cursor: pointer;
+    transition: background .12s, border-color .12s;
+    white-space: nowrap;
+}
+
+#id_action>div>label:hover {
+    background: #f1f3f4;
+    border-color: #bbb;
+}
+
+#id_action>div>label input[type="checkbox"] {
+    accent-color: #9B1C1C;
+    width: 13px;
+    height: 13px;
+    margin: 0;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+
+    .action-bar {
+        flex-wrap: wrap;
+    }
 }

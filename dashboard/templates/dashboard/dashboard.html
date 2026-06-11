@@ -22,28 +22,28 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
   <!-- Page title -->
   <div class="page-title">หน้าหลัก</div>
 
-  {% if user_role == "ผู้ดูแลระบบ" or user_role == "ผู้ดูแลระบบ" %}
+  {% if user_role != "ผู้ดูแลระบบ" or user_role != "ผู้ดูแลระดับฝ่าย" %}
   <!-- Stat cards -->
   <div class="stat-grid">
     <a href="?status=1" class="stat-card">
-      <div class="stat-label">ร่างคำร้องปัจจุบัน</div>
-      <div class="stat-number">{{ draft_count }}</div>
-      <div class="stat-unit">ร่าง</div>
+      <div class="stat-label" style="color:#444441;">ร่างคำร้องปัจจุบัน</div>
+      <div class="stat-number" style="color:#2C2C2A;">{{ draft_count }}</div>
+      <div class="stat-unit" style="color:#5F5E5A;">ร่าง</div>
     </a>
-    <a href="?status=10" class="stat-card-yellow" >
-      <div class="stat-label">รอการอนุมัติ</div>
-      <div class="stat-number">{{ unsent_count }}</div>
-      <div class="stat-unit">ร่าง</div>
+    <a href="?status=10" class="stat-card-yellow">
+      <div class="stat-label" style="color:#633806;">รอการอนุมัติ</div>
+      <div class="stat-number" style="color:#412402;">{{ unsent_count }}</div>
+      <div class="stat-unit" style="color:#854F0B;">ร่าง</div>
     </a>
     <a href="?status=20" class="stat-card-blue">
-      <div class="stat-label">ส่งถึงศาลสำเร็จ</div>
-      <div class="stat-number">{{ sent_count }}</div>
-      <div class="stat-unit">ร่าง</div>
+      <div class="stat-label" style="color:#0C447C;">ส่งถึงศาลสำเร็จ</div>
+      <div class="stat-number" style="color:#042C53;">{{ sent_count }}</div>
+      <div class="stat-unit" style="color:#185FA5;">ร่าง</div>
     </a>
     <a href="?status=23" class="stat-card-green">
-      <div class="stat-label">รอรายงานผลหมายจับ</div>
-      <div class="stat-number">{{ unreported_count }}</div>
-      <div class="stat-unit">ร่าง</div>
+      <div class="stat-label" style="color:#27500A;">รอรายงานผลหมายจับ</div>
+      <div class="stat-number" style="color:#173404;">{{ unreported_count }}</div>
+      <div class="stat-unit" style="color:#3B6D11;">ร่าง</div>
     </a>
   </div>
 
@@ -52,6 +52,10 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
     <div class="filter-group">
       <label class="filter-label">หมายเลขอ้างอิง</label>
       {{ filter_form.req_no_plaintiff }}
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">ชื่อผู้ร้อง</label>
+      {{ filter_form.req_name }}
     </div>
     <div class="filter-group">
       <label class="filter-label">ผู้ถูกกล่าวหา</label>
@@ -128,7 +132,7 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
   </div>
   {% else %}
   <div>
-    ไม่ได้รับอนุญาตให้สร้างคำร้อง
+    ผู้ดูแลระดับฝ่ายและผู้ดูแลระบบไม่มีสิทธิ
   </div>
   {% endif %}
 
