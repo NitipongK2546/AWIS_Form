@@ -407,6 +407,9 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
 
             existing_reqform.save()
 
+            selected_draft.reqform_draft.req_no_plaintiff = existing_reqform.req_no_plaintiff
+            selected_draft.reqform_draft.save()
+
             old_unsent_form.approve_status = 1
             old_unsent_form.save()
         except Exception as e:
