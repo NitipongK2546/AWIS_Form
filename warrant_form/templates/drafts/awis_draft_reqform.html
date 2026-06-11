@@ -411,16 +411,15 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
 <script>
   const cause_type_selector = document.getElementById("id_cause_type_id")
   const cause_section = document.getElementById("cause-special-section")
-  const cause_title = document.getElementById("cause-section-title")
   const cause_section_type_2 = document.getElementById("cause-section-type-two")
 
   function checkCauseType() {
     if (cause_type_selector.value == 1) {
-      cause_title.textContent = "...มาแจ้งความร้องทุกข์ต่อพนักงานสอบสวน"
+      // cause_title.textContent = "...มาแจ้งความร้องทุกข์ต่อพนักงานสอบสวน"
       cause_section_type_2.style.display = "none"
     } 
     else {
-      cause_title.textContent = "ปรากฏจากการสืบสวน/สอบสวนของ..."
+      // cause_title.textContent = "ปรากฏจากการสืบสวน/สอบสวนของ..."
       cause_section_type_2.style.display = "block"
     }
   }

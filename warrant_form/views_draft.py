@@ -346,15 +346,15 @@ def create_reqform_from_draft(request : HttpRequest, container_id : int):
                 warrant[1].save()
                 reqform_obj.warrants.add(warrant[0])
 
+            selected_draft.reqform_draft.req_no_plaintiff = new_req_no_plaintiff
+            selected_draft.reqform_draft.save()
+
             FormAwaitingApproval.objects.create(
                 form=reqform_obj, 
                 form_owner=selected_draft.form_owner, 
                 form_creator=selected_draft.form_creator, 
                 approve_status=1
             )
-
-            selected_draft.reqform_draft.req_no_plaintiff = new_req_no_plaintiff
-            selected_draft.reqform_draft.save()
 
             return redirect("dashboard:dashboard")
         except Exception as e:
