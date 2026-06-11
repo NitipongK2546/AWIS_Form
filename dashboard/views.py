@@ -238,7 +238,6 @@ def download_reqform(request : HttpRequest, req_no_plaintiff : str):
     doc_data = unsent_form.form.convertToDocumentData()
 
     response = doc_create.create_reqform_pdf(doc_data)
-    print(doc_data)
 
     return response
 
