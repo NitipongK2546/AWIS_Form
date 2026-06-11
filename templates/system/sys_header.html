@@ -189,9 +189,8 @@
         {% endif %}
         {% if user_role == "ผู้ดูแลระดับฝ่าย" or user_role == "ผู้ดูแลระบบ" or request.user.is_superuser  %}
           <a class="nav-link" href="{% url 'dashboard:statistics' %}" id="nav-stats">รายงานสถิติ</a>
-
-          {% endif %}
           <a class="nav-link" href="{% url 'admin_panel:collections' %}" id="nav-admin">Admin Page</a>
+        {% endif %}
         </nav>
 
         <!-- User area -->
