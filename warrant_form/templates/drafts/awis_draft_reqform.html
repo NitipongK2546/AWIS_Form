@@ -103,10 +103,12 @@ import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm'
         <h2>ข้อมูลผู้กรอกคำร้อง</h2>
       </div>
       <div class="card-body">
+        {% comment %}
         <div class="form-group">
           <label class="form-label">คำนำหน้า <span style="color:red;">*</span></label>
           {{ draft_form.req_title }}
         </div>
+        {% endcomment %}
         <div class="form-group">
           <label class="form-label">ผู้กรอกคำร้อง <span style="color:red;">*</span></label>
           {{ draft_form.req_name }}
@@ -467,5 +469,8 @@ bypassable_buttons.forEach(element => {
         allowLeave = true;
     });
 });
+</script>
+<script>
+  document.getElementById("id_req_case_type_id").style.appearance = "none";
 </script>
 {% endblock %}
