@@ -170,6 +170,7 @@
 
         .status-dot.ok   { background: #4ade80; box-shadow: 0 0 5px rgba(74,222,128,0.7); }
         .status-dot.err  { background: #f87171; box-shadow: 0 0 5px rgba(248,113,113,0.7); }
+        .status-dot.no-api   { background: yellow; box-shadow: 0 0 5px rgba(74,222,128,0.7); }
       </style>
 
       <div class="header-full">
@@ -230,8 +231,15 @@
         const data = await response.json();
 
         if (data.status == 200) {
-          statusDot.className  = "status-dot ok";
-          statusText.textContent = "เชื่อมต่อกับศาลแล้ว";
+          if (data.api_enabled) {
+            statusDot.className  = "status-dot ok";
+            statusText.textContent = "เชื่อมต่อกับศาลแล้ว";
+          }
+          else {
+              statusDot.className  = "status-dot no-api";
+              statusText.textContent = "เชื่อมต่อได้ แต่ระบบจะไม่ส่งคำร้อง";
+          }
+
         } else {
           statusDot.className  = "status-dot err";
           statusText.textContent = "เชื่อมต่อกับศาลไม่ได้";

@@ -7,6 +7,8 @@ from api.models import HealthCheckStatus
 from api.selector.court import checkCourtDifferent
 import _request_utils.connect_api as AWISConnect
 
+from django.conf import settings
+
 # import os
 
 from django.utils import timezone
@@ -32,6 +34,8 @@ def get_province(request : HttpRequest) -> JsonResponse:
     }, json_dumps_params={'ensure_ascii': False})
 
 def fetch_health_check(request : HttpRequest) -> JsonResponse:
+
+    api_enabled : bool = settings.ENABLE_API
     
     try:
         result = False
@@ -63,8 +67,9 @@ def fetch_health_check(request : HttpRequest) -> JsonResponse:
         
         if result:
             return JsonResponse({
-            "status": 200,
-        })
+                "status": 200,
+                "api_enabled": api_enabled,
+            })
         
         # Not true, API down.
         return JsonResponse({

@@ -105,6 +105,9 @@ class DefaultPermission(Enum):
             N.API_KEY,
             N.COURT_LIST,
         ]
+    ) + perm_str_list(
+        [T.VIEW,], 
+        N.STATISTICS,
     )
 # for perm in DefaultPermission:
 #     print(perm.value)
