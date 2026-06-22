@@ -10,6 +10,12 @@ from users.models import UserDataModel
 
 print("[Permission Section]")
 
+print("Deleting old permissions.")
+
+Permission.objects.all().delete()
+
+print("Create new permissions.")
+
 for name in PermissionList:
     ct = creation.createContentType(name)
 

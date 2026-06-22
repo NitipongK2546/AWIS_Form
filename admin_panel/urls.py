@@ -16,6 +16,8 @@ urlpatterns = [
     path("update-role-admin/<int:user_id>/<int:role_value>/", views.update_role_admin, name="update_role_admin"),
 
     path("delete-access/<int:user_id>/", views.delete_access, name="delete_access"),
+    path("delete-access-admin/<int:user_id>/", views.delete_access_admin, name="delete_access_admin"),
+
     path("delete-court-user/<str:user_id>/", views.delete_court_user, name="delete_court_user"),
 
     path("logs/", views.view_all_logs, name="view_logs"),

@@ -81,7 +81,6 @@ class DefaultPermission(Enum):
             N.USER_ROLE, 
 
             N.ADMIN_PANEL,
-            N.USER_ACCESS,  
             N.LOG_ACCESS,
             N.API_KEY,
             N.COURT_LIST,
@@ -92,15 +91,18 @@ class DefaultPermission(Enum):
     ) + perm_str_list(
         [T.VIEW,], 
         N.STATISTICS,
+    ) + perm_str_list(
+        [T.VIEW, T.CREATE, T.DELETE], 
+        N.USER_ACCESS,
     )
     
     SYSTEM_SUPERADMIN = perm_str_list_of_all(
         [T.VIEW, T.CREATE, T.EDIT, T.DELETE, T.APPROVE],
         [
             N.ADMIN_ROLE,
+            N.USER_ROLE,
 
             N.ADMIN_PANEL,
-            N.USER_ACCESS, 
             N.LOG_ACCESS,
             N.API_KEY,
             N.COURT_LIST,
@@ -108,6 +110,9 @@ class DefaultPermission(Enum):
     ) + perm_str_list(
         [T.VIEW,], 
         N.STATISTICS,
+    ) + perm_str_list(
+        [T.VIEW, T.CREATE, T.DELETE], 
+        N.USER_ACCESS,
     )
 # for perm in DefaultPermission:
 #     print(perm.value)
