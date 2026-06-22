@@ -37,7 +37,7 @@ def collections(request : HttpRequest):
 
 ORG_API_FETCH_USERS = os.getenv("ORG_API_FETCH_USERS")
 
-@perm_req_log([PermissionType.CREATE], PermissionList.ADMIN_PANEL, AccessType.CREATE)
+@perm_req_log([PermissionType.CREATE], PermissionList.USER_ACCESS, AccessType.CREATE)
 def admin_select_users(request : HttpRequest):
     try:
         response = requests.get(ORG_API_FETCH_USERS, timeout=5)
@@ -242,8 +242,17 @@ def update_role_admin(request : HttpRequest, user_id, role_value):
 
     return redirect("admin_panel:access_list")
 
-@perm_req_log([PermissionType.DELETE], PermissionList.USER_ACCESS, AccessType.DELETE)
+@perm_req_log([PermissionType.DELETE], PermissionList.USER_ROLE, AccessType.DELETE)
 def delete_access(request, user_id):
+    user = get_object_or_404(UserAccess, user_id=user_id)
+    user.delete()
+
+    # FileLogger.createNormalLogRequest(request, AccessType.DELETE, PermissionList.ADMIN_PANEL,)
+
+    return redirect("admin_panel:access_list")
+
+@perm_req_log([PermissionType.DELETE], PermissionList.ADMIN_ROLE, AccessType.DELETE)
+def delete_access_admin(request, user_id):
     user = get_object_or_404(UserAccess, user_id=user_id)
     user.delete()
 
